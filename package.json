@@ -1,0 +1,17 @@
+{
+  "name": "js-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "format": "prettier --write src/**/*.js"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "prompt-sync": "^4.2.0"
+  }
+}
