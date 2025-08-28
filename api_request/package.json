@@ -1,0 +1,8 @@
+{
+  "name": "api_request",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node main.js"
+  }
+}
