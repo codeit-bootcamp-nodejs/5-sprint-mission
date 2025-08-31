@@ -1,9 +1,6 @@
 
- // product 요청함수 구현하기
-
 const PRODUCT_BASE_URL = 'https://panda-market-api-crud.vercel.app/products';
 
-// 상품리스트 GET 메소드 사용 (page, pageSize, keyword쿼리 파라미터 이용)
 
 export async function getProductList(page = 1, pageSize = 10, keyword = '') {
   try {
@@ -17,7 +14,6 @@ export async function getProductList(page = 1, pageSize = 10, keyword = '') {
  }
 }
 
-// 상품 조회(getProduct) GET메소드사용
 
 export async function getProduct(id) {
   try {
@@ -30,7 +26,6 @@ export async function getProduct(id) {
   } 
 }
 
-//상품 생성 POST메소드사용. 바디에 name, description, price, tags, image 포함
 
 export async function createProduct({name, description, price, tags = [], images = []}) {
   try {
@@ -48,7 +43,6 @@ export async function createProduct({name, description, price, tags = [], images
   } 
 }
 
-// 상품수정 patchProduct id, updateData사용 PATCH 메소드
 
 export async function patchProduct(id, updateData) {
   try {
@@ -66,7 +60,6 @@ export async function patchProduct(id, updateData) {
   }
 }
 
-// 상품삭제(delete) 보통 삭제는 바디 없대 id
 
 export async function deleteProduct(id) {
   try {
