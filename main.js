@@ -25,7 +25,6 @@
     this._images = images;
     this._favoriteCount = favoriteCount
   }
-  //메소드
   favorite() {
     this._favoriteCount++;
   }
@@ -108,9 +107,6 @@ async function listProductToInstance() {
       products.push(new Product(name, description, price, tags, images));
     }
   });
-
-  console.log("인스턴스화 완료:", JSON.stringify(products, null, 2));
-
 }
 
 

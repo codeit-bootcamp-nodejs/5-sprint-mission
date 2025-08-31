@@ -7,9 +7,7 @@ export function getArticleList(page = 1, pageSize = 10, keyword = '') {
     if(!response.ok) throw new Error(`리스트 가져오기 실패 (${response.status})`);
     return response.json();  
   })
-  .catch(error => {
-    console.log('에러', error.message);
-  });
+  .catch(error => {});
  }
 
  export function getArticle(id) {
@@ -18,7 +16,7 @@ export function getArticleList(page = 1, pageSize = 10, keyword = '') {
     if(!response.ok)throw new Error(`글 못 불러옴 (${response.status}`);
     return response.json();
   })
-  .catch(error => console.log('에러:', error.message));
+  .catch(() => {});
  }
 
  export function createArticle({title, content, image}) {
@@ -31,13 +29,10 @@ export function getArticleList(page = 1, pageSize = 10, keyword = '') {
       if(!response.ok) throw new Error(`글 작성 실패 (${response.status})`);
       return response.json();
     })
-    .catch(error => console.log("에러", error.message));
+    .catch(() =>{} );
    
  }
 
-// 글 수정하기
-// id: 수정할 글의 아이디
-// updateData: 수정할내용 {title, content, image}
 
  export function patchArticle(id, updateData) {
   return fetch(`${ARTICLE_BASE_URL}/${id}`, {
@@ -49,7 +44,7 @@ export function getArticleList(page = 1, pageSize = 10, keyword = '') {
         if(!response.ok) throw new Error(`글 수정 실패 (${response.status})`);
         return response.json();
     })
-    .catch(error => console.log('수정 에러:', error.message));
+    .catch(() => {});
  }
 
  export function deleteArticle(id) {
@@ -58,5 +53,5 @@ export function getArticleList(page = 1, pageSize = 10, keyword = '') {
     if(!response.ok) throw new Error(`글 삭제 실패 (${response.status})`);
     return response.json();
   })
-  .catch(error => console.log('에러:', error.message));
+  .catch(()=> {});
  }

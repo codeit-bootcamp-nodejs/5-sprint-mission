@@ -8,8 +8,7 @@ export async function getProductList(page = 1, pageSize = 10, keyword = '') {
     const res = await fetch(url);
     if(!res.ok) throw new Error (`리스트 불러오기 실패 (${res.status})`);
     return await res.json();
-} catch(err) {
-  console.error ("리스트 에러: ", err.message);
+} catch {
   return null;
  }
 }
@@ -20,8 +19,7 @@ export async function getProduct(id) {
     const res = await fetch(`${PRODUCT_BASE_URL}/${id}`);
     if (!res.ok) throw new Error (`조회실패 (${res.status})`);
     return await res.json();
-  } catch (err) {
-    console.error('조회에러:', err.message);
+  } catch {
     return null;
   } 
 }
@@ -37,8 +35,7 @@ export async function createProduct({name, description, price, tags = [], images
 
     if(!res.ok) throw new Error(`생성 실패 (${res.status})`);
     return await res.json();
-  } catch(err) {
-    console.log('생성 에러', err.message);
+  } catch {
     return null;
   } 
 }
@@ -54,8 +51,7 @@ export async function patchProduct(id, updateData) {
 
     if (!res.ok) throw new Error(`수정 실패 (${res.status})`);
     return await res.json();
-  } catch(err) {
-    console.log('수정 에러', err.message);
+  } catch {
     return null;
   }
 }
@@ -66,8 +62,7 @@ export async function deleteProduct(id) {
     const res = await fetch(`${PRODUCT_BASE_URL}/${id}`, {method: 'DELETE'});
     if(!res.ok) throw new Error(`삭제 실패 (${res.status})`);
     return await res.json();
-  } catch(err) {
-    console.log('삭제 에러' , err.message);
+  } catch {
     return null;
   } 
 }
