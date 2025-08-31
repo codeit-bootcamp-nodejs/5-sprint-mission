@@ -1,87 +1,65 @@
 import { getArticleList, getArticle, createArticle, patchArticle, deleteArticle } from "./Service/ArticleService.js";
 import { getProductList, getProduct, createProduct, patchProduct, deleteProduct, makeElectronicClass, makeProductClass } from "./Service/ProductService.js";
 
-console.log('전자제품',await makeElectronicClass());
-console.log('일반제품', await makeProductClass());
-
 getArticleList()
-  .then(data => {
-    console.log("\n▶︎ 게시글 목록을 불러옵니다.", data);
-  })
+  .then(data => data)
   .catch(e => {
-    console.error(e.message);
-  }
-)
+    throw e;       
+  });
 
 getArticle(4058)
-  .then(data => {
-    console.log("\n▶︎ 게시글 상세 조회", data);
-  })
+  .then(data => data)
   .catch(e => {
-    console.error(e.message);
-  }
-)
+    throw e;       
+  });
 
 createArticle ({
   title:'테스트중입니다',
   content:'내용을 입력하세요',
   image:'https://photos'
 } )
-  .then(data => {
-    console.log("\n▶︎ 새로운 글을 게시합니다.", data);
-  })
+  .then(data => data)
   .catch(e => {
-    console.error(e.message);
-  }
-)
+    throw e;       
+  });
 
 patchArticle(4058)
-  .then(data => {
-    console.log("\n▶︎ 게시글 수정", data);
-  })
+  .then(data => data)
   .catch(e => {
-    console.error(e.message);
-  }
-)
+    throw e;       
+  });
 
 deleteArticle(0)
-  .then(data => {
-    console.log("\n▶︎ 게시글 삭제", data);
-  })
+  .then(data => data)
   .catch(e => {
-    console.error(e.message);
-  }
-)
+    throw e;       
+  });
 
 
-  
+
 getProductList()
-  .then(data => {
-    console.log("\n▶︎ 상품 목록을 불러옵니다.", data)
-  })
+  .then(data => data)
   .catch(e => {
     if (e.response){
-    console.log(e.response.status, e.response.data);
-  } else if (e.request) {
-    console.error(e.request);
-  } else {
-    console.error(e.message);
-  }}
-)
+      return e.response.data;
+    } else if (e.request) {
+      throw e.request;
+    } else {
+      throw e.message;
+    }
+  });
 
 getProduct(1744)
-  .then(data => {
-    console.log("\n▶︎ 상품 상세정보.", data)
-  })
+  .then(data => data)
   .catch(e => {
     if (e.response){
-    console.log(e.response.status, e.response.data);
-  } else if (e.request) {
-    console.error(e.request);
-  } else {
-    console.error(e.message);
-  }}
-)
+      return e.response.data;
+    } else if (e.request) {
+      throw e.request;
+    } else {
+      throw e.message;
+    }
+  });
 
 createProduct({
     name:'상품명',
@@ -90,45 +68,44 @@ createProduct({
     tags:'전자제품',
     images:'https://example.com'
   }) 
-  .then(data => {
-  console.log('\n ▶︎ 새 상품 등록', data);   
- })
+  .then(data => data)
   .catch(e => {
     if (e.response){
-    console.log(e.response.status, e.response.data);
-  } else if (e.request) {
-    console.error(e.request);
-  } else {
-    console.error(e.message);
-  }}
-)
+      return e.response.data;
+    } else if (e.request) {
+      throw e.request;
+    } else {
+      throw e.message;
+    }
+  });
 
 patchProduct(1744)
-  .then(data => {
-  console.log('\n ▶︎ 상품 정보를 수정', data);   
- })
+  .then(data => data)
   .catch(e => {
     if (e.response){
-    console.log(e.response.status, e.response.data);
-  } else if (e.request) {
-    console.error(e.request);
-  } else {
-    console.error(e.message);
-  }}
-)
+      return e.response.data;
+    } else if (e.request) {
+      throw e.request;
+    } else {
+      throw e.message;
+    }
+  });
 
 deleteProduct(0)
-  .then(data => {
-  console.log('\n ▶︎ 상품 정보를 수정', data);   
- })
+  .then(data => data)
   .catch(e => {
     if (e.response){
-    console.log(e.response.status, e.response.data);
-  } else if (e.request) {
-    console.error(e.request);
-  } else {
-    console.error(e.message);
-  }}
-  )
+      return e.response.data;
+    } else if (e.request) {
+      throw e.request;
+    } else {
+      throw e.message;
+    }
+  });
+
+
+  
+await makeElectronicClass();
+await makeProductClass();
 
 

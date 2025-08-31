@@ -1,6 +1,6 @@
 import axios from "axios";
-import Product from "../Entity/product.js";
-import ElectronicProduct from "../Entity/product_electronic.js";
+import Product from "../Entity/Product.js"
+import ElectronicProduct from "../Entity/ElectronicProduct.js";
 
 
 const instance = axios.create({
@@ -70,6 +70,3 @@ export async function makeProductClass() {
 
   return product;
 }
-
-
-
