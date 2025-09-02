@@ -1,0 +1,20 @@
+import App from "./app.js";
+import ArticleScreen from "./ui/article-screen.js";
+import ProductScreen from "./ui/product-screen.js";
+import PromptUtil from "./ui/prompt-util.js";
+import ProductRepository from "./repository/product-repository.js";
+import ProductService from "./service/product-service.js";
+import HomeScreen from "./ui/home-screen.js";
+import ArticleService from "./service/article-service.js";
+import ArticleRepository from "./repository/article-repository.js";
+
+const articleRepository = new ArticleRepository();
+const productRepository = new ProductRepository();
+const productService = new ProductService(productRepository);
+const articleService = new ArticleService(articleRepository);
+const promptUtil = new PromptUtil();
+const homeScreen = new HomeScreen(promptUtil);
+const productScreen = new ProductScreen(productService, promptUtil);
+const articleScreen = new ArticleScreen(articleService, promptUtil);
+const app = new App(homeScreen, productScreen, articleScreen);
+app.run();
