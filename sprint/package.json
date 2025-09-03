@@ -1,0 +1,8 @@
+{
+  "name": "app-oop",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node main.js"
+  }
+}
