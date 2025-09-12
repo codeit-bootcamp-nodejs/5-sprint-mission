@@ -3,7 +3,7 @@
 #코드잇에서 실습하는 프로젝트들이 있습니다.
 
 # 현재 만든 프로젝트
-  - sprint-mission1
+  - sprint-mission2
 
 
 # 설치 및 실행
@@ -11,5 +11,5 @@
   - npm install
 
   sprint-mission1 실행
-  - cd .\src\sprint-mission1\
+  - cd .\src\sprint-mission2\
   - npm run start
