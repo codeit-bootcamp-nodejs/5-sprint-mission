@@ -1,0 +1,82 @@
+import { Exception } from "../../common/exception.js";
+
+export class Product {
+  #id;
+  #name;
+  #description;
+  #price;
+  #tags;
+  #createdAt;
+  #updatedAt;
+  constructor({
+    id = undefined,
+    name,
+    description,
+    price,
+    tags,
+    createdAt = undefined,
+    updatedAt = undefined
+  }){
+    this.#id = id;
+    this.#name = name;
+    this.#description = description;
+    this.#price = price;
+    this.#tags = tags;
+    this.#createdAt = createdAt;
+    this.#updatedAt = updatedAt;
+  }
+
+
+  static createFactory = ({name, description, price, tags}) => {
+    this.validateNameRule(name);
+    this.validateDescriptionRule(description);
+    this.validatePriceIdRule(price);
+    this.validateTagsIdRule(tags);
+    return new Product({name, description, price, tags});
+  }
+
+  static validateNameRule = (name) => {
+    if(name.length > 20){
+      throw new Exception("NAME_TOO_LONG");
+    }
+  }
+  static validateDescriptionRule = (description) => {
+    if(description.length < 5){
+      throw new Exception("DESCRIPTION_TOO_SHORT");
+    }
+  }
+  static validatePriceIdRule = (price) => {
+    if(price < 0){
+      throw new Exception("PRICE_NOT_NEGATIVE_NUMBER");
+    }
+  }
+  static validateTagsIdRule = (tags) => {
+    if(tags.length < 1){
+      throw new Exception("LEAST_ONE_TAG");
+    }
+  }
+
+  get id() {
+    return this.#id;
+  }
+  get name() {
+    return this.#name;
+  }
+
+  get description() {
+    return this.#description;
+  }
+  get price() {
+    return this.#price;
+  }
+  get tags() {
+    return this.#tags;
+  }
+  get createdAt() {
+    return this.#createdAt;
+  }
+  get updatedAt() {
+    return this.#updatedAt;
+  }
+
+}

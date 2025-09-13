@@ -4,37 +4,45 @@ import morgan from "morgan";
 import { Exception } from "../common/exception.js";
 
 export class Server {
-  #_server;
-
-  constructor() {
-    this.#_server = express();
+  #server;
+  #controllers;
+  constructor(controllers) {
+    this.#controllers = controllers;
+    this.#server = express();
   }
 
   listen = () => {
-    this.#_server.listen(3000, () => {
+    this.#server.listen(3000, () => {
       console.log("app server listening on port 3000");
-    })
-  }
+    });
+  };
 
-  registerBaseMiddlewares = () =>{
-    this.#_server.use(cors());
-    this.#_server.use(morgan("dev"));
-    this.#_server.use(express.json());
-  }
+  registerBaseMiddlewares = () => {
+    this.#server.use(cors());
+    this.#server.use(morgan("dev"));
+    this.#server.use(express.json());
+  };
 
   registerExceptionMiddleware = () => {
-    this.#_server.use((err, req, res, next) => {
-      if(err instanceof Exception){
-        res.status(err.statusCode).json({message: err.message});
-      }else{
-        res.status(500).json({message: "알 수 없는 에러 발생!!!"});
+    this.#server.use((err, req, res, next) => {
+      if (err instanceof Exception) {
+        res.status(err.statusCode).json({ message: err.message });
+      } else {
+        res.status(500).json({ message: "알 수 없는 에러 발생!!!" });
+        console.error(err);
       }
     });
   };
 
+  registerControllerMiddleware = () => {
+    for (const controller of this.#controllers) {
+      this.#server.use(controller.basePath, controller.router);
+    }
+  };
   start = () => {
     this.registerBaseMiddlewares();
+    this.registerControllerMiddleware();
     this.registerExceptionMiddleware();
     this.listen();
-  }
+  };
 }
