@@ -1,22 +1,68 @@
 import { Exception } from "../../common/exception.js";
 import { Product } from "../entity/product.js";
 
-export class ProductService{
+export class ProductService {
   #productRepo;
 
   constructor(productRepo) {
     this.#productRepo = productRepo;
   }
 
-  createProduct = async ({name, description, price, tags}) => {
-    const findProduct = await this.#productRepo.findProductByname(name);
-    if(findProduct){
-      throw new Exception("NAME_ALREADY_EXIST");
+  viewProduct = async ({ name }) => {
+    const foundProduct = await this.#productRepo.findProductByname(name);
+    if (!foundProduct) {
+      throw new Exception("PRODUCT_NOT_EXIST");
     }
-    const product = Product.createFactory({name, description, price, tags});
-    
+
+    return foundProduct;
+  }
+
+  viewProductList = async ({offset, limit, sort}) => {
+    const orderBy = sort === "recent" ? {createdAt: "desc"} 
+    : sort === "priceLowest" ? {price: "asc"}
+    : {price: "desc"};
+
+    const foundProductList = await this.#productRepo.findProductList({offset, limit, orderBy});
+
+    return foundProductList;
+  }
+
+  createProduct = async ({ name, description, price, tags }) => {
+    const foundProduct = await this.#productRepo.findProductByname(name);
+    if (foundProduct) {
+      throw new Exception("PRODUCT_ALREADY_EXIST");
+    }
+    const product = Product.createFactory({ name, description, price, tags });
+
     const createdProduct = await this.#productRepo.create(product);
-    
+
     return createdProduct;
+  }
+
+  updateProduct = async ({ id, name, description, price, tags }) => {
+    const foundProduct = await this.#productRepo.findProductById(id);
+    if (!foundProduct) {
+      throw new Exception("PRODUCT_NOT_EXIST");
+    }
+
+    const product = Product.updateFactory({ id, name, description, price, tags });
+
+
+    const updatedProduct = await this.#productRepo.update(product);
+
+    return updatedProduct;
+  }
+
+  deleteProduct = async ({ id, name }) => {
+    const foundProduct = id
+      ? await this.#productRepo.findProductById(id)
+      : await this.#productRepo.findProductByname(name);
+
+    if (!foundProduct) {
+      throw new Exception("PRODUCT_NOT_EXIST");
+    }
+    const product = Product.deleteFactory({ id, name });
+    const deletedProduct = await this.#productRepo.delete(product);
+    return deletedProduct;
   }
 }

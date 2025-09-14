@@ -1,19 +1,43 @@
 export const EXCEPTIONS = {
   NAME_FORM: {
     statusCode: 400,
-    message: "이름 양식에 안 맞거나 입력하지 않았습니다.",
+    message: "이름 양식에 안 맞습니다.",
+  },
+  NAME_NOT_EXSIST:{
+    statusCode: 400,
+    message: "이름은 입력하지 않았습니다.(필수)",
   },
   DESCRIPTION_FORM: {
     statusCode: 400,
-    message: "설명 양식에 안 맞거나 입력하지 않았습니다.",
+    message: "설명 양식에 안 맞습니다.",
+  },
+  DESCRIPTION_NOT_EXSIST:{
+    statusCode: 400,
+    message: "설명을 입력하지 않았습니다.(필수)",
   },
   PRICE_FORM: {
     statusCode: 400,
-    message: "가격 양식에 안 맞거나 입력하지 않았습니다.",
+    message: "가격 양식에 안 맞습니다.",
+  },
+  PRICE_NOT_EXSIST:{
+    statusCode: 400,
+    message: "가격은 입력하지 않았습니다.(필수)",
   },
   TAGS_FORM: {
     statusCode: 400,
-    message: "태크 양식에 안 맞거나 입력하지 않았습니다.",
+    message: "태크 양식에 안 맞습니다.",
+  },
+  TAGS_NOT_EXSIST:{
+    statusCode: 400,
+    message: "태그를 입력하지 않았습니다.(필수)",
+  },
+  OFFSET_FORM: {
+    statusCode: 400,
+    message: "offset 양식에 안 맞습니다.",
+  },
+  LIMIT_FORM: {
+    statusCode: 400,
+    message: "limit 양식에 안 맞거나 입력하지 않았습니다.",
   },
   NAME_TOO_LONG: {
     statusCode: 400,
@@ -31,7 +55,7 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "최소 1개 이상 넣어야 합니다.",
   },
-  NAME_ALREADY_EXIST: {
+  PRODUCT_ALREADY_EXIST: {
     statusCode: 400,
     message: "이미 상품이 존재합니다.",
   },
@@ -42,6 +66,22 @@ export const EXCEPTIONS = {
   FOREIGN_KEY_VIOLATION:{
     statusCode: 400,
     message: "존재하지 않은 외래키입니다."
+  },
+  PRODUCT_NOT_EXIST:{
+    statusCode: 400,
+    message: "상품이 존재하지 않습니다."
+  },
+  ID_NOT_EXSIST:{
+    statusCode: 400,
+    message: "id를 입력하세요.(필수)"
+  },
+  ID_FORM:{
+    statusCode: 400,
+    message: "id 양식이 안 맞습니다."
+  },
+  SORT_FORM:{
+    statusCode: 400,
+    message: "정렬 양식이 안 맞습니다."
   }
 };
 

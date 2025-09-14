@@ -1,27 +1,37 @@
 import { BaseContolloer } from "./base.controller.js";
-import { ProductReqValidator } from "./req.validator/product.req.validator.js";
-import { CreateProductResDto } from "./res.Dto/product/create.product.res.Dto.js";
+
 
 export class ProductController extends BaseContolloer {
-  #productService;
+  #productMiddleware;
 
-  constructor(productService) {
+  constructor(productMiddleware) {
     super("/api/product");
-    this.#productService = productService;
+    this.#productMiddleware = productMiddleware;
     this.registerRouter();
   }
 
   registerRouter = () => {
     this.router.post(
       "/create",
-      this.catchException(this.createProductMiddleware) ,
+      this.catchException(this.#productMiddleware.createProductMiddleware)
+    );
+    this.router.get(
+      "/view/:name",
+      this.catchException(this.#productMiddleware.viewProductMiddleware)
+    );
+    this.router.get(
+      "/viewList",
+      this.catchException(this.#productMiddleware.viewProductListMiddleware)
+    );
+    this.router.patch(
+      "/update",
+      this.catchException(this.#productMiddleware.updateProductMiddleware)
+    );
+    this.router.delete(
+      "/delete",
+      this.catchException(this.#productMiddleware.deleteProductMiddleware)
     );
   };
 
-  createProductMiddleware = async (req, res, next) => {
-    const createProductReqDto = new ProductReqValidator({ body: req.body }).validate();
-    const createdProduct = await this.#productService.createProduct(createProductReqDto);
-    const createdProductResDto = new CreateProductResDto(createdProduct);  
-    return res.json(createdProductResDto);
-  };
+  
 }

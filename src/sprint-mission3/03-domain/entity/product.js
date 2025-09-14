@@ -10,10 +10,10 @@ export class Product {
   #updatedAt;
   constructor({
     id = undefined,
-    name,
-    description,
-    price,
-    tags,
+    name = undefined,
+    description = undefined,
+    price = undefined,
+    tags = undefined,
     createdAt = undefined,
     updatedAt = undefined
   }){
@@ -35,6 +35,29 @@ export class Product {
     return new Product({name, description, price, tags});
   }
 
+  static updateFactory = ({id, name, description, price, tags}) =>{
+    if(name !== undefined) {
+      this.validateNameRule(name);
+    }
+    if(description !== undefined){
+      this.validateDescriptionRule(description);
+    } 
+    if(price !== undefined){
+      this.validatePriceIdRule(price);
+    }
+    if(tags !== undefined){
+      this.validateTagsIdRule(tags);
+    } 
+    return new Product({id, name, description, price, tags});
+  }
+
+  static deleteFactory = ({id, name}) => {
+    if(name !== this.undefined) {
+      this.validateNameRule(name);
+    }
+    return new Product({id, name});
+  }
+  
   static validateNameRule = (name) => {
     if(name.length > 20){
       throw new Exception("NAME_TOO_LONG");
