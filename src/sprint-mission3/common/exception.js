@@ -82,13 +82,27 @@ export const EXCEPTIONS = {
   SORT_FORM:{
     statusCode: 400,
     message: "정렬 양식이 안 맞습니다."
+  },
+  LIMIT_MAX_20: {
+    statusCode: 400,
+    message: "limit 최대치는 20입니다."
+  },
+  LIMIT_OVERFLOW: {
+    statusCode: 400,
+    message: '요청한 limit 값이 전체 데이터 개수(${totalCount})를 초과했습니다.'
   }
 };
 
 export class Exception extends Error {
-  constructor(key) {
+  constructor(key, data = {}) {
     const errInfo = EXCEPTIONS[key];
-    super(errInfo.message);
+    let message = errInfo.message;
+    if(data){
+      for (const [k, v] of Object.entries(data)) {
+        message = message.replace(new RegExp(`\\$\\{${k}\\}`, "g"), v);
+      }
+    }
+    super(message);
     this.statusCode = errInfo.statusCode;
   }
 }

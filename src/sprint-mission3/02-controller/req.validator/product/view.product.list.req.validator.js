@@ -11,7 +11,7 @@ export class ViewProductListReqValidator extends BaseValidator{
 
     offset = Number(offset);
     limit = Number(limit);
-
+    
     if(!this.isInt(offset) || offset < 0){
       throw new Exception("OFFSET_FORM");
     }
@@ -24,7 +24,8 @@ export class ViewProductListReqValidator extends BaseValidator{
     }
     return {
       offset,
-      limit
+      limit,
+      sort
     }
   }
 }

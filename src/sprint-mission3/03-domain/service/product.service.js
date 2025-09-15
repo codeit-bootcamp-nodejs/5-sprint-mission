@@ -18,9 +18,18 @@ export class ProductService {
   }
 
   viewProductList = async ({offset, limit, sort}) => {
-    const orderBy = sort === "recent" ? {createdAt: "desc"} 
+    const orderBy = sort === "recent" ? {updatedAt: "desc"} 
     : sort === "priceLowest" ? {price: "asc"}
     : {price: "desc"};
+
+    if(limit > 20) {
+      throw new Exception("LIMIT_MAX_20");
+    }
+
+    const productTotalCount = await this.#productRepo.count();
+    if(productTotalCount < limit) {
+      throw new Exception("LIMIT_OVERFLOW" , {totalCount:productTotalCount})
+    }
 
     const foundProductList = await this.#productRepo.findProductList({offset, limit, orderBy});
 
