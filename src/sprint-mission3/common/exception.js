@@ -90,7 +90,43 @@ export const EXCEPTIONS = {
   LIMIT_OVERFLOW: {
     statusCode: 400,
     message: '요청한 limit 값이 전체 데이터 개수(${totalCount})를 초과했습니다.'
-  }
+  },
+  TITLE_FORM: {
+    statusCode: 400,
+    message: "제목 양식이 안 맞습니다."
+  },
+  CONTENT_FORM: {
+    statusCode: 400,
+    message: "내용 양식이 안 맞습니다."
+  },
+  TITLE_NOT_EXSIST: {
+    statusCode: 400,
+    message: "제목이 존재하지 않습니다."
+  },
+  CONTENT_NOT_EXSIST: {
+    statusCode: 400,
+    message: "내용이 존재하지 않습니다."
+  },
+  AT_LEAST_ONE_FORM: {
+    statusCode: 400,
+    message: "최소 하나 양식을 입력해야 됩니다."
+  },
+  ARTICLE_NOT_EXIST:{
+    statusCode: 400,
+    message: "게시글이 존재하지 않습니다."
+  },
+  ARTICLE_ALREADY_EXIST: {
+    statusCode: 400,
+    message: "이미 게시글이 존재합니다.",
+  },
+  TITLE_TOO_LONG: {
+    statusCode: 400,
+    message: "제목의 최대 길이는 20글자입니다.",
+  },
+  CONTENT_TOO_SHORT: {
+    statusCode: 400,
+    message: "내용이 너무 짧습니다.(최소 6글자)",
+  },
 };
 
 export class Exception extends Error {

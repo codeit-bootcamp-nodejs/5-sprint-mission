@@ -8,7 +8,7 @@ export class ViewProductReqValidator extends BaseValidator{
 
   validate = () => {
     const {name} = this.params;
-    if(!this.isString(name) || this.isEmpty(name)){
+    if(!this.isString(name) || this.isEmpty(name) || name.length > 20){
       throw new Exception("NAME_FORM");
     }
     

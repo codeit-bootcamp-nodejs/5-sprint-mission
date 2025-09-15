@@ -1,32 +1,30 @@
-import { PrismaClientKnownRequestError, skip } from "@prisma/client/runtime/library";
-import { Exception } from "../common/exception.js";
+import { BaseRepo } from "./base.repo.js";
 import { ProductMapper } from "./mapper/product.mapper.js";
 
-export class ProductRepo {
-  #prisma;
+export class ProductRepo extends BaseRepo{
   #includesOptions;
   constructor(prisma) {
-    this.#prisma = prisma;
+    super(prisma);
     // this.#includesOptions = {
     //   : true,
     // };
   }
 
   findProductByname = async (name) => {
-    const product = await this.#prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { name },
     });
     return product ? ProductMapper.toEntity(product) : null;
   }
 
   findProductById = async (id) => {
-    const product = await this.#prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { id },
     });
     return product ? ProductMapper.toEntity(product) : null;
   }
   findProductList = async ({ offset, limit, orderBy }) => {
-    const productList = await this.#prisma.product.findMany({
+    const productList = await this.prisma.product.findMany({
       skip: offset,
       take: limit,
       orderBy: [orderBy],
@@ -36,7 +34,7 @@ export class ProductRepo {
   }
 
   create = async (entity) => {
-    const product = await this.#prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         ...ProductMapper.toPersistent(entity),
       }
@@ -45,7 +43,7 @@ export class ProductRepo {
   };
 
   update = async (entity) => {
-    const updatedproduct = await this.#prisma.product.update({
+    const updatedproduct = await this.prisma.product.update({
       where: { id: entity.id },
       data: {
         ...ProductMapper.toPersistent(entity),
@@ -57,7 +55,7 @@ export class ProductRepo {
   }
 
   delete = async (entity) => {
-    const deletedProduct = await this.#prisma.product.delete({
+    const deletedProduct = await this.prisma.product.delete({
       where: entity.id
         ? { id: entity.id }
         : { name: entity.name }
@@ -66,7 +64,7 @@ export class ProductRepo {
   }
 
   count = async () => {
-    const totalCount = await this.#prisma.product.count();
+    const totalCount = await this.prisma.product.count();
 
     return totalCount;
   }

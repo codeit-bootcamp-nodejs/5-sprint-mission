@@ -15,6 +15,7 @@ export class ProductMiddleware {
   constructor(productService){
     this.#productService = productService;
   }
+  
   createProductMiddleware = async (req, res, next) => {
     const createProductReqDto = new CreateProductReqValidator({ body: req.body }).validate();
     const createdProduct = await this.#productService.createProduct(createProductReqDto);

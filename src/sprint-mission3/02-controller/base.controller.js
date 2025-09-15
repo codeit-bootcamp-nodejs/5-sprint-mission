@@ -22,14 +22,6 @@ export class BaseContolloer {
     };
   };
 
-  // get basePath() {
-  //   return this.basePath;
-  // }
-
-  // get router() {
-  //   return this.router;
-  // }
-
   registerRouter = () => {
     throw new Error("registerRouter 구현하시오.");
   };

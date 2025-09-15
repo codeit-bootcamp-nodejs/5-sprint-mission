@@ -8,6 +8,4 @@ export class UpdateProductResDto{
     this.createdAt = updateProduct.createdAt;
     this.updatedAt = updateProduct.updatedAt;
   }
-
-
 }
