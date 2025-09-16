@@ -1,18 +1,14 @@
 import { Exception } from "../../common/exception.js";
+import { BaseEntity } from "./baseEntity.js";
 
-export class Article {
-  #id;
+export class Article extends BaseEntity{
   #title;
   #content;
-  #createdAt;
-  #updatedAt;
 
   constructor({ id = undefined, title = undefined, content = undefined, createdAt = undefined, updatedAt = undefined }) {
-    this.#id = id;
+    super({id, createdAt, updatedAt})
     this.#title = title;
     this.#content = content;
-    this.#createdAt = createdAt;
-    this.#updatedAt = updatedAt;
   }
 
   static createFactory = ({ title, content }) => {
@@ -47,20 +43,11 @@ export class Article {
     }
   }
 
-  get id() {
-    return this.#id;
-  }
   get title() {
     return this.#title;
   }
   get content() {
     return this.#content;
-  }
-  get createdAt() {
-    return this.#createdAt;
-  }
-  get updatedAt() {
-    return this.#updatedAt;
   }
   
 }

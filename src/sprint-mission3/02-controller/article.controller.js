@@ -1,34 +1,35 @@
-import { BaseContolloer } from "./base.controller.js";
+import { BaseContoller } from "./base.controller.js";
 
-export class ArticleController extends BaseContolloer{
-  #articleMeddleware;
-
-  constructor(articleMeddleware){
-    super("/api/article");
-    this.#articleMeddleware = articleMeddleware;
-    this.registerRouter();
+export class ArticleController extends BaseContoller{
+  #articleMiddleware;
+  constructor(articleMiddleware, commentMiddleware){
+    super("/api/article", commentMiddleware);
+    this.#articleMiddleware = articleMiddleware;
+    super.registerRouter(); 
+    this.registerArticleRouter();
   }
 
-  registerRouter = () => {
+  registerArticleRouter = () => {
     this.router.post(
       "/create",
-      this.catchException(this.#articleMeddleware.createArticleMiddleware)
+      this.catchException(this.#articleMiddleware.createArticleMiddleware)
     );
     this.router.get(
       "/view/:title",
-      this.catchException(this.#articleMeddleware.viewArticleMiddleware)
+      this.catchException(this.#articleMiddleware.viewArticleMiddleware)
     );
     this.router.get(
       "/viewList",
-      this.catchException(this.#articleMeddleware.viewArticleListMiddleware)
+      this.catchException(this.#articleMiddleware.viewArticleListMiddleware)
     );
     this.router.patch(
       "/update",
-      this.catchException(this.#articleMeddleware.updateArticleMiddleware)
+      this.catchException(this.#articleMiddleware.updateArticleMiddleware)
     );
     this.router.delete(
       "/delete",
-      this.catchException(this.#articleMeddleware.deleteArticleMiddleware)
+      this.catchException(this.#articleMiddleware.deleteArticleMiddleware)
     );
+    
   };
 }

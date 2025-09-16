@@ -2,12 +2,9 @@ import { BaseRepo } from "./base.repo.js";
 import { ProductMapper } from "./mapper/product.mapper.js";
 
 export class ProductRepo extends BaseRepo{
-  #includesOptions;
+  
   constructor(prisma) {
     super(prisma);
-    // this.#includesOptions = {
-    //   : true,
-    // };
   }
 
   findProductByname = async (name) => {

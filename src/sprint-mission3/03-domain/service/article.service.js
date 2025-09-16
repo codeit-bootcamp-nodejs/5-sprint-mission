@@ -19,8 +19,8 @@ export class ArticleService {
 
   viewArticleList = async ({ offset, limit, sort }) => {
     const orderBy = sort === "recent" ? { updatedAt: "desc" }
-      : sort === "priceLowest" ? { price: "asc" }
-        : { price: "desc" };
+      : sort === "titleAsc" ? { title: "asc" }
+        : { title: "desc" };
 
     if (limit > 20) {
       throw new Exception("LIMIT_MAX_20");

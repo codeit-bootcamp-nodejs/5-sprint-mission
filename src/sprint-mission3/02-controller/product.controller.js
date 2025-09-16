@@ -1,16 +1,17 @@
-import { BaseContolloer } from "./base.controller.js";
+import { BaseContoller } from "./base.controller.js";
 
 
-export class ProductController extends BaseContolloer {
+export class ProductController extends BaseContoller {
   #productMiddleware;
 
-  constructor(productMiddleware) {
-    super("/api/product");
+  constructor(productMiddleware, commentMiddleware) {
+    super("/api/product", commentMiddleware);
     this.#productMiddleware = productMiddleware;
-    this.registerRouter();
+    super.registerRouter(); 
+    this.registerProductRouter();
   }
 
-  registerRouter = () => {
+  registerProductRouter = () => {
     this.router.post(
       "/create",
       this.catchException(this.#productMiddleware.createProductMiddleware)

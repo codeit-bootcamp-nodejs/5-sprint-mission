@@ -1,11 +1,13 @@
 import express from "express";
 
-export class BaseContolloer {
+export class BaseContoller {
   basePath;
   router;
+  #commentMiddleware;
 
-  constructor(basePath) {
+  constructor(basePath, commentMiddleware = undefined) {
     this.basePath = basePath;
+    this.#commentMiddleware = commentMiddleware;
     this.router = express.Router();
   }
 
@@ -22,7 +24,10 @@ export class BaseContolloer {
     };
   };
 
-  registerRouter = () => {
-    throw new Error("registerRouter 구현하시오.");
+  registerRouter(){
+    this.router.post(
+      "/comment/create",
+      this.catchException(this.#commentMiddleware.createCommentMiddleware)
+    );
   };
 }

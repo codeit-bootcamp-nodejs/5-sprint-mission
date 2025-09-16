@@ -1,5 +1,5 @@
 import { DepInjector } from "../dep-injector.js";
 
-const { _server } = new DepInjector();
+const { server } = new DepInjector();
 
-_server.start();
+server.start();

@@ -1,13 +1,11 @@
 import { Exception } from "../../common/exception.js";
+import { BaseEntity } from "./baseEntity.js";
 
-export class Product {
-  #id;
+export class Product extends BaseEntity{
   #name;
   #description;
   #price;
   #tags;
-  #createdAt;
-  #updatedAt;
   constructor({
     id = undefined,
     name = undefined,
@@ -17,13 +15,11 @@ export class Product {
     createdAt = undefined,
     updatedAt = undefined
   }){
-    this.#id = id;
+    super({id, createdAt, updatedAt});
     this.#name = name;
     this.#description = description;
     this.#price = price;
     this.#tags = tags;
-    this.#createdAt = createdAt;
-    this.#updatedAt = updatedAt;
   }
 
 
@@ -79,9 +75,6 @@ export class Product {
     }
   }
 
-  get id() {
-    return this.#id;
-  }
   get name() {
     return this.#name;
   }
@@ -95,11 +88,4 @@ export class Product {
   get tags() {
     return this.#tags;
   }
-  get createdAt() {
-    return this.#createdAt;
-  }
-  get updatedAt() {
-    return this.#updatedAt;
-  }
-
 }

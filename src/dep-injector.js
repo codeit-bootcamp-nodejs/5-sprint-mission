@@ -20,7 +20,7 @@ export class DepInjector {
     this.#sever = this.injectDeps();
   }
 
-  get _server() {
+  get server() {
     return this.#sever;
   }
 
@@ -39,10 +39,10 @@ export class DepInjector {
     const articleMiddleware = new ArticleMiddleware(articleService);
     const commentMiddleware = new CommentMiddleware(commentService)
 
-    const productController = new ProductController(productMiddleware);
-    const articleController = new ArticleController(articleMiddleware);
-    //const commentController = new CommentController(commentMiddleware);
-    const controllers = [productController, articleController];
+    const productController = new ProductController(productMiddleware, commentMiddleware);
+    const articleController = new ArticleController(articleMiddleware, commentMiddleware);
+    const commentController = new CommentController(commentMiddleware);
+    const controllers = [productController, articleController, commentController];
 
     return new Server(controllers);
   }

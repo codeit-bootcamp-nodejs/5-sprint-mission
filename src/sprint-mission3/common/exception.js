@@ -127,6 +127,30 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "내용이 너무 짧습니다.(최소 6글자)",
   },
+  COMMENT_ALREADY_EXIST: {
+    statusCode: 400,
+    message: "이미 댓글이 존재합니다.",
+  },
+  COMMENT_NOT_EXIST: {
+    statusCode: 400,
+    message: "댓글이 존재하지 않습니다.",
+  },
+  // FOREIGNID_FORM:{
+  //   statusCode: 400,
+  //   message: "외래키 양식이 안 맞습니다.",
+  // },
+  // FOREIGNID_NOT_EXSIST: {
+  //   statusCode: 400,
+  //   message: "외래키가 존재하지 않습니다.",
+  // },
+  TARGETTYPE_FORM:{
+    statusCode: 400,
+    message: "타겟 타입 양식이 안 맞습니다.",
+  },
+  TARGETTYPE_NOT_EXSIST: {
+    statusCode: 400,
+    message: "타겟 타입이 존재하지 않습니다.",
+  }
 };
 
 export class Exception extends Error {
