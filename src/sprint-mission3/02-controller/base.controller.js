@@ -3,11 +3,9 @@ import express from "express";
 export class BaseContoller {
   basePath;
   router;
-  #commentMiddleware;
 
-  constructor(basePath, commentMiddleware = undefined) {
+  constructor(basePath) {
     this.basePath = basePath;
-    this.#commentMiddleware = commentMiddleware;
     this.router = express.Router();
   }
 
@@ -22,12 +20,5 @@ export class BaseContoller {
         next(err);
       }
     };
-  };
-
-  registerRouter(){
-    this.router.post(
-      "/comment/create",
-      this.catchException(this.#commentMiddleware.createCommentMiddleware)
-    );
   };
 }

@@ -2,10 +2,10 @@ import { BaseContoller } from "./base.controller.js";
 
 export class ArticleController extends BaseContoller{
   #articleMiddleware;
-  constructor(articleMiddleware, commentMiddleware){
-    super("/api/article", commentMiddleware);
+  constructor(articleMiddleware)
+ {
+    super("/api/article");
     this.#articleMiddleware = articleMiddleware;
-    super.registerRouter(); 
     this.registerArticleRouter();
   }
 

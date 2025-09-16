@@ -4,10 +4,9 @@ import { BaseContoller } from "./base.controller.js";
 export class ProductController extends BaseContoller {
   #productMiddleware;
 
-  constructor(productMiddleware, commentMiddleware) {
-    super("/api/product", commentMiddleware);
+  constructor(productMiddleware) {
+    super("/api/product");
     this.#productMiddleware = productMiddleware;
-    super.registerRouter(); 
     this.registerProductRouter();
   }
 

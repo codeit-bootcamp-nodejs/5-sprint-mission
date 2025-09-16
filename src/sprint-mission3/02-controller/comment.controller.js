@@ -9,6 +9,10 @@ export class CommentController extends BaseContoller {
   }
 
   registerCommentRouter = () => {
+    this.router.post(
+      "/create",
+      this.catchException(this.#commentMiddleware.createCommentMiddleware)
+    );
     this.router.get(
       "/viewList",
       this.catchException(this.#commentMiddleware.viewCommentListMiddleware)
