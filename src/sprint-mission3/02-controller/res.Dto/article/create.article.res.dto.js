@@ -1,4 +1,4 @@
-export class CreateArticleResDto{
+export class CreateArticleResDto {
   constructor(createArticle) {
     this.id = createArticle.id;
     this.title = createArticle.title;

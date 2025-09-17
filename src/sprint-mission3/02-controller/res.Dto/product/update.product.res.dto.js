@@ -1,5 +1,5 @@
-export class UpdateProductResDto{
-  constructor(updateProduct){
+export class UpdateProductResDto {
+  constructor(updateProduct) {
     this.id = updateProduct.id;
     this.name = updateProduct.name;
     this.description = updateProduct.description;

@@ -11,31 +11,28 @@ export class CreateProductReqValidator extends BaseValidator {
 
     if (!this.isString(name)) {
       throw new Exception("NAME_FORM");
-    } else if(this.isEmpty(name)){
+    } else if (this.isEmpty(name)) {
       throw new Exception("NAME_NOT_EXSIST");
-    };
+    }
 
     if (!this.isString(description)) {
       throw new Exception("DESCRIPTION_FORM");
-    } else if(this.isEmpty(description)){
+    } else if (this.isEmpty(description)) {
       throw new Exception("DESCRIPTION_NOT_EXSIST");
-    };
+    }
 
     if (!this.isInt(price)) {
       throw new Exception("PRICE_FORM");
-    }else if(this.isEmpty(price)){
+    } else if (this.isEmpty(price)) {
       throw new Exception("PRICE_NOT_EXSIST");
-    };
+    }
 
-    if (
-      !Array.isArray(tags) ||
-      !tags.every((el) => typeof el === "string")
-    ) {
+    if (!Array.isArray(tags) || !tags.every((el) => typeof el === "string")) {
       throw new Exception("TAGS_FORM");
-    }else if(this.isEmpty(tags)){
+    } else if (this.isEmpty(tags)) {
       throw new Exception("TAGS_NOT_EXSIST");
-    };
+    }
 
-    return {name, description, price, tags};
+    return { name, description, price, tags };
   }
 }

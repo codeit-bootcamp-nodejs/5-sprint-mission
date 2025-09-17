@@ -7,7 +7,14 @@ export class BaseValidator {
   query;
   file;
   files;
-  constructor({ headers = {}, body = {}, params = {}, query = {}, file = {}, files = {} }) {
+  constructor({
+    headers = {},
+    body = {},
+    params = {},
+    query = {},
+    file = {},
+    files = {},
+  }) {
     this.headers = headers;
     this.body = body;
     this.params = params;

@@ -10,16 +10,16 @@ export class CreateCommentReqValidator extends BaseValidator {
     const { targetType, targetId, content } = this.body;
     if (!this.isString(targetType)) {
       throw new Exception("TARGETTYPE_FORM");
-    } else if(this.isEmpty(targetType)){
+    } else if (this.isEmpty(targetType)) {
       throw new Exception("TARGETTYPE_NOT_EXSIST");
-    };
+    }
 
     if (!this.isString(content)) {
       throw new Exception("CONTENT_FORM");
-    } else if(this.isEmpty(content)){
+    } else if (this.isEmpty(content)) {
       throw new Exception("CONTENT_NOT_EXSIST");
-    };
+    }
 
-    return {targetType, targetId, content};
+    return { targetType, targetId, content };
   }
 }

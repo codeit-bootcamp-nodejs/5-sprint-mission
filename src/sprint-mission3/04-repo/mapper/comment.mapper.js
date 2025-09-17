@@ -6,12 +6,12 @@ export class CommentMapper {
       id: record.id,
       content: record.content,
       createdAt: record.createdAt,
-      updatedAt: record.updatedAt
+      updatedAt: record.updatedAt,
     });
   }
   static toPersistent(entity) {
     return {
-      content: entity.content
-    }
+      content: entity.content,
+    };
   }
 }

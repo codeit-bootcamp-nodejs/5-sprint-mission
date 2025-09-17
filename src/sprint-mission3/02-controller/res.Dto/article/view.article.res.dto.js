@@ -1,5 +1,5 @@
 export class ViewArticleResDto {
-  constructor(viewArticle){
+  constructor(viewArticle) {
     this.id = viewArticle.id;
     this.title = viewArticle.title;
     this.content = viewArticle.content;

@@ -15,26 +15,33 @@ export class ProductService {
     }
 
     return foundProduct;
-  }
+  };
 
-  viewProductList = async ({offset, limit, sort}) => {
-    const orderBy = sort === "recent" ? {updatedAt: "desc"} 
-    : sort === "priceLowest" ? {price: "asc"}
-    : {price: "desc"};
+  viewProductList = async ({ offset, limit, sort }) => {
+    const orderBy =
+      sort === "recent"
+        ? { updatedAt: "desc" }
+        : sort === "priceLowest"
+          ? { price: "asc" }
+          : { price: "desc" };
 
-    if(limit > 20) {
+    if (limit > 20) {
       throw new Exception("LIMIT_MAX_20");
     }
 
     const productTotalCount = await this.#productRepo.count();
-    if(productTotalCount < limit) {
-      throw new Exception("LIMIT_OVERFLOW" , {totalCount:productTotalCount})
+    if (productTotalCount < limit) {
+      throw new Exception("LIMIT_OVERFLOW", { totalCount: productTotalCount });
     }
 
-    const foundProductList = await this.#productRepo.findProductList({offset, limit, orderBy});
+    const foundProductList = await this.#productRepo.findProductList({
+      offset,
+      limit,
+      orderBy,
+    });
 
     return foundProductList;
-  }
+  };
 
   createProduct = async ({ name, description, price, tags }) => {
     const foundProduct = await this.#productRepo.findProductByname(name);
@@ -46,7 +53,7 @@ export class ProductService {
     const createdProduct = await this.#productRepo.create(product);
 
     return createdProduct;
-  }
+  };
 
   updateProduct = async ({ id, name, description, price, tags }) => {
     const foundProduct = await this.#productRepo.findProductById(id);
@@ -54,13 +61,18 @@ export class ProductService {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
 
-    const product = Product.updateFactory({ id, name, description, price, tags });
-
+    const product = Product.updateFactory({
+      id,
+      name,
+      description,
+      price,
+      tags,
+    });
 
     const updatedProduct = await this.#productRepo.update(product);
 
     return updatedProduct;
-  }
+  };
 
   deleteProduct = async ({ id, name }) => {
     const foundProduct = id
@@ -73,5 +85,5 @@ export class ProductService {
     const product = Product.deleteFactory({ id, name });
     const deletedProduct = await this.#productRepo.delete(product);
     return deletedProduct;
-  }
+  };
 }

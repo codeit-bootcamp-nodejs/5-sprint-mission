@@ -2,8 +2,12 @@ export class BaseEntity {
   #id;
   #createdAt;
   #updatedAt;
-  
-  constructor({id = undefined, createdAt = undefined, updatedAt = undefined}){
+
+  constructor({
+    id = undefined,
+    createdAt = undefined,
+    updatedAt = undefined,
+  }) {
     this.#id = id;
     this.#createdAt = createdAt;
     this.#updatedAt = updatedAt;

@@ -1,13 +1,13 @@
 import { Exception } from "../../../common/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class ViewCommentListReqValidator extends BaseValidator{
-  constructor(data){
+export class ViewCommentListReqValidator extends BaseValidator {
+  constructor(data) {
     super(data);
   }
 
   validate() {
-    let { cursor = 0, limit, sort = "recent"} = this.query;
+    let { cursor = 0, limit, sort = "recent" } = this.query;
 
     // if (!this.isString(targetType)) {
     //   throw new Exception("TARGETTYPE_FORM");
@@ -17,11 +17,11 @@ export class ViewCommentListReqValidator extends BaseValidator{
 
     cursor = Number(cursor);
     limit = Number(limit);
-    
-    if(!this.isInt(cursor)){
+
+    if (!this.isInt(cursor)) {
       throw new Exception("OFFSET_FORM");
     }
-    if(!this.isInt(limit) || this.isEmpty(limit) || limit <= 0){
+    if (!this.isInt(limit) || this.isEmpty(limit) || limit <= 0) {
       throw new Exception("LIMIT_FORM");
     }
 
@@ -31,7 +31,7 @@ export class ViewCommentListReqValidator extends BaseValidator{
     return {
       cursor,
       limit,
-      sort
-    }
+      sort,
+    };
   }
 }

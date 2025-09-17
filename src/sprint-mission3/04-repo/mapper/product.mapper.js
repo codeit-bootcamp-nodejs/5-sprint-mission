@@ -1,7 +1,7 @@
-import { Product } from "../../03-domain/entity/product.js"
+import { Product } from "../../03-domain/entity/product.js";
 
-export class ProductMapper{
-  static toEntity(record){
+export class ProductMapper {
+  static toEntity(record) {
     return new Product({
       id: record.id,
       name: record.name,
@@ -9,7 +9,7 @@ export class ProductMapper{
       price: record.price,
       tags: record.tags,
       createdAt: record.createdAt,
-      updatedAt: record.updatedAt
+      updatedAt: record.updatedAt,
     });
   }
   static toPersistent(entity) {
@@ -17,7 +17,7 @@ export class ProductMapper{
       name: entity.name,
       description: entity.description,
       price: entity.price,
-      tags: entity.tags
-    }
+      tags: entity.tags,
+    };
   }
 }

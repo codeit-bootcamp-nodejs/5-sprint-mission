@@ -1,58 +1,56 @@
 import { Exception } from "../../../common/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class UpdateProductReqValidator extends BaseValidator{
+export class UpdateProductReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }
 
   validate() {
     let { id, name, description, price, tags } = this.body;
-    
+
     if (this.isEmpty(id)) {
-      throw new Exception("ID_NOT_EXSIST")
+      throw new Exception("ID_NOT_EXSIST");
     }
 
-    if (!this.isEmpty(name)){
-      if(!this.isString(name)){
-        throw new Exception("NAME_FORM");  
+    if (!this.isEmpty(name)) {
+      if (!this.isString(name)) {
+        throw new Exception("NAME_FORM");
       }
-    }else if(this.isEmpty(name)){
+    } else if (this.isEmpty(name)) {
       name = undefined;
     }
 
-    if (!this.isEmpty(description)){
-      if(!this.isString(description)){
-        throw new Exception("DESCRIPTION_FORM");  
+    if (!this.isEmpty(description)) {
+      if (!this.isString(description)) {
+        throw new Exception("DESCRIPTION_FORM");
       }
-    }else if(this.isEmpty(description)){
+    } else if (this.isEmpty(description)) {
       description = undefined;
     }
 
-    if (!this.isEmpty(price)){
-      if(!this.isInt(price)){
-        throw new Exception("PRICE_FORM");  
+    if (!this.isEmpty(price)) {
+      if (!this.isInt(price)) {
+        throw new Exception("PRICE_FORM");
       }
-    }else if(this.isEmpty(price)){
+    } else if (this.isEmpty(price)) {
       price = undefined;
     }
 
-    if (!this.isEmpty(tags)){
-      if(!Array.isArray(tags) ||
-      !tags.every((el) => typeof el === "string")){
-        throw new Exception("TAGS_FORM");  
+    if (!this.isEmpty(tags)) {
+      if (!Array.isArray(tags) || !tags.every((el) => typeof el === "string")) {
+        throw new Exception("TAGS_FORM");
       }
-    }else if(this.isEmpty(tags)){
+    } else if (this.isEmpty(tags)) {
       tags = undefined;
     }
-    
+
     return {
       id,
       name,
       description,
       price,
-      tags
-    }
+      tags,
+    };
   }
-
 }

@@ -7,13 +7,13 @@ export class ArticleMapper {
       title: record.title,
       content: record.content,
       createdAt: record.createdAt,
-      updatedAt: record.updatedAt
+      updatedAt: record.updatedAt,
     });
   }
   static toPersistent(entity) {
     return {
       title: entity.title,
       content: entity.content,
-    }
+    };
   }
 }

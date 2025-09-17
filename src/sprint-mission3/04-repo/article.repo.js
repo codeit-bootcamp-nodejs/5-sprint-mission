@@ -8,17 +8,17 @@ export class ArticleRepo extends BaseRepo {
 
   findArticleByTitle = async (title) => {
     const article = await this.prisma.article.findUnique({
-      where: {title},
+      where: { title },
     });
     return article ? ArticleMapper.toEntity(article) : null;
-  }
+  };
 
   findArticleById = async (id) => {
     const article = await this.prisma.article.findUnique({
       where: { id },
     });
     return article ? ArticleMapper.toEntity(article) : null;
-  }
+  };
   findArticleList = async ({ offset, limit, orderBy }) => {
     const articleList = await this.prisma.article.findMany({
       skip: offset,
@@ -26,14 +26,14 @@ export class ArticleRepo extends BaseRepo {
       orderBy: [orderBy],
     });
 
-    return articleList.map(article => ArticleMapper.toEntity(article));
-  }
+    return articleList.map((article) => ArticleMapper.toEntity(article));
+  };
 
   create = async (entity) => {
     const article = await this.prisma.article.create({
       data: {
         ...ArticleMapper.toPersistent(entity),
-      }
+      },
     });
     return ArticleMapper.toEntity(article);
   };
@@ -44,24 +44,22 @@ export class ArticleRepo extends BaseRepo {
       data: {
         ...ArticleMapper.toPersistent(entity),
         updatedAt: new Date(),
-      }
+      },
     });
 
     return ArticleMapper.toEntity(updatedarticle);
-  }
+  };
 
   delete = async (entity) => {
     const deletedArticle = await this.prisma.article.delete({
-      where: entity.id
-        ? { id: entity.id }
-        : { title: entity.title }
+      where: entity.id ? { id: entity.id } : { title: entity.title },
     });
     return deletedArticle;
-  }
+  };
 
   count = async () => {
     const totalCount = await this.prisma.article.count();
 
     return totalCount;
-  }
+  };
 }

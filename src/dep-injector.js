@@ -12,6 +12,9 @@ import { CommentRepo } from "./sprint-mission3/04-repo/comment.repo.js";
 import { CommentService } from "./sprint-mission3/03-domain/service/comment.service.js";
 import { CommentMiddleware } from "./sprint-mission3/02-controller/midleware/comment.middleware.js";
 import { CommentController } from "./sprint-mission3/02-controller/comment.controller.js";
+import { ImageMiddleware } from "./sprint-mission3/02-controller/midleware/image.middleware.js";
+import { ImageController } from "./sprint-mission3/02-controller/image.controller.js";
+import { FileUploader } from "./sprint-mission3/common/util/file-uploader.js";
 
 export class DepInjector {
   #sever;
@@ -26,7 +29,9 @@ export class DepInjector {
 
   injectDeps() {
     const prisma = new PrismaClient();
-    
+    const fileUploader = new FileUploader();
+    const libs = { fileUploader };
+
     const productRepo = new ProductRepo(prisma);
     const articleRepo = new ArticleRepo(prisma);
     const commentRepo = new CommentRepo(prisma);
@@ -37,12 +42,19 @@ export class DepInjector {
 
     const productMiddleware = new ProductMiddleware(productService);
     const articleMiddleware = new ArticleMiddleware(articleService);
-    const commentMiddleware = new CommentMiddleware(commentService)
+    const commentMiddleware = new CommentMiddleware(commentService);
+    const imageMiddleware = new ImageMiddleware();
 
     const productController = new ProductController(productMiddleware);
     const articleController = new ArticleController(articleMiddleware);
     const commentController = new CommentController(commentMiddleware);
-    const controllers = [productController, articleController, commentController];
+    const imageController = new ImageController({ libs, imageMiddleware });
+    const controllers = [
+      productController,
+      articleController,
+      commentController,
+      imageController,
+    ];
 
     return new Server(controllers);
   }

@@ -11,16 +11,16 @@ export class CreateArticleReqValidator extends BaseValidator {
 
     if (!this.isString(title)) {
       throw new Exception("TITLE_FORM");
-    } else if(this.isEmpty(title)){
+    } else if (this.isEmpty(title)) {
       throw new Exception("TITLE_NOT_EXSIST");
-    };
+    }
 
     if (!this.isString(content)) {
       throw new Exception("CONTENT_FORM");
-    } else if(this.isEmpty(content)){
+    } else if (this.isEmpty(content)) {
       throw new Exception("CONTENT_NOT_EXSIST");
-    };
+    }
 
-    return {title, content};
+    return { title, content };
   }
 }

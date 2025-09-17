@@ -3,7 +3,7 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "이름 양식에 안 맞습니다.",
   },
-  NAME_NOT_EXSIST:{
+  NAME_NOT_EXSIST: {
     statusCode: 400,
     message: "이름은 입력하지 않았습니다.(필수)",
   },
@@ -11,7 +11,7 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "설명 양식에 안 맞습니다.",
   },
-  DESCRIPTION_NOT_EXSIST:{
+  DESCRIPTION_NOT_EXSIST: {
     statusCode: 400,
     message: "설명을 입력하지 않았습니다.(필수)",
   },
@@ -19,7 +19,7 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "가격 양식에 안 맞습니다.",
   },
-  PRICE_NOT_EXSIST:{
+  PRICE_NOT_EXSIST: {
     statusCode: 400,
     message: "가격은 입력하지 않았습니다.(필수)",
   },
@@ -27,7 +27,7 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "태크 양식에 안 맞습니다.",
   },
-  TAGS_NOT_EXSIST:{
+  TAGS_NOT_EXSIST: {
     statusCode: 400,
     message: "태그를 입력하지 않았습니다.(필수)",
   },
@@ -59,61 +59,62 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "이미 상품이 존재합니다.",
   },
-  EMAIL_DUPLICATE:{
+  EMAIL_DUPLICATE: {
     statusCode: 400,
     message: "중복된 이름입니다.",
   },
-  FOREIGN_KEY_VIOLATION:{
+  FOREIGN_KEY_VIOLATION: {
     statusCode: 400,
-    message: "존재하지 않은 외래키입니다."
+    message: "존재하지 않은 외래키입니다.",
   },
-  PRODUCT_NOT_EXIST:{
+  PRODUCT_NOT_EXIST: {
     statusCode: 400,
-    message: "상품이 존재하지 않습니다."
+    message: "상품이 존재하지 않습니다.",
   },
-  ID_NOT_EXSIST:{
+  ID_NOT_EXSIST: {
     statusCode: 400,
-    message: "id를 입력하세요.(필수)"
+    message: "id를 입력하세요.(필수)",
   },
-  ID_FORM:{
+  ID_FORM: {
     statusCode: 400,
-    message: "id 양식이 안 맞습니다."
+    message: "id 양식이 안 맞습니다.",
   },
-  SORT_FORM:{
+  SORT_FORM: {
     statusCode: 400,
-    message: "정렬 양식이 안 맞습니다."
+    message: "정렬 양식이 안 맞습니다.",
   },
   LIMIT_MAX_20: {
     statusCode: 400,
-    message: "limit 최대치는 20입니다."
+    message: "limit 최대치는 20입니다.",
   },
   LIMIT_OVERFLOW: {
     statusCode: 400,
-    message: '요청한 limit 값이 전체 데이터 개수(${totalCount})를 초과했습니다.'
+    message:
+      "요청한 limit 값이 전체 데이터 개수(${totalCount})를 초과했습니다.",
   },
   TITLE_FORM: {
     statusCode: 400,
-    message: "제목 양식이 안 맞습니다."
+    message: "제목 양식이 안 맞습니다.",
   },
   CONTENT_FORM: {
     statusCode: 400,
-    message: "내용 양식이 안 맞습니다."
+    message: "내용 양식이 안 맞습니다.",
   },
   TITLE_NOT_EXSIST: {
     statusCode: 400,
-    message: "제목이 존재하지 않습니다."
+    message: "제목이 존재하지 않습니다.",
   },
   CONTENT_NOT_EXSIST: {
     statusCode: 400,
-    message: "내용이 존재하지 않습니다."
+    message: "내용이 존재하지 않습니다.",
   },
   AT_LEAST_ONE_FORM: {
     statusCode: 400,
-    message: "최소 하나 양식을 입력해야 됩니다."
+    message: "최소 하나 양식을 입력해야 됩니다.",
   },
-  ARTICLE_NOT_EXIST:{
+  ARTICLE_NOT_EXIST: {
     statusCode: 400,
-    message: "게시글이 존재하지 않습니다."
+    message: "게시글이 존재하지 않습니다.",
   },
   ARTICLE_ALREADY_EXIST: {
     statusCode: 400,
@@ -143,21 +144,21 @@ export const EXCEPTIONS = {
   //   statusCode: 400,
   //   message: "외래키가 존재하지 않습니다.",
   // },
-  TARGETTYPE_FORM:{
+  TARGETTYPE_FORM: {
     statusCode: 400,
     message: "타겟 타입 양식이 안 맞습니다.",
   },
   TARGETTYPE_NOT_EXSIST: {
     statusCode: 400,
     message: "타겟 타입이 존재하지 않습니다.",
-  }
+  },
 };
 
 export class Exception extends Error {
   constructor(key, data = {}) {
     const errInfo = EXCEPTIONS[key];
     let message = errInfo.message;
-    if(data){
+    if (data) {
       for (const [k, v] of Object.entries(data)) {
         message = message.replace(new RegExp(`\\$\\{${k}\\}`, "g"), v);
       }

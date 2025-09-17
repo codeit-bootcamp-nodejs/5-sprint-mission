@@ -15,12 +15,15 @@ export class ArticleService {
     }
 
     return foundArticle;
-  }
+  };
 
   viewArticleList = async ({ offset, limit, sort }) => {
-    const orderBy = sort === "recent" ? { updatedAt: "desc" }
-      : sort === "titleAsc" ? { title: "asc" }
-        : { title: "desc" };
+    const orderBy =
+      sort === "recent"
+        ? { updatedAt: "desc" }
+        : sort === "titleAsc"
+          ? { title: "asc" }
+          : { title: "desc" };
 
     if (limit > 20) {
       throw new Exception("LIMIT_MAX_20");
@@ -28,13 +31,17 @@ export class ArticleService {
 
     const articleTotalCount = await this.#articleRepo.count();
     if (articleTotalCount < limit) {
-      throw new Exception("LIMIT_OVERFLOW", { totalCount: articleTotalCount })
+      throw new Exception("LIMIT_OVERFLOW", { totalCount: articleTotalCount });
     }
 
-    const foundArticleList = await this.#articleRepo.findArticleList({ offset, limit, orderBy });
+    const foundArticleList = await this.#articleRepo.findArticleList({
+      offset,
+      limit,
+      orderBy,
+    });
 
     return foundArticleList;
-  }
+  };
 
   createArticle = async ({ title, content }) => {
     const foundArticle = await this.#articleRepo.findArticleByTitle(title);
@@ -46,7 +53,7 @@ export class ArticleService {
     const createdArticle = await this.#articleRepo.create(article);
 
     return createdArticle;
-  }
+  };
 
   updateArticle = async ({ id, title, content }) => {
     const foundArticle = await this.#articleRepo.findArticleById(id);
@@ -59,7 +66,7 @@ export class ArticleService {
     const updatedArticle = await this.#articleRepo.update(article);
 
     return updatedArticle;
-  }
+  };
 
   deleteArticle = async ({ id, title }) => {
     const foundArticle = id
@@ -72,5 +79,5 @@ export class ArticleService {
     const article = Article.deleteFactory({ id, title });
     const deletedArticle = await this.#articleRepo.delete(article);
     return deletedArticle;
-  }
+  };
 }

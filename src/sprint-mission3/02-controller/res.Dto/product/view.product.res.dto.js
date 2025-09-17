@@ -1,5 +1,5 @@
 export class ViewProductResDto {
-  constructor(viewProduct){
+  constructor(viewProduct) {
     this.id = viewProduct.id;
     this.name = viewProduct.name;
     this.description = viewProduct.description;
