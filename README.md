@@ -1,10 +1,10 @@
-# Panda MArket API 과제
+# Sprint Mission 3
 
-## 과제 목표
-  - 클래스 문법을 활용한 객체 설계
-  - API 요청 함수 구현 (Article, Product)
-  - 비동기 처리 방식: then/catch, async/await
+# 프로젝트 설정 방법
 
-## 실행 방법
-1. VS Code에서 'node main.js'입력
-2. 콘솔에서 결과확인
+1. `npm install`으로 패키지 설치
+2. `.env` 파일 생성
+3. `npx prisma generate`로 Prisma 클라이언트 생성
+4. `npx prisma migrate dev --name init`으로 DB 마이그레이션
+5. `npm run seed`로 테스트 데이터 삽입
+6. `npm run dev`로 서버 실행
