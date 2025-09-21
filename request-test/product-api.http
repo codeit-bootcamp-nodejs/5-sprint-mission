@@ -1,0 +1,36 @@
+GET http://localhost:3000/products?&offset=2&sort=asc
+
+###
+
+GET http://localhost:3000/products/7b8395ec-c7ea-4e87-b596-a4beb5ab0a80
+
+###
+
+
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name" : "상품명",
+    "description": "상품설명",
+    "price": 1000000, 
+    "tags": ["Electronics","Collectibles"]
+}
+
+### 
+
+
+PATCH http://localhost:3000/products/7b8395ec-c7ea-4e87-b596-a4beb5ab0a80
+Content-Type: application/json
+
+{
+    "name" : "juhohoho",
+    "description": "description123123",
+    "price": 1000000, 
+    "tags": ["Electronics", "Collectibles" ]
+}
+
+
+### 
+
+DELETE http://localhost:3000/products/b1f8b184-4f32-45e7-94fc-2c9dbfc401d7
