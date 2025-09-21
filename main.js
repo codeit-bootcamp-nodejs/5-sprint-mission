@@ -1,29 +1,34 @@
-  import {
-    getProductList,
-    getProduct,
-    createProduct,
-    patchProduct,
-    deleteProduct,
-  } from './ProductService.js';
-  
-  import {
-    getArticleList,
-    getArticle,
-    createArticle,
-    patchArticle,
-    deleteArticle,
-  } from './ArticleService.js';
-  
-  
-  class Product {
+import {
+  getProductList,
+  getProduct,
+  createProduct,
+  patchProduct,
+  deleteProduct,
+} from "./ProductService.js";
 
-  constructor(name, description, price, tags = [], images = [],favoriteCount = 0){
+import {
+  getArticleList,
+  getArticle,
+  createArticle,
+  patchArticle,
+  deleteArticle,
+} from "./ArticleService.js";
+
+class Product {
+  constructor(
+    name,
+    description,
+    price,
+    tags = [],
+    images = [],
+    favoriteCount = 0,
+  ) {
     this._name = name;
     this._description = description;
     this._price = price;
     this._tags = tags;
     this._images = images;
-    this._favoriteCount = favoriteCount
+    this._favoriteCount = favoriteCount;
   }
   favorite() {
     this._favoriteCount++;
@@ -49,9 +54,16 @@
   }
 }
 
-class ElectronicProduct extends Product{
-
-  constructor(name, description, price, tags, images, favoriteCount, manufacturer) {
+class ElectronicProduct extends Product {
+  constructor(
+    name,
+    description,
+    price,
+    tags,
+    images,
+    favoriteCount,
+    manufacturer,
+  ) {
     super(name, description, price, tags, images, favoriteCount);
     this._manufacturer = manufacturer;
   }
@@ -60,9 +72,7 @@ class ElectronicProduct extends Product{
   }
 }
 
-
 class Article {
- 
   constructor(title, content, writer, likeCount = 0) {
     this._title = title;
     this._content = content;
@@ -94,21 +104,34 @@ const products = [];
 
 async function listProductToInstance() {
   const list = await getProductList(1, 5, "");
-  if(!list) return;
+  if (!list) return;
 
   const items = list.list;
   products.length = 0;
 
-  items.forEach(item => {
-    const{name, description, price, tags = [], images = [], manufacturer} = item;
-    if(tags.includes("전자제품")) {
-      products.push(new ElectronicProduct(name, description, price, tags, images, 0, "제조사 미정"));
+  items.forEach((item) => {
+    const {
+      name,
+      description,
+      price,
+      tags = [],
+      images = [],
+      manufacturer,
+    } = item;
+    if (tags.includes("전자제품")) {
+      products.push(
+        new ElectronicProduct(
+          name,
+          description,
+          price,
+          tags,
+          images,
+          0,
+          "제조사 미정",
+        ),
+      );
     } else {
       products.push(new Product(name, description, price, tags, images));
     }
   });
 }
-
-
-
-
