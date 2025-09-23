@@ -1,0 +1,26 @@
+GET http://localhost:3000/articles
+
+###
+
+GET http://localhost:3000/articles/59d488c0-79f9-4cdf-b186-77cd4526ad28
+
+###
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+  "title": "네번째 게시글",
+  "content": "아 multer는 어떻게 하는건지 모르겠네 진짜"
+}
+
+###
+
+PATCH http://localhost:3000/articles/59d488c0-79f9-4cdf-b186-77cd4526ad28
+Content-Type: application/json
+
+{
+  "content": "수정된 후의 내용입니다."
+}
+
+###
+DELETE http://localhost:3000/articles/59d488c0-79f9-4cdf-b186-77cd4526ad28
