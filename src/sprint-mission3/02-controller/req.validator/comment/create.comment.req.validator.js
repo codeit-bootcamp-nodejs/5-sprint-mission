@@ -8,7 +8,7 @@ export class CreateCommentReqValidator extends BaseValidator {
 
   validate() {
     const { content } = this.body;
-    const {targetId} = this.params;
+    const { targetId } = this.params;
     if (!this.isString(content)) {
       throw new Exception("CONTENT_FORM");
     } else if (this.isEmpty(content)) {

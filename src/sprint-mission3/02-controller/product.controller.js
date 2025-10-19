@@ -50,7 +50,7 @@ export class ProductController {
   updateProductController = async (req, res, next) => {
     const updateProductReqDto = new UpdateProductReqValidator({
       body: req.body,
-      params: req.params
+      params: req.params,
     }).validate();
     const updatedProduct =
       await this.#productService.updateProduct(updateProductReqDto);
@@ -61,7 +61,7 @@ export class ProductController {
   deleteProductController = async (req, res, next) => {
     const deleteProductReqDto = new DeleteProductReqValidator({
       body: req.body,
-      params: req.params
+      params: req.params,
     }).validate();
     const deletedwProduct =
       await this.#productService.deleteProduct(deleteProductReqDto);

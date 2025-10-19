@@ -9,7 +9,7 @@ export class Server {
   #routers;
   #managers;
 
-  constructor({routers, managers}) {
+  constructor({ routers, managers }) {
     this.#routers = routers;
     this.#server = express();
     this.#managers = managers;
@@ -17,7 +17,9 @@ export class Server {
 
   listen = () => {
     this.#server.listen(this.#managers.config.get(CONFIG_KEY.PORT), () => {
-      console.log(`app server listening on port ${this.#managers.config.get(CONFIG_KEY.PORT)}`);
+      console.log(
+        `app server listening on port ${this.#managers.config.get(CONFIG_KEY.PORT)}`,
+      );
     });
   };
 

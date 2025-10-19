@@ -8,7 +8,7 @@ export class UpdateCommentReqValidator extends BaseValidator {
 
   validate() {
     let { content } = this.body;
-    let {id} = this.params;
+    let { id } = this.params;
     id = Number(id);
     if (this.isEmpty(id)) {
       throw new Exception("ID_NOT_EXSIST");

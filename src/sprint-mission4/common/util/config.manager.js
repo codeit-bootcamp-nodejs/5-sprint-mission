@@ -6,22 +6,22 @@ export class ConfigManager {
     PORT: { type: "number", default: 4000 },
     DISK_STORAGE_PATH: { type: "string", default: "public" },
     DATABASE_URL: { type: "string" },
-  }
+  };
 
   constructor() {
     dotenv.config({
-      path: process.env.NODE_ENV === "development" ? ".env.dev" : ".env"
+      path: process.env.NODE_ENV === "development" ? ".env.dev" : ".env",
     });
   }
 
   get(key) {
     const spec = this.#configSpec[key];
-    
-    if(!spec){
+
+    if (!spec) {
       throw new Error(`${key}: 환경 변수 스펙이 없습니다.`);
     }
-    
-    const { type, default: defaultValue} = spec;
+
+    const { type, default: defaultValue } = spec;
     const value = process.env[key];
 
     if (value === undefined || value === null) {
@@ -46,7 +46,5 @@ export class ConfigManager {
       default:
         throw new Error(`${key}: 지원되지 않는 타입`);
     }
-  
   }
-
 }

@@ -17,7 +17,7 @@ export class CommentController {
   createCommentController = async (req, res, next) => {
     const createCommentReqDto = new CreateCommentReqValidator({
       body: req.body,
-      params: req.params
+      params: req.params,
     }).validate();
     const createdComment =
       await this.#services.comment.createComment(createCommentReqDto);
@@ -39,7 +39,7 @@ export class CommentController {
   updateCommentController = async (req, res, next) => {
     const updateCommentReqDto = new UpdateCommentReqValidator({
       body: req.body,
-      params: req.params
+      params: req.params,
     }).validate();
     const updatedComment =
       await this.#services.comment.updateComment(updateCommentReqDto);
@@ -49,7 +49,7 @@ export class CommentController {
 
   deleteCommentController = async (req, res, next) => {
     const deleteCommentReqDto = new DeleteCommentReqValidator({
-      params: req.params
+      params: req.params,
     }).validate();
     const deletedwComment =
       await this.#services.comment.deleteComment(deleteCommentReqDto);

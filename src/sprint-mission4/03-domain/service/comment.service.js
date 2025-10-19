@@ -40,10 +40,13 @@ export class CommentService {
 
     const entity = Comment.factory({ targetId, content });
     let targetType;
-    if (foundProduct) targetType = "product"
-    else if (foundArticle) targetType = "article"
+    if (foundProduct) targetType = "product";
+    else if (foundArticle) targetType = "article";
 
-    const createdComment = await this.#repos.comment.create({ targetType, entity });
+    const createdComment = await this.#repos.comment.create({
+      targetType,
+      entity,
+    });
 
     return createdComment;
   };

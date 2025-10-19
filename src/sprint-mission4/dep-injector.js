@@ -45,7 +45,7 @@ export class DepInjector {
       product: productRepo,
       article: articleRepo,
       comment: commentRepo,
-    }
+    };
 
     const productService = new ProductService(repos);
     const articleService = new ArticleService(repos);
@@ -54,7 +54,7 @@ export class DepInjector {
       product: productService,
       article: articleService,
       comment: commentService,
-    }
+    };
 
     const productController = new ProductController(services);
     const articleController = new ArticleController(services);
@@ -65,19 +65,14 @@ export class DepInjector {
       article: articleController,
       comment: commentController,
       image: imageController,
-    }
+    };
 
     const productRouter = new ProductRouter(controllers);
     const articleRouter = new ArticleRouter(controllers);
     const commentRouter = new CommentRouter(controllers);
     const imageRouter = new ImageRouter({ managers, controllers });
-    const routers = [
-      productRouter,
-      articleRouter,
-      commentRouter,
-      imageRouter,
-    ];
+    const routers = [productRouter, articleRouter, commentRouter, imageRouter];
 
-    return new Server({routers, managers});
+    return new Server({ routers, managers });
   }
 }

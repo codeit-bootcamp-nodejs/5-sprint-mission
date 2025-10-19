@@ -49,12 +49,7 @@ export class DepInjector {
     const articleRouter = new ArticleRouter(articleController);
     const commentRouter = new CommentRouter(commentController);
     const imageRouter = new ImageRouter({ libs, imageController });
-    const routers = [
-      productRouter,
-      articleRouter,
-      commentRouter,
-      imageRouter,
-    ];
+    const routers = [productRouter, articleRouter, commentRouter, imageRouter];
     return new Server(routers);
   }
 }

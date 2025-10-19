@@ -8,7 +8,7 @@ export class UpdateProductReqValidator extends BaseValidator {
 
   validate() {
     let { name, description, price, tags } = this.body;
-    const {id} = this.params;
+    const { id } = this.params;
     if (this.isEmpty(id)) {
       throw new Exception("ID_NOT_EXSIST");
     }

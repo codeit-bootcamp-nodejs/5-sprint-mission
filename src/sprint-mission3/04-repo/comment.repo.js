@@ -30,7 +30,7 @@ export class CommentRepo extends BaseRepo {
   findCommentList = async ({ cursor, limit, orderBy }) => {
     const commentList = await this.prisma.comment.findMany({
       take: limit,
-      skip: cursor ? 1 : 0, 
+      skip: cursor ? 1 : 0,
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: [orderBy],
     });
@@ -51,10 +51,7 @@ export class CommentRepo extends BaseRepo {
             ? { connect: { id: entity.targetId } }
             : undefined,
       },
-      include:
-        targetType === "product"
-          ? { product: true }
-          : { article: true },
+      include: targetType === "product" ? { product: true } : { article: true },
     });
     return CommentMapper.toEntity(comment);
   };
