@@ -2,10 +2,10 @@ import { Exception } from "../../common/const/exception.js";
 import { Comment } from "../entity/comment.js";
 
 export class CommentService {
-  #commentRepo;
+  #repos;
 
-  constructor(commentRepo) {
-    this.#commentRepo = commentRepo;
+  constructor(repos) {
+    this.#repos = repos;
   }
 
   viewCommentList = async ({ targetType, cursor, limit, sort }) => {
@@ -16,12 +16,12 @@ export class CommentService {
       throw new Exception("LIMIT_MAX_20");
     }
 
-    const commentTotalCount = await this.#commentRepo.count();
+    const commentTotalCount = await this.#repos.comment.count();
     if (commentTotalCount < limit) {
       throw new Exception("LIMIT_OVERFLOW", { totalCount: commentTotalCount });
     }
 
-    const foundCommentList = await this.#commentRepo.findCommentList({
+    const foundCommentList = await this.#repos.comment.findCommentList({
       targetType,
       cursor,
       limit,
@@ -32,8 +32,8 @@ export class CommentService {
   };
 
   createComment = async ({ targetId, content }) => {
-    const foundProduct = await this.#commentRepo.findProductById(targetId);
-    const foundArticle = await this.#commentRepo.findArticleById(targetId);
+    const foundProduct = await this.#repos.comment.findProductById(targetId);
+    const foundArticle = await this.#repos.comment.findArticleById(targetId);
     if (!foundProduct && !foundArticle) {
       throw new Exception("ID_NOT_EXSIST");
     }
@@ -43,31 +43,31 @@ export class CommentService {
     if (foundProduct) targetType = "product"
     else if (foundArticle) targetType = "article"
 
-    const createdComment = await this.#commentRepo.create({ targetType, entity });
+    const createdComment = await this.#repos.comment.create({ targetType, entity });
 
     return createdComment;
   };
 
   updateComment = async ({ id, content }) => {
-    const foundComment = await this.#commentRepo.findCommentById(id);
+    const foundComment = await this.#repos.comment.findCommentById(id);
     if (!foundComment) {
       throw new Exception("COMMENT_NOT_EXIST");
     }
 
     const comment = Comment.factory({ id, content });
 
-    const updatedComment = await this.#commentRepo.update(comment);
+    const updatedComment = await this.#repos.comment.update(comment);
 
     return updatedComment;
   };
 
   deleteComment = async ({ id }) => {
-    const foundComment = await this.#commentRepo.findCommentById(id);
+    const foundComment = await this.#repos.comment.findCommentById(id);
 
     if (!foundComment) {
       throw new Exception("COMMENT_NOT_EXIST");
     }
-    const deletedComment = await this.#commentRepo.delete(id);
+    const deletedComment = await this.#repos.comment.delete(id);
     return deletedComment;
   };
 }

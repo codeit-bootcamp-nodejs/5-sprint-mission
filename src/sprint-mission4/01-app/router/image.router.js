@@ -2,12 +2,12 @@ import { BaseRouter } from "./base.router.js";
 
 export class ImageRouter extends BaseRouter {
   #managers;
-  #imageController;
+  #controllers;
 
-  constructor({ managers, imageController }) {
+  constructor({ managers, controllers }) {
     super("/api/images");
     this.#managers = managers;
-    this.#imageController = imageController;
+    this.#controllers = controllers;
     this.registerImageRouter();
   }
 
@@ -15,7 +15,7 @@ export class ImageRouter extends BaseRouter {
     this.router.post(
       "/",
       this.#managers.file.uploadFileMiddleware("image"),
-      this.catchException(this.#imageController.uploadImageController),
+      this.catchException(this.#controllers.image.uploadImageController),
     );
   };
 }

@@ -10,10 +10,10 @@ import { ViewArticleListResDto } from "./res.dto/article/view.article.list.res.d
 import { ViewArticleResDto } from "./res.dto/article/view.article.res.dto.js";
 
 export class ArticleController {
-  #articleService;
+  #services;
 
-  constructor(articleService) {
-    this.#articleService = articleService;
+  constructor(services) {
+    this.#services = services;
   }
 
   createArticleController = async (req, res, next) => {
@@ -21,7 +21,7 @@ export class ArticleController {
       body: req.body,
     }).validate();
     const createdArticle =
-      await this.#articleService.createArticle(createArticleReqDto);
+      await this.#services.article.createArticle(createArticleReqDto);
     const createdArticleResDto = new CreateArticleResDto(createdArticle);
     return res.json(createdArticleResDto);
   };
@@ -31,7 +31,7 @@ export class ArticleController {
       params: req.params,
     }).validate();
     const viewArticle =
-      await this.#articleService.viewArticle(viewArticleReqDto);
+      await this.#services.article.viewArticle(viewArticleReqDto);
     const viewArticleResDto = new ViewArticleResDto(viewArticle);
     return res.json(viewArticleResDto);
   };
@@ -40,7 +40,7 @@ export class ArticleController {
     const viewArticleListReqDto = new ViewArticleListReqValidator({
       query: req.query,
     }).validate();
-    const viewArticleList = await this.#articleService.viewArticleList(
+    const viewArticleList = await this.#services.article.viewArticleList(
       viewArticleListReqDto,
     );
     const viewArticleListResDto = new ViewArticleListResDto(viewArticleList);
@@ -53,7 +53,7 @@ export class ArticleController {
       params: req.params,
     }).validate();
     const updatedArticle =
-      await this.#articleService.updateArticle(updateArticleReqDto);
+      await this.#services.article.updateArticle(updateArticleReqDto);
     const updatedArticleResDto = new UpdateArticleResDto(updatedArticle);
     return res.json(updatedArticleResDto);
   };
@@ -64,7 +64,7 @@ export class ArticleController {
       params: req.params,
     }).validate();
     const deletedwArticle =
-      await this.#articleService.deleteArticle(deleteArticleReqDto);
+      await this.#services.article.deleteArticle(deleteArticleReqDto);
     const deletedArticleResDto = new DeleteArticleResDto(deletedwArticle);
     return res.json(deletedArticleResDto);
   };

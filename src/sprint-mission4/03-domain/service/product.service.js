@@ -2,14 +2,14 @@ import { Exception } from "../../common/const/exception.js";
 import { Product } from "../entity/product.js";
 
 export class ProductService {
-  #productRepo;
+  #repos;
 
-  constructor(productRepo) {
-    this.#productRepo = productRepo;
+  constructor(repos) {
+    this.#repos = repos;
   }
 
   viewProduct = async ({ name }) => {
-    const foundProduct = await this.#productRepo.findProductByname(name);
+    const foundProduct = await this.#repos.product.findProductByname(name);
     if (!foundProduct) {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
@@ -29,12 +29,12 @@ export class ProductService {
       throw new Exception("LIMIT_MAX_20");
     }
 
-    const productTotalCount = await this.#productRepo.count();
+    const productTotalCount = await this.#repos.product.count();
     if (productTotalCount < limit) {
       throw new Exception("LIMIT_OVERFLOW", { totalCount: productTotalCount });
     }
 
-    const foundProductList = await this.#productRepo.findProductList({
+    const foundProductList = await this.#repos.product.findProductList({
       offset,
       limit,
       orderBy,
@@ -44,19 +44,19 @@ export class ProductService {
   };
 
   createProduct = async ({ name, description, price, tags }) => {
-    const foundProduct = await this.#productRepo.findProductByname(name);
+    const foundProduct = await this.#repos.product.findProductByname(name);
     if (foundProduct) {
       throw new Exception("PRODUCT_ALREADY_EXIST");
     }
     const product = Product.createFactory({ name, description, price, tags });
 
-    const createdProduct = await this.#productRepo.create(product);
+    const createdProduct = await this.#repos.product.create(product);
 
     return createdProduct;
   };
 
   updateProduct = async ({ id, name, description, price, tags }) => {
-    const foundProduct = await this.#productRepo.findProductById(id);
+    const foundProduct = await this.#repos.product.findProductById(id);
     if (!foundProduct) {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
@@ -69,21 +69,21 @@ export class ProductService {
       tags,
     });
 
-    const updatedProduct = await this.#productRepo.update(product);
+    const updatedProduct = await this.#repos.product.update(product);
 
     return updatedProduct;
   };
 
   deleteProduct = async ({ id, name }) => {
     const foundProduct = id
-      ? await this.#productRepo.findProductById(id)
-      : await this.#productRepo.findProductByname(name);
+      ? await this.#repos.product.findProductById(id)
+      : await this.#repos.product.findProductByname(name);
 
     if (!foundProduct) {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
     const product = Product.deleteFactory({ id, name });
-    const deletedProduct = await this.#productRepo.delete(product);
+    const deletedProduct = await this.#repos.product.delete(product);
     return deletedProduct;
   };
 }

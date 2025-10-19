@@ -8,10 +8,10 @@ import { UpdateCommentResDto } from "./res.dto/comment/update.comment.res.dto.js
 import { ViewCommentListResDto } from "./res.dto/comment/view.comment.list.res.dto.js";
 
 export class CommentController {
-  #commentService;
+  #services;
 
-  constructor(commentService) {
-    this.#commentService = commentService;
+  constructor(services) {
+    this.#services = services;
   }
 
   createCommentController = async (req, res, next) => {
@@ -20,7 +20,7 @@ export class CommentController {
       params: req.params
     }).validate();
     const createdComment =
-      await this.#commentService.createComment(createCommentReqDto);
+      await this.#services.comment.createComment(createCommentReqDto);
     const createdCommentResDto = new CreateCommentResDto(createdComment);
     return res.json(createdCommentResDto);
   };
@@ -29,7 +29,7 @@ export class CommentController {
     const viewCommentListReqDto = new ViewCommentListReqValidator({
       query: req.query,
     }).validate();
-    const viewCommentList = await this.#commentService.viewCommentList(
+    const viewCommentList = await this.#services.comment.viewCommentList(
       viewCommentListReqDto,
     );
     const viewCommentListResDto = new ViewCommentListResDto(viewCommentList);
@@ -42,7 +42,7 @@ export class CommentController {
       params: req.params
     }).validate();
     const updatedComment =
-      await this.#commentService.updateComment(updateCommentReqDto);
+      await this.#services.comment.updateComment(updateCommentReqDto);
     const updatedCommentResDto = new UpdateCommentResDto(updatedComment);
     return res.json(updatedCommentResDto);
   };
@@ -52,7 +52,7 @@ export class CommentController {
       params: req.params
     }).validate();
     const deletedwComment =
-      await this.#commentService.deleteComment(deleteCommentReqDto);
+      await this.#services.comment.deleteComment(deleteCommentReqDto);
     const deletedCommentResDto = new DeleteCommentResDto(deletedwComment);
     return res.json(deletedCommentResDto);
   };

@@ -41,21 +41,36 @@ export class DepInjector {
     const productRepo = new ProductRepo(prisma);
     const articleRepo = new ArticleRepo(prisma);
     const commentRepo = new CommentRepo(prisma);
+    const repos = {
+      product: productRepo,
+      article: articleRepo,
+      comment: commentRepo,
+    }
 
-    const productService = new ProductService(productRepo);
-    const articleService = new ArticleService(articleRepo);
-    const commentService = new CommentService(commentRepo);
+    const productService = new ProductService(repos);
+    const articleService = new ArticleService(repos);
+    const commentService = new CommentService(repos);
+    const services = {
+      product: productService,
+      article: articleService,
+      comment: commentService,
+    }
 
-    const productController = new ProductController(productService);
-    const articleController = new ArticleController(articleService);
-    const commentController = new CommentController(commentService);
+    const productController = new ProductController(services);
+    const articleController = new ArticleController(services);
+    const commentController = new CommentController(services);
     const imageController = new ImageController();
+    const controllers = {
+      product: productController,
+      article: articleController,
+      comment: commentController,
+      image: imageController,
+    }
 
-    const productRouter = new ProductRouter(productController);
-    const articleRouter = new ArticleRouter(articleController);
-    const commentRouter = new CommentRouter(commentController);
-    const imageRouter = new ImageRouter({ managers, imageController });
-
+    const productRouter = new ProductRouter(controllers);
+    const articleRouter = new ArticleRouter(controllers);
+    const commentRouter = new CommentRouter(controllers);
+    const imageRouter = new ImageRouter({ managers, controllers });
     const routers = [
       productRouter,
       articleRouter,

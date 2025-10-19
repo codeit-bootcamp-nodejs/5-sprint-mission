@@ -10,10 +10,10 @@ import { ViewProductListResDto } from "./res.dto/product/view.product.list.res.d
 import { ViewProductResDto } from "./res.dto/product/view.product.res.dto.js";
 
 export class ProductController {
-  #productService;
+  #services;
 
-  constructor(productService) {
-    this.#productService = productService;
+  constructor(services) {
+    this.#services = services;
   }
 
   createProductController = async (req, res, next) => {
@@ -21,7 +21,7 @@ export class ProductController {
       body: req.body,
     }).validate();
     const createdProduct =
-      await this.#productService.createProduct(createProductReqDto);
+      await this.#services.product.createProduct(createProductReqDto);
     const createdProductResDto = new CreateProductResDto(createdProduct);
     return res.json(createdProductResDto);
   };
@@ -31,7 +31,7 @@ export class ProductController {
       params: req.params,
     }).validate();
     const viewProduct =
-      await this.#productService.viewProduct(viewProductReqDto);
+      await this.#services.product.viewProduct(viewProductReqDto);
     const viewProductResDto = new ViewProductResDto(viewProduct);
     return res.json(viewProductResDto);
   };
@@ -40,7 +40,7 @@ export class ProductController {
     const viewProductListReqDto = new ViewProductListReqValidator({
       query: req.query,
     }).validate();
-    const viewProductList = await this.#productService.viewProductList(
+    const viewProductList = await this.#services.product.viewProductList(
       viewProductListReqDto,
     );
     const viewProductListResDto = new ViewProductListResDto(viewProductList);
@@ -53,7 +53,7 @@ export class ProductController {
       params: req.params
     }).validate();
     const updatedProduct =
-      await this.#productService.updateProduct(updateProductReqDto);
+      await this.#services.product.updateProduct(updateProductReqDto);
     const updatedProductResDto = new UpdateProductResDto(updatedProduct);
     return res.json(updatedProductResDto);
   };
@@ -64,7 +64,7 @@ export class ProductController {
       params: req.params
     }).validate();
     const deletedwProduct =
-      await this.#productService.deleteProduct(deleteProductReqDto);
+      await this.#services.product.deleteProduct(deleteProductReqDto);
     const deletedProductResDto = new DeleteProductResDto(deletedwProduct);
     return res.json(deletedProductResDto);
   };

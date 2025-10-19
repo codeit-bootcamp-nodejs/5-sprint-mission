@@ -1,29 +1,29 @@
 import { BaseRouter } from "./base.router.js";
 
 export class CommentRouter extends BaseRouter {
-  #commentController;
-  constructor(commentController) {
-    super("/api/comments", commentController);
-    this.#commentController = commentController;
+  #controllers;
+  constructor(controllers) {
+    super("/api/comments");
+    this.#controllers = controllers;
     this.registerCommentRouter();
   }
 
   registerCommentRouter = () => {
     this.router.post(
       "/:targetId",
-      this.catchException(this.#commentController.createCommentController),
+      this.catchException(this.#controllers.comment.createCommentController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#commentController.viewCommentListController),
+      this.catchException(this.#controllers.comment.viewCommentListController),
     );
     this.router.patch(
       "/:id",
-      this.catchException(this.#commentController.updateCommentController),
+      this.catchException(this.#controllers.comment.updateCommentController),
     );
     this.router.delete(
       "/:id",
-      this.catchException(this.#commentController.deleteCommentController),
+      this.catchException(this.#controllers.comment.deleteCommentController),
     );
   };
 }

@@ -1,34 +1,34 @@
 import { BaseRouter } from "./base.router.js";
 
 export class ProductRouter extends BaseRouter {
-  #productController;
+  #controllers;
 
-  constructor(productController) {
+  constructor(controllers) {
     super("/api/products");
-    this.#productController = productController;
+    this.#controllers = controllers;
     this.registerProductRouter();
   }
 
   registerProductRouter = () => {
     this.router.post(
       "/",
-      this.catchException(this.#productController.createProductController),
+      this.catchException(this.#controllers.product.createProductController),
     );
     this.router.get(
       "/:name",
-      this.catchException(this.#productController.viewProductController),
+      this.catchException(this.#controllers.product.viewProductController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#productController.viewProductListController),
+      this.catchException(this.#controllers.product.viewProductListController),
     );
     this.router.patch(
       "/:id",
-      this.catchException(this.#productController.updateProductController),
+      this.catchException(this.#controllers.product.updateProductController),
     );
     this.router.delete(
       "/:id",
-      this.catchException(this.#productController.deleteProductController),
+      this.catchException(this.#controllers.product.deleteProductController),
     );
   };
 }
