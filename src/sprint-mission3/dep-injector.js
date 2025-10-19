@@ -1,20 +1,20 @@
 import { PrismaClient } from "@prisma/client";
-import { Server } from "./sprint-mission3/01-app/server.js";
-import { ProductService } from "./sprint-mission3/03-domain/service/product.service.js";
-import { ProductRepo } from "./sprint-mission3/04-repo/product.repo.js";
-import { ArticleService } from "./sprint-mission3/03-domain/service/article.service.js";
-import { ArticleRepo } from "./sprint-mission3/04-repo/article.repo.js";
-import { CommentRepo } from "./sprint-mission3/04-repo/comment.repo.js";
-import { CommentService } from "./sprint-mission3/03-domain/service/comment.service.js";
-import { FileUploader } from "./sprint-mission3/common/util/file-uploader.js";
-import { ProductController } from "./sprint-mission3/02-controller/product.controller.js";
-import { ArticleController } from "./sprint-mission3/02-controller/article.controller.js";
-import { CommentController } from "./sprint-mission3/02-controller/comment.controller.js";
-import { ImageController } from "./sprint-mission3/02-controller/image.controller.js";
-import { ImageRouter } from "./sprint-mission3/01-app/router/image.router.js";
-import { CommentRouter } from "./sprint-mission3/01-app/router/comment.router.js";
-import { ArticleRouter } from "./sprint-mission3/01-app/router/article.router.js";
-import { ProductRouter } from "./sprint-mission3/01-app/router/product.router.js";
+import { Server } from "./01-app/server.js";
+import { ProductController } from "./02-controller/product.controller.js";
+import { ProductService } from "./03-domain/service/product.service.js";
+import { ProductRepo } from "./04-repo/product.repo.js";
+import { ArticleService } from "./03-domain/service/article.service.js";
+import { ArticleRepo } from "./04-repo/article.repo.js";
+import { ArticleController } from "./02-controller/article.controller.js";
+import { CommentRepo } from "./04-repo/comment.repo.js";
+import { CommentService } from "./03-domain/service/comment.service.js";
+import { CommentController } from "./02-controller/comment.controller.js";
+import { ImageController } from "./02-controller/image.controller.js";
+import { FileUploader } from "./common/util/file-uploader.js";
+import { ProductRouter } from "./01-app/router/product.router.js";
+import { ArticleRouter } from "./01-app/router/article.router.js";
+import { CommentRouter } from "./01-app/router/comment.router.js";
+import { ImageRouter } from "./01-app/router/image.router.js";
 
 export class DepInjector {
   #sever;
@@ -49,14 +49,12 @@ export class DepInjector {
     const articleRouter = new ArticleRouter(articleController);
     const commentRouter = new CommentRouter(commentController);
     const imageRouter = new ImageRouter({ libs, imageController });
-
     const routers = [
       productRouter,
       articleRouter,
       commentRouter,
       imageRouter,
     ];
-
     return new Server(routers);
   }
 }
