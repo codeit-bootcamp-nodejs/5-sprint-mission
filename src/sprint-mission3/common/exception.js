@@ -73,7 +73,7 @@ export const EXCEPTIONS = {
   },
   ID_NOT_EXSIST: {
     statusCode: 400,
-    message: "id를 입력하세요.(필수)",
+    message: "id가 존재하지 않습니다.",
   },
   ID_FORM: {
     statusCode: 400,
@@ -101,11 +101,11 @@ export const EXCEPTIONS = {
     message: "내용 양식이 안 맞습니다.",
   },
   TITLE_NOT_EXSIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "제목이 존재하지 않습니다.",
   },
   CONTENT_NOT_EXSIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "내용이 존재하지 않습니다.",
   },
   AT_LEAST_ONE_FORM: {
@@ -113,11 +113,11 @@ export const EXCEPTIONS = {
     message: "최소 하나 양식을 입력해야 됩니다.",
   },
   ARTICLE_NOT_EXIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "게시글이 존재하지 않습니다.",
   },
   ARTICLE_ALREADY_EXIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "이미 게시글이 존재합니다.",
   },
   TITLE_TOO_LONG: {
@@ -129,21 +129,13 @@ export const EXCEPTIONS = {
     message: "내용이 너무 짧습니다.(최소 6글자)",
   },
   COMMENT_ALREADY_EXIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "이미 댓글이 존재합니다.",
   },
   COMMENT_NOT_EXIST: {
-    statusCode: 400,
+    statusCode: 404,
     message: "댓글이 존재하지 않습니다.",
   },
-  // FOREIGNID_FORM:{
-  //   statusCode: 400,
-  //   message: "외래키 양식이 안 맞습니다.",
-  // },
-  // FOREIGNID_NOT_EXSIST: {
-  //   statusCode: 400,
-  //   message: "외래키가 존재하지 않습니다.",
-  // },
   TARGETTYPE_FORM: {
     statusCode: 400,
     message: "타겟 타입 양식이 안 맞습니다.",

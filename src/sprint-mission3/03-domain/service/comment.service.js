@@ -1,3 +1,4 @@
+import { Exception } from "../../common/exception.js";
 import { Comment } from "../entity/comment.js";
 
 export class CommentService {
@@ -30,21 +31,30 @@ export class CommentService {
     return foundCommentList;
   };
 
-  createComment = async ({ targetType, targetId, content }) => {
-    const comment = Comment.factory({ targetType, targetId, content });
+  createComment = async ({ targetId, content }) => {
+    const foundProduct = await this.#commentRepo.findProductById(targetId);
+    const foundArticle = await this.#commentRepo.findArticleById(targetId);
+    if (!foundProduct && !foundArticle) {
+      throw new Exception("ID_NOT_EXSIST");
+    }
 
-    const createdComment = await this.#commentRepo.create(comment);
+    const entity = Comment.factory({ targetId, content });
+    let targetType;
+    if (foundProduct) targetType = "product"
+    else if (foundArticle) targetType = "article"
+
+    const createdComment = await this.#commentRepo.create({ targetType, entity });
 
     return createdComment;
   };
 
-  updateComment = async ({ targetType, id, content }) => {
+  updateComment = async ({ id, content }) => {
     const foundComment = await this.#commentRepo.findCommentById(id);
     if (!foundComment) {
       throw new Exception("COMMENT_NOT_EXIST");
     }
 
-    const comment = Comment.factory({ targetType, id, content });
+    const comment = Comment.factory({ id, content });
 
     const updatedComment = await this.#commentRepo.update(comment);
 

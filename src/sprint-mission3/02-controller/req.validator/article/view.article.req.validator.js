@@ -7,14 +7,14 @@ export class ViewArticleReqValidator extends BaseValidator {
   }
 
   validate = () => {
-    const { title } = this.params;
+    const { id } = this.params;
 
-    if (!this.isString(title) || this.isEmpty(title) || title.length > 20) {
-      throw new Exception("TITLE_FORM");
+    if (!this.isString(id) || this.isEmpty(id)) {
+      throw new Exception("ID_FORM");
     }
 
     return {
-      title,
+      id,
     };
   };
 }

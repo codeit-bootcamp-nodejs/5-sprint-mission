@@ -1,10 +1,24 @@
 import { BaseRepo } from "./base.repo.js";
+import { ArticleMapper } from "./mapper/article.mapper.js";
 import { CommentMapper } from "./mapper/comment.mapper.js";
+import { ProductMapper } from "./mapper/product.mapper.js";
 
 export class CommentRepo extends BaseRepo {
   constructor(prisma) {
     super(prisma);
   }
+  findProductById = async (id) => {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    return product ? ProductMapper.toEntity(product) : null;
+  };
+  findArticleById = async (id) => {
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+    });
+    return article ? ArticleMapper.toEntity(article) : null;
+  };
 
   findCommentById = async (id) => {
     const comment = await this.prisma.comment.findUnique({
@@ -15,31 +29,32 @@ export class CommentRepo extends BaseRepo {
 
   findCommentList = async ({ cursor, limit, orderBy }) => {
     const commentList = await this.prisma.comment.findMany({
-      skip: cursor,
       take: limit,
+      skip: cursor ? 1 : 0, 
+      cursor: cursor ? { id: cursor } : undefined,
       orderBy: [orderBy],
     });
 
     return commentList.map((comment) => CommentMapper.toEntity(comment));
   };
 
-  create = async (entity) => {
+  create = async ({ targetType, entity }) => {
     const comment = await this.prisma.comment.create({
       data: {
         ...CommentMapper.toPersistent(entity),
         product:
-          entity.targetType === "product"
+          targetType === "product"
             ? { connect: { id: entity.targetId } }
             : undefined,
         article:
-          entity.targetType === "article"
+          targetType === "article"
             ? { connect: { id: entity.targetId } }
             : undefined,
       },
-      include: {
-        product: true,
-        article: true,
-      },
+      include:
+        targetType === "product"
+          ? { product: true }
+          : { article: true },
     });
     return CommentMapper.toEntity(comment);
   };

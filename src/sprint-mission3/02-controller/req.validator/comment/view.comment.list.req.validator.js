@@ -7,13 +7,7 @@ export class ViewCommentListReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { cursor = 0, limit, sort = "recent" } = this.query;
-
-    // if (!this.isString(targetType)) {
-    //   throw new Exception("TARGETTYPE_FORM");
-    // } else if(this.isEmpty(targetType)){
-    //   throw new Exception("TARGETTYPE_NOT_EXSIST");
-    // };
+    let { cursor = 0, limit = 5, sort = "recent" } = this.query;
 
     cursor = Number(cursor);
     limit = Number(limit);

@@ -7,8 +7,8 @@ export class UpdateArticleReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { id, title, content } = this.body;
-
+    let { title, content } = this.body;
+    const {id} = this.params;
     if (this.isEmpty(id)) {
       throw new Exception("ID_NOT_EXSIST");
     }

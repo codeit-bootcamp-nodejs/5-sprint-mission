@@ -7,7 +7,8 @@ export class DeleteCommentReqValidator extends BaseValidator {
   }
 
   validate() {
-    const { id } = this.body;
+    let { id } = this.params;
+    id = Number(id);
 
     if (!this.isEmpty(id)) {
       if (!this.isInt(id)) {
