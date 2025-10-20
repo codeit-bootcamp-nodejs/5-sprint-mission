@@ -1,14 +1,14 @@
-import { Exception } from "../../../common/const/exception.js";
-import { BaseValidator } from "../base.validator.js";
+import { Exception } from "../../../../common/const/exception.js";
+import { BaseValidator } from "../../base.validator.js";
 
-export class UpdateCommentReqValidator extends BaseValidator {
+export class UpdateProductCommentReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }
 
   validate() {
     let { content } = this.body;
-    let { id } = this.params;
+    let { productId, id } = this.params;
     id = Number(id);
     if (this.isEmpty(id)) {
       throw new Exception("ID_NOT_EXSIST");
@@ -25,6 +25,7 @@ export class UpdateCommentReqValidator extends BaseValidator {
     return {
       id,
       content,
+      productId
     };
   }
 }

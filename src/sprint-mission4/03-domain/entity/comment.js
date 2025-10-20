@@ -2,20 +2,22 @@ import { Exception } from "../../common/const/exception.js";
 import { BaseEntity } from "./baseEntity.js";
 
 export class Comment extends BaseEntity {
-  #targetId;
+  #articleId;
+  #productId;
   #content;
 
-  constructor({ id, targetId, content, createdAt, updatedAt }) {
+  constructor({ id, articleId = undefined, productId = undefined, content, createdAt, updatedAt }) {
     super({ id, createdAt, updatedAt });
     this.#content = content;
-    this.#targetId = targetId;
+    this.#articleId = articleId;
+    this.#productId = productId;
   }
 
-  static factory = ({ targetId, id, content }) => {
+  static factory = ({ articleId, productId, id, content }) => {
     if (content !== undefined) {
       this.validateContentRule(content);
     }
-    return new Comment({ targetId, id, content });
+    return new Comment({articleId, productId, id, content });
   };
 
   static validateContentRule = (content) => {
@@ -27,7 +29,10 @@ export class Comment extends BaseEntity {
   get content() {
     return this.#content;
   }
-  get targetId() {
-    return this.#targetId;
+  get articleId() {
+    return this.#articleId;
+  }
+  get productId() {
+    return this.#productId;
   }
 }

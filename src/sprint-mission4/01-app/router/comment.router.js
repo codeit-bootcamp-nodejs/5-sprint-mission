@@ -3,27 +3,44 @@ import { BaseRouter } from "./base.router.js";
 export class CommentRouter extends BaseRouter {
   #controllers;
   constructor(controllers) {
-    super("/api/comments");
+    super("/api");
     this.#controllers = controllers;
     this.registerCommentRouter();
   }
 
   registerCommentRouter = () => {
     this.router.post(
-      "/:targetId",
-      this.catchException(this.#controllers.comment.createCommentController),
+      "/product/:productId/comments",
+      this.catchException(this.#controllers.productComment.createProductCommentController),
     );
     this.router.get(
-      "/",
-      this.catchException(this.#controllers.comment.viewCommentListController),
+      "/product/:productId/comments",
+      this.catchException(this.#controllers.productComment.viewProductCommentListController),
     );
     this.router.patch(
-      "/:id",
-      this.catchException(this.#controllers.comment.updateCommentController),
+      "/product/:productId/comment/:id",
+      this.catchException(this.#controllers.productComment.updateProductCommentController),
     );
     this.router.delete(
-      "/:id",
-      this.catchException(this.#controllers.comment.deleteCommentController),
+      "/product/:productId/comment/:id",
+      this.catchException(this.#controllers.productComment.deleteProductCommentController),
+    );
+
+    this.router.post(
+      "/article/:articleId/comments",
+      this.catchException(this.#controllers.articleComment.createArticleCommentController),
+    );
+    this.router.get(
+      "/article/:articleId/comments",
+      this.catchException(this.#controllers.articleComment.viewArticleCommentListController),
+    );
+    this.router.patch(
+      "/article/:articleId/comment/:id",
+      this.catchException(this.#controllers.articleComment.updateArticleCommentController),
+    );
+    this.router.delete(
+      "/article/:articleId/comment/:id",
+      this.catchException(this.#controllers.articleComment.deleteArticleCommentController),
     );
   };
 }

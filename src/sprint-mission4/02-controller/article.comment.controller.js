@@ -1,21 +1,21 @@
-import { CreateCommentReqValidator } from "./req.validator/comment/create.comment.req.validator.js";
-import { DeleteCommentReqValidator } from "./req.validator/comment/delete.comment.req.validator.js";
-import { UpdateCommentReqValidator } from "./req.validator/comment/update.comment.req.validator.js";
-import { ViewCommentListReqValidator } from "./req.validator/comment/view.comment.list.req.validator.js";
+import { CreateArticleCommentReqValidator } from "./req.validator/comment/article/create.article.comment.req.validator.js";
+import { DeleteArticleCommentReqValidator } from "./req.validator/comment/article/delete.article.comment.req.validator.js";
+import { UpdateArticleCommentReqValidator } from "./req.validator/comment/article/update.article.comment.req.validator.js";
+import { VieweArticleCommentListReqValidator } from "./req.validator/comment/article/view.article.comment.list.req.validator.js";
 import { CreateCommentResDto } from "./res.dto/comment/create.comment.res.dto.js";
 import { DeleteCommentResDto } from "./res.dto/comment/delete.comment.res.dto.js";
 import { UpdateCommentResDto } from "./res.dto/comment/update.comment.res.dto.js";
 import { ViewCommentListResDto } from "./res.dto/comment/view.comment.list.res.dto.js";
 
-export class CommentController {
+export class ArticleCommentController {
   #services;
 
   constructor(services) {
     this.#services = services;
   }
 
-  createCommentController = async (req, res, next) => {
-    const createCommentReqDto = new CreateCommentReqValidator({
+  createArticleCommentController = async (req, res, next) => {
+    const createCommentReqDto = new CreateArticleCommentReqValidator({
       body: req.body,
       params: req.params,
     }).validate();
@@ -25,9 +25,10 @@ export class CommentController {
     return res.json(createdCommentResDto);
   };
 
-  viewCommentListController = async (req, res, next) => {
-    const viewCommentListReqDto = new ViewCommentListReqValidator({
+  viewArticleCommentListController = async (req, res, next) => {
+    const viewCommentListReqDto = new VieweArticleCommentListReqValidator({
       query: req.query,
+      params: req.params,
     }).validate();
     const viewCommentList = await this.#services.comment.viewCommentList(
       viewCommentListReqDto,
@@ -36,8 +37,8 @@ export class CommentController {
     return res.json(viewCommentListResDto);
   };
 
-  updateCommentController = async (req, res, next) => {
-    const updateCommentReqDto = new UpdateCommentReqValidator({
+  updateArticleCommentController = async (req, res, next) => {
+    const updateCommentReqDto = new UpdateArticleCommentReqValidator({
       body: req.body,
       params: req.params,
     }).validate();
@@ -47,8 +48,8 @@ export class CommentController {
     return res.json(updatedCommentResDto);
   };
 
-  deleteCommentController = async (req, res, next) => {
-    const deleteCommentReqDto = new DeleteCommentReqValidator({
+  deleteArticleCommentController = async (req, res, next) => {
+    const deleteCommentReqDto = new DeleteArticleCommentReqValidator({
       params: req.params,
     }).validate();
     const deletedwComment =

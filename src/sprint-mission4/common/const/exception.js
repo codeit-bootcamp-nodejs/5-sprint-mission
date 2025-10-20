@@ -107,6 +107,7 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "타겟 타입이 존재하지 않습니다.",
   },
+  
 
   // 중복/충돌
   PRODUCT_ALREADY_EXIST: {

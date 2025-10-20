@@ -1,13 +1,14 @@
-import { Exception } from "../../../common/const/exception.js";
-import { BaseValidator } from "../base.validator.js";
+import { Exception } from "../../../../common/const/exception.js";
+import { BaseValidator } from "../../base.validator.js";
 
-export class ViewCommentListReqValidator extends BaseValidator {
+export class VieweArticleCommentListReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }
 
   validate() {
-    let { cursor = 0, limit = 5, sort = "recent" } = this.query;
+    let { cursor = 0, limit = 1, sort = "recent" } = this.query;
+    const { articleId } = this.params;
 
     cursor = Number(cursor);
     limit = Number(limit);
@@ -26,6 +27,7 @@ export class ViewCommentListReqValidator extends BaseValidator {
       cursor,
       limit,
       sort,
+      articleId,
     };
   }
 }

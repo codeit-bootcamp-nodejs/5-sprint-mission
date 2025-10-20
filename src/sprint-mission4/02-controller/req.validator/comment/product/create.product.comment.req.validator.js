@@ -1,20 +1,20 @@
-import { Exception } from "../../../common/const/exception.js";
-import { BaseValidator } from "../base.validator.js";
+import { Exception } from "../../../../common/const/exception.js";
+import { BaseValidator } from "../../base.validator.js";
 
-export class CreateCommentReqValidator extends BaseValidator {
+export class CreateProductCommentReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }
 
   validate() {
     const { content } = this.body;
-    const { targetId } = this.params;
+    const { productId } = this.params;
     if (!this.isString(content)) {
       throw new Exception("CONTENT_FORM");
     } else if (this.isEmpty(content)) {
       throw new Exception("CONTENT_NOT_EXSIST");
     }
 
-    return { targetId, content };
+    return { productId, content };
   }
 }

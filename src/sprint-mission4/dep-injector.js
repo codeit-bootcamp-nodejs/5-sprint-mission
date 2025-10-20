@@ -8,7 +8,7 @@ import { CommentRepo } from "./04-repo/comment.repo.js";
 import { CommentService } from "./03-domain/service/comment.service.js";
 import { ProductController } from "./02-controller/product.controller.js";
 import { ArticleController } from "./02-controller/article.controller.js";
-import { CommentController } from "./02-controller/comment.controller.js";
+import { ProductCommentController } from "./02-controller/product.comment.controller.js";
 import { ImageController } from "./02-controller/image.controller.js";
 import { ImageRouter } from "./01-app/router/image.router.js";
 import { CommentRouter } from "./01-app/router/comment.router.js";
@@ -16,6 +16,7 @@ import { ArticleRouter } from "./01-app/router/article.router.js";
 import { ProductRouter } from "./01-app/router/product.router.js";
 import { ConfigManager } from "./common/util/config.manager.js";
 import { FileManager } from "./common/util/file.manager.js";
+import { ArticleCommentController } from "./02-controller/article.comment.controller.js";
 
 export class DepInjector {
   #sever;
@@ -58,12 +59,14 @@ export class DepInjector {
 
     const productController = new ProductController(services);
     const articleController = new ArticleController(services);
-    const commentController = new CommentController(services);
+    const articleCommentController = new ArticleCommentController(services);
+    const productCommentController = new ProductCommentController(services);
     const imageController = new ImageController();
     const controllers = {
       product: productController,
       article: articleController,
-      comment: commentController,
+      productComment: productCommentController,
+      articleComment: articleCommentController,
       image: imageController,
     };
 

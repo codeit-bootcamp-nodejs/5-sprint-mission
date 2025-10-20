@@ -20,63 +20,143 @@ export class CommentRepo extends BaseRepo {
     return article ? ArticleMapper.toEntity(article) : null;
   };
 
-  findCommentById = async (id) => {
-    const comment = await this.prisma.comment.findUnique({
-      where: { id },
-    });
-    return comment ? CommentMapper.toEntity(comment) : null;
+  findCommentById = async ({ articleId, productId, id }) => {
+    if (articleId) {
+      const comment = await this.prisma.articleComment.findUnique({
+        where: {
+          articleId,
+          id,
+        },
+      });
+      return comment ? CommentMapper.toEntity(comment) : null;
+    }
+    if (productId) {
+      const comment = await this.prisma.productComment.findUnique({
+        where: {
+          productId,
+          id,
+        },
+      });
+      return comment ? CommentMapper.toEntity(comment) : null;
+    }
   };
 
-  findCommentList = async ({ cursor, limit, orderBy }) => {
-    const commentList = await this.prisma.comment.findMany({
-      take: limit,
-      skip: cursor ? 1 : 0,
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy: [orderBy],
-    });
+  findCommentList = async ({ productId, articleId, cursor, limit, orderBy }) => {
+    if (productId) {
+      const commentList = await this.prisma.productComment.findMany({
+        where: { productId },
+        take: limit,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: [orderBy],
+      });
+      return commentList.map((comment) => CommentMapper.toEntity(comment));
+    }
 
-    return commentList.map((comment) => CommentMapper.toEntity(comment));
+    if (articleId) {
+      const commentList = await this.prisma.articleComment.findMany({
+        where: { articleId },
+        take: limit,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: [orderBy],
+      });
+      return commentList.map((comment) => CommentMapper.toEntity(comment));
+    }
   };
 
-  create = async ({ targetType, entity }) => {
-    const comment = await this.prisma.comment.create({
-      data: {
-        ...CommentMapper.toPersistent(entity),
-        product:
-          targetType === "product"
-            ? { connect: { id: entity.targetId } }
-            : undefined,
-        article:
-          targetType === "article"
-            ? { connect: { id: entity.targetId } }
-            : undefined,
-      },
-      include: targetType === "product" ? { product: true } : { article: true },
-    });
-    return CommentMapper.toEntity(comment);
+  create = async ( entity ) => {
+    if (entity.articleId) {
+      const comment = await this.prisma.articleComment.create({
+        data: {
+          ...CommentMapper.toPersistent(entity),
+          Article: {
+            connect: { id: entity.articleId }
+          }
+        },
+      });
+      return CommentMapper.toEntity(comment);
+    }
+    if (entity.productId) {
+      const comment = await this.prisma.productComment.create({
+        data: {
+          ...CommentMapper.toPersistent(entity),
+          Product: {
+            connect: { id: entity.productId }
+          }
+        },
+      });
+      return CommentMapper.toEntity(comment);
+    }
   };
 
   update = async (entity) => {
-    const updatedcomment = await this.prisma.comment.update({
-      where: { id: entity.id },
-      data: {
-        ...CommentMapper.toPersistent(entity),
-        updatedAt: new Date(),
-      },
-    });
+    if (entity.articleId) {
+      const updatedcomment = await this.prisma.articleComment.update({
+        where: {
+          id: entity.id,
+          articleId: entity.articleId
+        },
+        data: {
+          ...CommentMapper.toPersistent(entity),
+          updatedAt: new Date(),
+        },
+      });
 
-    return CommentMapper.toEntity(updatedcomment);
+      return CommentMapper.toEntity(updatedcomment);
+    }
+    if (entity.productId) {
+      const updatedcomment = await this.prisma.productComment.update({
+        where: {
+          id: entity.id,
+          productId: entity.productId,
+        },
+        data: {
+          ...CommentMapper.toPersistent(entity),
+          updatedAt: new Date(),
+        },
+      });
+
+      return CommentMapper.toEntity(updatedcomment);
+    }
   };
 
-  delete = async (id) => {
-    const deletedComment = await this.prisma.comment.delete({
-      where: { id },
-    });
-    return deletedComment;
+  delete = async ({ articleId, productId, id }) => {
+    if (articleId) {
+      const deletedComment = await this.prisma.articleComment.delete({
+        where: {
+          id,
+          articleId,
+        },
+      });
+      return deletedComment;
+    }
+
+    if (productId) {
+      const deletedComment = await this.prisma.productComment.delete({
+        where: {
+          id,
+          productId,
+        },
+      });
+      return deletedComment;
+    }
   };
 
-  count = async () => {
-    const totalCount = await this.prisma.comment.count();
+  count = async ({ articleId,
+      productId, }) => {
+    let totalCount;
+    if (productId) {
+      totalCount = await this.prisma.productComment.count({
+        where: { productId }
+      });
+    }
+
+    if (articleId) {
+      totalCount = await this.prisma.articleComment.count({
+        where: { articleId }
+      });
+    }
     return totalCount;
   };
 }
