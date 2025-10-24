@@ -8,18 +8,24 @@ export class DeleteArticleCommentReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { articleId, id } = this.params;
-    id = Number(id);
+    const { articleId } = this.params;
+    let { commentId } = this.params;
+    commentId = Number(commentId);
 
-    if (!this.isEmpty(id)) {
-      if (!this.isInt(id)) {
-        throw new Exception("ID_FORM");
-      }
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
+    if (this.isEmpty(articleId)) {
+      throw new Exception("ARTICLEID_FORM");
+    }
+    if (this.isEmpty(commentId)) {
+      throw new Exception("COMMENTID_FORM");
     }
 
     return {
-      id,
-      articleId
+      userId : this.userId,
+      articleId,
+      commentId,
     };
   }
 }

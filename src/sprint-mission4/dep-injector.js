@@ -11,7 +11,6 @@ import { ArticleController } from "./02-controller/article.controller.js";
 import { ProductCommentController } from "./02-controller/product.comment.controller.js";
 import { ImageController } from "./02-controller/image.controller.js";
 import { ImageRouter } from "./01-app/router/image.router.js";
-import { CommentRouter } from "./01-app/router/comment.router.js";
 import { ArticleRouter } from "./01-app/router/article.router.js";
 import { ProductRouter } from "./01-app/router/product.router.js";
 import { ConfigManager } from "./common/util/config.manager.js";
@@ -92,13 +91,11 @@ export class DepInjector {
     const userRouter = new UserRouter(controllers, managers);
     const productRouter = new ProductRouter(controllers, managers);
     const articleRouter = new ArticleRouter(controllers, managers);
-    const commentRouter = new CommentRouter(controllers, managers);
     const imageRouter = new ImageRouter(controllers, managers);
     const routers = [
       userRouter,
       productRouter,
       articleRouter,
-      commentRouter,
       imageRouter,
     ];
 

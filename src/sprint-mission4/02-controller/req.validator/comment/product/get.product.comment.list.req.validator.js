@@ -7,10 +7,14 @@ export class GetProductCommentListReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { cursor = 0, limit = 1, sort = "recent" } = this.query;
+    let { cursor = 0, limit = 3, sort = "recent" } = this.query;
     const { productId } = this.params;
+
     cursor = Number(cursor);
     limit = Number(limit);
+    if (this.isEmpty(productId)) {
+      throw new Exception("PRODUCTID_FORM");
+    }
     if (!this.isInt(cursor)) {
       throw new Exception("OFFSET_FORM");
     }

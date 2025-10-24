@@ -33,5 +33,24 @@ export class ProductRouter extends BaseRouter {
       this.isAuthenticate,
       this.catchException(this.#controllers.product.deleteProductController),
     );
+    this.router.post(
+      "/:productId/comments",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.productComment.createProductCommentController),
+    );
+    this.router.get(
+      "/:productId/comments",
+      this.catchException(this.#controllers.productComment.getProductCommentListController),
+    );
+    this.router.patch(
+      "/:productId/comment/:commentId",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.productComment.updateProductCommentController),
+    );
+    this.router.delete(
+      "/:productId/comment/:commentId",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.productComment.deleteProductCommentController),
+    );
   };
 }

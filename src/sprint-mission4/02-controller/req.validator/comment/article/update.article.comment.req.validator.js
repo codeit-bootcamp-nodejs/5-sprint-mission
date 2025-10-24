@@ -7,25 +7,31 @@ export class UpdateArticleCommentReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { content } = this.body;
-    let { articleId, id } = this.params;
-    id = Number(id);
-    if (this.isEmpty(id)) {
-      throw new Exception("ID_NOT_EXSIST");
-    }
+    const { content } = this.body;
+    const { articleId } = this.params;
+    let { commentId } = this.params;
+    commentId = Number(commentId);
 
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
+    if (this.isEmpty(articleId)) {
+      throw new Exception("ARTICLEID_FORM");
+    }
+    if (this.isEmpty(commentId)) {
+      throw new Exception("COMMENTID_FORM");
+    }
     if (!this.isEmpty(content)) {
       if (!this.isString(content)) {
         throw new Exception("CONTENT_FORM");
       }
-    } else if (this.isEmpty(content)) {
-      content = undefined;
     }
 
     return {
-      id,
+      userId : this.userId,
+      articleId,
+      commentId,
       content,
-      articleId
     };
   }
 }

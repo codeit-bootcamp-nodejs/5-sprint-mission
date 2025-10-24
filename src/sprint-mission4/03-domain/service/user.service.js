@@ -34,7 +34,23 @@ export class UserService {
     }
     return foundUser;
   }
-  getUserProducts = async ({ id }) => {
+  getUserProducts = async ({ id, offset, limit, sort }) => {
+    const orderBy =
+      sort === "recent"
+        ? { updatedAt: "desc" }
+        : sort === "priceLowest"
+          ? { price: "asc" }
+          : { price: "desc" };
+
+    if (limit > 20) {
+      throw new Exception("LIMIT_MAX_20");
+    }
+
+    const productTotalCount = await this.#repos.product.count();
+    if (productTotalCount < limit) {
+      throw new Exception("LIMIT_OVERFLOW", { totalCount: productTotalCount });
+    }
+
     const foundUser = await this.#repos.user.findUserById(id);
     if (!foundUser) {
       throw new Exception("USER_NOT_EXSIST");

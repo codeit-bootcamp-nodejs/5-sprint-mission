@@ -12,7 +12,6 @@ export class CommentMapper {
   }
   static toPersistent(entity) {
     return {
-      userId : entity.userId,
       content: entity.content,
     };
   }

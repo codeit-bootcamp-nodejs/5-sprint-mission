@@ -32,5 +32,24 @@ export class ArticleRouter extends BaseRouter {
       this.isAuthenticate,
       this.catchException(this.#controllers.article.deleteArticleController),
     );
+    this.router.post(
+      "/:articleId/comments",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.articleComment.createArticleCommentController),
+    );
+    this.router.get(
+      "/:articleId/comments",
+      this.catchException(this.#controllers.articleComment.getArticleCommentListController),
+    );
+    this.router.patch(
+      "/:articleId/comment/:commentId",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.articleComment.updateArticleCommentController),
+    );
+    this.router.delete(
+      "/:articleId/comment/:commentId",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.articleComment.deleteArticleCommentController),
+    );
   };
 }

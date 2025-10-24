@@ -7,12 +7,15 @@ export class GeteArticleCommentListReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { cursor = 0, limit = 1, sort = "recent" } = this.query;
+    let { cursor = 0, limit = 3, sort = "recent" } = this.query;
     const { articleId } = this.params;
 
     cursor = Number(cursor);
     limit = Number(limit);
 
+    if (this.isEmpty(articleId)) {
+      throw new Exception("ARTICLEID_FORM");
+    }
     if (!this.isInt(cursor)) {
       throw new Exception("OFFSET_FORM");
     }

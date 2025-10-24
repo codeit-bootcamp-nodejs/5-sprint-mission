@@ -7,25 +7,32 @@ export class UpdateProductCommentReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { content } = this.body;
-    let { productId, id } = this.params;
-    id = Number(id);
-    if (this.isEmpty(id)) {
-      throw new Exception("ID_NOT_EXSIST");
+    const { content } = this.body;
+    const { productId } = this.params;
+    let { commentId } = this.params;
+    commentId = Number(commentId);
+
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
+    if (this.isEmpty(productId)) {
+      throw new Exception("PRODUCTID_FORM");
+    }
+    if (this.isEmpty(commentId)) {
+      throw new Exception("COMMENTID_FORM");
     }
 
     if (!this.isEmpty(content)) {
       if (!this.isString(content)) {
         throw new Exception("CONTENT_FORM");
       }
-    } else if (this.isEmpty(content)) {
-      content = undefined;
     }
 
     return {
-      id,
+      userId: this.userId,
+      productId,
+      commentId,
       content,
-      productId
     };
   }
 }

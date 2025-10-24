@@ -20,12 +20,12 @@ export class CommentRepo extends BaseRepo {
     return article ? ArticleMapper.toEntity(article) : null;
   };
 
-  findCommentById = async ({ articleId, productId, id }) => {
+  findCommentById = async ({ articleId, productId, commentId }) => {
     if (articleId) {
       const comment = await this.prisma.articleComment.findUnique({
         where: {
           articleId,
-          id,
+          id: commentId,
         },
       });
       return comment ? CommentMapper.toEntity(comment) : null;
@@ -34,7 +34,7 @@ export class CommentRepo extends BaseRepo {
       const comment = await this.prisma.productComment.findUnique({
         where: {
           productId,
-          id,
+          id: commentId,
         },
       });
       return comment ? CommentMapper.toEntity(comment) : null;
@@ -70,6 +70,9 @@ export class CommentRepo extends BaseRepo {
       const comment = await this.prisma.articleComment.create({
         data: {
           ...CommentMapper.toPersistent(entity),
+          User:{
+            connect: { id: entity.userId}
+          },
           Article: {
             connect: { id: entity.articleId }
           }
@@ -81,6 +84,9 @@ export class CommentRepo extends BaseRepo {
       const comment = await this.prisma.productComment.create({
         data: {
           ...CommentMapper.toPersistent(entity),
+          User:{
+            connect: { id: entity.userId}
+          },
           Product: {
             connect: { id: entity.productId }
           }
@@ -121,11 +127,11 @@ export class CommentRepo extends BaseRepo {
     }
   };
 
-  delete = async ({ articleId, productId, id }) => {
+  delete = async ({ articleId, productId, commentId }) => {
     if (articleId) {
       const deletedComment = await this.prisma.articleComment.delete({
         where: {
-          id,
+          id : commentId,
           articleId,
         },
       });
@@ -135,7 +141,7 @@ export class CommentRepo extends BaseRepo {
     if (productId) {
       const deletedComment = await this.prisma.productComment.delete({
         where: {
-          id,
+          id : commentId,
           productId,
         },
       });

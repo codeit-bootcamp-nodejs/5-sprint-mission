@@ -30,7 +30,7 @@ export class UserRepo {
     const userProducts = await this.#prisma.product.findMany({
       where: { userId: id },
     });
-    return userProducts && userProducts.length > 0 ? userProducts.map((userProduct) => ProductMapper.toEntity(userProducts)) : null;
+    return userProducts && userProducts.length > 0 ? userProducts.map((userProduct) => ProductMapper.toEntity(userProduct)) : null;
   }
   create = async (entity) => {
     const newUser = await this.#prisma.user.create({

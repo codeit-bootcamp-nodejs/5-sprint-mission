@@ -2,6 +2,7 @@ import { SignInUserReqValidator } from "./req.validator/user/signin.user.req.val
 import { SignUpUserReqValidator } from "./req.validator/user/signUp.user.req.validator.js";
 import { UpdatePasswordReqValidator } from "./req.validator/user/update.password.req.validator.js";
 import { updateUserReqValidator } from "./req.validator/user/update.user.req.validator.js";
+import { UserProductsReqValidator } from "./req.validator/user/user.products.req.validator.js";
 import { UserIdReqValidator } from "./req.validator/user/userId.req.validator.js";
 import { DeleteUserResDto } from "./res.dto/user/delete.user.res.dto.js";
 import { RefreshTokensResDto } from "./res.dto/user/refresh.tokens.res.dto.js";
@@ -58,8 +59,9 @@ export class UserController {
   }
 
   getUserProductsController = async (req, res, next) =>{
-    const userReqDto = new UserIdReqValidator({
+    const userReqDto = new UserProductsReqValidator({
       userId: req.userId,
+      params: req.params,
     }).validate();
 
     const {user, products} = await this.#services.user.getUserProducts(userReqDto);

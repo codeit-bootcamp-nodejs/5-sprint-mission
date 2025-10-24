@@ -15,7 +15,7 @@ export class Comment extends BaseEntity {
     this.#productId = productId;
   }
 
-  static factory = ({ id, userId, articleId, productId, content }) => {
+  static factory = ({ commentId : id, userId, articleId, productId, content }) => {
     if (content !== undefined) {
       this.validateContentRule(content);
     }
