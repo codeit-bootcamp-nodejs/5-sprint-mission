@@ -5,6 +5,7 @@ export class BaseValidator {
   query;
   file;
   files;
+  userId;
   constructor({
     headers = {},
     body = {},
@@ -12,6 +13,7 @@ export class BaseValidator {
     query = {},
     file = {},
     files = {},
+    userId = undefined,
   }) {
     this.headers = headers;
     this.body = body;
@@ -19,6 +21,7 @@ export class BaseValidator {
     this.query = query;
     this.file = file;
     this.files = files;
+    this.userId = userId;
   }
 
   isString(value) {

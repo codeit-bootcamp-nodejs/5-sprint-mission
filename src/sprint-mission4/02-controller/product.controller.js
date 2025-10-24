@@ -3,7 +3,7 @@ import { DeleteProductReqValidator } from "./req.validator/product/delete.produc
 import { UpdateProductReqValidator } from "./req.validator/product/update.product.req.validator.js";
 import { ViewProductListReqValidator } from "./req.validator/product/view.product.list.req.validator.js";
 import { ViewProductReqValidator } from "./req.validator/product/view.product.req.validator.js";
-import { CreateProductResDto } from "./res.Dto/product/create.product.res.dto.js";
+import { CreateProductResDto } from "./res.dto/product/create.product.res.dto.js";
 import { DeleteProductResDto } from "./res.dto/product/delete.product.res.dto.js";
 import { UpdateProductResDto } from "./res.dto/product/update.product.res.dto.js";
 import { ViewProductListResDto } from "./res.dto/product/view.product.list.res.dto.js";

@@ -2,8 +2,8 @@ import { BaseRouter } from "./base.router.js";
 
 export class CommentRouter extends BaseRouter {
   #controllers;
-  constructor(controllers) {
-    super("/api");
+  constructor(controllers, managers) {
+    super("/api", managers);
     this.#controllers = controllers;
     this.registerCommentRouter();
   }

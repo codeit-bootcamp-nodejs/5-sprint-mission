@@ -1,5 +1,25 @@
 export const EXCEPTIONS = {
   // 요청 형식 오류
+  EMAIL_FORM: {
+    statusCode: 400,
+    message: "이메일 양식에 안 맞습니다.",
+  },
+  NICKNAME_FORM: {
+    statusCode: 400,
+    message: "닉네임 양식에 안 맞습니다.",
+  },
+  IMAGE_FORM: {
+    statusCode: 400,
+    message: "이미지 양식에 안 맞습니다.",
+  },
+  PASSWORD_FORM: {
+    statusCode: 400,
+    message: "비밀번호 양식에 안 맞습니다.",
+  },
+  UPDATEPASSWORD_FORM: {
+    statusCode: 400,
+    message: "수정 비밀번호 양식에 안 맞습니다.",
+  },
   NAME_FORM: {
     statusCode: 400,
     message: "이름 양식에 안 맞습니다.",
@@ -61,6 +81,34 @@ export const EXCEPTIONS = {
     statusCode: 422,
     message: "내용이 너무 짧습니다.(최소 6글자)",
   },
+  PASSWORD_MISMATCH: {
+    statusCode: 401,
+    message: "비밀번호가 일치하지 않습니다.",
+  },
+  TOKEN_EXPIRED: {
+    statusCode: 401,
+    message: "토큰이 만료됐습니다.",
+  },
+  INVALID_AUTH: {
+    statusCode: 401,
+    message: "인증이 유효하지 않습니다.",
+  },
+  REFRESHTOKEN_MISMATCH: {
+    statusCode: 404,
+    message: "refresh 토큰이 일치하지 않습니다.",
+  },
+  EMAIL_TOO_SHORT: {
+    statusCode: 404,
+    message: "이메일이 너무 짧습니다.",
+  },
+  PASSWORD_TOO_SHORT: {
+    statusCode: 404,
+    message: "비밀번호가 너무 짧습니다.",
+  },
+  NICKNAME_TOO_LONG: {
+    statusCode: 404,
+    message: "닉네임이 너무 깁니다.",
+  },
 
   // 필수 값 누락
   NAME_NOT_EXSIST: {
@@ -107,7 +155,19 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "타겟 타입이 존재하지 않습니다.",
   },
-  
+  USER_NOT_EXSIST: {
+    statusCode: 404,
+    message: "유저가 존재하지 않습니다.",
+  },
+  USER_PRODUCTS_NOT_EXSIST: {
+    statusCode: 404,
+    message: "유저의 상품이 존재하지 않습니다.",
+  },
+  REFRESHTOKEN_NOT_EXSIST: {
+    statusCode: 404,
+    message: "refresh 토큰이 존재하지 않습니다.",
+  },
+
 
   // 중복/충돌
   PRODUCT_ALREADY_EXIST: {
@@ -129,6 +189,10 @@ export const EXCEPTIONS = {
   FOREIGN_KEY_VIOLATION: {
     statusCode: 422,
     message: "존재하지 않은 외래키입니다.",
+  },
+  USER_EXIST: {
+    statusCode: 409,
+    message: "이미 유저가 존재합니다.",
   },
 
   // 형식 오류 (기타)

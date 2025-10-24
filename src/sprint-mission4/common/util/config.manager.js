@@ -6,6 +6,7 @@ export class ConfigManager {
     PORT: { type: "number", default: 4000 },
     DISK_STORAGE_PATH: { type: "string", default: "public" },
     DATABASE_URL: { type: "string" },
+    TOKEN_SECRET: {type: "string"},
   };
 
   constructor() {

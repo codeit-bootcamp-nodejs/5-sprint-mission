@@ -15,13 +15,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String
-  nickname  String
-  image     String
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  email        String   @unique
+  nickname     String
+  image        String?
+  password     String
+  refreshToken String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   products        Product[]
   articles        Article[]
@@ -65,7 +66,7 @@ model ArticleComment {
   updatedAt DateTime @updatedAt
 
   Article Article @relation(fields: [articleId], references: [id])
-  User    User   @relation(fields: [userId], references: [id])
+  User    User    @relation(fields: [userId], references: [id])
   userId  String
 }
 
@@ -77,6 +78,6 @@ model ProductComment {
   updatedAt DateTime @updatedAt
 
   Product Product @relation(fields: [productId], references: [id])
-  User    User   @relation(fields: [userId], references: [id])
+  User    User    @relation(fields: [userId], references: [id])
   userId  String
 }

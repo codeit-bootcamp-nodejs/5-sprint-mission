@@ -17,6 +17,13 @@ import { ProductRouter } from "./01-app/router/product.router.js";
 import { ConfigManager } from "./common/util/config.manager.js";
 import { FileManager } from "./common/util/file.manager.js";
 import { ArticleCommentController } from "./02-controller/article.comment.controller.js";
+import { UserRouter } from "./01-app/router/user.router.js";
+import { UserController } from "./02-controller/user.controller.js";
+import { UserRepo } from "./04-repo/user.repo.js";
+import { UserService } from "./03-domain/service/user.service.js";
+import { HashManager } from "./common/util/hash.manager.js";
+import { TokenManager } from "./common/util/token.manager.js";
+import { AuthService } from "./03-domain/service/auth.service.js";
 
 export class DepInjector {
   #sever;
@@ -32,37 +39,49 @@ export class DepInjector {
   injectDeps() {
     const prisma = new PrismaClient();
 
+    const hashManager = new HashManager();
     const configManager = new ConfigManager();
     const fileManager = new FileManager();
+    const tokenManager = new TokenManager(configManager);
     const managers = {
       file: fileManager,
       config: configManager,
+      hash: hashManager,
+      token: tokenManager,
     };
 
+    const userRepo = new UserRepo(prisma);
     const productRepo = new ProductRepo(prisma);
     const articleRepo = new ArticleRepo(prisma);
     const commentRepo = new CommentRepo(prisma);
     const repos = {
+      user: userRepo,
       product: productRepo,
       article: articleRepo,
       comment: commentRepo,
     };
 
+    const userService = new UserService(repos, managers);
     const productService = new ProductService(repos);
     const articleService = new ArticleService(repos);
     const commentService = new CommentService(repos);
+    const authService = new AuthService(repos, managers);
     const services = {
+      user: userService,
       product: productService,
       article: articleService,
       comment: commentService,
+      auth: authService,
     };
 
+    const userController = new UserController(services);
     const productController = new ProductController(services);
     const articleController = new ArticleController(services);
     const articleCommentController = new ArticleCommentController(services);
     const productCommentController = new ProductCommentController(services);
     const imageController = new ImageController();
     const controllers = {
+      user: userController,
       product: productController,
       article: articleController,
       productComment: productCommentController,
@@ -70,11 +89,18 @@ export class DepInjector {
       image: imageController,
     };
 
-    const productRouter = new ProductRouter(controllers);
-    const articleRouter = new ArticleRouter(controllers);
-    const commentRouter = new CommentRouter(controllers);
-    const imageRouter = new ImageRouter({ managers, controllers });
-    const routers = [productRouter, articleRouter, commentRouter, imageRouter];
+    const userRouter = new UserRouter(controllers, managers);
+    const productRouter = new ProductRouter(controllers, managers);
+    const articleRouter = new ArticleRouter(controllers, managers);
+    const commentRouter = new CommentRouter(controllers, managers);
+    const imageRouter = new ImageRouter(controllers, managers);
+    const routers = [
+      userRouter,
+      productRouter,
+      articleRouter,
+      commentRouter,
+      imageRouter,
+    ];
 
     return new Server({ routers, managers });
   }

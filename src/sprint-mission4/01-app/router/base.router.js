@@ -1,11 +1,14 @@
 import express from "express";
+import { Exception } from "../../common/const/exception.js";
 
 export class BaseRouter {
   basePath;
   router;
+  managers;
 
-  constructor(basePath) {
+  constructor(basePath, managers) {
     this.basePath = basePath;
+    this.managers = managers
     this.router = express.Router();
   }
 
@@ -20,5 +23,16 @@ export class BaseRouter {
         next(err);
       }
     };
+  };
+
+  inAuthenticate = (req, res, next) => {
+    if(!req.headers.authorization) {
+      throw new Exception("INVALID_AUTH");
+    }
+
+    const [_, token] = req.headers.authorization.split(" ");
+    const decoded = this.managers.token.verify(token);
+    req.userId = decoded.userId;
+    next();
   };
 }

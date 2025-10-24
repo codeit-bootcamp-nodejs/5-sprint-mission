@@ -2,8 +2,8 @@ import { BaseRouter } from "./base.router.js";
 
 export class ArticleRouter extends BaseRouter {
   #controllers;
-  constructor(controllers) {
-    super("/api/articles");
+  constructor(controllers, managers) {
+    super("/api/articles", managers);
     this.#controllers = controllers;
     this.registerArticleRouter();
   }

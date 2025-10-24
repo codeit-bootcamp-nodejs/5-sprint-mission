@@ -3,8 +3,8 @@ import { BaseRouter } from "./base.router.js";
 export class ProductRouter extends BaseRouter {
   #controllers;
 
-  constructor(controllers) {
-    super("/api/products");
+  constructor(controllers, managers) {
+    super("/api/products", managers);
     this.#controllers = controllers;
     this.registerProductRouter();
   }

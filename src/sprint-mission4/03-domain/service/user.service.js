@@ -1,0 +1,87 @@
+import { Exception } from "../../common/const/exception.js";
+import { User } from "../entity/user.js";
+
+export class UserService {
+  #repos
+  #managers
+
+  constructor(repos, managers) {
+    this.#repos = repos;
+    this.#managers = managers;
+  }
+
+  signUpUser = async ({ email, nickname, image, password }) => {
+    const foundUser = await this.#repos.user.findUserByEmail(email);
+
+    if (foundUser) {
+      throw new Exception("USER_EXIST");
+    }
+
+    const hashPassword = await this.#managers.hash.hashingPassword(password);
+
+    const newUser = User.forCreate({ email, nickname, image, password: hashPassword });
+    const createdUser = await this.#repos.user.create(
+      newUser
+    );
+
+    return createdUser;
+
+  }
+  getUser = async ({ id }) => {
+    const foundUser = await this.#repos.user.findUserById(id);
+    if (!foundUser) {
+      throw new Exception("USER_NOT_EXSIST");
+    }
+    return foundUser;
+  }
+  getUserProducts = async ({ id }) => {
+    const foundUser = await this.#repos.user.findUserById(id);
+    if (!foundUser) {
+      throw new Exception("USER_NOT_EXSIST");
+    }
+
+    const foundUserProducts =await this.#repos.user.findUserProducts(id);
+    if(!foundUserProducts){
+      throw new Exception("USER_PRODUCTS_NOT_EXSIST");
+    }
+
+    return {user: foundUser, products: foundUserProducts};
+  }
+  updateUser = async ({ id, email, nickname, image, }) => {
+    const foundUser = await this.#repos.user.findUserById(id);
+    if (!foundUser) {
+      throw new Exception("USER_NOT_EXSIST");
+    }
+
+    const user = User.forCreate({ id, email, nickname, image });
+    const updateUser = await this.#repos.user.update(user);
+
+    return updateUser;
+  }
+  updatePasswordUser = async ({ id, password, updatePassword }) => {
+    const foundUser = await this.#repos.user.findUserById(id);
+    if (!foundUser) {
+      throw new Exception("USER_NOT_EXSIST");
+    }
+
+    const isPasswordValid = await this.#managers.hash.verifyPassword(password, foundUser.password);
+    if (!isPasswordValid) {
+      throw new Exception("PASSWORD_MISMATCH");
+    }
+
+    const hashingUpdatePassword = await this.#managers.hash.hashingPassword(updatePassword);
+    const user = User.forCreate({ id, password: hashingUpdatePassword });
+    const updatedPassword = await this.#repos.user.updatePassword(user);
+
+    return updatedPassword;
+  }
+  deleteUser = async ({ id }) => {
+    const foundUser = await this.#repos.user.findUserById(id);
+    if (!foundUser) {
+      throw new Exception("USER_NOT_EXSIST");
+    }
+    const deletedUser = await this.#repos.user.delete(id);
+
+    return deletedUser;
+  }
+}
