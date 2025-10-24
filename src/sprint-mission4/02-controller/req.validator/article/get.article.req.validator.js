@@ -7,14 +7,14 @@ export class GetArticleReqValidator extends BaseValidator {
   }
 
   validate = () => {
-    const { id } = this.params;
+    const { articleId } = this.params;
 
-    if (!this.isString(id) || this.isEmpty(id)) {
-      throw new Exception("ID_FORM");
+    if (this.isEmpty(articleId)) {      
+      throw new Exception("ARTICLEID_FORM");
     }
 
     return {
-      id,
+      articleId
     };
   };
 }

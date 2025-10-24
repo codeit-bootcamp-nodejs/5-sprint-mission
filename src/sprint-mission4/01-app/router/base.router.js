@@ -25,7 +25,7 @@ export class BaseRouter {
     };
   };
 
-  inAuthenticate = (req, res, next) => {
+  isAuthenticate = (req, res, next) => {
     if(!req.headers.authorization) {
       throw new Exception("INVALID_AUTH");
     }

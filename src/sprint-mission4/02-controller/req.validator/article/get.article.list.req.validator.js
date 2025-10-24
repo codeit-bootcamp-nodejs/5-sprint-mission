@@ -7,7 +7,7 @@ export class GetArticleListReqValidator extends BaseValidator {
   }
 
   validate() {
-    let { offset = 1, limit = 5, sort = "recent" } = this.query;
+    let { offset = 1, limit = 3, sort = "recent" } = this.query;
 
     offset = Number(offset);
     limit = Number(limit);

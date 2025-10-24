@@ -25,7 +25,7 @@ export class Article extends BaseEntity {
     this.validateContentRule(content);
     return new Article({ userId, title, content });
   };
-  static updateFactory = ({ articleId: id, title, content }) => {
+  static updateFactory = ({ articleId : id, title, content }) => {
     if (title !== undefined) {
       this.validateTitleRule(title);
     }

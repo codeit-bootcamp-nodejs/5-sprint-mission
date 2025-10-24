@@ -8,11 +8,14 @@ export class UpdateArticleReqValidator extends BaseValidator {
 
   validate() {
     let { title, content } = this.body;
-    const { id } = this.params;
-    if (this.isEmpty(id)) {
-      throw new Exception("ID_NOT_EXSIST");
+    const { articleId } = this.params;
+    
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
     }
-
+    if (this.isEmpty(articleId)) {      
+      throw new Exception("ARTICLEID_FORM");
+    }
     if (!this.isEmpty(title)) {
       if (!this.isString(title)) {
         throw new Exception("TITLE_FORM");
@@ -20,7 +23,6 @@ export class UpdateArticleReqValidator extends BaseValidator {
     } else if (this.isEmpty(title)) {
       title = undefined;
     }
-
     if (!this.isEmpty(content)) {
       if (!this.isString(content)) {
         throw new Exception("CONTENT_FORM");
@@ -30,7 +32,8 @@ export class UpdateArticleReqValidator extends BaseValidator {
     }
 
     return {
-      id,
+      userId : this.userId,
+      articleId,
       title,
       content,
     };

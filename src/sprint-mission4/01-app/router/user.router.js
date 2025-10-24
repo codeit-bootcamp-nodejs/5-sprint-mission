@@ -20,7 +20,7 @@ export class UserRouter extends BaseRouter{
     );
     this.router.get(
       "/sign-out",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.signOutUserController),
     );
     this.router.post(
@@ -29,27 +29,27 @@ export class UserRouter extends BaseRouter{
     );
     this.router.get(
       "/me",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.getUserController),
     );
     this.router.get(
       "/me/products",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.getUserProductsController),
     );
     this.router.patch(
       "/me",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.updateUserController),
     );
     this.router.patch(
       "/me/password/",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.updateUserPasswordController),
     );
     this.router.delete(
       "/me",
-      this.inAuthenticate,
+      this.isAuthenticate,
       this.catchException(this.#controllers.user.deleteUserController),
     );
   }

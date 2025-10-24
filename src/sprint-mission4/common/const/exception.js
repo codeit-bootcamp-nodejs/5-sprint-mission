@@ -208,6 +208,10 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "productId 양식이 안 맞습니다.",
   },
+  ARTICLEID_FORM: {
+    statusCode: 400,
+    message: "articleId 양식이 안 맞습니다.",
+  },
   COMMENTID_FORM: {
     statusCode: 400,
     message: "commentId 양식이 안 맞습니다.",
@@ -231,7 +235,15 @@ export const EXCEPTIONS = {
   UNAUTHORIZED_PRODUCT_OWNER: {
     statusCode: 403,
     message: "해당 상품에 대한 권한이 없습니다.",
-  }
+  },
+  UNAUTHORIZED_ARTICLE_OWNER: {
+    statusCode: 403,
+    message: "해당 게시글에 대한 권한이 없습니다.",
+  },
+  UNAUTHORIZED_COMMENT_OWNER: {
+    statusCode: 403,
+    message: "해당 댓글에 대한 권한이 없습니다.",
+  },
 };
 
 export class Exception extends Error {

@@ -17,7 +17,7 @@ export class ProductService {
     return foundProduct;
   };
 
-  getProductList = async ({ userId, offset, limit, sort }) => {
+  getProductList = async ({ offset, limit, sort }) => {
     const orderBy =
       sort === "recent"
         ? { updatedAt: "desc" }
@@ -29,7 +29,7 @@ export class ProductService {
       throw new Exception("LIMIT_MAX_20");
     }
 
-    const productTotalCount = await this.#repos.product.count(userId);
+    const productTotalCount = await this.#repos.product.count();
     if (productTotalCount < limit) {
       throw new Exception("LIMIT_OVERFLOW", { totalCount: productTotalCount });
     }
@@ -63,7 +63,7 @@ export class ProductService {
     }
 
     if(userId !== foundProduct.userId){
-      throw new Exception("UNAUTHORIZED_PRODUCT_OWNER")
+      throw new Exception("UNAUTHORIZED_PRODUCT_OWNER");
     }
     const product = Product.updateFactory({
       productId,

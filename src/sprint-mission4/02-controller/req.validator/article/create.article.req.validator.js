@@ -8,7 +8,10 @@ export class CreateArticleReqValidator extends BaseValidator {
 
   validate() {
     const { title, content } = this.body;
-
+    
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
     if (!this.isString(title)) {
       throw new Exception(EXCEPTIONS.TITLE_FORM);
     } else if (this.isEmpty(title)) {
@@ -21,6 +24,10 @@ export class CreateArticleReqValidator extends BaseValidator {
       throw new Exception("CONTENT_NOT_EXSIST");
     }
 
-    return { title, content };
+    return { 
+      userId : this.userId,
+      title,
+      content,
+    };
   }
 }

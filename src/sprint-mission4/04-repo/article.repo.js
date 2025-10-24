@@ -50,9 +50,9 @@ export class ArticleRepo extends BaseRepo {
     return ArticleMapper.toEntity(updatedarticle);
   };
 
-  delete = async (entity) => {
+  delete = async (articleId) => {
     const deletedArticle = await this.prisma.article.delete({
-      where: entity.id ? { id: entity.id } : { title: entity.title },
+      where: { id: articleId },
     });
     return deletedArticle;
   };

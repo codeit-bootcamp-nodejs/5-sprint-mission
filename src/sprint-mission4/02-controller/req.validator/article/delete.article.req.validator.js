@@ -7,26 +7,18 @@ export class DeleteArticleReqValidator extends BaseValidator {
   }
 
   validate() {
-    const { title } = this.body;
-    const { id } = this.params;
-    if (this.isEmpty(id) && this.isEmpty(title)) {
-      throw new Exception("AT_LEAST_ONE_FORM");
-    }
+    const { articleId } = this.params;
 
-    if (!this.isEmpty(id)) {
-      if (!this.isString(id)) {
-        throw new Exception("ID_FORM");
-      }
+    if (this.isEmpty(this.userId)) {
+      throw new Exception("USERID_FORM");
     }
-    if (!this.isEmpty(title)) {
-      if (!this.isString(title)) {
-        throw new Exception("TITLE_FORM");
-      }
+    if (this.isEmpty(articleId)) {      
+      throw new Exception("ARTICLEID_FORM");
     }
-
+    
     return {
-      id,
-      title,
+      userId: this.userId,
+      articleId,
     };
   }
 }

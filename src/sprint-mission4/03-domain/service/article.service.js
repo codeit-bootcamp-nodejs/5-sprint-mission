@@ -8,8 +8,8 @@ export class ArticleService {
     this.#repos = repos;
   }
 
-  getArticle = async ({ id }) => {
-    const foundArticle = await this.#repos.article.findArticleById(id);
+  getArticle = async ({ articleId }) => {
+    const foundArticle = await this.#repos.article.findArticleById(articleId);
     if (!foundArticle) {
       throw new Exception("ARTICLE_NOT_EXIST");
     }
@@ -43,41 +43,43 @@ export class ArticleService {
     return foundArticleList;
   };
 
-  createArticle = async ({ title, content }) => {
+  createArticle = async ({ userId, title, content }) => {
     const foundArticle = await this.#repos.article.findArticleByTitle(title);
     if (foundArticle) {
       throw new Exception("ARTICLE_ALREADY_EXIST");
     }
-    const article = Article.createFactory({ title, content });
+    const article = Article.createFactory({ userId, title, content });
 
     const createdArticle = await this.#repos.article.create(article);
 
     return createdArticle;
   };
 
-  updateArticle = async ({ id, title, content }) => {
-    const foundArticle = await this.#repos.article.findArticleById(id);
+  updateArticle = async ({ userId, articleId, title, content }) => {
+    const foundArticle = await this.#repos.article.findArticleById(articleId);
     if (!foundArticle) {
       throw new Exception("ARTICLE_NOT_EXIST");
     }
 
-    const article = Article.updateFactory({ id, title, content });
+    if (userId !== foundArticle.userId) {
+      throw new Exception("UNAUTHORIZED_ARTICLE_OWNER");
+    }
+    const article = Article.updateFactory({ articleId, title, content });
 
     const updatedArticle = await this.#repos.article.update(article);
 
     return updatedArticle;
   };
 
-  deleteArticle = async ({ id, title }) => {
-    const foundArticle = id
-      ? await this.#repos.article.findArticleById(id)
-      : await this.#repos.article.findArticleByTitle(title);
-
+  deleteArticle = async ({ userId, articleId }) => {
+    const foundArticle = await this.#repos.article.findArticleById(articleId);
     if (!foundArticle) {
       throw new Exception("ARTICLE_NOT_EXIST");
     }
-    const article = Article.deleteFactory({ id, title });
-    const deletedArticle = await this.#repos.article.delete(article);
+    if (userId !== foundArticle.userId) {
+      throw new Exception("UNAUTHORIZED_ARTICLE_OWNER");
+    }
+    const deletedArticle = await this.#repos.article.delete(articleId);
     return deletedArticle;
   };
 }

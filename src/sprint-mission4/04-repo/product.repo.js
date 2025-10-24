@@ -61,10 +61,8 @@ export class ProductRepo extends BaseRepo {
     return deletedProduct;
   };
 
-  count = async (userId) => {
-    const totalCount = await this.prisma.product.count({
-      where: { userId }
-    });
+  count = async () => {
+    const totalCount = await this.prisma.product.count();
 
     return totalCount;
   };

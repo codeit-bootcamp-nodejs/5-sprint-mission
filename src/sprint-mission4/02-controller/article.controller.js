@@ -19,6 +19,7 @@ export class ArticleController {
   createArticleController = async (req, res, next) => {
     const createArticleReqDto = new CreateArticleReqValidator({
       body: req.body,
+      userId: req.userId,
     }).validate();
     const createdArticle =
       await this.#services.article.createArticle(createArticleReqDto);
@@ -51,6 +52,7 @@ export class ArticleController {
     const updateArticleReqDto = new UpdateArticleReqValidator({
       body: req.body,
       params: req.params,
+      userId: req.userId,
     }).validate();
     const updatedArticle =
       await this.#services.article.updateArticle(updateArticleReqDto);
@@ -62,6 +64,7 @@ export class ArticleController {
     const deleteArticleReqDto = new DeleteArticleReqValidator({
       body: req.body,
       params: req.params,
+      userId: req.userId,
     }).validate();
     const deletedwArticle =
       await this.#services.article.deleteArticle(deleteArticleReqDto);

@@ -11,10 +11,11 @@ export class ArticleRouter extends BaseRouter {
   registerArticleRouter = () => {
     this.router.post(
       "/",
+      this.isAuthenticate,
       this.catchException(this.#controllers.article.createArticleController),
     );
     this.router.get(
-      "/:id",
+      "/:articleId",
       this.catchException(this.#controllers.article.getArticleController),
     );
     this.router.get(
@@ -22,11 +23,13 @@ export class ArticleRouter extends BaseRouter {
       this.catchException(this.#controllers.article.getArticleListController),
     );
     this.router.patch(
-      "/:id",
+      "/:articleId",
+      this.isAuthenticate,
       this.catchException(this.#controllers.article.updateArticleController),
     );
     this.router.delete(
-      "/:id",
+      "/:articleId",
+      this.isAuthenticate,
       this.catchException(this.#controllers.article.deleteArticleController),
     );
   };
