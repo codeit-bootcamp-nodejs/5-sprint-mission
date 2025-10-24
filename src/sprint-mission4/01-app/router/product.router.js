@@ -12,22 +12,27 @@ export class ProductRouter extends BaseRouter {
   registerProductRouter = () => {
     this.router.post(
       "/",
+      this.inAuthenticate,
       this.catchException(this.#controllers.product.createProductController),
     );
     this.router.get(
-      "/:name",
-      this.catchException(this.#controllers.product.viewProductController),
+      "/:productId",
+      this.inAuthenticate,
+      this.catchException(this.#controllers.product.getProductController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#controllers.product.viewProductListController),
+      this.inAuthenticate,
+      this.catchException(this.#controllers.product.getProductListController),
     );
     this.router.patch(
-      "/:id",
+      "/:productId",
+      this.inAuthenticate,
       this.catchException(this.#controllers.product.updateProductController),
     );
     this.router.delete(
-      "/:id",
+      "/:productId",
+      this.inAuthenticate,
       this.catchException(this.#controllers.product.deleteProductController),
     );
   };

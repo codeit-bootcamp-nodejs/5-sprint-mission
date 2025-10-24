@@ -22,7 +22,7 @@ export class CommentService {
     }
   };
 
-  viewCommentList = async ({ articleId, productId, cursor, limit, sort }) => {
+  getCommentList = async ({ articleId, productId, cursor, limit, sort }) => {
     const orderBy =
       sort === "recent" ? { updatedAt: "desc" } : { content: "asc" };
 

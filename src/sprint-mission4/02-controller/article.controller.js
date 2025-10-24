@@ -1,13 +1,13 @@
 import { CreateArticleReqValidator } from "./req.validator/article/create.article.req.validator.js";
 import { DeleteArticleReqValidator } from "./req.validator/article/delete.article.req.validator.js";
 import { UpdateArticleReqValidator } from "./req.validator/article/update.article.req.validator.js";
-import { ViewArticleListReqValidator } from "./req.validator/article/view.article.list.req.validator.js";
-import { ViewArticleReqValidator } from "./req.validator/article/view.article.req.validator.js";
+import { GetArticleListReqValidator } from "./req.validator/article/get.article.list.req.validator.js";
+import { GetArticleReqValidator } from "./req.validator/article/get.article.req.validator.js";
 import { CreateArticleResDto } from "./res.dto/article/create.article.res.dto.js";
 import { DeleteArticleResDto } from "./res.dto/article/delete.article.res.dto.js";
 import { UpdateArticleResDto } from "./res.dto/article/update.article.res.dto.js";
-import { ViewArticleListResDto } from "./res.dto/article/view.article.list.res.dto.js";
-import { ViewArticleResDto } from "./res.dto/article/view.article.res.dto.js";
+import { GetArticleListResDto } from "./res.dto/article/get.article.list.res.dto.js";
+import { GetArticleResDto } from "./res.dto/article/get.article.res.dto.js";
 
 export class ArticleController {
   #services;
@@ -26,25 +26,25 @@ export class ArticleController {
     return res.json(createdArticleResDto);
   };
 
-  viewArticleController = async (req, res, next) => {
-    const viewArticleReqDto = new ViewArticleReqValidator({
+  getArticleController = async (req, res, next) => {
+    const getArticleReqDto = new GetArticleReqValidator({
       params: req.params,
     }).validate();
-    const viewArticle =
-      await this.#services.article.viewArticle(viewArticleReqDto);
-    const viewArticleResDto = new ViewArticleResDto(viewArticle);
-    return res.json(viewArticleResDto);
+    const getArticle =
+      await this.#services.article.getArticle(getArticleReqDto);
+    const getArticleResDto = new GetArticleResDto(getArticle);
+    return res.json(getArticleResDto);
   };
 
-  viewArticleListController = async (req, res, next) => {
-    const viewArticleListReqDto = new ViewArticleListReqValidator({
+  getArticleListController = async (req, res, next) => {
+    const getArticleListReqDto = new GetArticleListReqValidator({
       query: req.query,
     }).validate();
-    const viewArticleList = await this.#services.article.viewArticleList(
-      viewArticleListReqDto,
+    const getArticleList = await this.#services.article.getArticleList(
+      getArticleListReqDto,
     );
-    const viewArticleListResDto = new ViewArticleListResDto(viewArticleList);
-    return res.json(viewArticleListResDto);
+    const getArticleListResDto = new GetArticleListResDto(getArticleList);
+    return res.json(getArticleListResDto);
   };
 
   updateArticleController = async (req, res, next) => {

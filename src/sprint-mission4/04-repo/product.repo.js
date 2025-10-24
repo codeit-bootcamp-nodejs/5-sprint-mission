@@ -5,22 +5,26 @@ export class ProductRepo extends BaseRepo {
   constructor(prisma) {
     super(prisma);
   }
-
-  findProductByname = async (name) => {
+  findProductByName = async (name) => {
     const product = await this.prisma.product.findUnique({
-      where: { name },
+      where: {
+        name
+      },
     });
     return product ? ProductMapper.toEntity(product) : null;
   };
 
-  findProductById = async (id) => {
+  findProductById = async (productId) => {
     const product = await this.prisma.product.findUnique({
-      where: { id },
+      where: {
+        id: productId,
+      },
     });
     return product ? ProductMapper.toEntity(product) : null;
   };
-  findProductList = async ({ offset, limit, orderBy }) => {
+  findProductList = async ({ userId, offset, limit, orderBy }) => {
     const productList = await this.prisma.product.findMany({
+      where: { userId },
       skip: offset,
       take: limit,
       orderBy: [orderBy],
@@ -50,15 +54,17 @@ export class ProductRepo extends BaseRepo {
     return ProductMapper.toEntity(updatedproduct);
   };
 
-  delete = async (entity) => {
+  delete = async (productId) => {
     const deletedProduct = await this.prisma.product.delete({
-      where: entity.id ? { id: entity.id } : { name: entity.name },
+      where: { id: productId },
     });
     return deletedProduct;
   };
 
-  count = async () => {
-    const totalCount = await this.prisma.product.count();
+  count = async (userId) => {
+    const totalCount = await this.prisma.product.count({
+      where: { userId }
+    });
 
     return totalCount;
   };

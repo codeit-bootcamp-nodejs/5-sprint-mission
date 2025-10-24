@@ -1,4 +1,4 @@
-export class ViewCommentListResDto {
+export class GetCommentListResDto {
   constructor(CommentList) {
     this.CommentList = CommentList.map((Comment) => ({
       id: Comment.id,

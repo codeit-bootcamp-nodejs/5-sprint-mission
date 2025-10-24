@@ -2,27 +2,30 @@ import { Exception } from "../../common/const/exception.js";
 import { BaseEntity } from "./baseEntity.js";
 
 export class Article extends BaseEntity {
+  #userId;
   #title;
   #content;
 
   constructor({
-    id = undefined,
+    id,
+    userId,
     title = undefined,
     content = undefined,
     createdAt = undefined,
     updatedAt = undefined,
   }) {
     super({ id, createdAt, updatedAt });
+    this.#userId = userId;
     this.#title = title;
     this.#content = content;
   }
 
-  static createFactory = ({ title, content }) => {
+  static createFactory = ({ userId, title, content }) => {
     this.validateTitleRule(title);
     this.validateContentRule(content);
-    return new Article({ title, content });
+    return new Article({ userId, title, content });
   };
-  static updateFactory = ({ id, title, content }) => {
+  static updateFactory = ({ articleId: id, title, content }) => {
     if (title !== undefined) {
       this.validateTitleRule(title);
     }
@@ -31,13 +34,7 @@ export class Article extends BaseEntity {
     }
     return new Article({ id, title, content });
   };
-  static deleteFactory = ({ id, title }) => {
-    if (title !== undefined) {
-      this.validateTitleRule(title);
-    }
-    return new Article({ id, title });
-  };
-
+ 
   static validateTitleRule = (title) => {
     if (title.length > 20) {
       throw new Exception("TITLE_TOO_LONG");
@@ -49,6 +46,9 @@ export class Article extends BaseEntity {
     }
   };
 
+  get userId() {
+    return this.#userId;
+  }
   get title() {
     return this.#title;
   }

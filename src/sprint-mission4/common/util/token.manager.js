@@ -10,7 +10,7 @@ export class TokenManager {
 
   constructor(configManager) {
     this.#configManager = configManager;
-    this.#accessTokenExpiresIn = 10;
+    this.#accessTokenExpiresIn = 60*60;
     this.#refreshTokenExpiresIn = "1d";
   }
 

@@ -2,12 +2,14 @@ import { Exception } from "../../common/const/exception.js";
 import { BaseEntity } from "./baseEntity.js";
 
 export class Product extends BaseEntity {
+  #userId;
   #name;
   #description;
   #price;
   #tags;
   constructor({
-    id = undefined,
+    id,
+    userId,
     name = undefined,
     description = undefined,
     price = undefined,
@@ -16,21 +18,22 @@ export class Product extends BaseEntity {
     updatedAt = undefined,
   }) {
     super({ id, createdAt, updatedAt });
+    this.#userId = userId;
     this.#name = name;
     this.#description = description;
     this.#price = price;
     this.#tags = tags;
   }
 
-  static createFactory = ({ name, description, price, tags }) => {
+  static createFactory = ({ userId, name, description, price, tags }) => {
     this.validateNameRule(name);
     this.validateDescriptionRule(description);
     this.validatePriceIdRule(price);
     this.validateTagsIdRule(tags);
-    return new Product({ name, description, price, tags });
+    return new Product({ userId, name, description, price, tags });
   };
 
-  static updateFactory = ({ id, name, description, price, tags }) => {
+  static updateFactory = ({ productId : id, name, description, price, tags }) => {
     if (name !== undefined) {
       this.validateNameRule(name);
     }
@@ -44,13 +47,6 @@ export class Product extends BaseEntity {
       this.validateTagsIdRule(tags);
     }
     return new Product({ id, name, description, price, tags });
-  };
-
-  static deleteFactory = ({ id, name }) => {
-    if (name !== this.undefined) {
-      this.validateNameRule(name);
-    }
-    return new Product({ id, name });
   };
 
   static validateNameRule = (name) => {
@@ -77,7 +73,6 @@ export class Product extends BaseEntity {
   get name() {
     return this.#name;
   }
-
   get description() {
     return this.#description;
   }
@@ -86,5 +81,8 @@ export class Product extends BaseEntity {
   }
   get tags() {
     return this.#tags;
+  }
+  get userId() {
+    return this.#userId;
   }
 }

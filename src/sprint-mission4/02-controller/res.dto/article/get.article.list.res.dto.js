@@ -1,4 +1,4 @@
-export class ViewArticleListResDto {
+export class GetArticleListResDto {
   constructor(ArticleList) {
     this.ArticleList = ArticleList.map((Article) => ({
       id: Article.id,

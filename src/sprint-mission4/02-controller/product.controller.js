@@ -1,13 +1,13 @@
 import { CreateProductReqValidator } from "./req.validator/product/create.product.req.validator.js";
 import { DeleteProductReqValidator } from "./req.validator/product/delete.product.req.validator.js";
 import { UpdateProductReqValidator } from "./req.validator/product/update.product.req.validator.js";
-import { ViewProductListReqValidator } from "./req.validator/product/view.product.list.req.validator.js";
-import { ViewProductReqValidator } from "./req.validator/product/view.product.req.validator.js";
+import { GetProductListReqValidator } from "./req.validator/product/get.product.list.req.validator.js";
+import { GetProductReqValidator } from "./req.validator/product/get.product.req.validator.js";
 import { CreateProductResDto } from "./res.dto/product/create.product.res.dto.js";
 import { DeleteProductResDto } from "./res.dto/product/delete.product.res.dto.js";
 import { UpdateProductResDto } from "./res.dto/product/update.product.res.dto.js";
-import { ViewProductListResDto } from "./res.dto/product/view.product.list.res.dto.js";
-import { ViewProductResDto } from "./res.dto/product/view.product.res.dto.js";
+import { GetProductListResDto } from "./res.dto/product/get.product.list.res.dto.js";
+import { GetProductResDto } from "./res.dto/product/get.product.res.dto.js";
 
 export class ProductController {
   #services;
@@ -18,6 +18,7 @@ export class ProductController {
 
   createProductController = async (req, res, next) => {
     const createProductReqDto = new CreateProductReqValidator({
+      userId: req.userId,
       body: req.body,
     }).validate();
     const createdProduct =
@@ -26,29 +27,32 @@ export class ProductController {
     return res.json(createdProductResDto);
   };
 
-  viewProductController = async (req, res, next) => {
-    const viewProductReqDto = new ViewProductReqValidator({
+  getProductController = async (req, res, next) => {
+    const getProductReqDto = new GetProductReqValidator({
+      userId: req.userId,
       params: req.params,
     }).validate();
-    const viewProduct =
-      await this.#services.product.viewProduct(viewProductReqDto);
-    const viewProductResDto = new ViewProductResDto(viewProduct);
-    return res.json(viewProductResDto);
+    const getProduct =
+      await this.#services.product.getProduct(getProductReqDto);
+    const getProductResDto = new GetProductResDto(getProduct);
+    return res.json(getProductResDto);
   };
 
-  viewProductListController = async (req, res, next) => {
-    const viewProductListReqDto = new ViewProductListReqValidator({
+  getProductListController = async (req, res, next) => {
+    const getProductListReqDto = new GetProductListReqValidator({
+      userId: req.userId,
       query: req.query,
     }).validate();
-    const viewProductList = await this.#services.product.viewProductList(
-      viewProductListReqDto,
+    const getProductList = await this.#services.product.getProductList(
+      getProductListReqDto,
     );
-    const viewProductListResDto = new ViewProductListResDto(viewProductList);
-    return res.json(viewProductListResDto);
+    const getProductListResDto = new GetProductListResDto(getProductList);
+    return res.json(getProductListResDto);
   };
 
   updateProductController = async (req, res, next) => {
     const updateProductReqDto = new UpdateProductReqValidator({
+      userId: req.userId,
       body: req.body,
       params: req.params,
     }).validate();
@@ -60,7 +64,7 @@ export class ProductController {
 
   deleteProductController = async (req, res, next) => {
     const deleteProductReqDto = new DeleteProductReqValidator({
-      body: req.body,
+      userId: req.userId,
       params: req.params,
     }).validate();
     const deletedwProduct =

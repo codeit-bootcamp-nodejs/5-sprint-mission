@@ -4,6 +4,7 @@ export class CommentMapper {
   static toEntity(record) {
     return new Comment({
       id: record.id,
+      userId : record.userId,
       content: record.content,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
@@ -11,6 +12,7 @@ export class CommentMapper {
   }
   static toPersistent(entity) {
     return {
+      userId : entity.userId,
       content: entity.content,
     };
   }

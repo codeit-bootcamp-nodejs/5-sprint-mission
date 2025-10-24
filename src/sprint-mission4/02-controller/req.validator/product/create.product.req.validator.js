@@ -8,6 +8,10 @@ export class CreateProductReqValidator extends BaseValidator {
 
   validate() {
     const { name, description, price, tags } = this.body;
+    
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
 
     if (!this.isString(name)) {
       throw new Exception("NAME_FORM");
@@ -33,6 +37,6 @@ export class CreateProductReqValidator extends BaseValidator {
       throw new Exception("TAGS_NOT_EXSIST");
     }
 
-    return { name, description, price, tags };
+    return { userId : this.userId, name, description, price, tags };
   }
 }

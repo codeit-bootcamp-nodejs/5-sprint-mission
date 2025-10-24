@@ -1,7 +1,7 @@
 import { Exception } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class ViewArticleListReqValidator extends BaseValidator {
+export class GetArticleListReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }

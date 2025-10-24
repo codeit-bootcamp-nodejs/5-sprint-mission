@@ -4,6 +4,7 @@ export class ProductMapper {
   static toEntity(record) {
     return new Product({
       id: record.id,
+      userId : record.userId,
       name: record.name,
       description: record.description,
       price: record.price,
@@ -14,6 +15,7 @@ export class ProductMapper {
   }
   static toPersistent(entity) {
     return {
+      userId : entity.userId,
       name: entity.name,
       description: entity.description,
       price: entity.price,

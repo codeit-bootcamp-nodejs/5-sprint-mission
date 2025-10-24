@@ -8,9 +8,12 @@ export class UpdateProductReqValidator extends BaseValidator {
 
   validate() {
     let { name, description, price, tags } = this.body;
-    const { id } = this.params;
-    if (this.isEmpty(id)) {
-      throw new Exception("ID_NOT_EXSIST");
+    const { productId } = this.params;
+    if (this.isEmpty(this.userId)) {      
+      throw new Exception("USERID_FORM");
+    }
+    if (this.isEmpty(productId)) {
+      throw new Exception("PRODUCTID_FORM");
     }
 
     if (!this.isEmpty(name)) {
@@ -46,7 +49,8 @@ export class UpdateProductReqValidator extends BaseValidator {
     }
 
     return {
-      id,
+      userId : this.userId,
+      productId,
       name,
       description,
       price,

@@ -4,6 +4,7 @@ export class ArticleMapper {
   static toEntity(record) {
     return new Article({
       id: record.id,
+      userId: record.userId,
       title: record.title,
       content: record.content,
       createdAt: record.createdAt,
@@ -12,6 +13,7 @@ export class ArticleMapper {
   }
   static toPersistent(entity) {
     return {
+      userId : entity.userId,
       title: entity.title,
       content: entity.content,
     };

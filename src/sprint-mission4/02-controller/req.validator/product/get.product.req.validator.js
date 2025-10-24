@@ -1,12 +1,12 @@
 import { Exception } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class DeleteProductReqValidator extends BaseValidator {
+export class GetProductReqValidator extends BaseValidator {
   constructor(data) {
     super(data);
   }
 
-  validate() {
+  validate = () => {
     const { productId } = this.params;
     
     if (this.isEmpty(this.userId)) {      
@@ -15,10 +15,10 @@ export class DeleteProductReqValidator extends BaseValidator {
     if (this.isEmpty(productId)) {
       throw new Exception("PRODUCTID_FORM");
     }
-
+    
     return {
       userId : this.userId,
       productId,
     };
-  }
+  };
 }

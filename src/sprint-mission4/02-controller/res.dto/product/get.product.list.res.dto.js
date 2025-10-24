@@ -1,4 +1,4 @@
-export class ViewProductListResDto {
+export class GetProductListResDto {
   constructor(productList) {
     this.productList = productList.map((product) => ({
       id: product.id,

@@ -15,7 +15,7 @@ export class CommentRouter extends BaseRouter {
     );
     this.router.get(
       "/product/:productId/comments",
-      this.catchException(this.#controllers.productComment.viewProductCommentListController),
+      this.catchException(this.#controllers.productComment.getProductCommentListController),
     );
     this.router.patch(
       "/product/:productId/comment/:id",
@@ -32,7 +32,7 @@ export class CommentRouter extends BaseRouter {
     );
     this.router.get(
       "/article/:articleId/comments",
-      this.catchException(this.#controllers.articleComment.viewArticleCommentListController),
+      this.catchException(this.#controllers.articleComment.getArticleCommentListController),
     );
     this.router.patch(
       "/article/:articleId/comment/:id",

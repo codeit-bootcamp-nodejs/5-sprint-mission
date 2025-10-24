@@ -1,11 +1,11 @@
 import { CreateProductCommentReqValidator } from "./req.validator/comment/product/create.product.comment.req.validator.js";
 import { DeleteProductCommentReqValidator } from "./req.validator/comment/product/delete.product.comment.req.validator.js";
 import { UpdateProductCommentReqValidator } from "./req.validator/comment/product/update.product.comment.req.validator.js";
-import { ViewProductCommentListReqValidator } from "./req.validator/comment/product/view.product.comment.list.req.validator.js";
+import { GetProductCommentListReqValidator } from "./req.validator/comment/product/get.product.comment.list.req.validator.js";
 import { CreateCommentResDto } from "./res.dto/comment/create.comment.res.dto.js";
 import { DeleteCommentResDto } from "./res.dto/comment/delete.comment.res.dto.js";
 import { UpdateCommentResDto } from "./res.dto/comment/update.comment.res.dto.js";
-import { ViewCommentListResDto } from "./res.dto/comment/view.comment.list.res.dto.js";
+import { GetCommentListResDto } from "./res.dto/comment/get.comment.list.res.dto.js";
 
 export class ProductCommentController {
   #services;
@@ -25,16 +25,16 @@ export class ProductCommentController {
     return res.json(createdCommentResDto);
   };
 
-  viewProductCommentListController = async (req, res, next) => {
-    const viewCommentListReqDto = new ViewProductCommentListReqValidator({
+  getProductCommentListController = async (req, res, next) => {
+    const getCommentListReqDto = new GetProductCommentListReqValidator({
       query: req.query,
       params: req.params
     }).validate();
-    const viewCommentList = await this.#services.comment.viewCommentList(
-      viewCommentListReqDto,
+    const getCommentList = await this.#services.comment.getCommentList(
+      getCommentListReqDto,
     );
-    const viewCommentListResDto = new ViewCommentListResDto(viewCommentList);
-    return res.json(viewCommentListResDto);
+    const getCommentListResDto = new GetCommentListResDto(getCommentList);
+    return res.json(getCommentListResDto);
   };
 
   updateProductCommentController = async (req, res, next) => {

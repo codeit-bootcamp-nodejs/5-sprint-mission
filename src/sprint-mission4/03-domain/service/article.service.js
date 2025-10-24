@@ -8,7 +8,7 @@ export class ArticleService {
     this.#repos = repos;
   }
 
-  viewArticle = async ({ id }) => {
+  getArticle = async ({ id }) => {
     const foundArticle = await this.#repos.article.findArticleById(id);
     if (!foundArticle) {
       throw new Exception("ARTICLE_NOT_EXIST");
@@ -17,7 +17,7 @@ export class ArticleService {
     return foundArticle;
   };
 
-  viewArticleList = async ({ offset, limit, sort }) => {
+  getArticleList = async ({ offset, limit, sort }) => {
     const orderBy =
       sort === "recent"
         ? { updatedAt: "desc" }

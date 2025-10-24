@@ -195,10 +195,22 @@ export const EXCEPTIONS = {
     message: "이미 유저가 존재합니다.",
   },
 
-  // 형식 오류 (기타)
+  // 형식 오류 및 기타
   ID_FORM: {
     statusCode: 400,
     message: "id 양식이 안 맞습니다.",
+  },
+  USERID_FORM: {
+    statusCode: 400,
+    message: "userId 양식이 안 맞습니다.",
+  },
+  PRODUCTID_FORM: {
+    statusCode: 400,
+    message: "productId 양식이 안 맞습니다.",
+  },
+  COMMENTID_FORM: {
+    statusCode: 400,
+    message: "commentId 양식이 안 맞습니다.",
   },
   TARGETTYPE_FORM: {
     statusCode: 400,
@@ -216,6 +228,10 @@ export const EXCEPTIONS = {
     statusCode: 400,
     message: "내용 양식이 안 맞습니다.",
   },
+  UNAUTHORIZED_PRODUCT_OWNER: {
+    statusCode: 403,
+    message: "해당 상품에 대한 권한이 없습니다.",
+  }
 };
 
 export class Exception extends Error {

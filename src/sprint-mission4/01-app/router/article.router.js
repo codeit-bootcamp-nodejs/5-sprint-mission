@@ -15,11 +15,11 @@ export class ArticleRouter extends BaseRouter {
     );
     this.router.get(
       "/:id",
-      this.catchException(this.#controllers.article.viewArticleController),
+      this.catchException(this.#controllers.article.getArticleController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#controllers.article.viewArticleListController),
+      this.catchException(this.#controllers.article.getArticleListController),
     );
     this.router.patch(
       "/:id",
