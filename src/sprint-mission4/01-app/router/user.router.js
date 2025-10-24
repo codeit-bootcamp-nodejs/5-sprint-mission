@@ -18,7 +18,7 @@ export class UserRouter extends BaseRouter{
       "/sign-up",
       this.catchException(this.#controllers.user.signUpUserController),
     );
-    this.router.post(
+    this.router.get(
       "/sign-out",
       this.inAuthenticate,
       this.catchException(this.#controllers.user.signOutUserController),

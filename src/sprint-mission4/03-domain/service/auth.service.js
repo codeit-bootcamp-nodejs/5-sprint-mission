@@ -23,6 +23,16 @@ export class AuthService {
     return { accessToken, authenticatedUser };
   }
 
+  signOutUser = async ({id}) => {
+    const foundUser = await this.#repos.user.findUserByEmail(id);
+
+    if (foundUser) {
+      throw new Exception("USER_EXIST");
+    }
+
+    const createdUser = await this.#repos.user.refreshTokenDelete(id, null);
+  }
+
   //다 만료 시에는 로그인 페이지로 이동하게 프론트엔트 코드를 구현하면 될 것 같다
   generateTokens = async (userId) => { 
     const { accessToken, refreshToken } = this.#managers.token.generate({

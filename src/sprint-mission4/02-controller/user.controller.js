@@ -6,6 +6,7 @@ import { UserIdReqValidator } from "./req.validator/user/userId.req.validator.js
 import { DeleteUserResDto } from "./res.dto/user/delete.user.res.dto.js";
 import { RefreshTokensResDto } from "./res.dto/user/refresh.tokens.res.dto.js";
 import { SignInResDto } from "./res.dto/user/signIn.res.dto.js";
+import { SignOutResDto } from "./res.dto/user/signout.res.dto.js";
 import { UserProductsResDto } from "./res.dto/user/user.products.res.dto.js";
 import { UserResDto } from "./res.dto/user/user.Res.Dto.js";
 
@@ -41,8 +42,8 @@ export class UserController {
       userId: req.userId,
     }).validate();
 
-    const user = await this.#services.user.signOutUser(userReqDto);
-    const resDto = new UserResDto(user);
+    await this.#services.auth.signOutUser(userReqDto);
+    const resDto = new SignOutResDto();
     return res.json(resDto);
   }
 

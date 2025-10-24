@@ -84,4 +84,13 @@ export class UserRepo {
 
     return user ? UserMapper.toEntity(user) : null;
   }
+
+  refreshTokenDelete = async (id, refreshToken) => {
+    const user = await this.#prisma.user.update({
+      where: { id },
+      data: {
+        refreshToken,
+      },
+    });
+  };
 }
