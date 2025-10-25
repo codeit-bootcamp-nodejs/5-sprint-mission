@@ -29,7 +29,6 @@ export class ProductController {
 
   getProductController = async (req, res, next) => {
     const getProductReqDto = new GetProductReqValidator({
-      userId: req.userId,
       params: req.params,
     }).validate();
     const getProduct =
@@ -40,12 +39,10 @@ export class ProductController {
 
   getProductListController = async (req, res, next) => {
     const getProductListReqDto = new GetProductListReqValidator({
-      userId: req.userId,
       query: req.query,
     }).validate();
-    const getProductList = await this.#services.product.getProductList(
-      getProductListReqDto,
-    );
+    const getProductList =
+      await this.#services.product.getProductList(getProductListReqDto);
     const getProductListResDto = new GetProductListResDto(getProductList);
     return res.json(getProductListResDto);
   };

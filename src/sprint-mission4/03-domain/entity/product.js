@@ -7,6 +7,8 @@ export class Product extends BaseEntity {
   #description;
   #price;
   #tags;
+  #isLiked;
+
   constructor({
     id,
     userId,
@@ -14,6 +16,7 @@ export class Product extends BaseEntity {
     description = undefined,
     price = undefined,
     tags = undefined,
+    isLiked = false,
     createdAt = undefined,
     updatedAt = undefined,
   }) {
@@ -23,6 +26,7 @@ export class Product extends BaseEntity {
     this.#description = description;
     this.#price = price;
     this.#tags = tags;
+    this.#isLiked = isLiked;
   }
 
   static createFactory = ({ userId, name, description, price, tags }) => {
@@ -33,7 +37,13 @@ export class Product extends BaseEntity {
     return new Product({ userId, name, description, price, tags });
   };
 
-  static updateFactory = ({ productId : id, name, description, price, tags }) => {
+  static updateFactory = ({
+    productId: id,
+    name,
+    description,
+    price,
+    tags,
+  }) => {
     if (name !== undefined) {
       this.validateNameRule(name);
     }
@@ -84,5 +94,8 @@ export class Product extends BaseEntity {
   }
   get userId() {
     return this.#userId;
+  }
+  get isLiked() {
+    return this.#isLiked;
   }
 }

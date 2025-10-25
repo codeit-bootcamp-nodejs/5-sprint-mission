@@ -9,11 +9,11 @@ export class UpdateArticleReqValidator extends BaseValidator {
   validate() {
     let { title, content } = this.body;
     const { articleId } = this.params;
-    
-    if (this.isEmpty(this.userId)) {      
+
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
-    if (this.isEmpty(articleId)) {      
+    if (this.isEmpty(articleId)) {
       throw new Exception("ARTICLEID_FORM");
     }
     if (!this.isEmpty(title)) {
@@ -32,7 +32,7 @@ export class UpdateArticleReqValidator extends BaseValidator {
     }
 
     return {
-      userId : this.userId,
+      userId: this.userId,
       articleId,
       title,
       content,

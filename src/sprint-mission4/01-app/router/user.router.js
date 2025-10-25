@@ -1,8 +1,8 @@
 import { BaseRouter } from "./base.router.js";
 
-export class UserRouter extends BaseRouter{
-  #controllers
-  
+export class UserRouter extends BaseRouter {
+  #controllers;
+
   constructor(controllers, managers) {
     super("/api/user", managers);
     this.#controllers = controllers;
@@ -37,6 +37,16 @@ export class UserRouter extends BaseRouter{
       this.isAuthenticate,
       this.catchException(this.#controllers.user.getUserProductsController),
     );
+    this.router.get(
+      "/me/like/products",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.user.getUserLikeProductsController),
+    );
+    this.router.get(
+      "/me/like/articles",
+      this.isAuthenticate,
+      this.catchException(this.#controllers.user.getUserLikeArticlesController),
+    );
     this.router.patch(
       "/me",
       this.isAuthenticate,
@@ -52,5 +62,5 @@ export class UserRouter extends BaseRouter{
       this.isAuthenticate,
       this.catchException(this.#controllers.user.deleteUserController),
     );
-  }
+  };
 }

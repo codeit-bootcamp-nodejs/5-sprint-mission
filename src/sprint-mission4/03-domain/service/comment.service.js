@@ -18,7 +18,7 @@ export class CommentService {
       if (!foundArticle) throw new Exception("ARTICLE_NOT_EXIST");
     }
 
-    if(!articleId && !productId){
+    if (!articleId && !productId) {
       throw new Exception("TARGETTYPE_NOT_EXSIST");
     }
   };
@@ -30,7 +30,7 @@ export class CommentService {
     if (limit > 20) {
       throw new Exception("LIMIT_MAX_20");
     }
-    
+
     if (!articleId && !productId) {
       throw new Exception("TARGETTYPE_NOT_EXSIST");
     }
@@ -51,11 +51,10 @@ export class CommentService {
       limit,
       orderBy,
     });
-
   };
 
   createComment = async ({ userId, articleId, productId, content }) => {
-    await this.#validateTargetExists({ articleId, productId});
+    await this.#validateTargetExists({ articleId, productId });
 
     const entity = Comment.factory({ userId, articleId, productId, content });
 
@@ -64,18 +63,33 @@ export class CommentService {
     return createdComment;
   };
 
-  updateComment = async ({ userId, articleId, productId, commentId, content }) => {
-    await this.#validateTargetExists({ articleId, productId});
+  updateComment = async ({
+    userId,
+    articleId,
+    productId,
+    commentId,
+    content,
+  }) => {
+    await this.#validateTargetExists({ articleId, productId });
 
-    const foundComment = await this.#repos.comment.findCommentById({ articleId, productId, commentId });
+    const foundComment = await this.#repos.comment.findCommentById({
+      articleId,
+      productId,
+      commentId,
+    });
     if (!foundComment) {
       throw new Exception("COMMENT_NOT_EXIST");
     }
-    if(userId !== foundComment.userId){
-      throw new Exception("UNAUTHORIZED_COMMENT_OWNER")
+    if (userId !== foundComment.userId) {
+      throw new Exception("UNAUTHORIZED_COMMENT_OWNER");
     }
 
-    const comment = Comment.factory({ articleId, productId, commentId, content });
+    const comment = Comment.factory({
+      articleId,
+      productId,
+      commentId,
+      content,
+    });
 
     const updatedComment = await this.#repos.comment.update(comment);
 
@@ -83,18 +97,26 @@ export class CommentService {
   };
 
   deleteComment = async ({ userId, articleId, productId, commentId }) => {
-    await this.#validateTargetExists({ articleId, productId});
+    await this.#validateTargetExists({ articleId, productId });
 
-    const foundComment = await this.#repos.comment.findCommentById({ articleId, productId, commentId });
+    const foundComment = await this.#repos.comment.findCommentById({
+      articleId,
+      productId,
+      commentId,
+    });
 
     if (!foundComment) {
       throw new Exception("COMMENT_NOT_EXIST");
     }
-    if(userId !== foundComment.userId){
-      throw new Exception("UNAUTHORIZED_COMMENT_OWNER")
+    if (userId !== foundComment.userId) {
+      throw new Exception("UNAUTHORIZED_COMMENT_OWNER");
     }
 
-    const deletedComment = await this.#repos.comment.delete({ articleId, productId, commentId });
+    const deletedComment = await this.#repos.comment.delete({
+      articleId,
+      productId,
+      commentId,
+    });
     return deletedComment;
   };
 }

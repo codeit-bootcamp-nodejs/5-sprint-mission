@@ -147,6 +147,14 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "상품이 존재하지 않습니다.",
   },
+  LIKE_NOT_EXIST: {
+    statusCode: 404,
+    message: "이미 좋아요가 안 눌러져 있습니다.",
+  },
+  LIKE_EXIST: {
+    statusCode: 404,
+    message: "이미 좋아요가 눌러져 있습니다.",
+  },
   ID_NOT_EXSIST: {
     statusCode: 404,
     message: "id가 존재하지 않습니다.",
@@ -163,11 +171,18 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "유저의 상품이 존재하지 않습니다.",
   },
+  USER_LIKEPRODUCTS_NOT_EXSIST: {
+    statusCode: 404,
+    message: "유저의 좋아요 상품이 존재하지 않습니다.",
+  },
+  USER_LIKEARTICLES_NOT_EXSIST: {
+    statusCode: 404,
+    message: "유저의 좋아요 게시글이 존재하지 않습니다.",
+  },
   REFRESHTOKEN_NOT_EXSIST: {
     statusCode: 404,
     message: "refresh 토큰이 존재하지 않습니다.",
   },
-
 
   // 중복/충돌
   PRODUCT_ALREADY_EXIST: {

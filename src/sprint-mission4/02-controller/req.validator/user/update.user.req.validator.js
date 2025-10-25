@@ -1,7 +1,7 @@
 import { Exception } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class updateUserReqValidator extends BaseValidator{
+export class updateUserReqValidator extends BaseValidator {
   email;
   nickname;
   image;
@@ -29,10 +29,10 @@ export class updateUserReqValidator extends BaseValidator{
       }
     }
     return {
-      id : this.userId,
+      id: this.userId,
       email,
       nickname,
       image,
-    }
+    };
   }
 }

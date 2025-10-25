@@ -8,7 +8,7 @@ export class ProductRepo extends BaseRepo {
   findProductByName = async (name) => {
     const product = await this.prisma.product.findUnique({
       where: {
-        name
+        name,
       },
     });
     return product ? ProductMapper.toEntity(product) : null;
@@ -22,6 +22,22 @@ export class ProductRepo extends BaseRepo {
     });
     return product ? ProductMapper.toEntity(product) : null;
   };
+
+  findProductLike = async (userId, productId) => {
+    const product = await this.prisma.productLike.findUnique({
+      where: {
+        userId_productId: {
+          userId,
+          productId,
+        },
+      },
+      include: {
+        product: true,
+      },
+    });
+    return product ? ProductMapper.toEntityLike(product) : null;
+  };
+
   findProductList = async ({ userId, offset, limit, orderBy }) => {
     const productList = await this.prisma.product.findMany({
       where: { userId },
@@ -42,6 +58,21 @@ export class ProductRepo extends BaseRepo {
     return ProductMapper.toEntity(product);
   };
 
+  addProductLike = async (userId, productId) => {
+    const createProductLike = await this.prisma.productLike.create({
+      data: {
+        userId,
+        productId,
+        isLiked: true,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    return ProductMapper.toEntityLike(createProductLike);
+  };
+
   update = async (entity) => {
     const updatedproduct = await this.prisma.product.update({
       where: { id: entity.id },
@@ -54,11 +85,49 @@ export class ProductRepo extends BaseRepo {
     return ProductMapper.toEntity(updatedproduct);
   };
 
+  updateProductLike = async (userId, productId, isLiked) => {
+    const updatedProductLike = await this.prisma.productLike.update({
+      where: {
+        userId_productId: {
+          userId,
+          productId,
+        },
+      },
+      data: {
+        isLiked,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    return ProductMapper.toEntityLike(updatedProductLike);
+  };
+
   delete = async (productId) => {
     const deletedProduct = await this.prisma.product.delete({
       where: { id: productId },
     });
     return deletedProduct;
+  };
+
+  cancelProductLike = async (userId, productId, isLiked) => {
+    const cancelProductLike = await this.prisma.productLike.update({
+      where: {
+        userId_productId: {
+          userId,
+          productId,
+        },
+      },
+      data: {
+        isLiked,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    return ProductMapper.toEntityLike(cancelProductLike);
   };
 
   count = async () => {

@@ -1,13 +1,16 @@
+import { Exception } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
 export class UserProductsReqValidator extends BaseValidator {
-
   constructor(data) {
     super(data);
   }
 
   validate() {
     let { offset = 0, limit = 3, sort = "recent" } = this.query;
+
+    offset = Number(offset);
+    limit = Number(limit);
 
     if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
@@ -27,6 +30,6 @@ export class UserProductsReqValidator extends BaseValidator {
       offset,
       limit,
       sort,
-    }
+    };
   }
 }

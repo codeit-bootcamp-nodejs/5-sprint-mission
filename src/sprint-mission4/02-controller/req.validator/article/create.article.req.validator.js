@@ -1,4 +1,4 @@
-import { Exception, EXCEPTIONS} from "../../../common/const/exception.js";
+import { Exception, EXCEPTIONS } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
 export class CreateArticleReqValidator extends BaseValidator {
@@ -8,8 +8,8 @@ export class CreateArticleReqValidator extends BaseValidator {
 
   validate() {
     const { title, content } = this.body;
-    
-    if (this.isEmpty(this.userId)) {      
+
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (!this.isString(title)) {
@@ -24,8 +24,8 @@ export class CreateArticleReqValidator extends BaseValidator {
       throw new Exception("CONTENT_NOT_EXSIST");
     }
 
-    return { 
-      userId : this.userId,
+    return {
+      userId: this.userId,
       title,
       content,
     };

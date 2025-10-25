@@ -23,6 +23,8 @@ import { UserService } from "./03-domain/service/user.service.js";
 import { HashManager } from "./common/util/hash.manager.js";
 import { TokenManager } from "./common/util/token.manager.js";
 import { AuthService } from "./03-domain/service/auth.service.js";
+import { ProductLikeController } from "./02-controller/product.like.controller.js";
+import { ArticleLikeController } from "./02-controller/article.like.controller.js";
 
 export class DepInjector {
   #sever;
@@ -75,16 +77,20 @@ export class DepInjector {
 
     const userController = new UserController(services);
     const productController = new ProductController(services);
+    const productCommentController = new ProductCommentController(services);
+    const productLikeController = new ProductLikeController(services);
     const articleController = new ArticleController(services);
     const articleCommentController = new ArticleCommentController(services);
-    const productCommentController = new ProductCommentController(services);
+    const articleLikeController = new ArticleLikeController(services);
     const imageController = new ImageController();
     const controllers = {
       user: userController,
       product: productController,
-      article: articleController,
       productComment: productCommentController,
+      productLike: productLikeController,
+      article: articleController,
       articleComment: articleCommentController,
+      articleLike: articleLikeController,
       image: imageController,
     };
 
@@ -92,12 +98,7 @@ export class DepInjector {
     const productRouter = new ProductRouter(controllers, managers);
     const articleRouter = new ArticleRouter(controllers, managers);
     const imageRouter = new ImageRouter(controllers, managers);
-    const routers = [
-      userRouter,
-      productRouter,
-      articleRouter,
-      imageRouter,
-    ];
+    const routers = [userRouter, productRouter, articleRouter, imageRouter];
 
     return new Server({ routers, managers });
   }

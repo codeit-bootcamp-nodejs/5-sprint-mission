@@ -29,11 +29,10 @@ export class ProductCommentController {
   getProductCommentListController = async (req, res, next) => {
     const getCommentListReqDto = new GetProductCommentListReqValidator({
       query: req.query,
-      params: req.params
+      params: req.params,
     }).validate();
-    const getCommentList = await this.#services.comment.getCommentList(
-      getCommentListReqDto,
-    );
+    const getCommentList =
+      await this.#services.comment.getCommentList(getCommentListReqDto);
     const getCommentListResDto = new GetCommentListResDto(getCommentList);
     return res.json(getCommentListResDto);
   };

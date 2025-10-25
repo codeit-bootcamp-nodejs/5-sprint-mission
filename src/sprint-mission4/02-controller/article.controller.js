@@ -41,9 +41,8 @@ export class ArticleController {
     const getArticleListReqDto = new GetArticleListReqValidator({
       query: req.query,
     }).validate();
-    const getArticleList = await this.#services.article.getArticleList(
-      getArticleListReqDto,
-    );
+    const getArticleList =
+      await this.#services.article.getArticleList(getArticleListReqDto);
     const getArticleListResDto = new GetArticleListResDto(getArticleList);
     return res.json(getArticleListResDto);
   };

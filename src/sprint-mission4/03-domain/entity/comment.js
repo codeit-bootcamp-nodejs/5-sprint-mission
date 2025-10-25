@@ -7,7 +7,15 @@ export class Comment extends BaseEntity {
   #productId;
   #content;
 
-  constructor({ id, userId, articleId = undefined, productId = undefined, content, createdAt, updatedAt }) {
+  constructor({
+    id,
+    userId,
+    articleId = undefined,
+    productId = undefined,
+    content,
+    createdAt,
+    updatedAt,
+  }) {
     super({ id, createdAt, updatedAt });
     this.#userId = userId;
     this.#content = content;
@@ -15,7 +23,13 @@ export class Comment extends BaseEntity {
     this.#productId = productId;
   }
 
-  static factory = ({ commentId : id, userId, articleId, productId, content }) => {
+  static factory = ({
+    commentId: id,
+    userId,
+    articleId,
+    productId,
+    content,
+  }) => {
     if (content !== undefined) {
       this.validateContentRule(content);
     }

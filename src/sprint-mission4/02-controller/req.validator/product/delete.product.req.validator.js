@@ -8,8 +8,8 @@ export class DeleteProductReqValidator extends BaseValidator {
 
   validate() {
     const { productId } = this.params;
-    
-    if (this.isEmpty(this.userId)) {      
+
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (this.isEmpty(productId)) {
@@ -17,7 +17,7 @@ export class DeleteProductReqValidator extends BaseValidator {
     }
 
     return {
-      userId : this.userId,
+      userId: this.userId,
       productId,
     };
   }

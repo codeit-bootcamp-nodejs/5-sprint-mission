@@ -25,20 +25,22 @@ export class Server {
 
   registerBaseMiddlewares = () => {
     const whitelist = ["http://localhost:3000"];
-    this.#server.use(cors({
-      origin: function (origin, callback) {
-        if (!origin) {
-          callback(null, true)
-        } else {
-          if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
+    this.#server.use(
+      cors({
+        origin: function (origin, callback) {
+          if (!origin) {
+            callback(null, true);
           } else {
-            callback(null, false)
+            if (whitelist.indexOf(origin) !== -1) {
+              callback(null, true);
+            } else {
+              callback(null, false);
+            }
           }
-        }
-      },
-      credentials: true,
-    }));
+        },
+        credentials: true,
+      }),
+    );
     this.#server.use(morgan("dev"));
     this.#server.use(express.json());
   };
@@ -65,7 +67,7 @@ export class Server {
     this.registerRouterMiddleware();
     this.#server.use((req, res, next) => {
       next(new Error("경로가 없습니다."));
-    })
+    });
     this.registerExceptionMiddleware();
     this.listen();
   };

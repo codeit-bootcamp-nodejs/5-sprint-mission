@@ -12,9 +12,9 @@ export class GetProductReqValidator extends BaseValidator {
     if (this.isEmpty(productId)) {
       throw new Exception("PRODUCTID_FORM");
     }
-    
+
     return {
-      userId : this.userId,
+      userId: this.userId,
       productId,
     };
   };

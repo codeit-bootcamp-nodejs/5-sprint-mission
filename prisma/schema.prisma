@@ -28,6 +28,8 @@ model User {
   articles        Article[]
   productComments ProductComment[]
   articleComments ArticleComment[]
+  ProductLike     ProductLike[]
+  ArticleLike     ArticleLike[]
 }
 
 model Product {
@@ -41,8 +43,33 @@ model Product {
 
   ProductComment ProductComment[]
 
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
+  User        User          @relation(fields: [userId], references: [id])
+  userId      String
+  ProductLike ProductLike[]
+}
+
+model ProductComment {
+  id        Int      @id @default(autoincrement())
+  productId String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Product Product @relation(fields: [productId], references: [id])
+  User    User    @relation(fields: [userId], references: [id])
+  userId  String
+}
+
+model ProductLike {
+  id        String  @id @default(uuid())
+  userId    String
+  productId String
+  isLiked   Boolean @default(true)
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
 }
 
 model Article {
@@ -54,8 +81,9 @@ model Article {
 
   ArticleComment ArticleComment[]
 
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
+  User        User          @relation(fields: [userId], references: [id])
+  userId      String
+  ArticleLike ArticleLike[]
 }
 
 model ArticleComment {
@@ -70,14 +98,14 @@ model ArticleComment {
   userId  String
 }
 
-model ProductComment {
-  id        Int      @id @default(autoincrement())
-  productId String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ArticleLike {
+  id        String  @id @default(uuid())
+  userId    String
+  articleId String
+  isLiked   Boolean @default(true)
+  
+  user    User    @relation(fields: [userId], references: [id])
+  article Article @relation(fields: [articleId], references: [id])
 
-  Product Product @relation(fields: [productId], references: [id])
-  User    User    @relation(fields: [userId], references: [id])
-  userId  String
+  @@unique([userId, articleId])
 }

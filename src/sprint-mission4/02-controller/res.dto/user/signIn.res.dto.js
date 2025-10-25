@@ -1,10 +1,10 @@
-export class SignInResDto{
+export class SignInResDto {
   id;
   email;
   image;
   nickname;
 
-  constructor(accessToken, user){
+  constructor(accessToken, user) {
     this.id = user.id;
     this.email = user.email;
     this.image = user.image;

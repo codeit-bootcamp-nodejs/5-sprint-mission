@@ -10,7 +10,7 @@ export class CreateArticleCommentReqValidator extends BaseValidator {
     const { content } = this.body;
     const { articleId } = this.params;
 
-    if (this.isEmpty(this.userId)) {      
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (this.isEmpty(articleId)) {
@@ -24,9 +24,9 @@ export class CreateArticleCommentReqValidator extends BaseValidator {
     }
 
     return {
-      userId : this.userId,
+      userId: this.userId,
       articleId,
-      content
+      content,
     };
   }
 }

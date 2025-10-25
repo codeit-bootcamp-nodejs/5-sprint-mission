@@ -18,9 +18,9 @@ export class UpdatePasswordReqValidator extends BaseValidator {
       throw new Exception("UPDATEPASSWORD_FORM");
     }
     return {
-      id : this.userId,
+      id: this.userId,
       password,
-      updatePassword
-    }
+      updatePassword,
+    };
   }
 }

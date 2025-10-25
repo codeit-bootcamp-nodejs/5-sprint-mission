@@ -35,7 +35,6 @@ export class ProductService {
     }
 
     const foundProductList = await this.#repos.product.findProductList({
-      userId,
       offset,
       limit,
       orderBy,
@@ -44,25 +43,58 @@ export class ProductService {
     return foundProductList;
   };
 
+  addProductLike = async ({ userId, productId }) => {
+    const foundProduct = await this.#repos.product.findProductById(productId);
+    if (!foundProduct) {
+      throw new Exception("PRODUCT_NOT_EXIST");
+    }
+
+    const existingLike = await this.#repos.product.findProductLike(
+      userId,
+      productId,
+    );
+    if (existingLike) {
+      if (!existingLike.isLiked) {
+        return this.#repos.product.updateProductLike(userId, productId, true);
+      }
+      throw new Exception("LIKE_EXIST");
+    }
+
+    return this.#repos.product.addProductLike(userId, productId);
+  };
+
   createProduct = async ({ userId, name, description, price, tags }) => {
     const foundProduct = await this.#repos.product.findProductByName(name);
     if (foundProduct) {
       throw new Exception("PRODUCT_ALREADY_EXIST");
     }
-    const product = Product.createFactory({ userId, name, description, price, tags });
+    const product = Product.createFactory({
+      userId,
+      name,
+      description,
+      price,
+      tags,
+    });
 
     const createdProduct = await this.#repos.product.create(product);
 
     return createdProduct;
   };
 
-  updateProduct = async ({ userId, productId, name, description, price, tags }) => {
+  updateProduct = async ({
+    userId,
+    productId,
+    name,
+    description,
+    price,
+    tags,
+  }) => {
     const foundProduct = await this.#repos.product.findProductById(productId);
     if (!foundProduct) {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
 
-    if(userId !== foundProduct.userId){
+    if (userId !== foundProduct.userId) {
       throw new Exception("UNAUTHORIZED_PRODUCT_OWNER");
     }
     const product = Product.updateFactory({
@@ -79,16 +111,33 @@ export class ProductService {
   };
 
   deleteProduct = async ({ userId, productId }) => {
-    const foundProduct = await this.#repos.product.findProductById(productId)
+    const foundProduct = await this.#repos.product.findProductById(productId);
 
     if (!foundProduct) {
       throw new Exception("PRODUCT_NOT_EXIST");
     }
-    if(userId !== foundProduct.userId){
-      throw new Exception("UNAUTHORIZED_PRODUCT_OWNER")
+    if (userId !== foundProduct.userId) {
+      throw new Exception("UNAUTHORIZED_PRODUCT_OWNER");
     }
 
     const deletedProduct = await this.#repos.product.delete(productId);
     return deletedProduct;
+  };
+
+  cancelProductLike = async ({ userId, productId }) => {
+    const foundProduct = await this.#repos.product.findProductById(productId);
+    if (!foundProduct) {
+      throw new Exception("PRODUCT_NOT_EXIST");
+    }
+
+    const existingLike = await this.#repos.product.findProductLike(
+      userId,
+      productId,
+    );
+    if (!existingLike) {
+      throw new Exception("LIKE_NOT_EXIST");
+    }
+
+    return this.#repos.product.cancelProductLike(userId, productId, false);
   };
 }

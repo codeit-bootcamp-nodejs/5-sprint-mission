@@ -5,12 +5,14 @@ export class Article extends BaseEntity {
   #userId;
   #title;
   #content;
+  #isLiked;
 
   constructor({
     id,
     userId,
     title = undefined,
     content = undefined,
+    isLiked = false,
     createdAt = undefined,
     updatedAt = undefined,
   }) {
@@ -18,6 +20,7 @@ export class Article extends BaseEntity {
     this.#userId = userId;
     this.#title = title;
     this.#content = content;
+    this.#isLiked = isLiked;
   }
 
   static createFactory = ({ userId, title, content }) => {
@@ -25,7 +28,7 @@ export class Article extends BaseEntity {
     this.validateContentRule(content);
     return new Article({ userId, title, content });
   };
-  static updateFactory = ({ articleId : id, title, content }) => {
+  static updateFactory = ({ articleId: id, title, content }) => {
     if (title !== undefined) {
       this.validateTitleRule(title);
     }
@@ -34,7 +37,7 @@ export class Article extends BaseEntity {
     }
     return new Article({ id, title, content });
   };
- 
+
   static validateTitleRule = (title) => {
     if (title.length > 20) {
       throw new Exception("TITLE_TOO_LONG");
@@ -54,5 +57,8 @@ export class Article extends BaseEntity {
   }
   get content() {
     return this.#content;
+  }
+  get isLiked() {
+    return this.#isLiked;
   }
 }

@@ -12,9 +12,6 @@ export class GetProductListReqValidator extends BaseValidator {
     offset = Number(offset);
     limit = Number(limit);
 
-    if (this.isEmpty(this.userId)) {      
-      throw new Exception("USERID_FORM");
-    }
     if (!this.isInt(offset) || offset < 0) {
       throw new Exception("OFFSET_FORM");
     }
@@ -26,7 +23,7 @@ export class GetProductListReqValidator extends BaseValidator {
       throw new Exception("SORT_FORM");
     }
     return {
-      userId : this.userId,
+      userId: this.userId,
       offset,
       limit,
       sort,

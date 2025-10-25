@@ -12,7 +12,7 @@ export class UpdateProductCommentReqValidator extends BaseValidator {
     let { commentId } = this.params;
     commentId = Number(commentId);
 
-    if (this.isEmpty(this.userId)) {      
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (this.isEmpty(productId)) {

@@ -31,9 +31,8 @@ export class ArticleCommentController {
       query: req.query,
       params: req.params,
     }).validate();
-    const getCommentList = await this.#services.comment.getCommentList(
-      getCommentListReqDto,
-    );
+    const getCommentList =
+      await this.#services.comment.getCommentList(getCommentListReqDto);
     const getCommentListResDto = new GetCommentListResDto(getCommentList);
     return res.json(getCommentListResDto);
   };

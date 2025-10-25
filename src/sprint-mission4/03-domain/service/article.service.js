@@ -43,6 +43,26 @@ export class ArticleService {
     return foundArticleList;
   };
 
+  addArticleLike = async ({ userId, articleId }) => {
+    const foundArticle = await this.#repos.article.findArticleById(articleId);
+    if (!foundArticle) {
+      throw new Exception("ARTICLE_NOT_EXIST");
+    }
+
+    const existingLike = await this.#repos.article.findArticleLike(
+      userId,
+      articleId,
+    );
+    if (existingLike) {
+      if (!existingLike.isLiked) {
+        return this.#repos.article.updateArticleLike(userId, articleId, true);
+      }
+      throw new Exception("LIKE_EXIST");
+    }
+
+    return this.#repos.article.addArticleLike(userId, articleId);
+  };
+
   createArticle = async ({ userId, title, content }) => {
     const foundArticle = await this.#repos.article.findArticleByTitle(title);
     if (foundArticle) {
@@ -81,5 +101,22 @@ export class ArticleService {
     }
     const deletedArticle = await this.#repos.article.delete(articleId);
     return deletedArticle;
+  };
+
+  cancelArticleLike = async ({ userId, articleId }) => {
+    const foundArticle = await this.#repos.article.findArticleById(articleId);
+    if (!foundArticle) {
+      throw new Exception("ARTICLE_NOT_EXIST");
+    }
+
+    const existingLike = await this.#repos.article.findArticleLike(
+      userId,
+      articleId,
+    );
+    if (!existingLike) {
+      throw new Exception("LIKE_NOT_EXIST");
+    }
+
+    return this.#repos.article.cancelArticleLike(userId, articleId, false);
   };
 }

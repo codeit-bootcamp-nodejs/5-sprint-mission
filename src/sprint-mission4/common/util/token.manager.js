@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { CONFIG_KEY } from "../const/config.key.js";
 import { Exception } from "../const/exception.js";
 
-
 export class TokenManager {
   #accessTokenExpiresIn;
   #refreshTokenExpiresIn;
@@ -10,7 +9,7 @@ export class TokenManager {
 
   constructor(configManager) {
     this.#configManager = configManager;
-    this.#accessTokenExpiresIn = 60*60;
+    this.#accessTokenExpiresIn = 60 * 60;
     this.#refreshTokenExpiresIn = "1d";
   }
 
@@ -26,23 +25,24 @@ export class TokenManager {
       this.#configManager.get(CONFIG_KEY.TOKEN_SECRET),
       { expiresIn: this.#refreshTokenExpiresIn },
     );
-    
+
     return { accessToken, refreshToken };
-  }
-  
+  };
+
   verify = (token) => {
-    try{
+    try {
       return jwt.verify(
         token,
         this.#configManager.get(CONFIG_KEY.TOKEN_SECRET),
       );
     } catch (err) {
-      if (err.name === "TokenExpiredError") { // 토큰 만료 시
+      if (err.name === "TokenExpiredError") {
+        // 토큰 만료 시
         throw new Exception("TOKEN_EXPIRED");
       } else {
-        console.log(err)
+        console.log(err);
         throw new Error("토큰 관련 에러 발생!!!");
       }
     }
-  }
+  };
 }

@@ -14,16 +14,21 @@ export class AuthService {
     if (!user) {
       throw new Exception("USER_NOT_EXSIST");
     }
-    const isPasswordMatch = await this.#managers.hash.verifyPassword(password, user.password);
+    const isPasswordMatch = await this.#managers.hash.verifyPassword(
+      password,
+      user.password,
+    );
     if (!isPasswordMatch) {
       throw new Exception("PASSWORD_MISMATCH");
     }
-    const { accessToken, authenticatedUser } = await this.generateTokens(user.id);
+    const { accessToken, authenticatedUser } = await this.generateTokens(
+      user.id,
+    );
 
     return { accessToken, authenticatedUser };
-  }
+  };
 
-  signOutUser = async ({id}) => {
+  signOutUser = async ({ id }) => {
     const foundUser = await this.#repos.user.findUserByEmail(id);
 
     if (foundUser) {
@@ -31,20 +36,25 @@ export class AuthService {
     }
 
     const createdUser = await this.#repos.user.refreshTokenDelete(id, null);
-  }
+  };
 
   //다 만료 시에는 로그인 페이지로 이동하게 프론트엔트 코드를 구현하면 될 것 같다
-  generateTokens = async (userId) => { 
+  generateTokens = async (userId) => {
     const { accessToken, refreshToken } = this.#managers.token.generate({
-      userId
+      userId,
     });
-    const authenticatedUser = await this.#repos.user.generate(userId, refreshToken);
+    const authenticatedUser = await this.#repos.user.generate(
+      userId,
+      refreshToken,
+    );
     return { accessToken, authenticatedUser };
-  }
+  };
 
-  refreshTokens = async (refreshToken) => { // 엑세스 만료 시
+  refreshTokens = async (refreshToken) => {
+    // 엑세스 만료 시
     const decoded = this.#managers.token.verify(refreshToken);
-    const foundUser = await this.#repos.user.findUserByRefreshToken(refreshToken);
+    const foundUser =
+      await this.#repos.user.findUserByRefreshToken(refreshToken);
 
     if (!foundUser) {
       throw new Exception("REFRESHTOKEN_NOT_EXSIST");
@@ -57,11 +67,13 @@ export class AuthService {
     const { accessToken, refreshToken: updatedrefreshToken } =
       this.#managers.token.generate({
         userId: decoded.userId,
-      }
-      );
+      });
 
-    const user = await this.#repos.user.generate(decoded.userId, updatedrefreshToken);
+    const user = await this.#repos.user.generate(
+      decoded.userId,
+      updatedrefreshToken,
+    );
 
     return { accessToken, user };
-  }
+  };
 }

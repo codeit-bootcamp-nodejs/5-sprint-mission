@@ -4,7 +4,7 @@ export class UserProductsResDto {
 
   constructor({ user, products }) {
     this.email = user.email;
-    this.products = products.map(product => ({
+    this.products = products.map((product) => ({
       name: product.name,
       description: product.description,
       price: product.price,

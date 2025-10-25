@@ -1,4 +1,3 @@
-
 import { Exception } from "../../../../common/const/exception.js";
 import { BaseValidator } from "../../base.validator.js";
 
@@ -12,7 +11,7 @@ export class DeleteArticleCommentReqValidator extends BaseValidator {
     let { commentId } = this.params;
     commentId = Number(commentId);
 
-    if (this.isEmpty(this.userId)) {      
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (this.isEmpty(articleId)) {
@@ -23,7 +22,7 @@ export class DeleteArticleCommentReqValidator extends BaseValidator {
     }
 
     return {
-      userId : this.userId,
+      userId: this.userId,
       articleId,
       commentId,
     };

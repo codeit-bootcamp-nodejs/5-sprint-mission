@@ -9,12 +9,12 @@ export class GetArticleReqValidator extends BaseValidator {
   validate = () => {
     const { articleId } = this.params;
 
-    if (this.isEmpty(articleId)) {      
+    if (this.isEmpty(articleId)) {
       throw new Exception("ARTICLEID_FORM");
     }
 
     return {
-      articleId
+      articleId,
     };
   };
 }

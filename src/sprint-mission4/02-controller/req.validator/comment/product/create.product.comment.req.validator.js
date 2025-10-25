@@ -9,7 +9,7 @@ export class CreateProductCommentReqValidator extends BaseValidator {
   validate() {
     const { content } = this.body;
     const { productId } = this.params;
-    if (this.isEmpty(this.userId)) {      
+    if (this.isEmpty(this.userId)) {
       throw new Exception("USERID_FORM");
     }
     if (this.isEmpty(productId)) {

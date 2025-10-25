@@ -8,7 +8,7 @@ export class BaseRouter {
 
   constructor(basePath, managers) {
     this.basePath = basePath;
-    this.managers = managers
+    this.managers = managers;
     this.router = express.Router();
   }
 
@@ -26,7 +26,7 @@ export class BaseRouter {
   };
 
   isAuthenticate = (req, res, next) => {
-    if(!req.headers.authorization) {
+    if (!req.headers.authorization) {
       throw new Exception("INVALID_AUTH");
     }
 

@@ -1,3 +1,4 @@
+import { ArticleMapper } from "./mapper/article.mapper.js";
 import { ProductMapper } from "./mapper/product.mapper.js";
 import { UserMapper } from "./mapper/user.mapper.js";
 
@@ -20,23 +21,68 @@ export class UserRepo {
     });
     return user ? UserMapper.toEntity(user) : null;
   };
+  findUserLikeProducts = async (id, offset, limit) => {
+    const userLikeArticles = await this.#prisma.productLike.findMany({
+      where: {
+        userId: id,
+        isLiked: true,
+      },
+      skip: offset,
+      take: limit,
+      include: {
+        product: true,
+      },
+    });
+    return userLikeArticles && userLikeArticles.length > 0
+      ? userLikeArticles.map((userLikeArticles) =>
+          ProductMapper.toEntityLike(userLikeArticles),
+        )
+      : null;
+  };
+  findUserLikeArticles = async (id, offset, limit) => {
+    const userLikeArticles = await this.#prisma.articleLike.findMany({
+      where: {
+        userId: id,
+        isLiked: true,
+      },
+      skip: offset,
+      take: limit,
+      include: {
+        article: true,
+      },
+    });
+    return userLikeArticles && userLikeArticles.length > 0
+      ? userLikeArticles.map((userLikeArticle) =>
+          ArticleMapper.toEntityLike(userLikeArticle),
+        )
+      : null;
+  };
+
   findUserByRefreshToken = async (refreshToken) => {
     const user = await this.#prisma.user.findUnique({
       where: { refreshToken },
     });
     return user ? UserMapper.toEntity(user) : null;
-  }
-  findUserProducts = async (id) => {
+  };
+  findUserProducts = async (id, offset, limit, orderBy) => {
     const userProducts = await this.#prisma.product.findMany({
       where: { userId: id },
+      skip: offset,
+      take: limit,
+      orderBy: [orderBy],
     });
-    return userProducts && userProducts.length > 0 ? userProducts.map((userProduct) => ProductMapper.toEntity(userProduct)) : null;
-  }
+    return userProducts && userProducts.length > 0
+      ? userLikeProduserProductsucts.map((userProduct) =>
+          ProductMapper.toEntityLike(userProduct),
+        )
+      : null;
+  };
+
   create = async (entity) => {
     const newUser = await this.#prisma.user.create({
       data: {
         ...UserMapper.toPersistent(entity),
-      }
+      },
     });
     return UserMapper.toEntity(newUser);
   };
@@ -48,7 +94,7 @@ export class UserRepo {
       },
       data: {
         ...UserMapper.toPersistent(entity),
-      }
+      },
     });
     return UserMapper.toEntity(updateUser);
   };
@@ -60,7 +106,7 @@ export class UserRepo {
       },
       data: {
         ...UserMapper.toPersistent(entity),
-      }
+      },
     });
     return UserMapper.toEntity(updateUser);
   };
@@ -68,7 +114,7 @@ export class UserRepo {
   delete = async (id) => {
     const deleteUser = await this.#prisma.user.delete({
       where: {
-        id
+        id,
       },
     });
     return deleteUser;
@@ -78,12 +124,12 @@ export class UserRepo {
     const user = await this.#prisma.user.update({
       where: { id: userId },
       data: {
-        refreshToken
-      }
+        refreshToken,
+      },
     });
 
     return user ? UserMapper.toEntity(user) : null;
-  }
+  };
 
   refreshTokenDelete = async (id, refreshToken) => {
     const user = await this.#prisma.user.update({

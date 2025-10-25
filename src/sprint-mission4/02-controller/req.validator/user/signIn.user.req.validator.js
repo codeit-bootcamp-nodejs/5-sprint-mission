@@ -1,7 +1,7 @@
 import { Exception } from "../../../common/const/exception.js";
 import { BaseValidator } from "../base.validator.js";
 
-export class SignInUserReqValidator extends BaseValidator{
+export class SignInUserReqValidator extends BaseValidator {
   email;
   password;
 
@@ -10,18 +10,18 @@ export class SignInUserReqValidator extends BaseValidator{
   }
 
   validate() {
-    const {email, password} = this.body
+    const { email, password } = this.body;
 
-    if(!this.isString(email) || this.isEmpty(email)){
+    if (!this.isString(email) || this.isEmpty(email)) {
       throw new Exception("EMAIL_FORM");
     }
-    if(!this.isString(password) || this.isEmpty(password)){
+    if (!this.isString(password) || this.isEmpty(password)) {
       throw new Exception("PASSWORD_FORM");
     }
 
     return {
       email,
-      password
-    }
+      password,
+    };
   }
 }

@@ -12,7 +12,7 @@ export class SignUpUserReqValidator extends BaseValidator {
   }
 
   validate() {
-    const { email, nickname, image = undefined, password } = this.body
+    const { email, nickname, image = undefined, password } = this.body;
 
     if (!this.isString(email) || this.isEmpty(email)) {
       throw new Exception("EMAIL_FORM");
@@ -25,7 +25,11 @@ export class SignUpUserReqValidator extends BaseValidator {
         throw new Exception("IMAGE_FORM");
       }
     }
-    if (!this.isString(password) || this.isEmpty(password) || password.length < 4) {
+    if (
+      !this.isString(password) ||
+      this.isEmpty(password) ||
+      password.length < 4
+    ) {
       throw new Exception("PASSWORD_FORM");
     }
 
@@ -33,7 +37,7 @@ export class SignUpUserReqValidator extends BaseValidator {
       email,
       nickname,
       image,
-      password
-    }
+      password,
+    };
   }
 }

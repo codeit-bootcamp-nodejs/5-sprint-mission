@@ -29,7 +29,7 @@ export class GetProductCommentListReqValidator extends BaseValidator {
       cursor,
       limit,
       sort,
-      productId
+      productId,
     };
   }
 }

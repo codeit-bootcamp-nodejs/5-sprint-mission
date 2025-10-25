@@ -26,7 +26,14 @@ export class User extends BaseEntity {
     this.#refreshToken = refreshToken;
   }
 
-  static forCreate({ id = undefined, email, nickname, image, password, refreshToken }) {
+  static forCreate({
+    id = undefined,
+    email,
+    nickname,
+    image,
+    password,
+    refreshToken,
+  }) {
     if (email) {
       this.validateEmailRule(email);
     }

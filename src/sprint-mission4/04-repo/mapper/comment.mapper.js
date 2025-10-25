@@ -4,7 +4,7 @@ export class CommentMapper {
   static toEntity(record) {
     return new Comment({
       id: record.id,
-      userId : record.userId,
+      userId: record.userId,
       content: record.content,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,

@@ -41,7 +41,13 @@ export class CommentRepo extends BaseRepo {
     }
   };
 
-  findCommentList = async ({ productId, articleId, cursor, limit, orderBy }) => {
+  findCommentList = async ({
+    productId,
+    articleId,
+    cursor,
+    limit,
+    orderBy,
+  }) => {
     if (productId) {
       const commentList = await this.prisma.productComment.findMany({
         where: { productId },
@@ -65,17 +71,17 @@ export class CommentRepo extends BaseRepo {
     }
   };
 
-  create = async ( entity ) => {
+  create = async (entity) => {
     if (entity.articleId) {
       const comment = await this.prisma.articleComment.create({
         data: {
           ...CommentMapper.toPersistent(entity),
-          User:{
-            connect: { id: entity.userId}
+          User: {
+            connect: { id: entity.userId },
           },
           Article: {
-            connect: { id: entity.articleId }
-          }
+            connect: { id: entity.articleId },
+          },
         },
       });
       return CommentMapper.toEntity(comment);
@@ -84,12 +90,12 @@ export class CommentRepo extends BaseRepo {
       const comment = await this.prisma.productComment.create({
         data: {
           ...CommentMapper.toPersistent(entity),
-          User:{
-            connect: { id: entity.userId}
+          User: {
+            connect: { id: entity.userId },
           },
           Product: {
-            connect: { id: entity.productId }
-          }
+            connect: { id: entity.productId },
+          },
         },
       });
       return CommentMapper.toEntity(comment);
@@ -101,7 +107,7 @@ export class CommentRepo extends BaseRepo {
       const updatedcomment = await this.prisma.articleComment.update({
         where: {
           id: entity.id,
-          articleId: entity.articleId
+          articleId: entity.articleId,
         },
         data: {
           ...CommentMapper.toPersistent(entity),
@@ -131,7 +137,7 @@ export class CommentRepo extends BaseRepo {
     if (articleId) {
       const deletedComment = await this.prisma.articleComment.delete({
         where: {
-          id : commentId,
+          id: commentId,
           articleId,
         },
       });
@@ -141,7 +147,7 @@ export class CommentRepo extends BaseRepo {
     if (productId) {
       const deletedComment = await this.prisma.productComment.delete({
         where: {
-          id : commentId,
+          id: commentId,
           productId,
         },
       });
@@ -149,18 +155,17 @@ export class CommentRepo extends BaseRepo {
     }
   };
 
-  count = async ({ articleId,
-      productId, }) => {
+  count = async ({ articleId, productId }) => {
     let totalCount;
     if (productId) {
       totalCount = await this.prisma.productComment.count({
-        where: { productId }
+        where: { productId },
       });
     }
 
     if (articleId) {
       totalCount = await this.prisma.articleComment.count({
-        where: { articleId }
+        where: { articleId },
       });
     }
     return totalCount;
