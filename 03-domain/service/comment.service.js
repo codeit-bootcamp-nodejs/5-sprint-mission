@@ -6,12 +6,13 @@ import { Comment } from "../entity/comment.js";
 
 export class CommentService {
     #repos
-    constructor(repos) {
+
+    constructor(repos, auth) {
         this.#repos = repos;
     }
 
-    async getAllComments(params, query) {
-        const commentEntities = await this.#repos.commentRepo.findAll(params, query);
+    async getAllArticleComments(articleId) {
+        const commentEntities = await this.#repos.commentRepo.findAllArticleComment(articleId);
         const commentDtos = commentEntities.map((entity) => new CommentResDto(entity));
         return commentDtos;
     }
@@ -29,8 +30,16 @@ export class CommentService {
         return new CommentResDto(createdComment);
     }
 
+    async createArticleComment(dto) {
+        const commentEntity = Comment.forCreate(dto);
+
+        const createdComment = await this.#repos.commentRepo.saveArticleComment(commentEntity);
+
+        return new CommentResDto(createdComment);
+    }
+
+
     async updateComment(dto) {
-        console.log(dto.params.commentId);
         const Entity = Comment.forCreate({
             id: dto.params.commentId,
             content: dto.content,

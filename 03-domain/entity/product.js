@@ -10,8 +10,10 @@ export class Product {
     #tags
     #createdAt
     #updatedAt
+    #userId
+    #isLiked
 
-    constructor({ id = uuidv4(), name, description, price, tags }) {
+    constructor({ id = uuidv4(), name, description, price, tags, userId, isLiked }) {
         this.#id = id;
         this.#name = name;
         this.#description = description;
@@ -19,6 +21,12 @@ export class Product {
         this.#tags = tags;
         this.#createdAt = new Date();
         this.#updatedAt = new Date();
+        this.#userId = userId;
+        this.#isLiked = isLiked;
+    }
+    
+    get isLiked() {
+        return this.#isLiked;
     }
 
     get id() {
@@ -48,14 +56,18 @@ export class Product {
     get updatedAt() {
         return this.#updatedAt;
     }
+    
+    get userId(){ 
+        return this.#userId;
+    }
 
-    static forCreate({ id, name, description, price, tags }) {
+    static forCreate({ id, name, description, price, tags, userId, isLiked }) {
         this.validateName(name);
         this.validateDescription(description);
         this.validatePrice(price);
         this.validateTags(tags);
 
-        return new Product({ id, name, description, price, tags });
+        return new Product({ id, name, description, price, tags, userId , isLiked});
     }
 
 

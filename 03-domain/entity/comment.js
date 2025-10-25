@@ -8,14 +8,16 @@ export class Comment {
     #updatedAt
     #articleId
     #productId
+    #userId
 
-    constructor({ id = uuidv4(), content, articleId = "", productId = "" }) {
+    constructor({ id, content, userId, productId, articleId, createdAt, updatedAt }) {
         this.#id = id;
         this.#content = content;
         this.#articleId = articleId;
         this.#productId = productId;
-        this.#createdAt = new Date();
-        this.#updatedAt = new Date();
+        this.#createdAt = createdAt;
+        this.#updatedAt = updatedAt;
+        this.#userId = userId;
     }
 
     get id() {
@@ -42,12 +44,14 @@ export class Comment {
         return this.#productId;
     }
 
-    static forCreate({ id, content, params = {} }) {
+    get userId() {
+        return this.#userId;
+    }
+
+    static forCreate({ id, content, userId, productId, articleId, createdAt, updatedAt }) {
         this.validateContent(content);
 
-        const { productId = null, articleId = null } = params;
-
-        return new Comment({ id, content, productId, articleId });
+        return new Comment({ id, content, userId, productId, articleId, createdAt, updatedAt });
 
     }
 

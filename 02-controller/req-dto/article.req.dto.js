@@ -5,12 +5,14 @@ import { BaseReqDto } from "./base.req.dto.js"
 export class ArticleReqDto extends BaseReqDto {
     title
     content
+    userId
 
     constructor(request) {
         super(request)
         const { title, content } = this.body;
         this.title = title;
         this.content = content;
+        this.userId = request.userId;
     }
 
     validate() {

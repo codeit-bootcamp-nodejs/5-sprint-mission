@@ -37,12 +37,29 @@ export class CommentRepository extends BaseRepository {
                 createdAt: entity.createdAt,
                 updatedAt: entity.updatedAt,
                 articleId: entity.articleId,
-                productId: entity.productId
+                productId: entity.productId,
+                userId: entity.userId
             }
         });
 
         return Comment.forCreate(comment);
     }
+
+
+    async saveArticleComment(entity) {
+        const comment = await this.prisma.comment.create({
+            data: {
+                content: entity.content,
+                articleId: entity.articleId,
+                userId: entity.userId
+            }
+        });
+
+        console.log("hi");
+        console.log(comment);
+        return Comment.forCreate(comment);
+    }
+
 
     async updateById(entity) {
         const id = entity.id;
