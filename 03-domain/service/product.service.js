@@ -5,8 +5,22 @@ import { Product } from "../entity/product.js";
 
 export class ProductService {
     #repos
+
     constructor(repos) {
         this.#repos = repos;
+    }
+
+    async likeProduct(id) {
+        const product = await this.#repos.productRepo.findById(id);
+        let like = true;
+        if (product.isLiked) {
+            like = false;
+        } else {
+            like = true;
+        };
+        
+        const productEntity = await this.#repos.productRepo.likeById(id, like);
+        return new ProductResDto(productEntity);
     }
 
     async getAllProducts(query) {
