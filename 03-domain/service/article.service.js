@@ -4,7 +4,8 @@ import { Article } from "../entity/article.js";
 
 export class ArticleService {
     #repos
-    constructor(repos) {
+    
+    constructor(repos, auth) {
         this.#repos = repos;
     }
 
@@ -15,7 +16,7 @@ export class ArticleService {
     }
 
     async getArticle(id) {
-        const articleEntity  = await this.#repos.articleRepo.findById(id);
+        const articleEntity = await this.#repos.articleRepo.findById(id);
         return new ArticleResDto(articleEntity);
     }
 
@@ -28,11 +29,10 @@ export class ArticleService {
     }
 
     async updateArticle(dto) {
-        console.log(dto);
         const articleEntity = Article.forCreate({
             id: dto.params.id,
             title: dto.title,
-            content: dto.content ,
+            content: dto.content,
         });
 
         const updatedArticle = await this.#repos.articleRepo.updateById(articleEntity);

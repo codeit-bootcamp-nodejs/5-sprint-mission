@@ -48,7 +48,7 @@ export class ArticleRepository extends BaseRepository {
 
     async save(entity) {
 
-        const { id, title, content, createdAt, updatedAt } = entity;
+        const { id, title, content, createdAt, updatedAt, userId } = entity;
 
         const article = await this.prisma.article.create({
             data: {
@@ -56,7 +56,8 @@ export class ArticleRepository extends BaseRepository {
                 title: title,
                 content: content,
                 createdAt: createdAt,
-                updatedAt: updatedAt
+                updatedAt: updatedAt,
+                userId : userId
             }
         });
 
