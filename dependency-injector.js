@@ -14,6 +14,10 @@ import { PrismaClient } from '@prisma/client';
 import { CommentRepository } from "./04-repository/comment.repository.js";
 import { ArticleRepository } from "./04-repository/article.repository.js";
 import { ProductRepository } from "./04-repository/product.repository.js";
+import { UserRepository } from "./04-repository/user.repository.js";
+import { UserController } from "./02-controller/user.controller.js";
+import { UserService } from "./03-domain/service/user.service.js";
+import { Authenticator } from "./external/authenticator.js";
 
 
 export class DependencyInjector {
@@ -30,24 +34,38 @@ export class DependencyInjector {
         const productRepository = new ProductRepository(prisma);
         const articleRepository = new ArticleRepository(prisma);
         const commentRepository = new CommentRepository(prisma);
+        const userRepository = new UserRepository(prisma);
 
         const repos = {
             productRepo: productRepository,
             articleRepo: articleRepository,
-            commentRepo: commentRepository
+            commentRepo: commentRepository,
+            userRepo: userRepository
         };
 
+        const authenticator = new Authenticator(repos);
+
+
         // Service
+        const userService = new UserService(repos, authenticator);
         const productService = new ProductService(repos);
         const articleService = new ArticleService(repos);
         const commentService = new CommentService(repos);
+        const services = {
+            product: productService,
+            article: articleService,
+            comment: commentService,
+            user: userService
+        }
+
 
         // Controller
-        const productController = new ProductController(productService);
-        const articleController = new ArticleController(articleService);
-        const productCommentController = new ProductCommentController(commentService);
-        const articleCommentController = new ArticleCommentController(commentService)
-        const controllers = [productController, articleController, productCommentController, articleCommentController];
+        const userController = new UserController(services, authenticator);
+        const productController = new ProductController(services, authenticator);
+        const articleController = new ArticleController(services, authenticator);
+        const productCommentController = new ProductCommentController(services, authenticator);
+        const articleCommentController = new ArticleCommentController(services, authenticator)
+        const controllers = [productController, articleController, productCommentController, articleCommentController, userController];
 
         // Server
         const server = new Server(controllers);
