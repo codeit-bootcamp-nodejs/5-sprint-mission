@@ -1,74 +1,34 @@
-function bad(m) {
-  const e = new Error(m);
-  e.status = 400;
-  return e;
-}
-export function validateCreateProduct(req, res, next) {
-  const { name, description, price, tags = [] } = req.body ?? {};
-  if (!name || name.trim().length < 2) return next(bad("상품명은 최소 2자"));
-  if (!description || description.trim().length < 2)
-    return next(bad("설명은 최소 2자"));
-  const num = Number(price);
-  if (!Number.isInteger(num) || num < 0)
-    return next(bad("가격은 0 이상의 정수"));
-  if (!Array.isArray(tags) || !tags.every((t) => typeof t === "string"))
-    return next(bad("태그는 문자열 배열"));
-  req.validated = { name, description, price: num, tags };
+export const validateSignup = (req, res, next) => {
+  const { email, nickname, password } = req.body || {};
+  if (!email || !nickname || !password)
+    return res.status(400).json({ message: "email, nickname, password는 필수입니다." });
   next();
-}
-export function validateUpdateProduct(req, res, next) {
-  const { name, description, price, tags, imageUrl } = req.body ?? {},
-    dto = {};
-  if (name !== undefined) {
-    if (!name || name.trim().length < 2) return next(bad("상품명은 최소 2자"));
-    dto.name = name;
-  }
-  if (description !== undefined) {
-    if (!description || description.trim().length < 2)
-      return next(bad("설명은 최소 2자"));
-    dto.description = description;
-  }
-  if (price !== undefined) {
-    const n = Number(price);
-    if (!Number.isInteger(n) || n < 0) return next(bad("가격은 0 이상의 정수"));
-    dto.price = n;
-  }
-  if (tags !== undefined) {
-    if (!Array.isArray(tags) || !tags.every((t) => typeof t === "string"))
-      return next(bad("태그는 문자열 배열"));
-    dto.tags = tags;
-  }
-  if (imageUrl !== undefined) dto.imageUrl = imageUrl;
-  req.validated = dto;
+};
+
+export const validateLogin = (req, res, next) => {
+  const { email, password } = req.body || {};
+  if (!email || !password)
+    return res.status(400).json({ message: "email, password는 필수입니다." });
   next();
-}
-export function validateCreateArticle(req, res, next) {
-  const { title, content } = req.body ?? {};
-  if (!title || title.trim().length < 2) return next(bad("제목은 최소 2자"));
-  if (!content || content.trim().length < 2)
-    return next(bad("내용은 최소 2자"));
-  req.validated = { title, content };
+};
+
+export const validateCreateProduct = (req, res, next) => {
+  const { name, description, price } = req.body || {};
+  if (!name || !description || price == null)
+    return res.status(400).json({ message: "name, description, price는 필수입니다." });
   next();
-}
-export function validateUpdateArticle(req, res, next) {
-  const { title, content } = req.body ?? {},
-    dto = {};
-  if (title !== undefined) {
-    if (!title || title.trim().length < 2) return next(bad("제목은 최소 2자"));
-    dto.title = title;
-  }
-  if (content !== undefined) {
-    if (!content || content.trim().length < 2)
-      return next(bad("내용은 최소 2자"));
-    dto.content = content;
-  }
-  req.validated = dto;
+};
+
+export const validateCreateArticle = (req, res, next) => {
+  const { title, content } = req.body || {};
+  if (!title || !content)
+    return res.status(400).json({ message: "title, content는 필수입니다." });
   next();
-}
-export function validateCreateComment(req, res, next) {
-  const { content } = req.body ?? {};
-  if (!content || content.trim().length < 1)
-    return next(bad("댓글은 1자 이상"));
-  req.validated = { content };
+};
+
+export const validateCreateComment = (req, res, next) => {
+  const { content } = req.body || {};
+  if (!content || content.trim().length === 0)
+    return res.status(400).json({ message: "content는 필수입니다." });
   next();
-}
+};
