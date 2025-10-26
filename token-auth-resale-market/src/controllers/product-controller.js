@@ -42,4 +42,18 @@ export class ProductController {
     res.json(updatedProduct);
 
   };
+
+  likeProduct = async (req, res) => {
+    const productId = parseInt(req.params.id);
+    const userId = req.user.userId;
+    const result = await this.productService.likeProduct(productId, userId);
+    res.json(result);
+  };
+
+  unlikeProduct = async (req, res) => {
+    const productId = parseInt(req.params.id);
+    const userId = req.user.userId;
+    const result = await this.productService.unlikeProduct(productId, userId);
+    res.json(result);
+  };
 }

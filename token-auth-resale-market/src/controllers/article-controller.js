@@ -42,4 +42,18 @@ export class ArticleController {
     await this.articleService.deleteArticle(articleId);
     res.json({ message: "게시글이 삭제되었습니다" });
   };
+  
+  likeArticle = async (req, res) => {
+    const articleId = parseInt(req.params.id);
+    const userId = req.user.userId;
+    const result = await this.articleService.likeArticle(articleId, userId);
+    res.json(result);
+  };
+
+  unlikeArticle = async (req, res) => {
+    const articleId = parseInt(req.params.id);
+    const userId = req.user.userId;
+    const result = await this.articleService.unlikeArticle(articleId, userId);
+    res.json(result);
+  };
 }

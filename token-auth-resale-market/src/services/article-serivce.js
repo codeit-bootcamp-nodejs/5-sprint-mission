@@ -40,4 +40,25 @@ export class ArticleService {
     await this.articleRepository.delete(articleId);
     return true;
   }
+  async likeArticle(articleId, userId) {
+    const article = await this.prisma.article.findUnique({ where: { id: articleId } });
+    if (!article) throw new Exception(404, "존재하지 않는 게시글입니다");
+    const exists = await this.prisma.articleLike.findUnique({
+      where: { articleId_userId: { articleId, userId } },
+    });
+    if (exists) throw new Exception(409, "이미 좋아요한 게시글입니다");
+    await this.prisma.articleLike.create({ data: { articleId, userId } });
+    return { liked: true };
+  }
+
+  async unlikeArticle(articleId, userId) {
+    const exists = await this.prisma.articleLike.findUnique({
+      where: { articleId_userId: { articleId, userId } },
+    });
+    if (!exists) throw new Exception(404, "좋아요한 내역이 없습니다");
+    await this.prisma.articleLike.delete({
+      where: { articleId_userId: { articleId, userId } },
+    });
+    return { liked: false };
+  }
 }
