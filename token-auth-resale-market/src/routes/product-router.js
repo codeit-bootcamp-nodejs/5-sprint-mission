@@ -10,5 +10,9 @@ router.get("/:id", productController.getProductDetail);
 router.post("/", authMiddleware, productController.createProduct);
 router.patch("/:id", authMiddleware, productController.updateProduct);
 router.delete("/:id", authMiddleware, productController.deleteProduct);
+router.post("/:id/like", authMiddleware, productController.likeProduct);
+router.delete("/:id/like", authMiddleware, productController.unlikeProduct);
+
+
 
 export default router;

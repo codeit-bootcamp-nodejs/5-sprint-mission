@@ -10,5 +10,7 @@ router.get("/:id", articleController.getArticleDetail);
 router.post("/", authMiddleware, articleController.createArticle);
 router.patch("/:id", authMiddleware, articleController.updateArticle);
 router.delete("/:id", authMiddleware, articleController.deleteArticle);
+router.post("/:id/like", authMiddleware, articleController.likeArticle);
+router.delete("/:id/like", authMiddleware, articleController.unlikeArticle);
 
 export default router;
