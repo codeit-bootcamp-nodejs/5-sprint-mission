@@ -13,6 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  nickname  String
+  image     String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+  articles  Article[]
+  comments  Comment[]
+  likesOnProducts LikeProduct[]
+  likesOnArticles LikeArticle[]
+}
+
 model Product {
   id          String    @id @default(uuid())
   name        String
@@ -22,7 +38,12 @@ model Product {
   imageUrl    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   comments    Comment[] @relation("ProductComment")
+  likes       LikeProduct[]
 }
 
 model Article {
@@ -31,7 +52,12 @@ model Article {
   content   String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   comments  Comment[] @relation("ArticleComment")
+  likes     LikeArticle[]
 }
 
 model Comment {
@@ -40,12 +66,41 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   productId String?
   product   Product? @relation("ProductComment", fields: [productId], references: [id], onDelete: Cascade)
 
   articleId String?
   article   Article? @relation("ArticleComment", fields: [articleId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@index([productId])
   @@index([articleId])
 }
+
+model LikeProduct {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+} 
+
+model LikeArticle {
+  id        String   @id @default(uuid())
+  userId    String
+  articleId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+}
+
