@@ -16,14 +16,19 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
-app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "public", "uploads")),
+);
 
 app.get("/health", (req, res) => res.json({ ok: true }));
 

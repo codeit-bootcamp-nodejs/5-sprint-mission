@@ -8,7 +8,13 @@ const router = express.Router();
 router.get("/me", authenticate, async (req, res) => {
   const me = await prisma.user.findUnique({
     where: { id: req.user.id },
-    select: { id: true, email: true, nickname: true, image: true, createdAt: true },
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+      image: true,
+      createdAt: true,
+    },
   });
   res.json(me);
 });
@@ -26,9 +32,15 @@ router.patch("/me", authenticate, async (req, res) => {
 router.patch("/me/password", authenticate, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const ok = await bcrypt.compare(currentPassword, req.user.password);
-  if (!ok) return res.status(400).json({ message: "현재 비밀번호가 일치하지 않습니다." });
+  if (!ok)
+    return res
+      .status(400)
+      .json({ message: "현재 비밀번호가 일치하지 않습니다." });
   const hashed = await bcrypt.hash(newPassword, 10);
-  await prisma.user.update({ where: { id: req.user.id }, data: { password: hashed } });
+  await prisma.user.update({
+    where: { id: req.user.id },
+    data: { password: hashed },
+  });
   res.json({ message: "비밀번호 변경 완료" });
 });
 
