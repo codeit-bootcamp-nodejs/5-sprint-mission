@@ -6,7 +6,11 @@ import { validateComment } from "../middlewares/validator/validate.comment.js";
 const prisma = new PrismaClient();
 const router = Router();
 
-router.post("/product/:productId", authMiddleware, validateComment, async (req, res, next) => {
+router.post(
+  "/product/:productId",
+  authMiddleware,
+  validateComment,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { productId } = req.params;
@@ -34,7 +38,11 @@ router.post("/product/:productId", authMiddleware, validateComment, async (req, 
   },
 );
 
-router.post("/article/:articleId", authMiddleware, validateComment, async (req, res, next) => {
+router.post(
+  "/article/:articleId",
+  authMiddleware,
+  validateComment,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { articleId } = req.params;
@@ -142,7 +150,11 @@ router.get("/article/:articleId", async (req, res, next) => {
   }
 });
 
-router.patch("/product/:commentId", authMiddleware, validateComment, async (req, res, next) => {
+router.patch(
+  "/product/:commentId",
+  authMiddleware,
+  validateComment,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { commentId } = req.params;
@@ -156,7 +168,9 @@ router.patch("/product/:commentId", authMiddleware, validateComment, async (req,
       }
 
       if (comment.authorId !== userId) {
-        return res.status(403).json({ error: "댓글을 수정할 권한이 없습니다." });
+        return res
+          .status(403)
+          .json({ error: "댓글을 수정할 권한이 없습니다." });
       }
 
       const updatedComment = await prisma.productComment.update({
@@ -174,7 +188,11 @@ router.patch("/product/:commentId", authMiddleware, validateComment, async (req,
   },
 );
 
-router.patch("/article/:commentId", authMiddleware, validateComment, async (req, res, next) => {
+router.patch(
+  "/article/:commentId",
+  authMiddleware,
+  validateComment,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { commentId } = req.params;
@@ -188,7 +206,9 @@ router.patch("/article/:commentId", authMiddleware, validateComment, async (req,
       }
 
       if (comment.authorId !== userId) {
-        return res.status(403).json({ error: "댓글을 수정할 권한이 없습니다." });
+        return res
+          .status(403)
+          .json({ error: "댓글을 수정할 권한이 없습니다." });
       }
 
       const updatedComment = await prisma.articleComment.update({
@@ -207,63 +227,61 @@ router.patch("/article/:commentId", authMiddleware, validateComment, async (req,
 );
 
 router.delete("/product/:commentId", authMiddleware, async (req, res, next) => {
-    try {
-      const { id: userId } = req.user;
-      const { commentId } = req.params;
+  try {
+    const { id: userId } = req.user;
+    const { commentId } = req.params;
 
-      const comment = await prisma.productComment.findUnique({
-        where: { id: parseInt(commentId) },
-      });
-      if (!comment) {
-        return res.status(404).json({ error: "댓글을 찾을 수 없습니다." });
-      }
-
-      if (comment.authorId !== userId) {
-        return res.status(403).json({ error: "댓글을 삭제할 권한이 없습니다." });
-      }
-
-      await prisma.productComment.delete({
-        where: { id: parseInt(commentId) },
-      });
-
-      res.status(204).send();
-    } catch (e) {
-      if (e.code === "P2025") {
-        return res.status(404).json({ error: "해당 댓글을 찾을 수 없습니다." });
-      }
-      next(e);
+    const comment = await prisma.productComment.findUnique({
+      where: { id: parseInt(commentId) },
+    });
+    if (!comment) {
+      return res.status(404).json({ error: "댓글을 찾을 수 없습니다." });
     }
-  },
-);
+
+    if (comment.authorId !== userId) {
+      return res.status(403).json({ error: "댓글을 삭제할 권한이 없습니다." });
+    }
+
+    await prisma.productComment.delete({
+      where: { id: parseInt(commentId) },
+    });
+
+    res.status(204).send();
+  } catch (e) {
+    if (e.code === "P2025") {
+      return res.status(404).json({ error: "해당 댓글을 찾을 수 없습니다." });
+    }
+    next(e);
+  }
+});
 
 router.delete("/article/:commentId", authMiddleware, async (req, res, next) => {
-    try {
-      const { id: userId } = req.user;
-      const { commentId } = req.params;
+  try {
+    const { id: userId } = req.user;
+    const { commentId } = req.params;
 
-      const comment = await prisma.articleComment.findUnique({
-        where: { id: parseInt(commentId) },
-      });
-      if (!comment) {
-        return res.status(404).json({ error: "댓글을 찾을 수 없습니다." });
-      }
-
-      if (comment.authorId !== userId) {
-        return res.status(403).json({ error: "댓글을 삭제할 권한이 없습니다." });
-      }
-
-      await prisma.articleComment.delete({
-        where: { id: parseInt(commentId) },
-      });
-
-      res.status(204).send();
-    } catch (e) {
-      if (e.code === "P2025") {
-        return res.status(404).json({ error: "해당 댓글을 찾을 수 없습니다." });
-      }
-      next(e);
+    const comment = await prisma.articleComment.findUnique({
+      where: { id: parseInt(commentId) },
+    });
+    if (!comment) {
+      return res.status(404).json({ error: "댓글을 찾을 수 없습니다." });
     }
-  },
-);
+
+    if (comment.authorId !== userId) {
+      return res.status(403).json({ error: "댓글을 삭제할 권한이 없습니다." });
+    }
+
+    await prisma.articleComment.delete({
+      where: { id: parseInt(commentId) },
+    });
+
+    res.status(204).send();
+  } catch (e) {
+    if (e.code === "P2025") {
+      return res.status(404).json({ error: "해당 댓글을 찾을 수 없습니다." });
+    }
+    next(e);
+  }
+});
 
 export default router;

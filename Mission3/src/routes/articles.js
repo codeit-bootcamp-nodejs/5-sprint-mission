@@ -140,7 +140,11 @@ router.get("/:id", authOptionalMiddleware, async (req, res, next) => {
   }
 });
 
-router.patch("/:id", authMiddleware, validateArticle, async (req, res, next) => {
+router.patch(
+  "/:id",
+  authMiddleware,
+  validateArticle,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { id: articleId } = req.params;
@@ -154,7 +158,9 @@ router.patch("/:id", authMiddleware, validateArticle, async (req, res, next) => 
       }
 
       if (article.authorId !== userId) {
-        return res.status(403).json({ error: "게시글을 수정할 권한이 없습니다." });
+        return res
+          .status(403)
+          .json({ error: "게시글을 수정할 권한이 없습니다." });
       }
 
       const updatedArticle = await prisma.article.update({
@@ -165,7 +171,9 @@ router.patch("/:id", authMiddleware, validateArticle, async (req, res, next) => 
       res.status(200).json(updatedArticle);
     } catch (e) {
       if (e.code === "P2025") {
-        return res.status(404).json({ error: "해당 게시글을 찾을 수 없습니다." });
+        return res
+          .status(404)
+          .json({ error: "해당 게시글을 찾을 수 없습니다." });
       }
       next(e);
     }
@@ -185,7 +193,9 @@ router.delete("/:id", authMiddleware, async (req, res, next) => {
     }
 
     if (article.authorId !== userId) {
-      return res.status(403).json({ error: "게시글을 삭제할 권한이 없습니다." });
+      return res
+        .status(403)
+        .json({ error: "게시글을 삭제할 권한이 없습니다." });
     }
 
     await prisma.article.delete({

@@ -12,7 +12,9 @@ export function validateProduct(req, res, next) {
     typeof description !== "string" ||
     description.length > 500
   ) {
-    return res.status(400).json({ error: "상품 설명을 500자 미만으로 입력해주세요." });
+    return res
+      .status(400)
+      .json({ error: "상품 설명을 500자 미만으로 입력해주세요." });
   }
 
   const numPrice = parseFloat(price);
@@ -25,7 +27,7 @@ export function validateProduct(req, res, next) {
   if (tags !== undefined && !Array.isArray(tags)) {
     return res.status(400).json({ error: "태그는 배열 형식이어야 합니다." });
   }
-  
+
   req.body.price = numPrice;
 
   next();

@@ -3,7 +3,11 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middlewares/auth.middleware.js";
-import { validateSignUp, validateLogin, validateToken } from "../middlewares/validator/validate.auth.js";
+import {
+  validateSignUp,
+  validateLogin,
+  validateToken,
+} from "../middlewares/validator/validate.auth.js";
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -70,12 +74,16 @@ router.post("/login", validateLogin, async (req, res, next) => {
       where: { email },
     });
     if (!user) {
-      return res.status(401).json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
+      return res
+        .status(401)
+        .json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
+      return res
+        .status(401)
+        .json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
     }
 
     const accessToken = createAccessToken(user.id);
@@ -100,7 +108,9 @@ router.post("/token", validateToken, async (req, res, next) => {
     try {
       payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
     } catch (e) {
-      return res.status(401).json({ error: "Refresh Token이 유효하지 않습니다." });
+      return res
+        .status(401)
+        .json({ error: "Refresh Token이 유효하지 않습니다." });
     }
 
     const userId = payload.userId;
@@ -109,7 +119,9 @@ router.post("/token", validateToken, async (req, res, next) => {
     });
 
     if (!user || user.refreshToken !== refreshToken) {
-      return res.status(401).json({ error: "Refresh Token이 일치하지 않습니다." });
+      return res
+        .status(401)
+        .json({ error: "Refresh Token이 일치하지 않습니다." });
     }
 
     const newAccessToken = createAccessToken(userId);

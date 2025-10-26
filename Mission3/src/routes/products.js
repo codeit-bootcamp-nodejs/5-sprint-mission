@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import authOptionalMiddleware from "../middlewares/auth.optional.middleware.js";
 import { validateProduct } from "../middlewares/validator/validate.product.js";
-import upload from "../middlewares/upload.js";
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -146,7 +145,11 @@ router.get("/:id", authOptionalMiddleware, async (req, res, next) => {
   }
 });
 
-router.patch("/:id", authMiddleware, validateProduct, async (req, res, next) => {
+router.patch(
+  "/:id",
+  authMiddleware,
+  validateProduct,
+  async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { id: productId } = req.params;
@@ -160,7 +163,9 @@ router.patch("/:id", authMiddleware, validateProduct, async (req, res, next) => 
       }
 
       if (product.authorId !== userId) {
-        return res.status(403).json({ error: "상품을 수정할 권한이 없습니다." });
+        return res
+          .status(403)
+          .json({ error: "상품을 수정할 권한이 없습니다." });
       }
 
       const updatedProduct = await prisma.product.update({
@@ -262,14 +267,6 @@ router.post("/:id/like", authMiddleware, async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-});
-
-router.post("/upload", authMiddleware, upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "이미지 파일을 찾을 수 없습니다." });
-  }
-  const imageUrl = `/api/uploads/${req.file.filename}`;
-  res.status(201).json({ url: imageUrl });
 });
 
 export default router;

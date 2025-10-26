@@ -11,9 +11,7 @@ export function validateSignUp(req, res, next) {
   }
 
   if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ error: "비밀번호는 6자 이상이어야 합니다." });
+    return res.status(400).json({ error: "비밀번호는 6자 이상이어야 합니다." });
   }
 
   if (password !== passwordConfirm) {

@@ -8,7 +8,11 @@ export function validateUpdateMe(req, res, next) {
   }
 
   if (nickname) {
-    if (typeof nickname !== "string" || nickname.length < 2 || nickname.length > 15) {
+    if (
+      typeof nickname !== "string" ||
+      nickname.length < 2 ||
+      nickname.length > 15
+    ) {
       return res
         .status(400)
         .json({ error: "닉네임은 2자 이상 15자 이하로 설정해주세요." });
@@ -17,7 +21,9 @@ export function validateUpdateMe(req, res, next) {
 
   if (image) {
     if (typeof image !== "string") {
-      return res.status(400).json({ error: "이미지 경로는 문자열이어야 합니다." });
+      return res
+        .status(400)
+        .json({ error: "이미지 경로는 문자열이어야 합니다." });
     }
   }
 
@@ -28,7 +34,9 @@ export function validateChangePassword(req, res, next) {
   const { currentPassword, newPassword, newPasswordConfirm } = req.body;
 
   if (!currentPassword || !newPassword || !newPasswordConfirm) {
-    return res.status(400).json({ error: "모든 비밀번호 필드를 입력해주세요." });
+    return res
+      .status(400)
+      .json({ error: "모든 비밀번호 필드를 입력해주세요." });
   }
 
   if (newPassword.length < 6) {
