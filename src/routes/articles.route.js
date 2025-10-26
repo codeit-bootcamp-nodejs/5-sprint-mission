@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
-import { validateCreateArticle, validateUpdateArticle } from "../middleware/validators.js";
+import { validateCreateArticle, validateUpdateArticle } from "../middlewares/validator.js";
 
 const router = Router();
 router

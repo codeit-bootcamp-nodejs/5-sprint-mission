@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
-import { validateCreateComment } from "../middleware/validators.js";
+import { validateCreateComment } from "../middlewares/validator.js";
 const router = Router({ mergeParams: true });
 router.get("/", async (req, res, next) => {
   try {

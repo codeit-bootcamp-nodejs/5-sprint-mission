@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import {
   validateCreateProduct,
   validateUpdateProduct,
-} from "../middleware/validators.js";
+} from "../middlewares/validator.js";
 const router = Router();
 router
   .route("/")
