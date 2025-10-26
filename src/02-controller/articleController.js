@@ -1,56 +1,29 @@
-import { ArticleService } from "../03-service/article.service.js"; 
-const articleService = new ArticleService(); 
-
 export class ArticleController {
-  create = async (req, res, next) => {
+  #articleService;
+  constructor(articleService) { this.#articleService = articleService; }
+
+  createArticle = async (req, res, next) => {
     try {
-      const { title, content } = req.body;
-      const article = await articleService.create({ title, content }); 
-      res.status(201).json(article); 
-    } catch (e) {
-      next(e);
-    }
+      const userId = req.user.id;
+      const article = await this.#articleService.createArticle(userId, req.body);
+      res.status(201).json(article);
+    } catch (err) { next(err); }
   };
 
-  detail = async (req, res, next) => {
+  getArticles = async (req, res, next) => {
     try {
-      const article = await articleService.getById(req.params.id);
-      res.status(200).json(article);
-    } catch (e) {
-      next(e);
-    }
+      const userId = req.user?.id;
+      const articles = await this.#articleService.getArticles(userId);
+      res.status(200).json(articles);
+    } catch (err) { next(err); }
   };
 
-  update = async (req, res, next) => {
+  toggleLike = async (req, res, next) => {
     try {
-      const updated = await articleService.update(req.params.id, req.body);
-      res.status(200).json(updated);
-    } catch (e) {
-      next(e);
-    }
-  };
-
-  remove = async (req, res, next) => {
-    try {
-      await articleService.delete(req.params.id);
-      res.status(204).send();
-    } catch (e) {
-      next(e);
-    }
-  };
-
-  list = async (req, res, next) => {
-    try {
-      const page = Math.max(1, Number(req.query.page || 1));
-      const limit = Math.min(100, Math.max(1, Number(req.query.limit || 10)));
-      const skip = (page - 1) * limit;
-      const search = req.query.search || null;
-      const sort = req.query.sort === 'recent' ? 'recent' : null;
-
-      const result = await articleService.list({ skip, take: limit, search, sort });
-      res.status(200).json({ ...result, page, limit });
-    } catch (e) {
-      next(e);
-    }
+      const userId = req.user.id;
+      const { articleId } = req.params;
+      const like = await this.#articleService.toggleLike(userId, articleId);
+      res.status(200).json(like);
+    } catch (err) { next(err); }
   };
 }

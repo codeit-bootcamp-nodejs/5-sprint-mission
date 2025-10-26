@@ -1,55 +1,29 @@
-import prisma from "../generated/prisma/index.js";
-
 export class ProductService {
+  #prisma;
+  constructor(prisma) { this.#prisma = prisma; }
 
-  create = async ({ name, description, price, tags }) => {
-    return prisma.product.create({
-      data: { name, description, price, tags },
+  async createProduct(userId, data) {
+    return this.#prisma.product.create({
+      data: { ...data, userId, images: { create: data.images.map(url => ({ url })) } },
+      include: { images: true, likes: true }
     });
-  };
+  }
 
-  getById = async (id) => {
-    const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
+  async getProducts(userId) {
+    const items = await this.#prisma.product.findMany({
+      include: { images: true, likes: true },
+      orderBy: { createdAt: "desc" },
     });
-    if (!product) throw new Error("상품을 찾을 수 없습니다.");
-    return product;
-  };
+    return items.map(p => ({
+      ...p,
+      thumbnail: p.images[0]?.url ?? null,
+      isLiked: p.likes.some(l => l.userId === userId && l.isLiked),
+    }));
+  }
 
-  update = async (id, data) => {
-    return prisma.product.update({
-      where: { id: Number(id) },
-      data,
-    });
-  };
-
-  delete = async (id) => {
-    return prisma.product.delete({
-      where: { id: Number(id) },
-    });
-  };
-
-  list = async ({ skip, take, search, sort }) => {
-    const where = search
-      ? {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {};
-
-    const orderBy = sort === "recent" ? { createdAt: "desc" } : {};
-
-    const items = await prisma.product.findMany({
-      where,
-      orderBy,
-      skip,
-      take,
-    });
-
-    const total = await prisma.product.count({ where });
-
-    return { total, items };
-  };
+  async toggleLike(userId, productId) {
+    const like = await this.#prisma.productLike.findUnique({ where: { userId_productId: { userId, productId } }});
+    if (like) return this.#prisma.productLike.update({ where: { userId_productId: { userId, productId } }, data: { isLiked: !like.isLiked }});
+    return this.#prisma.productLike.create({ data: { userId, productId }});
+  }
 }
