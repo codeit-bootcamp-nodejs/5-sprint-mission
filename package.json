@@ -2,16 +2,25 @@
   "name": "js-project",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./src/sprint-mission4/index.js",
+    "dev.ts": "cross-env NODE_ENV=development nodemon --exec ts-node ./src/sprint-mission5/index.ts",
     "start": "node src/index.js",
     "format": "prettier --write src/**/*.js"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/express-session": "^1.18.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.9.1",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "prisma": "^6.16.1"
+    "prisma": "^6.16.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",

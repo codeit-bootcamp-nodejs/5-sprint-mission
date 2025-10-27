@@ -1,0 +1,21 @@
+import { Exception } from "../../../common/const/exception.js";
+import { BaseValidator } from "../base.validator.js";
+
+export class GetProductReqValidator extends BaseValidator {
+  constructor(data) {
+    super(data);
+  }
+
+  validate = () => {
+    const { productId } = this.params;
+
+    if (this.isEmpty(productId)) {
+      throw new Exception("PRODUCTID_FORM");
+    }
+
+    return {
+      userId: this.userId,
+      productId,
+    };
+  };
+}
