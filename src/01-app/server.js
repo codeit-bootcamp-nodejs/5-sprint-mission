@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 import articlesRoutes from "../04-routes/articles.routes.js";
 import commentsRoutes from "../04-routes/comments.routes.js";
 import productsRoutes from "../04-routes/products.routes.js";
+import authRoutes from "../04-routes/auth.routes.js";
+import usersRoutes from "../04-routes/users.routes.js";
 
 import { notFound } from "../05-middleware/notfound.middleware.js";
 import { errorHandler } from "../05-middleware/error.middleware.js";
@@ -28,6 +30,8 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "..", "uploads")))
 app.use("/api", productsRoutes);
 app.use("/api", articlesRoutes);
 app.use("/api", commentsRoutes);
+app.use("/api", authRoutes);
+app.use("/api", usersRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
