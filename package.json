@@ -1,27 +1,31 @@
 {
-  "name": "5-sprint-mission2",
-  "version": "1.0.0",
-  "description": "sprint-mission2-project ",
-  "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "test": "node src/test-server.js",
+    "format": "prettier . --write",
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/june5815/5-sprint-mission.git"
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
-  "keywords": [
-    "sprint",
-    "mission",
-    "api",
-    "nodejs"
-  ],
-  "author": "DAON",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/june5815/5-sprint-mission/issues"
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "prisma": "^6.16.2"
   },
-  "homepage": "https://github.com/june5815/5-sprint-mission#readme"
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "is-email": "^1.0.2",
+    "is-uuid": "^1.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "path": "^0.12.7",
+    "prompt-sync": "^4.2.0",
+    "superstruct": "^2.0.2"
+  }
 }
