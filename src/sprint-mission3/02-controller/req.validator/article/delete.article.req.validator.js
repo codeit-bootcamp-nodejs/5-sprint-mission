@@ -7,8 +7,8 @@ export class DeleteArticleReqValidator extends BaseValidator {
   }
 
   validate() {
-    const { id, title } = this.body;
-
+    const { title } = this.body;
+    const { id } = this.params;
     if (this.isEmpty(id) && this.isEmpty(title)) {
       throw new Exception("AT_LEAST_ONE_FORM");
     }

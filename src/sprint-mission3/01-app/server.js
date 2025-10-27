@@ -5,15 +5,15 @@ import { Exception } from "../common/exception.js";
 
 export class Server {
   #server;
-  #controllers;
-  constructor(controllers) {
-    this.#controllers = controllers;
+  #routers;
+  constructor(routers) {
+    this.#routers = routers;
     this.#server = express();
   }
 
   listen = () => {
-    this.#server.listen(3000, () => {
-      console.log("app server listening on port 3000");
+    this.#server.listen(process.env.PORT, () => {
+      console.log(`app server listening on port ${process.env.PORT}`);
     });
   };
 
@@ -35,8 +35,8 @@ export class Server {
   };
 
   registerControllerMiddleware = () => {
-    for (const controller of this.#controllers) {
-      this.#server.use(controller.basePath, controller.router);
+    for (const router of this.#routers) {
+      this.#server.use(router.basePath, router.router);
     }
   };
   start = () => {

@@ -7,8 +7,8 @@ export class DeleteProductReqValidator extends BaseValidator {
   }
 
   validate() {
-    const { id, name } = this.body;
-
+    const { name } = this.body;
+    const { id } = this.params;
     if (this.isEmpty(id) && this.isEmpty(name)) {
       throw new Exception("AT_LEAST_ONE_FORM");
     }

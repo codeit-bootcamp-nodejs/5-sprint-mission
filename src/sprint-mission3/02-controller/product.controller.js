@@ -1,34 +1,71 @@
-import { BaseContoller } from "./base.controller.js";
+import { CreateProductReqValidator } from "./req.validator/product/create.product.req.validator.js";
+import { DeleteProductReqValidator } from "./req.validator/product/delete.product.req.validator.js";
+import { UpdateProductReqValidator } from "./req.validator/product/update.product.req.validator.js";
+import { ViewProductListReqValidator } from "./req.validator/product/view.product.list.req.validator.js";
+import { ViewProductReqValidator } from "./req.validator/product/view.product.req.validator.js";
+import { CreateProductResDto } from "./res.Dto/product/create.product.res.dto.js";
+import { DeleteProductResDto } from "./res.dto/product/delete.product.res.dto.js";
+import { UpdateProductResDto } from "./res.dto/product/update.product.res.dto.js";
+import { ViewProductListResDto } from "./res.dto/product/view.product.list.res.dto.js";
+import { ViewProductResDto } from "./res.dto/product/view.product.res.dto.js";
 
-export class ProductController extends BaseContoller {
-  #productMiddleware;
+export class ProductController {
+  #productService;
 
-  constructor(productMiddleware) {
-    super("/api/product");
-    this.#productMiddleware = productMiddleware;
-    this.registerProductRouter();
+  constructor(productService) {
+    this.#productService = productService;
   }
 
-  registerProductRouter = () => {
-    this.router.post(
-      "/create",
-      this.catchException(this.#productMiddleware.createProductMiddleware),
+  createProductController = async (req, res, next) => {
+    const createProductReqDto = new CreateProductReqValidator({
+      body: req.body,
+    }).validate();
+    const createdProduct =
+      await this.#productService.createProduct(createProductReqDto);
+    const createdProductResDto = new CreateProductResDto(createdProduct);
+    return res.json(createdProductResDto);
+  };
+
+  viewProductController = async (req, res, next) => {
+    const viewProductReqDto = new ViewProductReqValidator({
+      params: req.params,
+    }).validate();
+    const viewProduct =
+      await this.#productService.viewProduct(viewProductReqDto);
+    const viewProductResDto = new ViewProductResDto(viewProduct);
+    return res.json(viewProductResDto);
+  };
+
+  viewProductListController = async (req, res, next) => {
+    const viewProductListReqDto = new ViewProductListReqValidator({
+      query: req.query,
+    }).validate();
+    const viewProductList = await this.#productService.viewProductList(
+      viewProductListReqDto,
     );
-    this.router.get(
-      "/view/:name",
-      this.catchException(this.#productMiddleware.viewProductMiddleware),
-    );
-    this.router.get(
-      "/viewList",
-      this.catchException(this.#productMiddleware.viewProductListMiddleware),
-    );
-    this.router.patch(
-      "/update",
-      this.catchException(this.#productMiddleware.updateProductMiddleware),
-    );
-    this.router.delete(
-      "/delete",
-      this.catchException(this.#productMiddleware.deleteProductMiddleware),
-    );
+    const viewProductListResDto = new ViewProductListResDto(viewProductList);
+    return res.json(viewProductListResDto);
+  };
+
+  updateProductController = async (req, res, next) => {
+    const updateProductReqDto = new UpdateProductReqValidator({
+      body: req.body,
+      params: req.params,
+    }).validate();
+    const updatedProduct =
+      await this.#productService.updateProduct(updateProductReqDto);
+    const updatedProductResDto = new UpdateProductResDto(updatedProduct);
+    return res.json(updatedProductResDto);
+  };
+
+  deleteProductController = async (req, res, next) => {
+    const deleteProductReqDto = new DeleteProductReqValidator({
+      body: req.body,
+      params: req.params,
+    }).validate();
+    const deletedwProduct =
+      await this.#productService.deleteProduct(deleteProductReqDto);
+    const deletedProductResDto = new DeleteProductResDto(deletedwProduct);
+    return res.json(deletedProductResDto);
   };
 }

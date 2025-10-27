@@ -14,35 +14,98 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  nickname     String
+  image        String?
+  password     String
+  refreshToken String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  products        Product[]
+  articles        Article[]
+  productComments ProductComment[]
+  articleComments ArticleComment[]
+  ProductLike     ProductLike[]
+  ArticleLike     ArticleLike[]
+}
+
 model Product {
-  id          String    @id @default(uuid())
-  name        String    @unique
+  id          String   @id @default(uuid())
+  name        String   @unique
   description String
   price       Int
   tags        String[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Comment     Comment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ProductComment ProductComment[]
+
+  User        User          @relation(fields: [userId], references: [id])
+  userId      String
+  ProductLike ProductLike[]
 }
 
-model Article {
-  id        String    @id @default(uuid())
-  title     String    @unique
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Comment   Comment[]
-}
-
-model Comment {
+model ProductComment {
   id        Int      @id @default(autoincrement())
+  productId String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  productId String?
-  articleId String?
+  Product Product @relation(fields: [productId], references: [id])
+  User    User    @relation(fields: [userId], references: [id])
+  userId  String
+}
 
-  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  article Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+model ProductLike {
+  id        String  @id @default(uuid())
+  userId    String
+  productId String
+  isLiked   Boolean @default(true)
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Article {
+  id        String   @id @default(uuid())
+  title     String   @unique
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ArticleComment ArticleComment[]
+
+  User        User          @relation(fields: [userId], references: [id])
+  userId      String
+  ArticleLike ArticleLike[]
+}
+
+model ArticleComment {
+  id        Int      @id @default(autoincrement())
+  articleId String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Article Article @relation(fields: [articleId], references: [id])
+  User    User    @relation(fields: [userId], references: [id])
+  userId  String
+}
+
+model ArticleLike {
+  id        String  @id @default(uuid())
+  userId    String
+  articleId String
+  isLiked   Boolean @default(true)
+  
+  user    User    @relation(fields: [userId], references: [id])
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, articleId])
 }

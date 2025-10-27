@@ -8,8 +8,8 @@ export class ArticleService {
     this.#articleRepo = articleRepo;
   }
 
-  viewArticle = async ({ title }) => {
-    const foundArticle = await this.#articleRepo.findArticleByTitle(title);
+  viewArticle = async ({ id }) => {
+    const foundArticle = await this.#articleRepo.findArticleById(id);
     if (!foundArticle) {
       throw new Exception("ARTICLE_NOT_EXIST");
     }
