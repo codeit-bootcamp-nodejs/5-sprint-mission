@@ -13,39 +13,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  nickname  String
+  image     String?
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  products        Product[]
+  articles        Article[]
+  comments        Comment[]
+  likesOnProducts LikeProduct[]
+  likesOnArticles LikeArticle[]
+}
+
 model Product {
-  id          String    @id @default(uuid())
+  id          Int        @id @default(autoincrement())
   name        String
   description String
   price       Int
   tags        String[]
   imageUrl    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  comments    Comment[] @relation("ProductComment")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  comments    Comment[]  @relation("ProductComment")
+  likes       LikeProduct[]
 }
 
 model Article {
-  id        String    @id @default(uuid())
+  id        Int         @id @default(autoincrement())
   title     String
   content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comments  Comment[] @relation("ArticleComment")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  userId    Int
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  comments  Comment[]    @relation("ArticleComment")
+  likes     LikeArticle[]
 }
 
 model Comment {
-  id        String   @id @default(uuid())
+  id        Int        @id @default(autoincrement())
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  productId String?
-  product   Product? @relation("ProductComment", fields: [productId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  articleId String?
-  article   Article? @relation("ArticleComment", fields: [articleId], references: [id], onDelete: Cascade)
+  productId Int?
+  product   Product?   @relation("ProductComment", fields: [productId], references: [id], onDelete: Cascade)
 
+  articleId Int?
+  article   Article?   @relation("ArticleComment", fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@index([productId])
   @@index([articleId])
+}
+
+model LikeProduct {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  productId Int
+  createdAt DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model LikeArticle {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  articleId Int
+  createdAt DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
 }
