@@ -1,5 +1,4 @@
 const t = (s) => (typeof s === "string" ? s.trim() : s);
-const isNonEmptyString = (v) => typeof v === "string" && v.trim().length > 0;
 
 const toTags = (v) => {
   if (v == null) return [];
@@ -37,7 +36,7 @@ export const validateSignup = (req, res, next) => {
   req.validated = {
     email: t(email),
     nickname: t(nickname),
-    password, // 해싱은 라우터/서비스에서 처리
+    password,
   };
   next();
 };
@@ -107,32 +106,30 @@ export const validateUpdateProduct = (req, res, next) => {
 };
 
 export const validateCreateArticle = (req, res, next) => {
-  const { name, description, price, tags } = req.body || {};
+  const { title, content, tags } = req.body || {};
 
-  if (!name || !description) {
-    return res.status(400).json({ message: "name, description는 필수입니다." });
+  if (!title || !content) {
+    return res.status(400).json({ message: "title, content 필수입니다." });
   }
 
   req.validated = {
-    name: t(name),
-    description: t(description),
-    ...(price != null ? { price } : {}),
+    title: t(title),
+    content: t(content),
     tags: toTags(tags),
   };
   next();
 };
 
 export const validateUpdateArticle = (req, res, next) => {
-  const { name, description, price, tags } = req.body || {};
+  const { title, content, tags } = req.body || {};
 
-  if (name === "" || description === "" || price === "") {
+  if (title === "" || content === "") {
     return res.status(400).json({ message: "빈 문자열은 허용되지 않습니다." });
   }
 
   const out = {};
-  if (name != null) out.name = t(name);
-  if (description != null) out.description = t(description);
-  if (price != null) out.price = price;
+  if (title != null) out.title = t(title);
+  if (content != null) out.content = t(content);
   if (tags != null) out.tags = toTags(tags);
 
   req.validated = out;

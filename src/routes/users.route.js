@@ -44,15 +44,6 @@ router.patch("/me/password", authenticate, async (req, res) => {
   res.json({ message: "비밀번호 변경 완료" });
 });
 
-router.get("/me/products", authenticate, async (req, res) => {
-  const products = await prisma.product.findMany({
-    where: { userId: req.user.id },
-    select: { id: true, name: true, price: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-  });
-  res.json(products);
-});
-
 router.get("/me/likes/products", authenticate, async (req, res) => {
   const liked = await prisma.likeProduct.findMany({
     where: { userId: req.user.id },

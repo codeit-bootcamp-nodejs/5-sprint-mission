@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
-import { validateCreateComment } from "../middlewares/validator.js";
+import {
+  validateCreateComment,
+  validateUpdateComment,
+} from "../middlewares/validator.js";
 import { authenticate, optionalAuthenticate } from "../middlewares/auth.js";
 import { parseIdParam } from "../middlewares/params.js";
 
@@ -39,7 +42,7 @@ router.get(
     } catch (e) {
       next(e);
     }
-  }
+  },
 );
 
 router.post(
@@ -61,14 +64,14 @@ router.post(
     } catch (e) {
       next(e);
     }
-  }
+  },
 );
 
 router.patch(
   "/:commentId",
   authenticate,
   parseIdParam("commentId"),
-  validateCreateComment,
+  validateUpdateComment,
   async (req, res, next) => {
     try {
       const id = req.params.commentId;
@@ -90,7 +93,7 @@ router.patch(
     } catch (e) {
       next(e);
     }
-  }
+  },
 );
 
 router.delete(
@@ -111,7 +114,7 @@ router.delete(
     } catch (e) {
       next(e);
     }
-  }
+  },
 );
 
 export default router;

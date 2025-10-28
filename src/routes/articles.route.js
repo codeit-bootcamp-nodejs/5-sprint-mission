@@ -9,6 +9,24 @@ import { parseIdParam } from "../middlewares/params.js";
 
 const router = Router();
 
+router.get("/mine", authenticate, async (req, res, next) => {
+  try {
+    const articles = await prisma.article.findMany({
+      where: { userId: req.user.id },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.status(200).json(articles);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router
   .route("/")
   .get(optionalAuthenticate, async (req, res, next) => {
@@ -31,7 +49,12 @@ router
           orderBy,
           skip: Number(offset),
           take: Number(limit),
-          select: { id: true, title: true, content: true, createdAt: true },
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            createdAt: true,
+          },
         }),
         prisma.article.count({ where }),
       ]);

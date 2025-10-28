@@ -9,6 +9,19 @@ import { parseIdParam } from "../middlewares/params.js";
 
 const router = Router();
 
+router.get("/mine", authenticate, async (req, res, next) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: { userId: req.user.id },
+      select: { id: true, name: true, price: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+    res.status(200).json(products);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router
   .route("/")
   .get(optionalAuthenticate, async (req, res, next) => {
