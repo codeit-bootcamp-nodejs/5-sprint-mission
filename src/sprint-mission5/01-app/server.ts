@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import { ConfigManager } from "../common/util/config.manager";
 
+const configManager = new ConfigManager();
 
 export class Server {
   private _server;
@@ -69,6 +71,7 @@ export class Server {
     // });
     // this.registerExceptionMiddleware();
     //this.listen();
+    
     this._server.listen(4001, () => {
       console.log(
         `app server listening on port 4001`,

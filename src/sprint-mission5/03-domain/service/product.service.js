@@ -31,7 +31,7 @@ export class ProductService {
 
     const productTotalCount = await this.#repos.product.count();
     if (productTotalCount < limit) {
-      throw new Exception("LIMIT_OVERFLOW", { totalCount: productTotalCount });
+      throw new Exception("LIMIT_OVERFLOW",productTotalCount);
     }
 
     const foundProductList = await this.#repos.product.findProductList({
