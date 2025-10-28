@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("시딩 시작");
+  console.log("시드 데이터 시작");
 
   const hashed = await bcrypt.hash("123456", 10);
   const user = await prisma.user.create({
@@ -18,8 +18,8 @@ async function main() {
 
   const product = await prisma.product.create({
     data: {
-      name: "테스트 상품",
-      description: "상품 등록 테스트용.",
+      name: "테스트",
+      description: "ts 마이그레이션 확인용 상품.",
       price: 19900,
       tags: ["테스트", "상품"],
       userId: user.id,
@@ -29,8 +29,8 @@ async function main() {
 
   const article = await prisma.article.create({
     data: {
-      title: "테스트 게시글",
-      content: "게시글 테스트용",
+      title: "ts 마이그레이션 게시글",
+      content: "시드 데이터.",
       userId: user.id,
     },
   });
@@ -38,14 +38,14 @@ async function main() {
 
   const comment = await prisma.comment.create({
     data: {
-      content: "댓글 테스트",
+      content: "댓글 시드 테스트",
       userId: user.id,
       productId: product.id,
     },
   });
   console.log(`댓글 생성 완료 (id: ${comment.id})`);
 
-  console.log("모든 시드 데이터가 잘 추가됨");
+  console.log("시드 데이터 완료!");
 }
 
 main()

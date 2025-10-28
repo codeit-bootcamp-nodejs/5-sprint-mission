@@ -6,8 +6,8 @@ const uploadDir = path.join(process.cwd(), "public", "uploads");
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, uploadDir),
-  filename: (_, file, cb) => {
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname);
     const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
     cb(null, name);
@@ -15,5 +15,5 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({ storage });
-export const buildImageUrl = (filename) =>
+export const buildImageUrl = (filename: String) =>
   `${process.env.IMAGE_BASE_URL || "http://localhost:3000"}/uploads/${filename}`;
