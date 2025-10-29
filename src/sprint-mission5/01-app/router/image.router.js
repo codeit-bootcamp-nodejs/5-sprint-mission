@@ -12,7 +12,7 @@ export class ImageRouter extends BaseRouter {
   registerImageRouter = () => {
     this.router.post(
       "/",
-      this.managers.file.uploadFileMiddleware("image"),
+      this.fileManager.uploadFileMiddleware("image"),
       this.catchException(this.#controllers.image.uploadImageController),
     );
   };

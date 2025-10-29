@@ -1,5 +1,5 @@
-import { Exception } from "../../common/const/exception.js";
-import { Article } from "../entity/article.js";
+import { Exception } from "../../common/const/exception";
+import { ArticleEntity } from "../entity/article.entity.js";
 
 export class ArticleService {
   #repos;
@@ -17,7 +17,7 @@ export class ArticleService {
     return foundArticle;
   };
 
-  getArticleList = async ({ offset, limit, sort }) => {
+  getArticleList = async ({ offset, limit, sort }:) => {
     const orderBy =
       sort === "recent"
         ? { updatedAt: "desc" }
@@ -68,7 +68,7 @@ export class ArticleService {
     if (foundArticle) {
       throw new Exception("ARTICLE_ALREADY_EXIST");
     }
-    const article = Article.createFactory({ userId, title, content });
+    const article = ArticleEntity.createFactory({ userId, title, content });
 
     const createdArticle = await this.#repos.article.create(article);
 
@@ -84,7 +84,7 @@ export class ArticleService {
     if (userId !== foundArticle.userId) {
       throw new Exception("UNAUTHORIZED_ARTICLE_OWNER");
     }
-    const article = Article.updateFactory({ articleId, title, content });
+    const article = ArticleEntity.updateFactory({ articleId, title, content });
 
     const updatedArticle = await this.#repos.article.update(article);
 

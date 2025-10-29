@@ -4,9 +4,6 @@ import { HashManager, IHashManager } from "./hash.manager";
 import { ITokenManager, TokenManager } from "./token.manager";
 
 const configManager = new ConfigManager();
-const hashManager = new HashManager(configManager);
-const fileManager = new FileManager();
-const tokenManager = new TokenManager(configManager);
 
 export interface IManagers {
   config: IConfigManager;
@@ -17,7 +14,7 @@ export interface IManagers {
 
 export const managers : IManagers = {
   config: configManager,
-  hash: hashManager,
-  file: fileManager,
-  token: tokenManager,
+  hash: new HashManager(configManager),
+  file: new FileManager(),
+  token: new TokenManager(configManager),
 };

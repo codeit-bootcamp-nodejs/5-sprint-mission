@@ -14,16 +14,7 @@ export class DepInjector {
   injectDeps() {
     // const prisma = new PrismaClient();
 
-    // const hashManager = new HashManager();
-    // const configManager = new ConfigManager();
-    // const fileManager = new FileManager();
-    // const tokenManager = new TokenManager(configManager);
-    // const managers = {
-    //   file: fileManager,
-    //   config: configManager,
-    //   hash: hashManager,
-    //   token: tokenManager,
-    // };
+    
 
     // const userRepo = new UserRepo(prisma);
     // const productRepo = new ProductRepo(prisma);

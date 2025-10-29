@@ -4,11 +4,14 @@ import { Exception } from "../../common/const/exception.js";
 export class BaseRouter {
   basePath;
   router;
-  managers;
+  tokeManager;
+  fileManager;
+  
 
   constructor(basePath, managers) {
     this.basePath = basePath;
-    this.managers = managers;
+    this.tokeManager = managers.token;
+    this.fileManager = managers.file;
     this.router = express.Router();
   }
 
@@ -31,7 +34,7 @@ export class BaseRouter {
     }
 
     const [_, token] = req.headers.authorization.split(" ");
-    const decoded = this.managers.token.verify(token);
+    const decoded = this.tokeManager.verify(token);
     req.userId = decoded.userId;
     next();
   };

@@ -1,5 +1,5 @@
 import { Exception } from "../../common/const/exception.js";
-import { Product } from "../entity/product.js";
+import { ProductEntity } from "../entity/product.entity.js";
 
 export class ProductService {
   #repos;
@@ -68,7 +68,7 @@ export class ProductService {
     if (foundProduct) {
       throw new Exception("PRODUCT_ALREADY_EXIST");
     }
-    const product = Product.createFactory({
+    const product = ProductEntity.createFactory({
       userId,
       name,
       description,
@@ -97,7 +97,7 @@ export class ProductService {
     if (userId !== foundProduct.userId) {
       throw new Exception("UNAUTHORIZED_PRODUCT_OWNER");
     }
-    const product = Product.updateFactory({
+    const product = ProductEntity.updateFactory({
       productId,
       name,
       description,
