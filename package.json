@@ -1,27 +1,25 @@
 {
-  "name": "5-sprint-mission2",
-  "version": "1.0.0",
-  "description": "sprint-mission2-project ",
-  "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node ./src/main.js",
+    "seed": "node ./prisma/seed.js",
+    "format": "prettier --write ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/june5815/5-sprint-mission.git"
+  "prisma": {
+    "seed": "node ./prisma/seed.js"
   },
-  "keywords": [
-    "sprint",
-    "mission",
-    "api",
-    "nodejs"
-  ],
-  "author": "DAON",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/june5815/5-sprint-mission/issues"
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "prisma": "^5.16.2"
   },
-  "homepage": "https://github.com/june5815/5-sprint-mission#readme"
+  "dependencies": {
+    "@prisma/client": "^5.16.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "superstruct": "^2.0.2",
+    "uuid": "^11.0.5"
+  }
 }
