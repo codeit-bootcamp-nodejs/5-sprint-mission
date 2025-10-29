@@ -1,15 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { BaseRepo } from "./base.repo";
 import { ProductMapper } from "./mapper/product.mapper";
-import { QueryType } from "../types/query";
+import { ProductKeys, QueryType } from "../types/query";
 import { ProductEntity } from "../03-domain/entity/product.entity";
 import { IProductRepo } from "../03-domain/port/repo/i.product.repo";
 
-export type ProductKeys = "updatedAt" | "price";
 
-export type ProductListQueryType<TKey> = QueryType<TKey> & {
-  userId: string;
-}
+export type ProductListQueryType = QueryType<ProductKeys>
 
 export type BaseProductParamsType = {
   userId: string;
@@ -56,9 +53,8 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
     return product ? ProductMapper.toEntity(product) : null;
   };
 
-  findProductList = async <Tkey extends ProductKeys>({ userId, offset, limit, orderBy }: ProductListQueryType<Tkey>) => {
+  findProductList = async <Tkey extends ProductKeys>({ offset, limit, orderBy }: ProductListQueryType) => {
     const productList = await this._prisma.product.findMany({
-      where: { userId },
       skip: offset,
       take: limit,
       orderBy: {

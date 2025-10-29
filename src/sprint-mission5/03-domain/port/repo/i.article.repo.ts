@@ -1,5 +1,4 @@
-import { ArticleKeys } from "../../../04-repo/article.repo";
-import { QueryType } from "../../../types/query";
+import { ArticleKeys, QueryType } from "../../../types/query";
 import { ArticleEntity } from "../../entity/article.entity"
 
 export interface IArticleRepo {

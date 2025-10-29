@@ -1,8 +1,12 @@
 import { Article } from "@prisma/client";
 
 export type Sort = "asc" | "desc";
+export type ArticleKeys = "updatedAt" | "title"
+export type ProductKeys = "updatedAt" | "price";
+export type CommentKeys = "updatedAt" | "id";
+export type UserKeys = "updatedAt" | "email";
 
-export type QueryType<TKey> = {
+export type QueryType<TKey extends string> = {
   offset?: number;
   cursor?: number;
   limit: number;
@@ -10,4 +14,16 @@ export type QueryType<TKey> = {
     field: TKey,
     sort: Sort;
   };
+}
+
+export type ArticleSort = "recent" | "title-asc" | "title-desc";
+export type ProductSort = "recent" | "price-lowest" | "price-highest";
+export type CommentSort = "recent" | "idAsc" | "id-desc";
+export type UserSort = "recent" | "email-asc" | "email-desc";
+
+export type BaseQueryType<TSort extends string> = {
+  offset?: number;
+  cursor?: number;
+  limit: number;
+  sort?: TSort;
 }

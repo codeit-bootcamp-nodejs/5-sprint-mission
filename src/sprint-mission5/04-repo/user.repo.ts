@@ -2,14 +2,13 @@ import { PrismaClient } from "@prisma/client";
 import { UserMapper } from "./mapper/user.mapper";
 import { ProductMapper } from "./mapper/product.mapper";
 import { ArticleMapper } from "./mapper/article.mapper";
-import { QueryType } from "../types/query";
+import { QueryType, UserKeys } from "../types/query";
 import { UserEntity } from "../03-domain/entity/user.entity";
 import { BaseRepo } from "./base.repo";
 import { IUserRepo } from "../03-domain/port/repo/i.user.repo";
 
-export type UserKeys = "updatedAt" | "email";
 
-export type UserListQueryType<TKey> = QueryType<TKey> & {
+export type UserListQueryType = QueryType<UserKeys> & {
   id: string;
 };
 
@@ -88,8 +87,8 @@ export class UserRepo extends BaseRepo implements IUserRepo {
     });
     return user ? UserMapper.toEntity(user) : null;
   };
-  
-  findUserProducts = async <TKey extends UserKeys>({ id, offset, limit, orderBy }: UserListQueryType<TKey>) => {
+
+  findUserProducts = async <TKey extends UserKeys>({ id, offset, limit, orderBy }: UserListQueryType) => {
     const userProducts = await this._prisma.product.findMany({
       where: { userId: id },
       skip: offset,
@@ -157,7 +156,7 @@ export class UserRepo extends BaseRepo implements IUserRepo {
     return user ? UserMapper.toEntity(user) : null;
   };
 
-  refreshTokenDelete = async (id: string, refreshToken: string) => {
+  DeleteRefreshToken = async (id: string, refreshToken: null) => {
     const user = await this._prisma.user.update({
       where: { id },
       data: {

@@ -19,7 +19,7 @@ export class BaseEntity<T> {
     this._updatedAt = updatedAt;
   }
 
-  get id() {
+  get id() : T | undefined {
     return this._id;
   }
   get createdAt() {

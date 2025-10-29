@@ -20,10 +20,13 @@ export type ProductFactoryType = {
   isLiked: boolean;
 }
 
-export type CreateProductFactoryType = ProductFactoryType;
+export type CreateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
+  isLiked?: boolean;
+};
 
-export type UpdateProductFactoryType = ProductFactoryType & {
+export type UpdateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
   productId: string;
+  isLiked?: boolean;
 };
 
 export class ProductEntity extends BaseEntity<string> {

@@ -17,7 +17,7 @@ export interface IRepos {
   comment: ICommentRepo;
 }
 
-const repos: IRepos = {
+export const repos: IRepos = {
   user: new UserRepo(prisma),
   product: new ProductRepo(prisma),
   article: new ArticleRepo(prisma),

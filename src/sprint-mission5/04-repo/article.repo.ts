@@ -2,10 +2,10 @@ import { Article, PrismaClient } from "@prisma/client";
 import { BaseRepo } from "./base.repo";
 import { ArticleEntity } from "../03-domain/entity/article.entity";
 import { ArticleMapper } from "./mapper/article.mapper";
-import { QueryType } from "../types/query";
+import { ArticleKeys, QueryType } from "../types/query";
 import { IArticleRepo } from "../03-domain/port/repo/i.article.repo";
 
-export type ArticleKeys = "updatedAt" | "title"
+export type ArticleQuery = QueryType<ArticleKeys>;
 
 export class ArticleRepo extends BaseRepo implements IArticleRepo {
   constructor(prisma: PrismaClient) {
@@ -44,7 +44,7 @@ export class ArticleRepo extends BaseRepo implements IArticleRepo {
     return article ? ArticleMapper.toEntity(article) : null;
   };
 
-  findArticleList = async <TKey extends ArticleKeys>({ offset, limit, orderBy }: QueryType<TKey>) => {
+  findArticleList = async ({ offset, limit, orderBy }: ArticleQuery) => {
     const articleList = await this._prisma.article.findMany({
       skip: offset,
       take: limit,

@@ -3,13 +3,12 @@ import { BaseRepo } from "./base.repo";
 import { ProductMapper } from "./mapper/product.mapper";
 import { ArticleMapper } from "./mapper/article.mapper";
 import { CommentMapper } from "./mapper/comment.mapper";
-import { QueryType } from "../types/query";
+import { CommentKeys, QueryType } from "../types/query";
 import { CommentEntity } from "../03-domain/entity/comment.entity";
 import { ICommentRepo } from "../03-domain/port/repo/i.comment.repo";
 
-export type CommentKeys = "updatedAt" | "createdAt";
 
-export type CommentListQueryType<TKey> = QueryType<TKey> & {
+export type CommentListQueryType = QueryType<CommentKeys> & {
   productId: string;
   articleId: string;
 }
@@ -71,7 +70,7 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
     cursor,
     limit,
     orderBy,
-  }: CommentListQueryType<T>) => {
+  }: CommentListQueryType) => {
     if (productId) {
       const commentList = await this._prisma.productComment.findMany({
         where: { productId },
@@ -182,7 +181,8 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
   };
 
   count = async ({ articleId, productId }: CountCommentParamsType) => {
-    let totalCount;
+    let totalCount = 0;
+
     if (productId) {
       totalCount = await this._prisma.productComment.count({
         where: { productId },
@@ -194,6 +194,7 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
         where: { articleId },
       });
     }
+
     return totalCount;
   };
 }

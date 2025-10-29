@@ -3,20 +3,17 @@ import { Exception } from "../../common/exception/exception";
 import { BaseEntity, BaseParams } from "./base.entity";
 
 export interface UserParams extends BaseParams<string> {
-  email: string;
-  nickname: string;
-  image: string | undefined;
-  password: string;
+  email?: string;
+  nickname?: string;
+  image?: string | undefined;
+  password?: string;
   refreshToken?: string | undefined;
 }
-
-export type UserFactory = {
-  id?: string;
-  email: string;
-  nickname: string;
-  image?: string;
+export interface PersistedUserEntity extends UserEntity {
+  id : string;
   password: string;
-  refreshToken?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class UserEntity extends BaseEntity<string> {
@@ -27,7 +24,7 @@ export class UserEntity extends BaseEntity<string> {
   private _refreshToken;
 
   constructor({
-    id,
+    id= undefined,
     email,
     nickname,
     image,
@@ -51,7 +48,7 @@ export class UserEntity extends BaseEntity<string> {
     image,
     password,
     refreshToken,
-  }: UserFactory) {
+  }: UserParams) {
     if (email) {
       this.validateEmailRule(email);
     }

@@ -71,7 +71,7 @@ export const EXCEPTIONS = {
   LIMIT_OVERFLOW: {
     statusCode: 422,
     message:
-      "요청한 limit 값이 전체 데이터 개수(${totalCount})를 초과했습니다.",
+      "요청한 limit 값이 전체 데이터 개수(${value})를 초과했습니다.",
   },
   TITLE_TOO_LONG: {
     statusCode: 422,

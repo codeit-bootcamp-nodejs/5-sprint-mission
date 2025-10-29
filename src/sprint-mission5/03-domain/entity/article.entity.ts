@@ -35,7 +35,7 @@ export class ArticleEntity extends BaseEntity<string> {
     userId : string,
     title: string,
     content: string,
-    isLiked: boolean,
+    isLiked?: boolean,
   }) => {
     this.validateTitleRule(title);
     this.validateContentRule(content);
@@ -46,7 +46,7 @@ export class ArticleEntity extends BaseEntity<string> {
     userId: string,
     title: string,
     content: string,
-    isLiked: boolean,
+    isLiked?: boolean,
   }) => {
     if (title !== undefined) {
       this.validateTitleRule(title);

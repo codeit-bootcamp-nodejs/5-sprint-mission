@@ -5,8 +5,8 @@ import { EXCEPTIONS } from "../const/exception.info";
 
 
 export interface ITokenManager {
-  generate: (payload: string) => { accessToken: string, refreshToken: string };
-  verify: (token: string) => TokenPayload | undefined
+  generate: (payload: {userId: string}) => { accessToken: string, refreshToken: string };
+  verify: <TokenPayload>(token: string) => TokenPayload
 }
 
 interface TokenPayload {
@@ -21,7 +21,7 @@ export class TokenManager implements ITokenManager {
   }
 
   // 엑세스 토큰 만료이든 리플레쉬 토큰까지 둘 다 만료이든 둘 다 갱신하기
-  generate = (payload: string) => {
+  generate = (payload: {userId: string}) => {
     const accessToken = jwt.sign(
       payload,
       this._configManager.getParsed().TOKEN_SECRET,
@@ -36,7 +36,7 @@ export class TokenManager implements ITokenManager {
     return { accessToken, refreshToken };
   };
 
-  verify = <TokenPayload>(token: string) => {
+  verify = <TokenPayload>(token: string) => { // payload에 들어있는 변수들 타입 체크
     try {
       return jwt.verify(
         token,
@@ -50,8 +50,9 @@ export class TokenManager implements ITokenManager {
         } else {
           console.log(err);
           throw new Exception({message: "토큰 관련 에러 발생!!!"});
-        }
+        } 
       }
+      throw new Exception({ message: "알 수 없는 토큰 에러" });
     }
   };
 }

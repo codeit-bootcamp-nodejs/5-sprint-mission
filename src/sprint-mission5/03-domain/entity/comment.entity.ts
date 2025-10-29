@@ -9,6 +9,7 @@ export interface CommentParams extends BaseParams<number> {
   productId?: string;
   content: string;
 }
+
 export type CommentFactoryType = {
   commentId?: number;
   userId: string;
@@ -16,6 +17,7 @@ export type CommentFactoryType = {
   productId?: string;
   content: string,
 }
+
 export class CommentEntity extends BaseEntity<number> {
   private _userId;
   private _articleId;
