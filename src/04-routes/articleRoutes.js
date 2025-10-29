@@ -1,20 +1,12 @@
-import express from 'express';
-import * as articleController from '../controllers/articleController.js';
-import { errorHandler } from '../middleware/error.js';
+import express from "express";
+import { authMiddleware } from "../05-middleware/auth.js";
 
-const router = express.Router();
+export const articleRoutes = (articleController) => {
+  const router = express.Router();
 
-router
-  .route('/')
-  .get(articleController.list)
-  .post(articleController.create);
+  router.post("/", authMiddleware, articleController.createArticle);
+  router.get("/", authMiddleware, articleController.getArticles);
+  router.post("/:articleId/like", authMiddleware, articleController.toggleLike);
 
-router
-  .route('/:id')
-  .get(articleController.detail)
-  .patch(articleController.update)
-  .delete(articleController.remove);
-
-router.use(errorHandler);
-
-export default router;
+  return router;
+};

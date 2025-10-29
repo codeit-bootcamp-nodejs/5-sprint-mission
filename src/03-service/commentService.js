@@ -1,56 +1,33 @@
-import prisma from "../generated/prisma/index.js";
-
 export class CommentService {
-  createForProduct = async ({ productId, content }) => {
-    return prisma.comment.create({
-      data: { content, productId },
+  #prisma;
+  constructor(prisma) { this.#prisma = prisma; }
+
+  async createProductComment(userId, productId, content) {
+    return this.#prisma.productComment.create({
+      data: { userId, productId, content },
     });
-  };
+  }
 
-  createForArticle = async ({ articleId, content }) => {
-    return prisma.comment.create({
-      data: { content, articleId },
+  async createArticleComment(userId, articleId, content) {
+    return this.#prisma.articleComment.create({
+      data: { userId, articleId, content },
     });
-  };
+  }
 
-  update = async (id, data) => {
-    return prisma.comment.update({
-      where: { id: Number(id) },
-      data,
+  async updateComment(userId, commentId, content) {
+    const comment = await this.#prisma.productComment.findUnique({ where: { id: commentId } }) ||
+                    await this.#prisma.articleComment.findUnique({ where: { id: commentId } });
+    if (!comment || comment.userId !== userId) throw new Error("Forbidden");
+    return await this.#prisma.comment.update({
+      where: { id: commentId },
+      data: { content, updatedAt: new Date() },
     });
-  };
+  }
 
-  delete = async (id) => {
-    return prisma.comment.delete({
-      where: { id: Number(id) },
-    });
-  };
-
-  listForProduct = async ({ productId, cursor, limit }) => {
-    const items = await prisma.comment.findMany({
-      where: { productId },
-      orderBy: { id: "asc" },
-      cursor: cursor ? { id: cursor } : undefined,
-      skip: cursor ? 1 : 0,
-      take: limit,
-    });
-
-    const nextCursor = items.length ? items[items.length - 1].id : null;
-
-    return { items, nextCursor };
-  };
-
-  listForArticle = async ({ articleId, cursor, limit }) => {
-    const items = await prisma.comment.findMany({
-      where: { articleId },
-      orderBy: { id: "asc" },
-      cursor: cursor ? { id: cursor } : undefined,
-      skip: cursor ? 1 : 0,
-      take: limit,
-    });
-
-    const nextCursor = items.length ? items[items.length - 1].id : null;
-
-    return { items, nextCursor };
-  };
+  async deleteComment(userId, commentId) {
+    const comment = await this.#prisma.productComment.findUnique({ where: { id: commentId } }) ||
+                    await this.#prisma.articleComment.findUnique({ where: { id: commentId } });
+    if (!comment || comment.userId !== userId) throw new Error("Forbidden");
+    return await this.#prisma.comment.delete({ where: { id: commentId } });
+  }
 }

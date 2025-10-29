@@ -1,24 +1,13 @@
-import express from 'express';
-import * as commentController from '../controllers/commentController.js';
-import { errorHandler } from '../middleware/error.js';
+import express from "express";
+import { authMiddleware } from "../05-middleware/auth.js";
 
-const router = express.Router();
+export const commentRoutes = (commentController) => {
+  const router = express.Router();
 
-router
-  .route('/products/:productId/comments')
-  .get(commentController.listProductComments)
-  .post(commentController.createProductComment);
+  router.post("/product", authMiddleware, commentController.createProductComment);
+  router.post("/article", authMiddleware, commentController.createArticleComment);
+  router.put("/:commentId", authMiddleware, commentController.updateComment);
+  router.delete("/:commentId", authMiddleware, commentController.deleteComment);
 
-router
-  .route('/articles/:articleId/comments')
-  .get(commentController.listArticleComments)
-  .post(commentController.createArticleComment);
-
-router
-  .route('/comments/:id')
-  .patch(commentController.update)
-  .delete(commentController.remove);
-
-router.use(errorHandler);
-
-export default router;
+  return router;
+};

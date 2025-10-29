@@ -1,10 +1,54 @@
-import dotenv from 'dotenv';
-import app from './app';
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import { errorMiddleware } from "../05-middleware/error.js";
 
-dotenv.config();
+export class Server {
+  #server;
+  #routers;
+  #config;
 
-const PORT = process.env.PORT || 4000;
+  constructor({ routers, config }) {
+    this.#routers = routers;
+    this.#config = config;
+    this.#server = express();
+  }
 
-app.listen(PORT, () => {
-  console.log(`서버가 http://localhost:${PORT}에서 실행 중입니다.`);
-});
+  registerMiddlewares() {
+    const whitelist = ["http://localhost:3000"];
+    this.#server.use(cors({
+      origin: (origin, callback) => {
+        if (!origin || whitelist.includes(origin)) callback(null, true);
+        else callback(new Error("Not allowed by CORS"));
+      },
+      credentials: true,
+    }));
+
+    this.#server.use(morgan("dev"));
+    this.#server.use(express.json());
+  }
+
+  registerRouters() {
+    Object.values(this.#routers).forEach((router) => {
+      this.#server.use(router.path, router.handler);
+    });
+  }
+
+  registerErrorHandler() {
+    this.#server.use(errorMiddleware);
+  }
+
+  listen() {
+    const port = this.#config.get(CONFIG_KEY.PORT);
+    this.#server.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
+  }
+
+  start() {
+    this.registerMiddlewares();
+    this.registerRouters();
+    this.registerErrorHandler();
+    this.listen();
+  }
+}
