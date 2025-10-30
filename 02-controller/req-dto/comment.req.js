@@ -4,11 +4,17 @@ import { BaseReqDto } from "./base.req.dto.js"
 
 export class CommentReqDto extends BaseReqDto {
     content
+    userId
+    productId
+    articleId
 
     constructor(request) {
         super(request)
         const { content } = this.body;
         this.content = content;
+        this.userId = request.userId;
+        this.productId = request.params.productId;
+        this.articleId = request.params.articleId;
     }
 
     validate() {

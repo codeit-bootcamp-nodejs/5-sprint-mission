@@ -7,6 +7,7 @@ export class ProductReqDto extends BaseReqDto {
     description
     price
     tags
+    userId
 
     constructor(request) {
         super(request)
@@ -17,6 +18,7 @@ export class ProductReqDto extends BaseReqDto {
         this.description = description;
         this.price = price;
         this.tags = tags;
+        this.userId = request.userId;
     }
 
     validate() {

@@ -7,14 +7,17 @@ export class Article {
     #content
     #createdAt
     #updatedAt
+    #userId
+    
 
 
-    constructor({ id = uuidv4(), title, content }) {
+    constructor({ id = uuidv4(), title, content, userId }) {
         this.#id = id;
         this.#title = title;
         this.#content = content;
         this.#createdAt = new Date();
         this.#updatedAt = new Date();
+        this.#userId = userId;
     }
 
     get id() {
@@ -37,12 +40,16 @@ export class Article {
         return this.#updatedAt;
     }
 
+    get userId() {
+        return this.#userId;
+    }
 
-    static forCreate({ id, title, content }) {
+
+    static forCreate({ id, title, content, userId}) {
         this.validateTitle(title);
         this.validateContent(content);
 
-        return new Article({ id, title, content });
+        return new Article({ id, title, content, userId });
     }
 
     static validateTitle(title) {

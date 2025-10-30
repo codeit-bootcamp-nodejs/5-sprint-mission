@@ -6,8 +6,10 @@ export class ProductResDto {
     tags
     createdAt
     updatedAt
+    userId
+    isLiked
 
-    constructor({ id, name, description, price, tags, createdAt, updatedAt }) {
+    constructor({ id, name, description, price, tags, createdAt, updatedAt, userId, isLiked}) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -15,5 +17,7 @@ export class ProductResDto {
         this.tags = tags;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.userId = userId;
+        this.isLiked = isLiked;
     }
 }
