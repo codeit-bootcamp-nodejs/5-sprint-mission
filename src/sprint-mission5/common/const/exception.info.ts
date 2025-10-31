@@ -1,5 +1,8 @@
 export const EXCEPTIONS = {
   // 요청 형식 오류
+  INVALID_REQUEST: {
+    statusCode: 401,
+  },
   EMAIL_FORM: {
     statusCode: 400,
     message: "이메일 양식에 안 맞습니다.",
@@ -183,6 +186,10 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "refresh 토큰이 존재하지 않습니다.",
   },
+  USERID_NOT_EXSIST: {
+    statusCode: 404,
+    message: "userId가 없습니다.",
+  },
 
   // 중복/충돌
   PRODUCT_ALREADY_EXIST: {
@@ -214,10 +221,6 @@ export const EXCEPTIONS = {
   ID_FORM: {
     statusCode: 400,
     message: "id 양식이 안 맞습니다.",
-  },
-  USERID_FORM: {
-    statusCode: 400,
-    message: "userId 양식이 안 맞습니다.",
   },
   PRODUCTID_FORM: {
     statusCode: 400,

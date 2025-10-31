@@ -2,7 +2,7 @@ import { EXCEPTIONS } from "../const/exception.info";
 
 export type ExceptionInfoType = {
   statusCode: number,
-  message: string
+  message?: string
 }
 export type ValueType = string | number | boolean;
 

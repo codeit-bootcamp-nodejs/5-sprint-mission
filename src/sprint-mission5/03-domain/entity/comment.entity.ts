@@ -1,13 +1,17 @@
 import { EXCEPTIONS } from "../../common/const/exception.info";
 import { Exception } from "../../common/exception/exception";
 import { BaseEntity, BaseParams } from "./base.entity.js";
-import { ProductFactoryType } from "./product.entity";
 
 export interface CommentParams extends BaseParams<number> {
   userId: string;
   articleId?: string;
   productId?: string;
   content: string;
+}
+export interface PersistedCommentEntity extends CommentEntity{
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type CommentFactoryType = {

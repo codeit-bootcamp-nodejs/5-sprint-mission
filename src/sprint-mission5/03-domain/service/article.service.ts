@@ -2,16 +2,16 @@ import { IRepos } from "../../04-repo/repos";
 import { EXCEPTIONS } from "../../common/const/exception.info";
 import { Exception } from "../../common/exception/exception";
 import { ArticleKeys, ArticleSort, BaseQueryType, QueryType, Sort } from "../../types/query";
-import { ArticleEntity } from "../entity/article.entity";
+import { ArticleEntity, PersistedArticleEntity } from "../entity/article.entity";
 import { BaseService } from "./base.service";
 export interface IArticleService {
-  getArticle: ({ articleId }: GetArticleParamsType) => Promise<ArticleEntity>;
-  getArticleList: ({ offset, limit, sort }: BaseArticleQueryType) => Promise<ArticleEntity[]>;
-  addArticleLike: ({ userId, articleId }: AddArticleParamsType) => Promise<ArticleEntity>;
-  createArticle: ({ userId, title, content }: CreateArticleParamsType) => Promise<ArticleEntity>;
-  updateArticle: ({ userId, articleId, title, content }: BaseArticleParamsType) => Promise<ArticleEntity>;
+  getArticle: ({ articleId }: GetArticleParamsType) => Promise<PersistedArticleEntity>;
+  getArticleList: ({ offset, limit, sort }: BaseArticleQueryType) => Promise<PersistedArticleEntity[]>;
+  addArticleLike: ({ userId, articleId }: AddArticleParamsType) => Promise<PersistedArticleEntity>;
+  createArticle: ({ userId, title, content }: CreateArticleParamsType) => Promise<PersistedArticleEntity>;
+  updateArticle: ({ userId, articleId, title, content }: BaseArticleParamsType) => Promise<PersistedArticleEntity>;
   deleteArticle: ({ userId, articleId }: DeleteArticleParamsType) => Promise<void>;
-  cancelArticleLike: ({ userId, articleId }: CancelArticleParamsType) => Promise<ArticleEntity>;
+  cancelArticleLike: ({ userId, articleId }: CancelArticleParamsType) => Promise<PersistedArticleEntity>;
 }
 
 type BaseArticleQueryType = BaseQueryType<ArticleSort>;

@@ -9,6 +9,12 @@ export interface ArticleParams extends BaseParams<string> {
   isLiked: boolean;
 }
 
+export interface PersistedArticleEntity extends ArticleEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export class ArticleEntity extends BaseEntity<string> {
   private _userId;
   private _title;

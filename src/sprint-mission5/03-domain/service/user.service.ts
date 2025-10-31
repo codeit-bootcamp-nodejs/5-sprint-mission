@@ -36,9 +36,9 @@ type BaseUserParamsType = {
   password: string;
   updatePassword: string;
 }
-type SignUpUserParams = Omit<BaseUserParamsType, "id">;
+type SignUpUserParams = Omit<BaseUserParamsType, "id" | "updatePassword">;
 type GetUserParams = Pick<BaseUserParamsType, "id">;
-type UpdateUserParams = Omit<BaseUserParamsType, "password">;
+type UpdateUserParams = Omit<BaseUserParamsType, "password" | "updatePassword">;
 type UpdatePasswordUserParams = Pick<BaseUserParamsType, "id" | "password" | "updatePassword">;
 type DeleteUserParams = Pick<BaseUserParamsType, 'id'>;
 
@@ -65,6 +65,9 @@ export class UserService extends BaseService implements IUserService {
       image,
       password: hashPassword,
     });
+    if (!newUser.email || !newUser.nickname || !newUser.password) {
+      throw new Exception({ message: "Required fields are missing"});
+    }
     const createdUser = await this._repos.user.create(newUser);
 
     return createdUser;

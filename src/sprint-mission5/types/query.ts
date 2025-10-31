@@ -18,7 +18,7 @@ export type QueryType<TKey extends string> = {
 
 export type ArticleSort = "recent" | "title-asc" | "title-desc";
 export type ProductSort = "recent" | "price-lowest" | "price-highest";
-export type CommentSort = "recent" | "idAsc" | "id-desc";
+export type CommentSort = "recent" | "id-asc" | "id-desc";
 export type UserSort = "recent" | "email-asc" | "email-desc";
 
 export type BaseQueryType<TSort extends string> = {

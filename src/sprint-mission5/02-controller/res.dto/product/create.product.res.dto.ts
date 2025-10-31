@@ -1,0 +1,8 @@
+import { PersistedProductEntity, ProductEntity } from "../../../03-domain/entity/product.entity";
+import { BaseProductResDto } from "./base.product.res.dto";
+
+export class CreateProductResDto extends BaseProductResDto{
+  constructor(createProduct: PersistedProductEntity) {
+    super(createProduct);
+  }
+}

@@ -16,10 +16,10 @@ export class UserMapper {
   }
   static toPersistent(entity: UserEntity) {
     return {
-      email: entity.email,
-      nickname: entity.nickname,
+      email: entity.email!,
+      nickname: entity.nickname!,
       image: entity.image,
-      password: entity.password,
+      password: entity.password!,
       refreshToken: entity.refreshToken,
     };
   }

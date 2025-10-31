@@ -14,6 +14,7 @@ export interface PersistedUserEntity extends UserEntity {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  refreshToken: string;
 }
 
 export class UserEntity extends BaseEntity<string> {

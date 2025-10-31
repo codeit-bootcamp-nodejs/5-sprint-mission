@@ -9,13 +9,13 @@ import { ICommentRepo } from "../03-domain/port/repo/i.comment.repo";
 
 
 export type CommentListQueryType = QueryType<CommentKeys> & {
-  productId: string;
-  articleId: string;
+  productId?: string;
+  articleId?: string;
 }
 
 export type BaseCommentParamsType = {
-  articleId: string;
-  productId: string;
+  articleId?: string;
+  productId?: string;
 }
 export type CountCommentParamsType = BaseCommentParamsType
 export type FindCommentParamsType = BaseCommentParamsType & {

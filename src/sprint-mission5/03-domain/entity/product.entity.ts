@@ -11,7 +11,13 @@ export interface ProductParams extends BaseParams<string> {
   isLiked: boolean;
 }
 
-export type ProductFactoryType = {
+export interface PersistedProductEntity extends ProductEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+type ProductFactoryType = {
   userId: string;
   name: string;
   description: string;
@@ -20,11 +26,11 @@ export type ProductFactoryType = {
   isLiked: boolean;
 }
 
-export type CreateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
+type CreateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
   isLiked?: boolean;
 };
 
-export type UpdateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
+type UpdateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
   productId: string;
   isLiked?: boolean;
 };

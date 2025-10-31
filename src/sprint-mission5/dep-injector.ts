@@ -16,29 +16,7 @@ export class DepInjector {
 
     
 
-    // const userRepo = new UserRepo(prisma);
-    // const productRepo = new ProductRepo(prisma);
-    // const articleRepo = new ArticleRepo(prisma);
-    // const commentRepo = new CommentRepo(prisma);
-    // const repos = {
-    //   user: userRepo,
-    //   product: productRepo,
-    //   article: articleRepo,
-    //   comment: commentRepo,
-    // };
-
-    // const userService = new UserService(repos, managers);
-    // const productService = new ProductService(repos);
-    // const articleService = new ArticleService(repos);
-    // const commentService = new CommentService(repos);
-    // const authService = new AuthService(repos, managers);
-    // const services = {
-    //   user: userService,
-    //   product: productService,
-    //   article: articleService,
-    //   comment: commentService,
-    //   auth: authService,
-    // };
+   
 
     // const userController = new UserController(services);
     // const productController = new ProductController(services);

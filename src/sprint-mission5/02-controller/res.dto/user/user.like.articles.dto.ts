@@ -1,0 +1,17 @@
+import { ArticleEntity } from "../../../03-domain/entity/article.entity";
+
+export class UserLikeArticlesResDto {
+  public articles;
+  
+  constructor(likeArticles: ArticleEntity[]) {
+    this.articles = likeArticles.map((article) => ({
+      ownerId: article.userId,
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      createdAt: article.createdAt,
+      updatedAt: article.updatedAt,
+      isLiked: article.isLiked,
+    }));
+  }
+}

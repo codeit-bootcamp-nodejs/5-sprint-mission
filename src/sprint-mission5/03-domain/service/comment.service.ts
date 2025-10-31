@@ -2,31 +2,32 @@ import { IRepos } from "../../04-repo/repos";
 import { EXCEPTIONS } from "../../common/const/exception.info";
 import { Exception } from "../../common/exception/exception";
 import { BaseQueryType, CommentKeys, CommentSort, Sort } from "../../types/query";
-import { CommentEntity } from "../entity/comment.entity";
+import { CommentEntity, PersistedCommentEntity } from "../entity/comment.entity";
 import { BaseService } from "./base.service";
 
 export interface ICommentService {
-  getCommentList: ({ articleId, productId, cursor, limit, sort }: BaseCommentQueryType) => Promise<CommentEntity[] | undefined>;
-  createComment: ({ userId, articleId, productId, content }: CreateCommentParamsType) => Promise<CommentEntity | undefined>;
-  updateComment: ({ userId, articleId, productId, commentId, content, }: BaseCommentParamsType) => Promise<CommentEntity | undefined>;
+  getCommentList: ({ articleId, productId, cursor, limit, sort }: BaseCommentQueryType) => Promise<PersistedCommentEntity[]>;
+  createComment: ({ userId, articleId, productId, content }: CreateCommentParamsType) => Promise<PersistedCommentEntity>;
+  updateComment: ({ userId, articleId, productId, commentId, content, }: BaseCommentParamsType) => Promise<PersistedCommentEntity>;
   deleteComment: ({ userId, articleId, productId, commentId }: DeleteCommentParamsType) => Promise<void>;
 }
 
 type BaseCommentQueryType = BaseQueryType<CommentSort> & {
-  articleId: string;
-  productId: string;
+  articleId?: string;
+  productId?: string;
 };
 type BaseCommentParamsType = {
   userId: string;
-  articleId: string;
-  productId: string;
+  articleId?: string;
+  productId?: string;
   commentId: number;
   content: string;
 }
+
 type ValidateTargetParams = Pick<BaseCommentParamsType, "articleId" | "productId">;
 type CreateCommentParamsType = Omit<BaseCommentParamsType, "commentId">;
 type UpdateCommentParamsType = BaseCommentParamsType;
-type DeleteCommentParamsType = Omit<BaseCommentParamsType, "comment">;
+type DeleteCommentParamsType = Omit<BaseCommentParamsType, "content">;
 
 export class CommentService extends BaseService implements ICommentService {
   constructor(repos: IRepos) {

@@ -2,17 +2,17 @@ import { IRepos } from "../../04-repo/repos";
 import { EXCEPTIONS } from "../../common/const/exception.info";
 import { Exception } from "../../common/exception/exception.js";
 import { BaseQueryType, ProductKeys, ProductSort, Sort } from "../../types/query";
-import { ProductEntity } from "../entity/product.entity";
+import { PersistedProductEntity, ProductEntity } from "../entity/product.entity";
 import { BaseService } from "./base.service";
 
 export interface IProductService {
-  getProduct: ({ productId }: GetProductParamsType) => Promise<ProductEntity>;
-  getProductList: ({ offset, limit, sort }: BaseProductQueryType) => Promise<ProductEntity[]>;
-  addProductLike: ({ userId, productId }: AddProductParamsType) => Promise<ProductEntity>;
-  createProduct: ({ userId, name, description, price, tags }: CreateProductParamsType) => Promise<ProductEntity>;
-  updateProduct: ({ userId, productId, name, description, price, tags, }: BaseProductParamsType) => Promise<ProductEntity>;
+  getProduct: ({ productId }: GetProductParamsType) => Promise<PersistedProductEntity>;
+  getProductList: ({ offset, limit, sort }: BaseProductQueryType) => Promise<PersistedProductEntity[]>;
+  addProductLike: ({ userId, productId }: AddProductParamsType) => Promise<PersistedProductEntity>;
+  createProduct: ({ userId, name, description, price, tags }: CreateProductParamsType) => Promise<PersistedProductEntity>;
+  updateProduct: ({ userId, productId, name, description, price, tags, }: BaseProductParamsType) => Promise<PersistedProductEntity>;
   deleteProduct: ({ userId, productId }: DeleteProductParamsType) => Promise<void>;
-  cancelProductLike: ({ userId, productId }: CancelProductParamsType) => Promise<ProductEntity>;
+  cancelProductLike: ({ userId, productId }: CancelProductParamsType) => Promise<PersistedProductEntity>;
 }
 type BaseProductQueryType = BaseQueryType<ProductSort>;
 type BaseProductParamsType = {
