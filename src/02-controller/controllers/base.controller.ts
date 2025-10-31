@@ -4,7 +4,7 @@ export class BaseController {
     #basePath;
     #router;
 
-    constructor(basePath){ 
+    constructor(basePath: string){ 
         this.#basePath = basePath;
         this.#router = express.Router();
     }
