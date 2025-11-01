@@ -1,8 +1,10 @@
+import { IControllers } from "../../02-controller/controllers";
+import { IManagers } from "../../common/util/managers";
 import { BaseRouter } from "./base.router";
 
 export class ArticleRouter extends BaseRouter {
   #controllers;
-  constructor(controllers, managers) {
+  constructor(controllers: IControllers, managers: IManagers) {
     super("/api/articles", managers);
     this.#controllers = controllers;
     this.registerArticleRouter();

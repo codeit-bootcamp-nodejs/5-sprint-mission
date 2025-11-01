@@ -1,9 +1,9 @@
-import { IRepos } from "../../04-repo/repos.js";
-import { EXCEPTIONS } from "../../common/const/exception.info.js";
-import { Exception } from "../../common/exception/exception.js";
-import { IManagers } from "../../common/util/managers.js";
-import { PersistedUserEntity } from "../entity/user.entity.js";
-import { BaseService } from "./base.service.js";
+import { IRepos } from "../../04-repo/repos";
+import { EXCEPTIONS } from "../../common/const/exception.info";
+import { Exception } from "../../common/exception/exception";
+import { IManagers } from "../../common/util/managers";
+import { PersistedUserEntity } from "../entity/user.entity";
+import { BaseService } from "./base.service";
 
 export interface IAuthService {
   signInUser: ({ email, password }: {

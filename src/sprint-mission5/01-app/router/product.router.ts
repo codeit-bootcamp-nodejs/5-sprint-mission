@@ -1,9 +1,11 @@
-import { BaseRouter } from "./base.router.js";
+import { IControllers } from "../../02-controller/controllers";
+import { IManagers } from "../../common/util/managers";
+import { BaseRouter } from "./base.router";
 
 export class ProductRouter extends BaseRouter {
   #controllers;
 
-  constructor(controllers, managers) {
+  constructor(controllers: IControllers, managers: IManagers) {
     super("/api/products", managers);
     this.#controllers = controllers;
     this.registerProductRouter();

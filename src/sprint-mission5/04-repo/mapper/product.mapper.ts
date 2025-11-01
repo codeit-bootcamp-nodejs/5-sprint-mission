@@ -1,12 +1,12 @@
 import { Product, ProductLike } from "@prisma/client";
-import { ProductEntity } from "../../03-domain/entity/product.entity";
+import { PersistedProductEntity, ProductEntity, } from "../../03-domain/entity/product.entity";
 
 interface ProductWithLike extends Product {
   ProductLike?: ProductLike[];
 }
 
 export class ProductMapper {
-  static toEntity(product: ProductWithLike) {
+  static toEntity(product: ProductWithLike): PersistedProductEntity {
     return new ProductEntity({
       id: product.id,
       userId: product.userId,
@@ -17,7 +17,7 @@ export class ProductMapper {
       isLiked: !!product.ProductLike?.length,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
-    });
+    }) as PersistedProductEntity;
   }
   static toPersistent(entity: ProductEntity) {
     return {

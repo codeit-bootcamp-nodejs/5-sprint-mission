@@ -82,14 +82,17 @@ export class CommentService extends BaseService implements ICommentService {
     if (commentTotalCount < limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: commentTotalCount });
     }
-
-    return await this._repos.comment.findCommentList({
+    const comments = await this._repos.comment.findCommentList({
       articleId,
       productId,
       cursor,
       limit,
       orderBy,
-    });
+    })
+    if (!comments) {
+      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+    }
+    return comments;
   };
 
   createComment = async ({ userId, articleId, productId, content }: CreateCommentParamsType) => {
@@ -99,6 +102,9 @@ export class CommentService extends BaseService implements ICommentService {
 
     const createdComment = await this._repos.comment.create(entity);
 
+    if (!createdComment) {
+      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+    }
     return createdComment;
   };
 
@@ -133,6 +139,9 @@ export class CommentService extends BaseService implements ICommentService {
 
     const updatedComment = await this._repos.comment.update(comment);
 
+    if (!updatedComment) {
+      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+    }
     return updatedComment;
   };
 

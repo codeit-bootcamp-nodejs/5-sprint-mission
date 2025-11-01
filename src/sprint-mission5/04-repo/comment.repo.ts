@@ -51,6 +51,7 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
           id: commentId,
         },
       });
+      
       return comment ? CommentMapper.toEntity(comment) : null;
     }
     if (productId) {
@@ -62,6 +63,7 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
       });
       return comment ? CommentMapper.toEntity(comment) : null;
     }
+    return null;
   };
 
   findCommentList = async <T extends CommentKeys>({
@@ -96,6 +98,7 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
       });
       return commentList.map((comment) => CommentMapper.toEntity(comment));
     }
+    return null
   };
 
   create = async (entity: CommentEntity) => {
@@ -127,6 +130,8 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
       });
       return CommentMapper.toEntity(comment);
     }
+
+    return null;
   };
 
   update = async (entity: CommentEntity) => {
@@ -158,6 +163,8 @@ export class CommentRepo extends BaseRepo implements ICommentRepo {
 
       return CommentMapper.toEntity(updatedcomment);
     }
+
+    return null;
   };
 
   delete = async ({ articleId, productId, commentId }: DeleteCommentParamsType) => {

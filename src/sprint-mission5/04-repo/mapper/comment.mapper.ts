@@ -1,8 +1,8 @@
 import { ArticleComment, ProductComment } from "@prisma/client";
-import { CommentEntity } from "../../03-domain/entity/comment.entity";
+import { CommentEntity, PersistedCommentEntity } from "../../03-domain/entity/comment.entity";
 
 export class CommentMapper {
-  static toEntity(comment: ArticleComment | ProductComment) {
+  static toEntity(comment: ArticleComment | ProductComment) : PersistedCommentEntity {
     return new CommentEntity({
       id: comment.id,
       articleId: "articleId" in comment ? comment.articleId : undefined,
@@ -11,7 +11,7 @@ export class CommentMapper {
       content: comment.content,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
-    });
+    }) as PersistedCommentEntity ;
   }
   static toPersistent(entity: CommentEntity) {
     return {

@@ -1,6 +1,6 @@
-import { EXCEPTIONS } from "../../common/const/exception.info.js";
-import { Exception } from "../../common/exception/exception.js";
-import { BaseEntity, BaseParams } from "./base.entity.js";
+import { EXCEPTIONS } from "../../common/const/exception.info";
+import { Exception } from "../../common/exception/exception";
+import { BaseEntity, BaseParams } from "./base.entity";
 
 export interface ArticleParams extends BaseParams<string> {
   userId: string;

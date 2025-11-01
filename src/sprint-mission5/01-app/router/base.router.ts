@@ -9,7 +9,6 @@ export class BaseRouter {
   protected _tokeManager;
   protected _fileManager;
 
-
   constructor(basePath: string, managers: IManagers) {
     this.basePath = basePath;
     this._tokeManager = managers.token;
@@ -36,11 +35,12 @@ export class BaseRouter {
     }
 
     const [_, token] = req.headers.authorization.split(" ");
+    
+    const decoded = this._tokeManager.verify<{ userId: string }>(token);
+    req.userId = decoded.userId;
     if(!req.userId){
       throw new Exception({info: EXCEPTIONS.USERID_NOT_EXSIST});
     }
-    const decoded = this._tokeManager.verify<{ userId: string }>(token);
-    req.userId = decoded.userId;
     next();
   };
 }

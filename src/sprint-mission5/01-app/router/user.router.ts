@@ -1,6 +1,6 @@
-import { IControllers } from "../../02-controller/controllers.js";
-import { IManagers } from "../../common/util/managers.js";
-import { BaseRouter } from "./base.router.js";
+import { IControllers } from "../../02-controller/controllers";
+import { IManagers } from "../../common/util/managers";
+import { BaseRouter } from "./base.router";
 
 export class UserRouter extends BaseRouter {
   #controllers;

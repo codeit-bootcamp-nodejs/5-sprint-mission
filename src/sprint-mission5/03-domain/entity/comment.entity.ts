@@ -1,6 +1,6 @@
 import { EXCEPTIONS } from "../../common/const/exception.info";
 import { Exception } from "../../common/exception/exception";
-import { BaseEntity, BaseParams } from "./base.entity.js";
+import { BaseEntity, BaseParams } from "./base.entity";
 
 export interface CommentParams extends BaseParams<number> {
   userId: string;

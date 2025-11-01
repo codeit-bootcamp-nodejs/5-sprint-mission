@@ -1,4 +1,10 @@
+import { ArticleRouter } from "./01-app/router/article.router";
+import { ImageRouter } from "./01-app/router/image.router";
+import { ProductRouter } from "./01-app/router/product.router";
+import { UserRouter } from "./01-app/router/user.router";
 import { Server } from "./01-app/server";
+import { controllers } from "./02-controller/controllers";
+import { managers } from "./common/util/managers";
 
 export class DepInjector {
   private _sever: Server;
@@ -12,37 +18,13 @@ export class DepInjector {
   }
 
   injectDeps() {
-    // const prisma = new PrismaClient();
 
-    
+    const userRouter = new UserRouter(controllers, managers);
+    const productRouter = new ProductRouter(controllers, managers);
+    const articleRouter = new ArticleRouter(controllers, managers);
+    const imageRouter = new ImageRouter(controllers, managers);
+    const routers = [userRouter, productRouter, articleRouter, imageRouter];
 
-   
-
-    // const userController = new UserController(services);
-    // const productController = new ProductController(services);
-    // const productCommentController = new ProductCommentController(services);
-    // const productLikeController = new ProductLikeController(services);
-    // const articleController = new ArticleController(services);
-    // const articleCommentController = new ArticleCommentController(services);
-    // const articleLikeController = new ArticleLikeController(services);
-    // const imageController = new ImageController();
-    // const controllers = {
-    //   user: userController,
-    //   product: productController,
-    //   productComment: productCommentController,
-    //   productLike: productLikeController,
-    //   article: articleController,
-    //   articleComment: articleCommentController,
-    //   articleLike: articleLikeController,
-    //   image: imageController,
-    // };
-
-    // const userRouter = new UserRouter(controllers, managers);
-    // const productRouter = new ProductRouter(controllers, managers);
-    // const articleRouter = new ArticleRouter(controllers, managers);
-    // const imageRouter = new ImageRouter(controllers, managers);
-    // const routers = [userRouter, productRouter, articleRouter, imageRouter];
-
-    return new Server();
+    return new Server({routers, managers});
   }
 }

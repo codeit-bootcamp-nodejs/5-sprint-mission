@@ -1,6 +1,6 @@
 import { IRepos } from "../../04-repo/repos";
 import { EXCEPTIONS } from "../../common/const/exception.info";
-import { Exception } from "../../common/exception/exception.js";
+import { Exception } from "../../common/exception/exception";
 import { BaseQueryType, ProductKeys, ProductSort, Sort } from "../../types/query";
 import { PersistedProductEntity, ProductEntity } from "../entity/product.entity";
 import { BaseService } from "./base.service";
