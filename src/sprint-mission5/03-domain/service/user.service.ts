@@ -38,7 +38,12 @@ type BaseUserParamsType = {
 }
 type SignUpUserParams = Omit<BaseUserParamsType, "id" | "updatePassword">;
 type GetUserParams = Pick<BaseUserParamsType, "id">;
-type UpdateUserParams = Omit<BaseUserParamsType, "password" | "updatePassword">;
+type UpdateUserParams = {
+  id: string;
+  email?: string;
+  nickname?: string;
+  image?: string;
+};
 type UpdatePasswordUserParams = Pick<BaseUserParamsType, "id" | "password" | "updatePassword">;
 type DeleteUserParams = Pick<BaseUserParamsType, 'id'>;
 
@@ -75,7 +80,7 @@ export class UserService extends BaseService implements IUserService {
   getUser = async ({ id }: GetUserParams) => {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
     return foundUser;
   };
@@ -107,7 +112,7 @@ export class UserService extends BaseService implements IUserService {
 
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const foundUserProducts = await this._repos.user.findUserProducts({
@@ -117,7 +122,7 @@ export class UserService extends BaseService implements IUserService {
       orderBy,
     });
     if (!foundUserProducts) {
-      throw new Exception({ info: EXCEPTIONS.USER_PRODUCTS_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_PRODUCTS_NOT_EXIST });
     }
 
     return { user: foundUser, products: foundUserProducts };
@@ -129,7 +134,7 @@ export class UserService extends BaseService implements IUserService {
 
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const foundUserLikeProducts = await this._repos.user.findUserLikeProducts(
@@ -138,7 +143,7 @@ export class UserService extends BaseService implements IUserService {
       limit,
     );
     if (!foundUserLikeProducts) {
-      throw new Exception({ info: EXCEPTIONS.USER_LIKEPRODUCTS_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_LIKEPRODUCTS_NOT_EXIST });
     }
 
     return foundUserLikeProducts;
@@ -150,7 +155,7 @@ export class UserService extends BaseService implements IUserService {
 
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const foundUserLikeArticles = await this._repos.user.findUserLikeArticles(
@@ -159,7 +164,7 @@ export class UserService extends BaseService implements IUserService {
       limit,
     );
     if (!foundUserLikeArticles) {
-      throw new Exception({ info: EXCEPTIONS.USER_LIKEARTICLES_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_LIKEARTICLES_NOT_EXIST });
     }
 
     return foundUserLikeArticles;
@@ -167,7 +172,7 @@ export class UserService extends BaseService implements IUserService {
   updateUser = async ({ id, email, nickname, image }: UpdateUserParams) => {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const user = UserEntity.forCreate({ id, email, nickname, image });
@@ -178,7 +183,7 @@ export class UserService extends BaseService implements IUserService {
   updatePasswordUser = async ({ id, password, updatePassword }: UpdatePasswordUserParams) => {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const isPasswordValid = await this._hashManager.verifyPassword(
@@ -199,7 +204,7 @@ export class UserService extends BaseService implements IUserService {
   deleteUser = async ({ id }: DeleteUserParams) => {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
     const deletedUser = await this._repos.user.delete(id);
 

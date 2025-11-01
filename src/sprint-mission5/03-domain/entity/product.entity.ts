@@ -4,15 +4,19 @@ import { BaseEntity, BaseParams } from "./base.entity";
 
 export interface ProductParams extends BaseParams<string> {
   userId: string;
-  name: string;
-  description: string;
-  price: number;
-  tags: string[];
+  name?: string;
+  description?: string;
+  price?: number;
+  tags?: string[];
   isLiked: boolean;
 }
 
 export interface PersistedProductEntity extends ProductEntity {
   id: string;
+  name: string;
+  description: string;
+  price: number;
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,8 +34,13 @@ type CreateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
   isLiked?: boolean;
 };
 
-type UpdateProductFactoryType = Omit<ProductFactoryType, "isLiked"> & {
+type UpdateProductFactoryType = {
+  userId: string;
   productId: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  tags?: string[];
   isLiked?: boolean;
 };
 
@@ -68,7 +77,7 @@ export class ProductEntity extends BaseEntity<string> {
     this.validateDescriptionRule(description);
     this.validatePriceIdRule(price);
     this.validateTagsIdRule(tags);
-    return new ProductEntity({ userId, name, description, price, tags, isLiked });
+    return new ProductEntity({ userId, name, description, price, tags, isLiked }) as PersistedProductEntity;
   };
 
   static updateFactory = ({

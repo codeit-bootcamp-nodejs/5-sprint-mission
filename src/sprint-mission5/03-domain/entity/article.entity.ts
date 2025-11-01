@@ -4,13 +4,15 @@ import { BaseEntity, BaseParams } from "./base.entity";
 
 export interface ArticleParams extends BaseParams<string> {
   userId: string;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   isLiked: boolean;
 }
 
 export interface PersistedArticleEntity extends ArticleEntity {
   id: string;
+  title: string;
+  content: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,13 +47,13 @@ export class ArticleEntity extends BaseEntity<string> {
   }) => {
     this.validateTitleRule(title);
     this.validateContentRule(content);
-    return new ArticleEntity({ userId, title, content, isLiked });
+    return new ArticleEntity({ userId, title, content, isLiked }) as PersistedArticleEntity;
   };
   static updateFactory = ({ articleId: id, userId, title, content, isLiked = false }: {
     articleId : string,
     userId: string,
-    title: string,
-    content: string,
+    title?: string,
+    content?: string,
     isLiked?: boolean,
   }) => {
     if (title !== undefined) {

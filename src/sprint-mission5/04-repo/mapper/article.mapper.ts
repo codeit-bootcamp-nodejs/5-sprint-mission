@@ -12,7 +12,7 @@ export class ArticleMapper {
       userId: article.userId,
       title: article.title,
       content: article.content,
-      isLiked: !!article.ArticleLike?.length,
+      isLiked: article.ArticleLike?.[0]?.isLiked ?? false,
       createdAt: article.createdAt,
       updatedAt: article.updatedAt,
     }) as PersistedArticleEntity;
@@ -24,4 +24,12 @@ export class ArticleMapper {
       content: entity.content,
     };
   }
+  static toPersistentForCreate(entity: PersistedArticleEntity) {
+    return {
+      userId: entity.userId,
+      title: entity.title,
+      content: entity.content,
+    };
+  }
+
 }

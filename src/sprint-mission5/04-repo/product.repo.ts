@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { BaseRepo } from "./base.repo";
 import { ProductMapper } from "./mapper/product.mapper";
 import { ProductKeys, QueryType } from "../types/query";
-import { ProductEntity } from "../03-domain/entity/product.entity";
+import { PersistedProductEntity, ProductEntity } from "../03-domain/entity/product.entity";
 import { IProductRepo } from "../03-domain/port/repo/i.product.repo";
 
 
@@ -14,7 +14,7 @@ export type BaseProductParamsType = {
 }
 export type FindProductLikeParamsType = BaseProductParamsType;
 
-export class ProductRepo extends BaseRepo implements IProductRepo{
+export class ProductRepo extends BaseRepo implements IProductRepo {
   constructor(prisma: PrismaClient) {
     super(prisma);
   }
@@ -36,21 +36,25 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
     return product ? ProductMapper.toEntity(product) : null;
   };
 
-  findProductLike = async (userId: string, productId: string)=> {
+  findProductLike = async (userId: string, productId: string) => {
     const product = await this._prisma.product.findUnique({
       where: {
         id: productId
       },
       include: {
         ProductLike: userId ? {
-          where:{
+          where: {
             userId
           }
         } : false
       },
     });
-    
-    return product ? ProductMapper.toEntity(product) : null;
+
+    if (!product || product.ProductLike.length === 0) {
+      return null; // 좋아요 없으면 null
+    }
+
+    return ProductMapper.toEntity(product);
   };
 
   findProductList = async <Tkey extends ProductKeys>({ offset, limit, orderBy }: ProductListQueryType) => {
@@ -58,17 +62,17 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
       skip: offset,
       take: limit,
       orderBy: {
-        [orderBy.field] : orderBy.sort
+        [orderBy.field]: orderBy.sort
       },
     });
 
     return productList.map((product) => ProductMapper.toEntity(product));
   };
 
-  create = async (entity: ProductEntity) => {
+  create = async (entity: PersistedProductEntity) => {
     const product = await this._prisma.product.create({
       data: {
-        ...ProductMapper.toPersistent(entity),
+        ...ProductMapper.toPersistentForCreate(entity),
       },
     });
     return ProductMapper.toEntity(product);
@@ -88,9 +92,9 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
 
     const productWithLike = {
       ...createProductLike.product,
-      ArticleLike : [createProductLike],
+      ProductLike: [createProductLike],
     }
-    
+
     return ProductMapper.toEntity(productWithLike);
   };
 
@@ -106,7 +110,7 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
     return ProductMapper.toEntity(updatedproduct);
   };
 
-  updateProductLike = async (userId: string, productId:string, isLiked: boolean) => {
+  updateProductLike = async (userId: string, productId: string, isLiked: boolean) => {
     const updatedProductLike = await this._prisma.productLike.update({
       where: {
         userId_productId: {
@@ -124,7 +128,7 @@ export class ProductRepo extends BaseRepo implements IProductRepo{
 
     const productWithLike = {
       ...updatedProductLike.product,
-      ArticleLike : [updatedProductLike],
+      ProductLike: [updatedProductLike],
     }
 
     return ProductMapper.toEntity(productWithLike);

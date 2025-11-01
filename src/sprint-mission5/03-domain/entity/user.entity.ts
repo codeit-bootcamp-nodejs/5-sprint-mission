@@ -11,6 +11,8 @@ export interface UserParams extends BaseParams<string> {
 }
 export interface PersistedUserEntity extends UserEntity {
   id : string;
+  nickname: string;
+  image: string | undefined;
   password: string;
   createdAt: Date;
   updatedAt: Date;

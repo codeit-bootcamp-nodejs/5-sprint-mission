@@ -33,9 +33,9 @@ export class ArticleController extends BaseController implements IArticleControl
   };
 
   getArticleController: ControllerHandler = async (req, res, next) => {
-    const reqDto = this.validateOrThrow(getArticleReqSchema.safeParse({
-      ...req.params
-    }));
+    const reqDto = this.validateOrThrow(getArticleReqSchema.safeParse(
+      req.params
+    ));
     const getArticle =
       await this._articleService.getArticle(reqDto);
     const getArticleResDto = new GetArticleResDto(getArticle);
@@ -43,9 +43,9 @@ export class ArticleController extends BaseController implements IArticleControl
   };
 
   getArticleListController: ControllerHandler = async (req, res, next) => {
-    const reqDto = this.validateOrThrow(getArticleListReqSchema.safeParse({
-      ...req.query
-    }));
+    const reqDto = this.validateOrThrow(getArticleListReqSchema.safeParse(
+      req.query
+    ));
     const getArticleList =
       await this._articleService.getArticleList(reqDto);
     const getArticleListResDto = new GetArticleListResDto(getArticleList);

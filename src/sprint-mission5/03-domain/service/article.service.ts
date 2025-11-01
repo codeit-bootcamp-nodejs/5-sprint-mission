@@ -9,7 +9,7 @@ export interface IArticleService {
   getArticleList: ({ offset, limit, sort }: BaseArticleQueryType) => Promise<PersistedArticleEntity[]>;
   addArticleLike: ({ userId, articleId }: AddArticleParamsType) => Promise<PersistedArticleEntity>;
   createArticle: ({ userId, title, content }: CreateArticleParamsType) => Promise<PersistedArticleEntity>;
-  updateArticle: ({ userId, articleId, title, content }: BaseArticleParamsType) => Promise<PersistedArticleEntity>;
+  updateArticle: ({ userId, articleId, title, content }: UpdateArticleParamsType) => Promise<PersistedArticleEntity>;
   deleteArticle: ({ userId, articleId }: DeleteArticleParamsType) => Promise<void>;
   cancelArticleLike: ({ userId, articleId }: CancelArticleParamsType) => Promise<PersistedArticleEntity>;
 }
@@ -24,7 +24,12 @@ type BaseArticleParamsType = {
 type GetArticleParamsType = Pick<BaseArticleParamsType, "articleId">;
 type AddArticleParamsType = Pick<BaseArticleParamsType, "userId" | "articleId">;
 type CreateArticleParamsType = Pick<BaseArticleParamsType, "userId" | "title" | "content">;
-type UpdateArticleParamsType = BaseArticleParamsType;
+type UpdateArticleParamsType = {
+  articleId: string;
+  userId: string;
+  title?: string;
+  content?: string;
+};
 type DeleteArticleParamsType = Pick<BaseArticleParamsType, "userId" | "articleId">;
 type CancelArticleParamsType = Pick<BaseArticleParamsType, "userId" | "articleId">;
 

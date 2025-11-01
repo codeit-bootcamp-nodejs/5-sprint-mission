@@ -7,7 +7,7 @@ export interface IProductRepo {
   findProductById: (productId: string) => Promise<PersistedProductEntity | null>;
   findProductLike: (userId: string, productId: string) => Promise<PersistedProductEntity | null>;
   findProductList: ({ offset, limit, orderBy }: ProductListQueryType) => Promise<PersistedProductEntity[]>;
-  create: (entity: ProductEntity) => Promise<PersistedProductEntity>;
+  create: (entity: PersistedProductEntity) => Promise<PersistedProductEntity>;
   addProductLike: (userId: string, productId: string) => Promise<PersistedProductEntity>;
   update: (entity: ProductEntity) => Promise<PersistedProductEntity>;
   updateProductLike: (userId: string, productId: string, isLiked: boolean) => Promise<PersistedProductEntity>;

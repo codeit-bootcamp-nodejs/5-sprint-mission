@@ -38,7 +38,7 @@ export class UserController extends BaseController implements IUserController {
     const { accessToken, authenticatedUser } =
       await this._authService.signInUser(reqDto);
     if (!authenticatedUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     const resDto = new SignInResDto(accessToken, authenticatedUser);
@@ -54,7 +54,7 @@ export class UserController extends BaseController implements IUserController {
   };
 
   signOutUserController = async (req: Request, res: Response, next: NextFunction) => {
-    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse(req.userId));
+    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
     await this._authService.signOutUser({ id: userId });
     const resDto = new SignOutResDto();
@@ -62,7 +62,7 @@ export class UserController extends BaseController implements IUserController {
   };
 
   getUserController = async (req: Request, res: Response, next: NextFunction) => {
-    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse(req.userId));
+    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
     const user = await this._userService.getUser({ id: userId });
     const resDto = new UserResDto(user);
@@ -131,7 +131,7 @@ export class UserController extends BaseController implements IUserController {
   };
 
   deleteUserController = async (req: Request, res: Response, next: NextFunction) => {
-    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse(req.userId));
+    const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
     await this._userService.deleteUser({ id: userId });
     const resDto = new DeleteUserResDto();
@@ -139,7 +139,7 @@ export class UserController extends BaseController implements IUserController {
   };
 
   refreshTokensController = async (req: Request, res: Response, next: NextFunction) => {
-    const { refreshToken } = this.validateOrThrow(refreshTokensReqSchema.safeParse(req.body.refreshToken));
+    const { refreshToken } = this.validateOrThrow(refreshTokensReqSchema.safeParse({ refreshToken: req.body.refreshToken }));
     const { accessToken, user } = await this._authService.refreshTokens(refreshToken);
 
     const resDto = new RefreshTokensResDto({ accessToken, user: user! });

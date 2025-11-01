@@ -46,7 +46,7 @@ export class ProductCommentController extends BaseController implements IProduct
   updateProductCommentController: ControllerHandler = async (req, res, next) => {
     const resDto = this.validateOrThrow(updateProductCommentReqSchema.safeParse({
       userId: req.userId,
-      ...req.query,
+      ...req.body,
       ...req.params
     }));
     const updatedComment =

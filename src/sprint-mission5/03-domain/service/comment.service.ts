@@ -36,7 +36,7 @@ export class CommentService extends BaseService implements ICommentService {
 
   private _validateTargetExists = async ({ articleId, productId }: ValidateTargetParams) => {
     if (!articleId && !productId) {
-      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
     }
 
     if (productId) {
@@ -71,7 +71,7 @@ export class CommentService extends BaseService implements ICommentService {
     }
 
     if (!articleId && !productId) {
-      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
     }
 
     const commentTotalCount = await this._repos.comment.count({

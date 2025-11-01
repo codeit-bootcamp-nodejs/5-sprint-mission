@@ -39,7 +39,7 @@ export class BaseRouter {
     const decoded = this._tokeManager.verify<{ userId: string }>(token);
     req.userId = decoded.userId;
     if(!req.userId){
-      throw new Exception({info: EXCEPTIONS.USERID_NOT_EXSIST});
+      throw new Exception({info: EXCEPTIONS.USERID_NOT_EXIST});
     }
     next();
   };

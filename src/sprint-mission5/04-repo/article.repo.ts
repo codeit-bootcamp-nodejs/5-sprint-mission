@@ -1,6 +1,6 @@
 import { Article, PrismaClient } from "@prisma/client";
 import { BaseRepo } from "./base.repo";
-import { ArticleEntity } from "../03-domain/entity/article.entity";
+import { ArticleEntity, PersistedArticleEntity } from "../03-domain/entity/article.entity";
 import { ArticleMapper } from "./mapper/article.mapper";
 import { ArticleKeys, QueryType } from "../types/query";
 import { IArticleRepo } from "../03-domain/port/repo/i.article.repo";
@@ -41,7 +41,12 @@ export class ArticleRepo extends BaseRepo implements IArticleRepo {
         } : false
       },
     });
-    return article ? ArticleMapper.toEntity(article) : null;
+
+    if (!article || article.ArticleLike.length === 0) {
+      return null; 
+    }
+
+    return ArticleMapper.toEntity(article);
   };
 
   findArticleList = async ({ offset, limit, orderBy }: ArticleQuery) => {
@@ -56,10 +61,10 @@ export class ArticleRepo extends BaseRepo implements IArticleRepo {
     return articleList.map((article) => ArticleMapper.toEntity(article));
   };
 
-  create = async (entity: ArticleEntity) => {
+  create = async (entity: PersistedArticleEntity) => {
     const article = await this._prisma.article.create({
       data: {
-        ...ArticleMapper.toPersistent(entity),
+        ...ArticleMapper.toPersistentForCreate(entity),
       },
     });
     return ArticleMapper.toEntity(article);

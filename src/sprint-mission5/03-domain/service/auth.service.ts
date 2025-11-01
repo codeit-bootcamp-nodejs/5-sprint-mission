@@ -41,7 +41,7 @@ export class AuthService extends BaseService implements IAuthService{
   }) => {
     const user = await this._repos.user.findUserByEmail(email);
     if (!user) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
     const isPasswordMatch = await this._hashManager.verifyPassword(
       password,
@@ -84,7 +84,7 @@ export class AuthService extends BaseService implements IAuthService{
       await this._repos.user.findUserByRefreshToken(refreshToken);
 
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.REFRESHTOKEN_NOT_EXSIST });
+      throw new Exception({ info: EXCEPTIONS.REFRESHTOKEN_NOT_EXIST });
     }
 
     if (foundUser.id !== decoded.userId) {

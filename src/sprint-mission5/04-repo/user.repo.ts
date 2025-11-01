@@ -47,12 +47,12 @@ export class UserRepo extends BaseRepo implements IUserRepo {
     if (!userLikeProducts || userLikeProducts.length === 0) return null;
 
     return userLikeProducts.map((userLikeProduct) => {
-      const articleWithLike = {
+      const productWithLike = {
         ...userLikeProduct.product,
-        ArticleLike: [userLikeProduct],
+        ProductLike: [userLikeProduct],
       };
 
-      return ProductMapper.toEntity(articleWithLike);
+      return ProductMapper.toEntity(productWithLike);
     });
   };
 

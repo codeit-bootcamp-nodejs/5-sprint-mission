@@ -24,7 +24,7 @@ export class Exception extends Error {
     originalErr?: unknown
   }) {
     
-    let finalMessage = info?.message ?? message ?? "알 수 없는 에러입니다.";
+    let finalMessage = message ?? info?.message ?? "알 수 없는 에러입니다.";
 
     if (value) {
       finalMessage = finalMessage.replace(/$\{value\}/g, String(value));

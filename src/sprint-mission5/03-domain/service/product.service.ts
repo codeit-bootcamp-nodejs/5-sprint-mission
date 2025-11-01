@@ -10,7 +10,7 @@ export interface IProductService {
   getProductList: ({ offset, limit, sort }: BaseProductQueryType) => Promise<PersistedProductEntity[]>;
   addProductLike: ({ userId, productId }: AddProductParamsType) => Promise<PersistedProductEntity>;
   createProduct: ({ userId, name, description, price, tags }: CreateProductParamsType) => Promise<PersistedProductEntity>;
-  updateProduct: ({ userId, productId, name, description, price, tags, }: BaseProductParamsType) => Promise<PersistedProductEntity>;
+  updateProduct: ({ userId, productId, name, description, price, tags, }: UpdateProductParamsType) => Promise<PersistedProductEntity>;
   deleteProduct: ({ userId, productId }: DeleteProductParamsType) => Promise<void>;
   cancelProductLike: ({ userId, productId }: CancelProductParamsType) => Promise<PersistedProductEntity>;
 }
@@ -26,7 +26,14 @@ type BaseProductParamsType = {
 type GetProductParamsType = Pick<BaseProductParamsType, "productId">;
 type AddProductParamsType = Pick<BaseProductParamsType, "userId" | "productId">;
 type CreateProductParamsType = Omit<BaseProductParamsType, "productId">;
-type UpdateProductParamsType = BaseProductParamsType;
+type UpdateProductParamsType = {
+  userId: string;
+  productId: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  tags?: string[];
+}
 type DeleteProductParamsType = Pick<BaseProductParamsType, "userId" | "productId">;
 type CancelProductParamsType = Pick<BaseProductParamsType, "userId" | "productId">;
 

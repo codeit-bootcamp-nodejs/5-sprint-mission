@@ -1,7 +1,15 @@
 export const EXCEPTIONS = {
   // 요청 형식 오류
   INVALID_REQUEST: {
-    statusCode: 401,
+    statusCode: 400,
+  },
+  USERID_FORM: {
+    statusCode: 400,
+    message: "userId 양식에 안 맞습니다.",
+  },
+  REFRESHTOKEN_FORM: {
+    statusCode: 400,
+    message: "refresh 토큰 양식에 안 맞습니다.",
   },
   EMAIL_FORM: {
     statusCode: 400,
@@ -45,7 +53,11 @@ export const EXCEPTIONS = {
   },
   LIMIT_FORM: {
     statusCode: 400,
-    message: "limit 양식이 잘못되었거나 입력하지 않았습니다.",
+    message: "limit 양식이 안 맞습니다.",
+  },
+  CURSOR_FORM: {
+    statusCode: 400,
+    message: "it 양식이 안 맞습니다.",
   },
   NAME_TOO_LONG: {
     statusCode: 422,
@@ -114,27 +126,27 @@ export const EXCEPTIONS = {
   },
 
   // 필수 값 누락
-  NAME_NOT_EXSIST: {
+  NAME_NOT_EXIST: {
     statusCode: 400,
     message: "이름은 입력하지 않았습니다.(필수)",
   },
-  DESCRIPTION_NOT_EXSIST: {
+  DESCRIPTION_NOT_EXIST: {
     statusCode: 400,
     message: "설명을 입력하지 않았습니다.(필수)",
   },
-  PRICE_NOT_EXSIST: {
+  PRICE_NOT_EXIST: {
     statusCode: 400,
     message: "가격은 입력하지 않았습니다.(필수)",
   },
-  TAGS_NOT_EXSIST: {
+  TAGS_NOT_EXIST: {
     statusCode: 400,
     message: "태그를 입력하지 않았습니다.(필수)",
   },
-  TITLE_NOT_EXSIST: {
+  TITLE_NOT_EXIST: {
     statusCode: 404,
     message: "제목이 존재하지 않습니다.",
   },
-  CONTENT_NOT_EXSIST: {
+  CONTENT_NOT_EXIST: {
     statusCode: 404,
     message: "내용이 존재하지 않습니다.",
   },
@@ -158,35 +170,35 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "이미 좋아요가 눌러져 있습니다.",
   },
-  ID_NOT_EXSIST: {
+  ID_NOT_EXIST: {
     statusCode: 404,
     message: "id가 존재하지 않습니다.",
   },
-  TARGETTYPE_NOT_EXSIST: {
+  TARGETTYPE_NOT_EXIST: {
     statusCode: 404,
     message: "타겟 타입이 존재하지 않습니다.",
   },
-  USER_NOT_EXSIST: {
+  USER_NOT_EXIST: {
     statusCode: 404,
     message: "유저가 존재하지 않습니다.",
   },
-  USER_PRODUCTS_NOT_EXSIST: {
+  USER_PRODUCTS_NOT_EXIST: {
     statusCode: 404,
     message: "유저의 상품이 존재하지 않습니다.",
   },
-  USER_LIKEPRODUCTS_NOT_EXSIST: {
+  USER_LIKEPRODUCTS_NOT_EXIST: {
     statusCode: 404,
     message: "유저의 좋아요 상품이 존재하지 않습니다.",
   },
-  USER_LIKEARTICLES_NOT_EXSIST: {
+  USER_LIKEARTICLES_NOT_EXIST: {
     statusCode: 404,
     message: "유저의 좋아요 게시글이 존재하지 않습니다.",
   },
-  REFRESHTOKEN_NOT_EXSIST: {
+  REFRESHTOKEN_NOT_EXIST: {
     statusCode: 404,
     message: "refresh 토큰이 존재하지 않습니다.",
   },
-  USERID_NOT_EXSIST: {
+  USERID_NOT_EXIST: {
     statusCode: 404,
     message: "userId가 없습니다.",
   },
