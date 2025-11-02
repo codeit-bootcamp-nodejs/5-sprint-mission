@@ -1,8 +1,9 @@
-import { RequestHandler } from "express";
 import { AuthedRequest, Validated } from "../types/http";
 import { CreateProductDTO, UpdateProductDTO } from "../types/dto";
 import { productService } from "../services/product.service";
+import { Router, RequestHandler } from "express";
 
+const router = Router();
 export const list: RequestHandler = async (req, res) => {
   const {
     offset = "0",
@@ -76,3 +77,5 @@ export const unlike: RequestHandler = async (req, res) => {
   await productService.unlike(user.id, id);
   res.status(200).json({ ok: true });
 };
+
+export default router;

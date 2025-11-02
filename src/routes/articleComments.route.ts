@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { authenticate, optionalAuthenticate } from "../middlewares/auth";
-
 import * as c from "../controllers/comment.controller";
-import { parseIdParam } from "@/middlewares/params";
+import { parseIdParam } from "../middlewares/params";
 import {
   validateCreateComment,
   validateUpdateComment,
-} from "@/middlewares/validator";
+} from "../middlewares/validator";
 
 const router = Router({ mergeParams: true });
 

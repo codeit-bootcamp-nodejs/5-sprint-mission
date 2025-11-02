@@ -4,8 +4,8 @@ import { authenticate, optionalAuthenticate } from "../middlewares/auth";
 import {
   validateCreateArticle,
   validateUpdateArticle,
-} from "@/middlewares/validator";
-import { parseIdParam } from "@/middlewares/params";
+} from "../middlewares/validator";
+import { parseIdParam } from "../middlewares/params";
 
 const router = Router();
 
