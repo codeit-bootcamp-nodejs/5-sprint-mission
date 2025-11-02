@@ -30,7 +30,7 @@ export default async function authOptionalMiddleware(req, res, next) {
       return next();
     }
 
-    const userId = payload.id;
+    const userId = payload.userId;
     if (!userId) {
       req.user = null;
       return next();

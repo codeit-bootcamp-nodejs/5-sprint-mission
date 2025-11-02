@@ -127,7 +127,7 @@ router.get("/me/liked-products", authMiddleware, async (req, res, next) => {
       where: {
         likes: {
           some: {
-            authorId: userId,
+            userId: userId,
           },
         },
       },

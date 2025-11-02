@@ -26,7 +26,7 @@ const createRefreshToken = (userId) => {
 
 router.post("/signup", validateSignUp, async (req, res, next) => {
   try {
-    const { email, nickname, password } = req.body;
+    const { email, nickname, password: normalPassword } = req.body;
 
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email },
@@ -42,7 +42,7 @@ router.post("/signup", validateSignUp, async (req, res, next) => {
       return res.status(409).json({ error: "이미 사용중인 닉네임입니다." });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(normalPassword, 10);
 
     const user = await prisma.user.create({
       data: {
@@ -52,15 +52,9 @@ router.post("/signup", validateSignUp, async (req, res, next) => {
       },
     });
 
-    const userWithoutPassword = {
-      id: user.id,
-      email: user.email,
-      nickname: user.nickname,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    const { password, ...rest } = user;
 
-    res.status(201).json(userWithoutPassword);
+    res.status(201).json(rest);
   } catch (e) {
     next(e);
   }
