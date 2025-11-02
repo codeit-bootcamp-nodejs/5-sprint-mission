@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  nickname String @unique
+  image String?
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products      Product[]
+  articles      Article[]
+  comments      Comment[]
+
+  productLikes  ProductLike[]
+  articleLikes  ArticleLike[]
+
+  refreshToken RefreshToken?
+}
+
+model RefreshToken{
+  id Int @id @default(autoincrement())
+  token String @unique
+  expiresAt DateTime
+
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Tags {
+  FASHION
+  BEAUTY
+  SPORTS
+  ELECTRONICS
+  HOME_INTERIOR
+  HOUSEHOLD_SUPPLIES
+  KITCHENWARE
+}
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String?
+  tags        Tags
+  price       Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  authorId String
+  author User @relation(fields: [authorId], references: [id])
+
+  comments    Comment[]
+
+  likes ProductLike[]
+}
+
+model Article {
+  id        Int    @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  authorId String
+  author User @relation(fields: [authorId], references: [id])
+
+  comments  Comment[]
+
+  likes ArticleLike[]
+}
+
+model Comment {
+  id        Int   @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String
+  author User @relation(fields: [authorId], references: [id])
+
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int?
+}
+
+model ProductLike{
+  userId String @map("user_id")
+  productId Int @map("product_id")
+
+  user          User    @relation(fields: [userId], references: [id])
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@id([userId, productId])
+  @@map("product_like")
+}
+
+model ArticleLike {
+  userId        String @map("user_id")
+  articleId     Int    @map("article_id")
+  
+  user          User    @relation(fields: [userId], references: [id])
+  article       Article @relation(fields: [articleId], references: [id])
+  
+  @@id([userId, articleId])
+  @@map("article_like")
+}
