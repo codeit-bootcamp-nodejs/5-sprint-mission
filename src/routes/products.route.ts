@@ -4,8 +4,16 @@ import { CreateProductDTO, UpdateProductDTO } from "../types/dto";
 import { productService } from "../services/product.service";
 
 export const list: RequestHandler = async (req, res) => {
-  const { offset = "0", limit = "20", sort = "recent", q } = req.query as {
-    offset?: string; limit?: string; sort?: "recent" | "asc"; q?: string;
+  const {
+    offset = "0",
+    limit = "20",
+    sort = "recent",
+    q,
+  } = req.query as {
+    offset?: string;
+    limit?: string;
+    sort?: "recent" | "asc";
+    q?: string;
   };
 
   const viewerId = (req as AuthedRequest).user?.id ?? null;
@@ -34,13 +42,15 @@ export const mine: RequestHandler = async (req, res) => {
 };
 
 export const create: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<CreateProductDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<CreateProductDTO>;
   const created = await productService.create(user.id, validated);
   res.status(201).json(created);
 };
 
 export const update: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<UpdateProductDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<UpdateProductDTO>;
   const id = Number(req.params.id);
   const updated = await productService.update(user.id, id, validated);
   res.json(updated);

@@ -14,7 +14,7 @@ export const productRepository = {
     where: Prisma.ProductWhereInput,
     orderBy: Prisma.ProductOrderByWithRelationInput[],
     skip: number,
-    take: number
+    take: number,
   ) {
     return prisma.product.findMany({
       where,
@@ -24,7 +24,6 @@ export const productRepository = {
     });
   },
 
-
   findById(id: number) {
     return prisma.product.findUnique({ where: { id } });
   },
@@ -32,7 +31,6 @@ export const productRepository = {
   create(data: Prisma.ProductUncheckedCreateInput) {
     return prisma.product.create({ data });
   },
-
 
   update(id: number, data: Prisma.ProductUpdateInput) {
     return prisma.product.update({ where: { id }, data });

@@ -14,7 +14,7 @@ export const commentRepository = {
     productId: number,
     skip = 0,
     take = 20,
-    orderBy: Prisma.CommentOrderByWithRelationInput[] = [{ createdAt: "desc" }]
+    orderBy: Prisma.CommentOrderByWithRelationInput[] = [{ createdAt: "desc" }],
   ) {
     return prisma.comment.findMany({
       where: { productId },
@@ -31,7 +31,7 @@ export const commentRepository = {
     articleId: number,
     skip = 0,
     take = 20,
-    orderBy: Prisma.CommentOrderByWithRelationInput[] = [{ createdAt: "desc" }]
+    orderBy: Prisma.CommentOrderByWithRelationInput[] = [{ createdAt: "desc" }],
   ) {
     return prisma.comment.findMany({
       where: { articleId },
@@ -44,7 +44,11 @@ export const commentRepository = {
     });
   },
 
-  createForProduct(data: { userId: number; productId: number; content: string }) {
+  createForProduct(data: {
+    userId: number;
+    productId: number;
+    content: string;
+  }) {
     const payload: Prisma.CommentUncheckedCreateInput = {
       userId: data.userId,
       productId: data.productId,
@@ -53,7 +57,11 @@ export const commentRepository = {
     return prisma.comment.create({ data: payload });
   },
 
-  createForArticle(data: { userId: number; articleId: number; content: string }) {
+  createForArticle(data: {
+    userId: number;
+    articleId: number;
+    content: string;
+  }) {
     const payload: Prisma.CommentUncheckedCreateInput = {
       userId: data.userId,
       articleId: data.articleId,

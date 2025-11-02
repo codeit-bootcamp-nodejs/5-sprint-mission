@@ -14,7 +14,7 @@ export const articleRepository = {
     where: Prisma.ArticleWhereInput,
     orderBy: Prisma.ArticleOrderByWithRelationInput[],
     skip: number,
-    take: number
+    take: number,
   ) {
     return prisma.article.findMany({
       where,
@@ -31,7 +31,6 @@ export const articleRepository = {
   create(data: Prisma.ArticleUncheckedCreateInput) {
     return prisma.article.create({ data });
   },
-
 
   update(id: number, data: Prisma.ArticleUpdateInput) {
     return prisma.article.update({ where: { id }, data });

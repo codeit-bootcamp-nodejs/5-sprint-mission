@@ -10,13 +10,15 @@ export const me: RequestHandler = async (req, res) => {
 };
 
 export const updateMe: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<UpdateMeDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<UpdateMeDTO>;
   const updated = await userService.updateMe(user.id, validated);
   res.json(updated);
 };
 
 export const changePassword: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<ChangePasswordDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<ChangePasswordDTO>;
   await userService.changePassword(user.id, validated);
   res.status(200).json({ ok: true });
 };

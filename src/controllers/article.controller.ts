@@ -4,8 +4,14 @@ import { CreateArticleDTO, UpdateArticleDTO } from "@/types/dto";
 import { articleService } from "../services/article.service";
 
 export const list: RequestHandler = async (req, res) => {
-  const { offset = "0", limit = "20", sort = "recent" } = req.query as {
-    offset?: string; limit?: string; sort?: "recent" | "asc";
+  const {
+    offset = "0",
+    limit = "20",
+    sort = "recent",
+  } = req.query as {
+    offset?: string;
+    limit?: string;
+    sort?: "recent" | "asc";
   };
   const viewerId = (req as AuthedRequest).user?.id ?? null;
   const data = await articleService.list(viewerId, {
@@ -24,13 +30,15 @@ export const getById: RequestHandler = async (req, res) => {
 };
 
 export const create: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<CreateArticleDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<CreateArticleDTO>;
   const data = await articleService.create(user.id, validated);
   res.status(201).json(data);
 };
 
 export const update: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<UpdateArticleDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<UpdateArticleDTO>;
   const id = Number(req.params.id);
   const data = await articleService.update(user.id, id, validated);
   res.json(data);

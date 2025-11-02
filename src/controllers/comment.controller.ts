@@ -16,21 +16,32 @@ export const listForArticle: RequestHandler = async (req, res) => {
 };
 
 export const createForProduct: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<CreateCommentDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<CreateCommentDTO>;
   const productId = Number(req.params.productId);
-  const comment = await commentService.createForProduct(user.id, productId, validated);
+  const comment = await commentService.createForProduct(
+    user.id,
+    productId,
+    validated,
+  );
   res.status(201).json(comment);
 };
 
 export const createForArticle: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<CreateCommentDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<CreateCommentDTO>;
   const articleId = Number(req.params.articleId);
-  const comment = await commentService.createForArticle(user.id, articleId, validated);
+  const comment = await commentService.createForArticle(
+    user.id,
+    articleId,
+    validated,
+  );
   res.status(201).json(comment);
 };
 
 export const update: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest & Validated<UpdateCommentDTO>;
+  const { user, validated } = req as unknown as AuthedRequest &
+    Validated<UpdateCommentDTO>;
   const commentId = Number(req.params.commentId);
   const updated = await commentService.update(user.id, commentId, validated);
   res.json(updated);

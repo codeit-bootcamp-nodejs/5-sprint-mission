@@ -1,19 +1,50 @@
 import jwt from "jsonwebtoken";
 
-type JwtUserPayload = { userId: number };
+const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "dev_access_secret";
+const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET ?? "dev_refresh_secret";
 
-export const signAccess = (userId: number): string =>
-  jwt.sign({ userId }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+export type JwtPayload = { sub: number; email?: string; nickname?: string };
 
-export const signRefresh = (userId: number): string =>
-  jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET as string, {
-    expiresIn: "7d",
-  });
+export function signAccess(payload: JwtPayload): string {
+  return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "1h" });
+}
 
-export const verifyAccess = (token: string): JwtUserPayload =>
-  jwt.verify(token, String(process.env.JWT_SECRET)) as { userId: number };
+export function signRefresh(payload: Pick<JwtPayload, "sub">): string {
+  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "14d" });
+}
 
-export const verifyRefresh = (token: string): JwtUserPayload =>
-  jwt.verify(token, String(process.env.JWT_REFRESH_SECRET)) as {
-    userId: number;
-  };
+function decodeAndNarrow(
+  token: string,
+  secret: string,
+  kind: "access" | "refresh",
+): JwtPayload {
+  let decoded: unknown;
+  try {
+    decoded = jwt.verify(token, secret);
+  } catch {
+    throw Object.assign(new Error(`Invalid ${kind} token`), { status: 401 });
+  }
+
+  const payload = decoded as jwt.JwtPayload;
+
+  const sub = payload.sub as unknown;
+  if (typeof sub !== "number") {
+    throw Object.assign(new Error(`Invalid ${kind} token payload`), {
+      status: 401,
+    });
+  }
+
+  const email = typeof payload.email === "string" ? payload.email : undefined;
+  const nickname =
+    typeof payload.nickname === "string" ? payload.nickname : undefined;
+
+  return { sub, email, nickname };
+}
+
+export function verifyAccess(token: string): JwtPayload {
+  return decodeAndNarrow(token, ACCESS_SECRET, "access");
+}
+
+export function verifyRefresh(token: string): JwtPayload {
+  return decodeAndNarrow(token, REFRESH_SECRET, "refresh");
+}

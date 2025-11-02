@@ -2,11 +2,11 @@
   "name": "sprint_mission_3",
   "version": "1.0.0",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/server.ts",
+    "dev": "nodemon --watch \"**/*.ts\" --exec ts-node --transpile-only server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "format": "prettier . --write",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node seed.ts",
+    "format": "prettier . --write"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",

@@ -1,8 +1,11 @@
 export type SignupDTO = { email: string; nickname: string; password: string };
-export type LoginDTO  = { email: string; password: string };
+export type LoginDTO = { email: string; password: string };
 
 export type UpdateMeDTO = { nickname?: string; image?: string | null };
-export type ChangePasswordDTO = { currentPassword: string; newPassword: string };
+export type ChangePasswordDTO = {
+  currentPassword: string;
+  newPassword: string;
+};
 
 export type CreateProductDTO = {
   name: string;

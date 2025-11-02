@@ -6,7 +6,9 @@ export const parseIdParam =
     const raw = (req.params as Record<string, string | undefined>)[param];
 
     if (!raw) {
-      return res.status(400).json({ message: `${param}는 1 이상의 정수여야 합니다.` });
+      return res
+        .status(400)
+        .json({ message: `${param}는 1 이상의 정수여야 합니다.` });
     }
 
     const n = Number(raw);
