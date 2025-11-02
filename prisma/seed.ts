@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient, User, Product, Article } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function main(): Promise<void> {
   await prisma.productLikes.deleteMany();
   await prisma.articleLikes.deleteMany();
   await prisma.comment.deleteMany();
@@ -13,7 +13,8 @@ async function main() {
   await prisma.user.deleteMany();
 
   const passwordHash = await bcrypt.hash("password123", 10);
-  const user1 = await prisma.user.create({
+
+  const user1: User = await prisma.user.create({
     data: {
       email: "user1@example.com",
       nickname: "홍길동",
@@ -21,7 +22,7 @@ async function main() {
     },
   });
 
-  const user2 = await prisma.user.create({
+  const user2: User = await prisma.user.create({
     data: {
       email: "user2@example.com",
       nickname: "김철수",
@@ -29,37 +30,37 @@ async function main() {
     },
   });
 
-  const product1 = await prisma.product.create({
+  const product1: Product = await prisma.product.create({
     data: {
-      name: 'iPhone 13',
-      description: '128GB, 상태 좋음',
+      name: "iPhone 13",
+      description: "128GB, 상태 좋음",
       price: 850000,
-      tags: ['apple', 'phone'],
+      tags: ["apple", "phone"],
       userId: user1.id,
     },
   });
 
-  const product2 = await prisma.product.create({
+  const product2: Product = await prisma.product.create({
     data: {
-      name: 'Galaxy S22',
-      description: '상태 양호',
+      name: "Galaxy S22",
+      description: "상태 양호",
       price: 650000,
-      tags: ['samsung', 'phone'],
+      tags: ["samsung", "phone"],
       userId: user1.id,
     },
   });
 
-  const article1 = await prisma.article.create({
+  const article1: Article = await prisma.article.create({
     data: {
-      title: '첫 글입니다',
-      content: '안녕하세요! 게시판 테스트 글이에요.',
+      title: "첫 글입니다",
+      content: "안녕하세요! 게시판 테스트 글이에요.",
       userId: user2.id,
     },
   });
 
   await prisma.comment.create({
     data: {
-      content: '아이폰 관심있어요!',
+      content: "아이폰 관심있어요!",
       productId: product1.id,
       userId: user2.id,
     },
@@ -67,7 +68,7 @@ async function main() {
 
   await prisma.comment.create({
     data: {
-      content: '가격 네고 가능할까요?',
+      content: "가격 네고 가능할까요?",
       productId: product2.id,
       userId: user2.id,
     },
@@ -75,7 +76,7 @@ async function main() {
 
   await prisma.comment.create({
     data: {
-      content: '잘 읽었습니다',
+      content: "잘 읽었습니다",
       articleId: article1.id,
       userId: user1.id,
     },
@@ -89,7 +90,7 @@ async function main() {
     data: { userId: user1.id, articleId: article1.id },
   });
 
-  console.log('시딩 완료!');
+  console.log("시딩 완료!");
 }
 
 main()
