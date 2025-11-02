@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "noEmitOnError": true,
+    "paths": {
+      "@app/*": ["./app/*"],
+      "@controller/*": ["./controller/*"],
+      "@service/*": ["./service/*"],
+      "@routes/*": ["./routes/*"],
+      "@middleware/*": ["./middelware/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
