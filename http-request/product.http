@@ -1,0 +1,30 @@
+GET http://localhost:3000/products
+
+###
+
+GET http://localhost:3000/products/781fd97d-05b4-417f-9b50-aba304e67dd3
+
+###
+
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name" : "나의 작은 node.js 그리고 express",
+  "description": "내가 만든 작고 귀여운 node.js 코드.",
+  "tags": "BEAUTY",
+  "price": 10
+}
+
+###
+
+PATCH http://localhost:3000/products/781fd97d-05b4-417f-9b50-aba304e67dd3
+Content-Type: application/json
+
+{
+  "name": "사실 이건 node가 아니야 !"
+}
+
+###
+
+DELETE http://localhost:3000/products/62bf47c6-c41c-4b0e-b232-86c37a220ff5

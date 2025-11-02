@@ -1,0 +1,44 @@
+GET http://localhost:3000/products/32ae904d-35bb-4f1b-a684-79e566580a47/comments
+
+###
+GET http://localhost:3000/articles/925956c7-573d-4f44-a815-dfa7704200f6/comments
+
+###
+POST http://localhost:3000/products/781fd97d-05b4-417f-9b50-aba304e67dd3/comments
+Content-Type: application/json
+
+{
+  "content" : "파일을 분리한 후의 코멘트 작동.. 되나?"
+}
+
+###
+
+POST http://localhost:3000/articles/59d488c0-79f9-4cdf-b186-77cd4526ad28/comments
+Content-Type: application/json
+
+{
+  "content" : "수정완료. 이제 되나?"
+}
+
+###
+PATCH http://localhost:3000/products/464f69a7-c249-4f59-a918-fc55bd04a728/comments/f818d746-0207-4b44-8d74-b75d03e6f322
+Content-Type: application/json
+
+{
+  "content": "수정후: 이거 좋아요 !!"
+}
+
+###
+
+PATCH  http://localhost:3000/articles/925956c7-573d-4f44-a815-dfa7704200f6/comments/eb10d494-d707-4bac-94d7-a0202aef31cb
+Content-Type: application/json
+
+{
+  "content" : "수정후 : 알겠사옵니다."
+}
+
+###
+DELETE http://localhost:3000/products/464f69a7-c249-4f59-a918-fc55bd04a728/comments/a5bf24ae-43a3-4d23-a77b-7cf971862535
+
+###
+DELETE http://localhost:3000/articles/464f69a7-c249-4f59-a918-fc55bd04a728/comments/227d7085-b90c-4995-a559-d2709ea5ed6c

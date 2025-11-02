@@ -1,0 +1,11 @@
+
+###
+POST http://localhost:3000/files
+Content-Type: multipart/form-data; boundary=my-boundary
+
+--my-boundary
+Content-Disposition: form-data; name="image"; filename="cat1.jpg"
+Content-Type: image/jpeg
+
+< ./image/cat1.jpg
+--my-boundary--
