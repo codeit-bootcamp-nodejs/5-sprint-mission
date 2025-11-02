@@ -1,92 +1,40 @@
+import { CreateCommentDTO, UpdateCommentDTO } from "@/types/dto";
 import { commentRepository } from "../repositories/comment.repository";
+import { articleRepository } from "../repositories/article.repository";
+import { productRepository } from "../repositories/product.repository";
 
 export const commentService = {
-  listForProduct: async (
-    viewerId: number | undefined,
-    productId: number,
-    cursor?: number,
-    limit: number = 10,
-  ) => {
-    const items = await commentRepository.listByProduct(
-      productId,
-      cursor,
-      limit,
-    );
-    const nextCursor =
-      items.length === limit ? items[items.length - 1].id : null;
-    return {
-      items: items.map((c) => ({
-        id: c.id,
-        content: c.content,
-        createdAt: c.createdAt,
-        mine: viewerId ? c.userId === viewerId : false,
-      })),
-      nextCursor,
-    };
+  listByProduct(productId: number) {
+    return commentRepository.listByProduct(productId);
   },
 
-  listForArticle: async (
-    viewerId: number | undefined,
-    articleId: number,
-    cursor?: number,
-    limit: number = 10,
-  ) => {
-    const items = await commentRepository.listByArticle(
-      articleId,
-      cursor,
-      limit,
-    );
-    const nextCursor =
-      items.length === limit ? items[items.length - 1].id : null;
-    return {
-      items: items.map((c) => ({
-        id: c.id,
-        content: c.content,
-        createdAt: c.createdAt,
-        mine: viewerId ? c.userId === viewerId : false,
-      })),
-      nextCursor,
-    };
+  listByArticle(articleId: number) {
+    return commentRepository.listByArticle(articleId);
   },
 
-  createForProduct: (userId: number, productId: number, content: string) =>
-    commentRepository.createForProduct({ content, userId, productId }),
+  async createForProduct(userId: number, productId: number, dto: CreateCommentDTO) {
+    const exists = await productRepository.findById(productId);
+    if (!exists) throw Object.assign(new Error("상품이 존재하지 않습니다."), { status: 404 });
+    return commentRepository.createForProduct({ userId, productId, content: dto.content });
+  },
 
-  createForArticle: (userId: number, articleId: number, content: string) =>
-    commentRepository.createForArticle({ content, userId, articleId }),
+  async createForArticle(userId: number, articleId: number, dto: CreateCommentDTO) {
+    const exists = await articleRepository.findById(articleId);
+    if (!exists) throw Object.assign(new Error("게시글이 존재하지 않습니다."), { status: 404 });
+    return commentRepository.createForArticle({ userId, articleId, content: dto.content });
+  },
 
-  async update(userId: number, commentId: number, content: string) {
-    const exists = await commentRepository.findById(commentId);
-    if (!exists) {
-      const e: any = new Error("댓글을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    if (exists.userId !== userId) {
-      const e: any = new Error("수정 권한이 없습니다.");
-      e.status = 403;
-      throw e;
-    }
-    const updated = await commentRepository.update(commentId, { content });
-    return {
-      id: updated.id,
-      content: updated.content,
-      createdAt: updated.createdAt,
-    };
+  async update(userId: number, commentId: number, dto: UpdateCommentDTO) {
+    const c = await commentRepository.findById(commentId);
+    if (!c) throw Object.assign(new Error("댓글이 존재하지 않습니다."), { status: 404 });
+    if (c.userId !== userId) throw Object.assign(new Error("수정 권한이 없습니다."), { status: 403 });
+    return commentRepository.update(commentId, { content: dto.content });
   },
 
   async remove(userId: number, commentId: number) {
-    const exists = await commentRepository.findById(commentId);
-    if (!exists) {
-      const e: any = new Error("댓글을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    if (exists.userId !== userId) {
-      const e: any = new Error("삭제 권한이 없습니다.");
-      e.status = 403;
-      throw e;
-    }
-    await commentRepository.delete(commentId);
+    const c = await commentRepository.findById(commentId);
+    if (!c) throw Object.assign(new Error("댓글이 존재하지 않습니다."), { status: 404 });
+    if (c.userId !== userId) throw Object.assign(new Error("삭제 권한이 없습니다."), { status: 403 });
+    await commentRepository.remove(commentId);
   },
 };

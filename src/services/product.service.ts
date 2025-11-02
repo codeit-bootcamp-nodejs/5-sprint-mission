@@ -1,129 +1,55 @@
-import { Prisma } from "@prisma/client";
+import { CreateProductDTO, UpdateProductDTO, WithIsLiked } from "@/types/dto";
 import { productRepository } from "../repositories/product.repository";
 
 export const productService = {
-  mine: (userId: number) => productRepository.findMine(userId),
+  async list(viewerId: number | null, opt: { offset: number; limit: number; sort: "recent" | "asc"; q?: string }) {
+    const orderBy = opt.sort === "asc" ? [{ createdAt: "asc" }] : [{ createdAt: "desc" }];
+    const where = opt.q ? { OR: [{ name: { contains: opt.q } }, { description: { contains: opt.q } }] } : {};
+    const items = await productRepository.list(where, orderBy, opt.offset, opt.limit);
 
-  list: async (
-    viewerId: number | undefined,
-    q?: string,
-    offset = 0,
-    limit = 20,
-    sort: "recent" | "asc" = "recent",
-  ) => {
-    const where: Prisma.ProductWhereInput = q
-      ? {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { description: { contains: q, mode: "insensitive" } },
-          ],
-        }
-      : {};
-    const orderBy =
-      sort === "recent" ? [{ createdAt: "desc" }] : [{ id: "asc" }];
-    const [items, total] = await productRepository.list(
-      where,
-      orderBy,
-      offset,
-      limit,
-    );
-    if (!viewerId) return { items, total };
-    const ids = items.map((x) => x.id);
-    const likes = await productRepository.likesOfUserFor(viewerId, ids);
-    const set = new Set(likes.map((l) => l.productId));
-    return {
-      items: items.map((p) => ({ ...p, isLiked: set.has(p.id) })),
-      total,
-    };
+    if (!viewerId) return items.map(p => ({ ...p, isLiked: false } as WithIsLiked<typeof p>));
+    const liked = await productRepository.likesOfUserFor(viewerId, items.map(i => i.id));
+    const likedSet = new Set(liked.map(x => x.productId));
+    return items.map(p => ({ ...p, isLiked: likedSet.has(p.id) }));
   },
 
-  get: async (id: number, viewerId?: number) => {
+  async getById(viewerId: number | null, id: number) {
     const p = await productRepository.findById(id);
-    if (!p) {
-      const e: any = new Error("상품을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    let isLiked = false;
-    if (viewerId) {
-      const likes = await productRepository.likesOfUserFor(viewerId, [id]);
-      isLiked = likes.length > 0;
-    }
-    return {
-      id: p.id,
-      name: p.name,
-      description: p.description,
-      price: p.price,
-      tags: p.tags,
-      createdAt: p.createdAt,
-      isLiked,
-    };
+    if (!p) throw Object.assign(new Error("상품을 찾을 수 없습니다."), { status: 404 });
+    if (!viewerId) return { ...p, isLiked: false };
+    const liked = await productRepository.likesOfUserFor(viewerId, [id]);
+    return { ...p, isLiked: liked.some(x => x.productId === id) };
   },
 
-  create: async (userId: number, data: any) => {
-    const created = await productRepository.create({ ...data, userId });
-    return {
-      id: created.id,
-      name: created.name,
-      description: created.description,
-      price: created.price,
-      tags: created.tags,
-      createdAt: created.createdAt,
-      isLiked: false,
-    };
+  async mine(userId: number) {
+    return productRepository.findMine(userId);
   },
 
-  update: async (userId: number, id: number, data: any) => {
+  async create(userId: number, dto: CreateProductDTO) {
+    return productRepository.create({ ...dto, userId });
+  },
+
+  async update(userId: number, id: number, dto: UpdateProductDTO) {
     const exists = await productRepository.findById(id);
-    if (!exists) {
-      const e: any = new Error("상품을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    if (exists.userId !== userId) {
-      const e: any = new Error("수정 권한이 없습니다.");
-      e.status = 403;
-      throw e;
-    }
-    const updated = await productRepository.update(id, data);
-    return {
-      id: updated.id,
-      name: updated.name,
-      description: updated.description,
-      price: updated.price,
-      tags: updated.tags,
-      createdAt: updated.createdAt,
-    };
+    if (!exists) throw Object.assign(new Error("상품을 찾을 수 없습니다."), { status: 404 });
+    if (exists.userId !== userId) throw Object.assign(new Error("수정 권한이 없습니다."), { status: 403 });
+    return productRepository.update(id, dto);
   },
 
-  remove: async (userId: number, id: number) => {
+  async remove(userId: number, id: number) {
     const exists = await productRepository.findById(id);
-    if (!exists) {
-      const e: any = new Error("상품을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    if (exists.userId !== userId) {
-      const e: any = new Error("삭제 권한이 없습니다.");
-      e.status = 403;
-      throw e;
-    }
+    if (!exists) throw Object.assign(new Error("상품을 찾을 수 없습니다."), { status: 404 });
+    if (exists.userId !== userId) throw Object.assign(new Error("삭제 권한이 없습니다."), { status: 403 });
     await productRepository.delete(id);
   },
 
-  like: async (userId: number, productId: number) => {
-    const exists = await productRepository.findById(productId);
-    if (!exists) {
-      const e: any = new Error("상품을 찾을 수 없습니다.");
-      e.status = 404;
-      throw e;
-    }
-    await productRepository.likeUpsert(userId, productId);
-    return { message: "좋아요 완료", isLiked: true };
+  async like(userId: number, id: number) {
+    const exists = await productRepository.findById(id);
+    if (!exists) throw Object.assign(new Error("상품을 찾을 수 없습니다."), { status: 404 });
+    await productRepository.likeUpsert(userId, id);
   },
 
-  unlike: async (userId: number, productId: number) => {
-    await productRepository.likeDelete(userId, productId);
-    return { message: "좋아요 취소", isLiked: false };
+  async unlike(userId: number, id: number) {
+    await productRepository.likeDelete(userId, id);
   },
 };

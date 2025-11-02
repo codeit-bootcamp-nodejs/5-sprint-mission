@@ -2,6 +2,7 @@ import "express";
 
 declare module "express-serve-static-core" {
   interface Request {
+    validated?: unknown;
     user?: {
       id: number;
       email: string;
@@ -10,6 +11,5 @@ declare module "express-serve-static-core" {
       image?: string | null;
       createdAt?: Date;
     };
-    validated?: any;
   }
 }

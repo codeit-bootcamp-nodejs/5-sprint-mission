@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { signup, login, refresh } from "../controllers/auth.controller";
-import { validateLogin, validateSignup } from "../middlewares/validator";
+import * as authCtrl from "../controllers/auth.controller";
+import { validateLogin, validateSignup } from "../middlewares/validator"
 
 const router = Router();
-router.post("/signup", validateSignup, signup);
-router.post("/login", validateLogin, login);
-router.post("/refresh", refresh);
+
+router.post("/signup", validateSignup, authCtrl.signup);
+router.post("/login", validateLogin, authCtrl.login);
+router.post("/refresh", authCtrl.refresh);
+
 export default router;

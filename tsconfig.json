@@ -11,7 +11,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"] }
   },
   "include": ["src/**/*", "prisma/seed.js"],
   "exclude": ["node_modules", "dist"]

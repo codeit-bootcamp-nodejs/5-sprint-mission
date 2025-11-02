@@ -1,23 +1,22 @@
-export type JwtPayload = { userId: number };
+export type SignupDTO = { email: string; nickname: string; password: string };
+export type LoginDTO  = { email: string; password: string };
 
-export type SignupDto = { email: string; nickname: string; password: string };
-export type LoginDto = { email: string; password: string };
+export type UpdateMeDTO = { nickname?: string; image?: string | null };
+export type ChangePasswordDTO = { currentPassword: string; newPassword: string };
 
-export type CreateProductDto = {
+export type CreateProductDTO = {
   name: string;
   description: string;
   price: number;
   tags: string[];
-  imageUrl: string | null;
+  imageUrl?: string | null;
 };
-export type UpdateProductDto = Partial<CreateProductDto>;
+export type UpdateProductDTO = Partial<CreateProductDTO>;
 
-export type CreateArticleDto = {
-  title: string;
-  content: string;
-  tags: string[];
-};
-export type UpdateArticleDto = Partial<CreateArticleDto>;
+export type CreateArticleDTO = { title: string; content: string };
+export type UpdateArticleDTO = Partial<CreateArticleDTO>;
 
-export type CreateCommentDto = { content: string };
-export type UpdateCommentDto = CreateCommentDto;
+export type CreateCommentDTO = { content: string };
+export type UpdateCommentDTO = { content: string };
+
+export type WithIsLiked<T> = T & { isLiked: boolean };

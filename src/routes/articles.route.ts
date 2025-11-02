@@ -1,26 +1,22 @@
 import { Router } from "express";
+import * as articleCtrl from "../controllers/article.controller";
 import { authenticate, optionalAuthenticate } from "../middlewares/auth";
-import { parseIdParam } from "../middlewares/params";
 import {
   validateCreateArticle,
   validateUpdateArticle,
-} from "../middlewares/validator";
-import * as article from "../controllers/article.controller";
+} from"@/middlewares/validator";
+import { parseIdParam } from "@/middlewares/params";
 
 const router = Router();
-router.get("/mine", authenticate, article.mine);
 
-router
-  .route("/")
-  .get(optionalAuthenticate, article.list)
-  .post(authenticate, validateCreateArticle, article.create);
+router.get("/", optionalAuthenticate, articleCtrl.list);
+router.get("/:id", optionalAuthenticate, parseIdParam("id"), articleCtrl.getById);
 
-router
-  .route("/:id")
-  .get(optionalAuthenticate, parseIdParam(), article.getOne)
-  .patch(authenticate, parseIdParam(), validateUpdateArticle, article.update)
-  .delete(authenticate, parseIdParam(), article.remove);
+router.post("/", authenticate, validateCreateArticle, articleCtrl.create);
+router.patch("/:id", authenticate, parseIdParam("id"), validateUpdateArticle, articleCtrl.update);
+router.delete("/:id", authenticate, parseIdParam("id"), articleCtrl.remove);
 
-router.post("/:id/like", authenticate, parseIdParam(), article.like);
-router.delete("/:id/like", authenticate, parseIdParam(), article.unlike);
+router.post("/:id/like", authenticate, parseIdParam("id"), articleCtrl.like);
+router.delete("/:id/like", authenticate, parseIdParam("id"), articleCtrl.unlike);
+
 export default router;
