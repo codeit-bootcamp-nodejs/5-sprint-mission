@@ -1,5 +1,7 @@
 import { UploadProductDto } from "../../dto/product/create-product.dto";
 import { EditProductDto } from "../../dto/product/edit-product.dto";
+import BadRequestError from "../../lib/errors/BadRequestError";
+import NotFoundError from "../../lib/errors/NotFoundError";
 import { IRepository, PaginationQuery } from "../../repositories/repository";
 import { PersistedProductEntity } from "../entity/proudct-entity";
 import { BaseService } from "./base-service";
@@ -52,7 +54,7 @@ export class ProductService extends BaseService implements IProductService {
 
   async getProductDetail(productId: number) {
     const product = await this.repository.product.loadDetail(productId);
-    if (!product) throw new Error("존재하지 않는 상품입니다.");
+    if (!product) throw new NotFoundError("존재하지 않는 상품입니다.", productId);
     return product;
   }
 
@@ -62,7 +64,7 @@ export class ProductService extends BaseService implements IProductService {
     productData: EditProductDto,
   ) {
     const existing = await this.repository.product.loadDetail(productId);
-    if (!existing) throw new Error("존재하지 않는 상품입니다.");
+    if (!existing) throw new NotFoundError("존재하지 않는 상품입니다.", productId);
 
     const productDatawithUserId = { ...productData, userId };
 
@@ -75,7 +77,7 @@ export class ProductService extends BaseService implements IProductService {
 
   async deleteProduct(productId: number) {
     const existing = await this.repository.product.loadDetail(productId);
-    if (!existing) throw new Error("존재하지 않는 상품입니다.");
+    if (!existing) throw new NotFoundError("존재하지 않는 상품입니다.", productId);
 
     await this.repository.product.delete(productId);
     return true;
@@ -92,14 +94,14 @@ export class ProductService extends BaseService implements IProductService {
 
   async likeProduct(productId: number, userId: number) {
     const productExists = await this.repository.product.loadDetail(productId);
-    if (!productExists) throw new Error("좋아요할 상품을 찾을 수 없습니다.");
+    if (!productExists) throw new NotFoundError("좋아요할 상품을 찾을 수 없습니다.", productId);
 
     const existingFavorite = await this.repository.product.findFavorite(
       productId,
       userId
     );
     if (existingFavorite) {
-      throw new Error("이미 좋아요를 누른 상품입니다.");
+      throw new BadRequestError("이미 좋아요를 누른 상품입니다.");
     }
 
     const favorite = await this.repository.product.createFavorite(
@@ -116,7 +118,7 @@ export class ProductService extends BaseService implements IProductService {
       userId
     );
     if (!existingFavorite) {
-      throw new Error("취소할 좋아요 기록을 찾을 수 없습니다.");
+      throw new BadRequestError("취소할 좋아요 기록을 찾을 수 없습니다.");
     }
 
     await this.repository.product.deleteFavorite(productId, userId);

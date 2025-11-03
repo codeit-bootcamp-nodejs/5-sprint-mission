@@ -1,4 +1,5 @@
 import { IService } from "../domain/service.js";
+import BadRequestError from "../lib/errors/BadRequestError.js";
 import { BaseController } from "./base-controller.js";
 import { Request, Response } from "express";
 
@@ -37,13 +38,13 @@ export class AuthController extends BaseController implements IAuthController {
 
   handleLogout = async (req: Request, res: Response) => {
     this.clearTokenCookies(res);
-    res.status(200).send();
+    res.status(200).send({ message: '로그아웃 되었습니다.' });
   };
 
   handleReissueTokens = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      throw new Error("리프레시 토큰을 가져올 수 없습니다");
+      throw new BadRequestError( "리프레시 토큰을 가져올 수 없습니다");
     }
     const { accessToken, refreshToken: newRefreshToken } =
       await this.service.auth.reissueTokens(refreshToken);

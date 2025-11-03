@@ -1,6 +1,7 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import BadRequestError from "../lib/errors/BadRequestError";
 
 export interface IImageController {}
 
@@ -31,7 +32,7 @@ const upload = multer({
     if (extname && mimetype) {
       cb(null, true);
     } else {
-      cb(new Error("이미지 파일만 업로드 가능합니다."));
+      cb(new BadRequestError("이미지 파일만 업로드 가능합니다."));
     }
   },
 });

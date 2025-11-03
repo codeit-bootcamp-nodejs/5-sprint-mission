@@ -1,5 +1,7 @@
 import { BaseService } from "./base-service";
 import { IRepository, PaginationQuery } from "../../repositories/repository";
+import BadRequestError from "../../lib/errors/BadRequestError";
+import UnauthorizedError from "../../lib/errors/UnauthorizedError";
 
 interface ICommentService {}
 
@@ -51,10 +53,10 @@ export class CommentService extends BaseService implements ICommentService {
     const existing = this.repository.comment.loadDetail(commentId);
 
     if (!existing) {
-      throw new Error("존재하지 않는 댓글입니다.");
+      throw new BadRequestError("존재하지 않는 댓글입니다.");
     }
     if (existing.userId !== userId) {
-      throw new Error("댓글을 수정할 권한이 없습니다.");
+      throw new UnauthorizedError("댓글을 수정할 권한이 없습니다.");
     }
 
     const updateData = { content };
@@ -68,10 +70,10 @@ export class CommentService extends BaseService implements ICommentService {
     const existing = this.repository.comment.loadDetail(commentId);
 
     if (!existing) {
-      throw new Error("존재하지 않는 댓글입니다.");
+      throw new BadRequestError("존재하지 않는 댓글입니다.");
     }
     if (existing.userId !== userId) {
-      throw new Error("댓글을 삭제할 권한이 없습니다.");
+      throw new UnauthorizedError("댓글을 삭제할 권한이 없습니다.");
     }
 
     return this.repository.comment.deleteComment(commentId);

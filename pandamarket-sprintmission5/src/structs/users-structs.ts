@@ -1,5 +1,5 @@
-import { nullable, object, partial, string } from "superstruct";
-import { PageParamsStruct } from "./commonStructs.js";
+import { nullable, object, partial, string } from 'superstruct';
+import { PageParamsStruct } from './common-structs';
 
 export const UpdateMeBodyStruct = partial(
   object({

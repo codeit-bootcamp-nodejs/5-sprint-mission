@@ -7,6 +7,7 @@ import productRouter from "./routers/product-router";
 import articleRouter from "./routers/article-router";
 import commentRouter from "./routers/comment-router";
 import uploadRouter from "./routers/upload-router";
+import { defaultNotFoundHandler, globalErrorHandler } from "./controllers/errorController";
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.use("/products", productRouter);
 app.use("/articles", articleRouter);
 app.use("/comments", commentRouter);
 app.use("/images", uploadRouter);
+
+app.use(defaultNotFoundHandler);
+app.use(globalErrorHandler);
 
 app.use((err, req, res, next) => {
   console.error(err);

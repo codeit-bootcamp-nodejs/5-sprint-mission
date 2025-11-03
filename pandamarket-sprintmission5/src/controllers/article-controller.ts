@@ -1,6 +1,11 @@
+import { create } from "superstruct";
 import { IService } from "../domain/service";
+import BadRequestError from "../lib/errors/BadRequestError";
+import UnauthorizedError from "../lib/errors/UnauthorizedError";
+import { CreateArticleBodyStruct, UpdateArticleBodyStruct } from "../structs/articles-structs";
 import { BaseController } from "./base-controller";
 import { Request, Response } from "express";
+import { IdParamsStruct } from "../structs/common-structs";
 
 export interface IArticleController {
   handlerCreateArticle: (req: Request, res: Response) => Promise<void>;
@@ -21,7 +26,8 @@ export class ArticleController extends BaseController implements IArticleControl
 
   handlerCreateArticle = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const article = await this.service.article.createArticle(userId, req.body);
+    const data = create(req.body, CreateArticleBodyStruct);
+    const article = await this.service.article.createArticle(userId, data);
     res.status(201).json({ message: "게시글이 등록되었습니다", data: article });
   };
 
@@ -31,28 +37,25 @@ export class ArticleController extends BaseController implements IArticleControl
   };
 
   handlerGetArticleDetail = async (req: Request, res: Response) => {
-    const articleId = parseInt(req.params.id);
-    if (isNaN(articleId)) {
-      throw new Exception(400, "유효하지 않은 게시글 ID입니다")
+    const { id } = create(req.params, IdParamsStruct);
+    if (isNaN(id)) {
+      throw new BadRequestError("유효하지 않은 게시글 ID입니다")
     }
 
-    const article = await this.service.article.getArticleById(articleId);
+    const article = await this.service.article.getArticleById(id);
     res.json(article);
   };
 
   handlerUpdateArticle = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (!userId) {
-      throw new Error();
-    }
 
-    const articleId = parseInt(req.params.id);
-    if (isNaN(articleId)) throw new Error("유효하지 않은 게시글 ID입니다");
+    const { id } = create(req.params, IdParamsStruct);
+    const data = create(req.body, UpdateArticleBodyStruct);
 
     const updatedArticle = await this.service.article.updateArticle(
-      articleId,
+      id,
       userId,
-      req.body,
+      data,
     )
 
     res.status(200).json(updatedArticle);
@@ -60,16 +63,9 @@ export class ArticleController extends BaseController implements IArticleControl
 
   handlerDeleteArticle = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (!userId) {
-      throw new Error();
-    }
+    const { id } = create(req.params, IdParamsStruct);
 
-    const articleId = parseInt(req.params.id);
-    if (isNaN(articleId)) {
-      throw new Error("유효하지 않은 게시글 ID입니다")
-    }
-
-    await this.service.article.deleteArticle(articleId, userId);
+    await this.service.article.deleteArticle(id, userId);
     res.status(200).json({ message: "게시글이 삭제되었습니다" });
   };
 
@@ -78,12 +74,8 @@ export class ArticleController extends BaseController implements IArticleControl
     if (!userId) {
       throw new Error();
     }
-
-    const articleId = parseInt(req.params.id);
-    if (isNaN(articleId)) {
-      throw new Error("유효하지 않은 게시글 ID입니다")
-    }
-    const result = await this.service.article.likeArticle(articleId, userId);
+    const { id } = create(req.params, IdParamsStruct);
+    const result = await this.service.article.likeArticle(id, userId);
     res.status(200).json(result);
   };
 
@@ -93,12 +85,9 @@ export class ArticleController extends BaseController implements IArticleControl
       throw new Error();
     }
 
-    const articleId = parseInt(req.params.id);
-    if (isNaN(articleId)) {
-      throw new Error("유효하지 않은 게시글 ID입니다")
-    }
+    const { id } = create(req.params, IdParamsStruct);
 
-    const result = await this.service.article.unlikeArticle(articleId, userId);
+    const result = await this.service.article.unlikeArticle(id, userId);
     res.json(result);
     res.status(200).json(result);
   };
@@ -107,9 +96,8 @@ export class ArticleController extends BaseController implements IArticleControl
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new Error("인증이 필요합니다.");
+      throw new UnauthorizedError("인증이 필요합니다.");
     }
-
     const query = req.query;
 
     const articles = await this.service.article.loadMyArticles(userId, query);
@@ -119,10 +107,6 @@ export class ArticleController extends BaseController implements IArticleControl
 
   handlerGetMyFavoriteArticles = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (!userId) {
-      throw new Error();
-    }
-
     const query = req.query;
     const articles = await this.service.article.getFavoriteArticles(userId, query);
 

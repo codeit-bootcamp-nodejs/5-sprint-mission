@@ -1,4 +1,4 @@
-import { nonempty, object, string } from "superstruct";
+import { nonempty, object, string } from 'superstruct';
 
 export const RegisterBodyStruct = object({
   email: nonempty(string()),
@@ -10,3 +10,4 @@ export const LoginBodyStruct = object({
   email: nonempty(string()),
   password: nonempty(string()),
 });
+

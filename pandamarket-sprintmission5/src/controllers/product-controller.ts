@@ -1,6 +1,10 @@
+import { create } from "superstruct";
 import { IService } from "../domain/service";
+import BadRequestError from "../lib/errors/BadRequestError";
 import { BaseController } from "./base-controller";
 import { Request, Response } from "express";
+import { CreateProductBodyStruct } from "../structs/products-struct";
+import { IdParamsStruct } from "../structs/common-structs";
 
 export interface IProductController {
   handlerUploadProduct: (req: Request, res: Response) => Promise<void>;
@@ -22,9 +26,7 @@ export class ProductController
 
   handlerUploadProduct = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
+    const data = create(req.body, CreateProductBodyStruct);
     const product = await this.service.product.uploadProduct(req.body, userId);
     res.status(200).json({ message: "상품이 등록되었습니다", data: product });
   };
@@ -35,26 +37,16 @@ export class ProductController
   };
 
   handlerGetProductDetail = async (req: Request, res: Response) => {
-    const productId = parseInt(req.params.id);
-    if (isNaN(productId)) {
-      throw new Error("유효하지 않은 상품 ID입니다.");
-    }
-    const product = await this.service.product.getProductDetail(productId);
+    const { id } = create(req.params, IdParamsStruct);
+    const product = await this.service.product.getProductDetail(id);
     res.status(200).json({ message: "상품 상세 조회 성공", data: product });
   };
 
   handlerUpdateProduct = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
-
-    const productId = parseInt(req.params.id);
-    if (isNaN(productId)) {
-      throw new Error("유효하지 않은 상품 ID입니다.");
-    }
+    const { id } = create(req.params, IdParamsStruct);
     const updatedProduct = await this.service.product.editProduct(
-      productId,
+      id,
       userId,
       req.body,
     );
@@ -63,58 +55,32 @@ export class ProductController
 
   handlerDeleteProduct = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
-
-    const productId = parseInt(req.params.id);
-    if (isNaN(productId)) {
-      throw new Error("유효하지 않은 상품 ID입니다.");
-    }
-
-    await this.service.product.deleteProduct(productId);
+    const { id } = create(req.params, IdParamsStruct);
+    await this.service.product.deleteProduct(id);
 
     res.status(200).json({ message: "상품 삭제 성공" });
   };
 
   handlerLikeProduct = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
-
-    const productId = parseInt(req.params.id);
-    if (isNaN(productId)) {
-      throw new Error("유효하지 않은 상품 ID입니다.");
-    }
-
-    const result = await this.service.product.likeProduct(productId, userId);
+    const { id } = create(req.params, IdParamsStruct);
+    await this.service.product.likeProduct(id, userId);
 
     res.status(200).json();
   };
 
   handlerUnlikeProduct = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
-
-    const productId = parseInt(req.params.id);
-    if (isNaN(productId)) {
-      throw new Error("유효하지 않은 상품 ID입니다.");
-    }
-    const result = await this.service.product.unlikeProduct(
-      productId,
+    const { id } = create(req.params, IdParamsStruct);
+    await this.service.product.unlikeProduct(
+      id,
       userId,
     );
-    res.status(200).json(result);
+    res.status(200).json();
   };
 
   handlerGetMyProducts = async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    if (userId === undefined || userId === null) {
-      throw new Error("인증된 사용자 ID를 찾을 수 없습니다.");
-    }
     const query = req.query;
     const products = await this.service.product.getMyProducts(userId, query);
 
