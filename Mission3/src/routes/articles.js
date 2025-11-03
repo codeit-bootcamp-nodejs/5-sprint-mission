@@ -59,7 +59,7 @@ router.get("/", authOptionalMiddleware, async (req, res, next) => {
         },
         likes: userId
           ? {
-              where: { authorId: userId },
+              where: { userId: userId },
               select: { id: true },
             }
           : false,
@@ -110,7 +110,7 @@ router.get("/:id", authOptionalMiddleware, async (req, res, next) => {
         },
         likes: userId
           ? {
-              where: { authorId: userId },
+              where: { userId: userId },
               select: { id: true },
             }
           : false,
@@ -225,8 +225,8 @@ router.post("/:id/like", authMiddleware, async (req, res, next) => {
 
     const existingLike = await prisma.articleLike.findUnique({
       where: {
-        authorId_articleId: {
-          authorId: userId,
+        articleId_userId: {
+          userId: userId,
           articleId: parseInt(articleId),
         },
       },
@@ -241,7 +241,7 @@ router.post("/:id/like", authMiddleware, async (req, res, next) => {
     } else {
       await prisma.articleLike.create({
         data: {
-          authorId: userId,
+          userId: userId,
           articleId: parseInt(articleId),
         },
       });

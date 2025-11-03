@@ -34,10 +34,10 @@ export default async function authMiddleware(req, res, next) {
         .json({ error: `유효하지 않은 Access Token입니다. (${e.message})` });
     }
 
-    const userId = payload.id;
+    const userId = payload.userId;
     if (!userId) {
       return res.status(401).json({
-        error: "토큰 페이로드에 사용자 ID(id)가 포함되어 있지 않습니다.",
+        error: "토큰 페이로드에 사용자 ID(userId)가 포함되어 있지 않습니다.",
       });
     }
 
@@ -47,6 +47,7 @@ export default async function authMiddleware(req, res, next) {
         id: true,
         email: true,
         nickname: true,
+        password: true, 
       },
     });
 
