@@ -1,19 +1,35 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node ./src/main.js",
-    "seed": "node ./prisma/seed.js",
+    "build": "tsc",
+    "start": "node ./dist/main.js",
+    "dev:tsx": "tsx watch ./src/main.ts",
+    "dev": "npm run dev:watch",
+    "dev:watch": "nodemon --exec tsx ./src/main.ts --watch src --ext ts",
+    "seed": "tsx ./prisma/seed.js",
     "format": "prettier --write ."
   },
   "prisma": {
-    "seed": "node ./prisma/seed.js"
+    "seed": "tsx ./prisma/seed.js"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.9.2",
+    "@types/uuid": "^10.0.0",
+    "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "prisma": "^5.16.2"
+    "prisma": "^5.16.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@prisma/client": "^5.16.2",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

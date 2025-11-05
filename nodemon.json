@@ -1,0 +1,22 @@
+{
+  "watch": ["src/**/*.ts", "prisma/**/*.ts", ".env*"],
+  "ext": "ts,js,json,env",
+  "ignore": [
+    "dist/**/*",
+    "node_modules/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "coverage/**/*",
+    ".git/**/*"
+  ],
+  "exec": "tsx ./src/main.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": 1000,
+  "verbose": true,
+  "restartable": "rs",
+  "colours": true,
+  "legacyWatch": false
+}
