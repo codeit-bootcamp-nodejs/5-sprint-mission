@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "es6",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "lib": ["ES2020"],
+    "sourceMap": false,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "declarationMap": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleDetection": "force"
+  },
+  "include": ["./src"],
+  "exclude": ["node_modules"]
+}
