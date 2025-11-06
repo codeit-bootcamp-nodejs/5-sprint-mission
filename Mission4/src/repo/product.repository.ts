@@ -20,15 +20,17 @@ export class ProductRepository {
 
     const queryMode: Prisma.QueryMode = "insensitive";
 
+    const whereCondition: Prisma.ProductWhereInput = {
+      OR: [
+        { name: { contains: keyword, mode: queryMode } },
+        { description: { contains: keyword, mode: queryMode } },
+      ],
+    };
+
     return prisma.product.findMany({
       skip: offset,
       take: limit,
-      where: {
-        OR: [
-          { name: { contains: keyword, mode: queryMode } },
-          { description: { contains: keyword, mode: queryMode } },
-        ],
-      },
+      where: whereCondition,
       orderBy: {
         createdAt: sort === "recent" ? "desc" : "asc",
       },
