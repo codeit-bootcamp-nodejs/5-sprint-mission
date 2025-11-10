@@ -1,3 +1,4 @@
+/*sprint mission-6-sql*/ 
 -- # 초급 문제
 
 -- 1. `orders` 테이블에서 모든 주문을 조회하세요.
@@ -207,3 +208,4 @@ JOIN pizzas ON order_details.pizza_id = pizzas.id
 JOIN pizza_types ON pizzas.pizza_type_id = pizza_types.id
 GROUP BY pizza_types.name
 ORDER BY total_revenue DESC;
+    
