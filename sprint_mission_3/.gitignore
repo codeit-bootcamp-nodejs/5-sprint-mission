@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# env files (예시는 커밋)
+.env
+.env.*
+!.env.example
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# uploads & temp
+public/uploads/
+tmp/
+*.tmp
+
+# build outputs / coverage / caches
+dist/
+build/
+coverage/
+.cache/
+.eslintcache
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# editors / IDE
+.vscode/
+.idea/
+
+# Prisma (스키마/마이그는 커밋, 로컬 DB는 무시)
+# prisma/schema.prisma, prisma/migrations/ 는 커밋하세요.
+prisma/*.db
+prisma/*.db-journal
+
+# (선택) 기타 DB 파일 통합 무시
+*.sqlite
+*.sqlite-journal
