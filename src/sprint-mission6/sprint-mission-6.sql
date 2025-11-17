@@ -33,7 +33,7 @@ OFFSET 40;
 -- 7. `orders` 테이블에서 커서 페이지네이션된 목록을 조회합니다. 페이지 크기가 10이고 최신순일때, `id` 값을 기준으로 커서를 사용합시다. 커서의 값이 `42`일 때 다음 페이지를 조회하세요.
 SELECT *
 FROM orders
-WHERE id < 42
+WHERE id > 42
 ORDER BY date DESC, time DESC
 LIMIT 10;
 
@@ -144,8 +144,8 @@ LIMIT 10;
     JOIN order_details AS od_d ON od.id = od_d.order_id
     JOIN pizzas AS p ON p.id = od_d.pizza_id
 WHERE od.date BETWEEN '2025-03-01' AND '2025-03-31'
-GROUP BY date
-ORDER BY date;
+GROUP BY od.date
+ORDER BY od.date;
 
 /*
     3. `order`의 `id`가 78에 해당하는 주문 내역들을 조회합니다. 주문 내역에서 각각 주문한 피자의 이름을 `pizza_name`, 피자의 크기를 `pizza_size`, 피자 가격을 `pizza_price`, 수량을 `quantity`, 각 주문 내역의 총 금액을 `total_amount` 라는 이름으로 조회해 주세요.
