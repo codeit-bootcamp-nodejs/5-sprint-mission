@@ -1,4 +1,5 @@
-import { UserRequest } from "../../02-controller/req-validator/req.validator";
+import { request } from "express";
+import {  UserSignInDto, UserSignUpDto } from "../../02-controller/req-validator/req.validator";
 import { ProductResDto } from "../../02-controller/res-dto/product.res.dto";
 import { IBaseRepository } from "../../04-repository/I.base.repository";
 import { Authenticator, HttpError } from "../../external/authenticator";
@@ -7,9 +8,8 @@ import { Product } from "../entity/product";
 
 
 export interface IUserService {
-
-    createUser(user: UserRequest): any
-    getTokens(user: any): any
+    createUser(user: UserSignInDto): any
+    getTokens(user: UserSignUpDto): any
 
     getInfo(userId: string): Promise<any>
 
@@ -29,23 +29,19 @@ export class UserService implements IUserService {
     }
 
 
-    async createUser(request: UserRequest) {
-        const { email, nickname, password } = request.body;
-        const { refreshToken } = request.cookie;
-
-        console.log("refresh token");
-        console.log(request.cookie);
-        console.log(refreshToken);
-
+    async createUser(dto: UserSignUpDto) {
+        const { email, nickname, password } = dto;
+        const refreshToken = this.#auth.createToken({ email }, 'refresh');
         const hashPassword = await this.#auth.createHashPassword(password);
         const newUser = await this.#repos.userRepo.save({ email, nickname, hashPassword, refreshToken });
         return this.#auth.filterSensitiveUserData(newUser);
+        // return newUser;
     }
 
-    async getTokens(user: any) {
-        const { email, password } = user;
+    async getTokens(dto: UserSignInDto) {
+        const { email, password } = dto;
         const savedUser = await this.#repos.userRepo.findByEmail(email);
-        if (!user) {
+        if (!savedUser) {
             const error = new HttpError('Unauthorized', 401);
             throw error;
         }
@@ -53,7 +49,7 @@ export class UserService implements IUserService {
         await this.#auth.verifyPassword(password, savedUser.password);
         const accessToken = this.#auth.createToken(savedUser);
         const refreshToken = this.#auth.createToken(savedUser, 'refresh');
-
+        console.log( refreshToken);
         // await this.#repos.userRepo.updateUser({savedUser.id, refreshToken }); // 추가
 
         return { accessToken, refreshToken };

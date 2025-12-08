@@ -46,15 +46,9 @@ export const productReqSchema = querySchema.extend({
 })
 
 export const userReqSchema = z.object({
-    body: z.object({
-        email: z.string(),
-        nickname: z.string(),
-        password: z.string(),
-    }),
-    cookie: z.object({
-        refreshToken: z.string()
-    })
-
+    email: z.string(),
+    nickname: z.string(),
+    password: z.string(),
 
 })
 
@@ -95,7 +89,11 @@ export const articleCommentSchema = z.object({
 export type QueryType = z.infer<typeof querySchema>;
 export type ArticleRequest = z.infer<typeof articleReqSchema>;
 export type ProductRequest = z.infer<typeof productReqSchema>;
-export type UserRequest = z.infer<typeof userReqSchema>;
+
+export type UserSignUpDto = z.infer<typeof userReqSchema>;
+export type UserSignInDto = Omit<z.infer<typeof userReqSchema>, 'nickname'>;
+
+
 export type ProductCommentRequest = z.infer<typeof productCommentSchema>;
 export type ArticleCommentRequest = z.infer<typeof articleCommentSchema>;
 

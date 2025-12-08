@@ -26,30 +26,30 @@ export class Server {
     
 
     registerExceptionHandler() {
-        this.#server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-            if (err instanceof Exception) {
-                res.status(err.statusCode).json(err.message);
-            } else if (
-                err.name === "StructError" ||
-                err instanceof Prisma.PrismaClientValidationError
-            ) {
-                res.status(400).send({ message: err.message });
-            } else if (
-                err instanceof Prisma.PrismaClientKnownRequestError &&
-                err.code === "P2025"
-            ) {
-                ; res.sendStatus(404);
-            } else if (err instanceof HttpError) {
-                console.log(err.message);
-                res.status(err.code).json({ message: err.message });
-            }
-            else {
-                console.log(err);
-                res.status(500).json({
-                    message: '알 수 없는 오류가 발생했습니다.'
-                })
-            }
-        });
+        // this.#server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+        //     if (err instanceof Exception) {
+        //         res.status(err.statusCode).json(err.message);
+        //     } else if (
+        //         err.name === "StructError" ||
+        //         err instanceof Prisma.PrismaClientValidationError
+        //     ) {
+        //         res.status(400).send({ message: err.message });
+        //     } else if (
+        //         err instanceof Prisma.PrismaClientKnownRequestError &&
+        //         err.code === "P2025"
+        //     ) {
+        //         ; res.sendStatus(404);
+        //     } else if (err instanceof HttpError) {
+        //         console.log(err.message);
+        //         res.status(err.code).json({ message: err.message });
+        //     }
+        //     else {
+        //         console.log(err);
+        //         res.status(500).json({
+        //             message: '알 수 없는 오류가 발생했습니다.'
+        //         })
+        //     }
+        // });
     }
 
     registerRouters() {

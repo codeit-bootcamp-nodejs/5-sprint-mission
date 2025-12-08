@@ -17,14 +17,31 @@ export class UserController extends BaseController {
     }
 
 
-    registerRoutes() { 
-        this.router.post('/signUp', this.signUp); 
+    registerRoutes() {
+        this.router.post('/signUp', this.signUp);
         this.router.post('/signIn', this.signIn);
         this.router.post('/token/refresh', this.#auth.verifyRefreshToken, this.getNewToken);
         this.router.get('/me', this.#auth.verifyAccessToken, this.userInfo);
         this.router.patch('/me', this.#auth.verifyAccessToken, this.#auth.verifyUserAuth, this.editUserInfo);
         this.router.get('/me/products', this.#auth.verifyAccessToken, this.userProducts)
     }
+
+    signUp = async (req: Request, res: Response) => {
+        const userReqDto = this.validate(userReqSchema, req.body); 
+        const userResDto = await this.#service.userService.createUser(userReqDto);
+        return res.json(userResDto);
+    }
+
+    signIn = async (req: Request, res: Response) => {
+        const { accessToken, refreshToken } = await this.#service.userService.getTokens(req.body);
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true
+        })
+        return res.json({ accessToken });
+    }
+
 
     getNewToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -42,28 +59,7 @@ export class UserController extends BaseController {
         return res.json(user);
     }
 
-    signUp = async (req: Request, res: Response) => {
-        const result = userReqSchema.safeParse({ body: req.body });
 
-        if (result.success) {
-            const user = await this.#service.userService.createUser(result.data);
-            return res.json(user);
-        } else {
-            const errorMessage = result.error.issues.pop()?.message ?? "Body가 유효하지 않습니다";
-            throw new HttpError(errorMessage, 401);
-        }
-    }
-
-    signIn = async (req: Request, res: Response) => {
-
-        const { accessToken, refreshToken } = await this.#service.userService.getTokens(req.body);
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: true
-        })
-        return res.json({ accessToken });
-    }
 
     editUserInfo = async (req: Request, res: Response) => {
         const updatedUser = await this.#service.userService.updateUser({ userId: req.user.userId, info: req.body });
