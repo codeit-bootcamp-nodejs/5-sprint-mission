@@ -2,9 +2,9 @@ import bcrypt, { hash } from 'bcrypt'
 import jwt, { SignOptions, Secret } from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import { Exception } from '../common/exception/exception';
-import { BaseRepository } from '../04-repository/repo/base.repository';
+import { BaseRepository } from '../03-outbound/repo/base.repository';
 import { NextFunction, Request, Response } from 'express';
-import { IBaseRepository } from '../04-repository/I.base.repository';
+import { IBaseRepository } from '../03-outbound/I.base.repository';
 
 
 

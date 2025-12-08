@@ -1,27 +1,27 @@
-import { Server } from "./01-server/server";
-import { ArticleController } from "./02-controller/controllers/article.controller";
+import { Server } from "./server/server";
+import { ArticleController } from "./01-inbound/controllers/article.controller";
 
-import { ProductController } from "./02-controller/controllers/product.controller";
+import { ProductController } from "./01-inbound/controllers/product.controller";
 
-import { ArticleService } from "./03-domain/service/article.service";
+import { ArticleService } from "./02-domain/service/article.service";
 
 
-import { ProductService } from "./03-domain/service/product.service";
+import { ProductService } from "./02-domain/service/product.service";
 
 
 import { PrismaClient } from '@prisma/client';
-import { ArticleRepository } from "./04-repository/repo/article.repository";
-import { ProductRepository } from "./04-repository/repo/product.repository";
-import { UserRepository } from "./04-repository/repo/user.repository";
-import { UserController } from "./02-controller/controllers/user.controller";
-import { UserService } from "./03-domain/service/user.service";
+import { ArticleRepository } from "./03-outbound/repo/article.repository";
+import { ProductRepository } from "./03-outbound/repo/product.repository";
+import { UserRepository } from "./03-outbound/repo/user.repository";
+import { UserController } from "./01-inbound/controllers/user.controller";
+import { UserService } from "./02-domain/service/user.service";
 import { Authenticator } from "./external/authenticator";
-import { ProductCommentService } from "./03-domain/service/product.comment.service";
-import { ProductCommentRepository } from "./04-repository/repo/product.comment.repository";
-import { ProductCommentController } from "./02-controller/controllers/product.comment.controller";
-import { ArticleCommentRepository } from "./04-repository/repo/article.comment.repository";
-import { ArticleCommentService } from "./03-domain/service/article.comment.service";
-import { ArticleCommentController } from "./02-controller/controllers/article.comment.controller";
+import { ProductCommentService } from "./02-domain/service/product.comment.service";
+import { ProductCommentRepository } from "./03-outbound/repo/product.comment.repository";
+import { ProductCommentController } from "./01-inbound/controllers/product.comment.controller";
+import { ArticleCommentRepository } from "./03-outbound/repo/article.comment.repository";
+import { ArticleCommentService } from "./02-domain/service/article.comment.service";
+import { ArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
 
 
 export class DependencyInjector {
