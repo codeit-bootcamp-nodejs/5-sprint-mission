@@ -1,4 +1,5 @@
 import { Product } from "@prisma/client"
+import { PersistedProduct } from "../../02-domain/entity/product"
 
 export class ProductResDto {
     id
@@ -11,7 +12,7 @@ export class ProductResDto {
     userId
     isLiked
 
-    constructor(entity: Product) {
+    constructor(entity: PersistedProduct) {
         this.id = entity.id;
         this.name = entity.name;
         this.description = entity.description;

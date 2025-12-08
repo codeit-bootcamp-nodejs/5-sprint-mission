@@ -28,24 +28,27 @@ export const articleParamSchema = z.object({
 
 
 
-export const productReqSchema = querySchema.extend({
-    body: z.object({
-        name: z.string(),
-        description: z.string(),
-        price: z.coerce.number(),
-        tags: z.array(z.string()).optional(),
-        imageUrl: z.string().optional(),
-        isLiked: z.boolean().default(false)
-    }),
-
-    user: z.object({
-        userId: z.string()
-    }),
-
-    params: z.object({
-        id: z.string().optional()
-    }).optional()
+export const productBodySchema = z.object({
+    name: z.string(),
+    description: z.string(),
+    price: z.coerce.number(),
+    tags: z.array(z.string()),
+    imageUrl: z.string().optional(),
+    isLiked: z.boolean().default(false)
 })
+
+
+export const productParamSchema = z.object({
+    id: z.string()
+})
+
+
+export type ProductReqDto = z.infer<typeof productBodySchema> & z.infer<typeof productParamSchema> &
+{
+    userId: string
+};
+
+
 
 export const userReqSchema = z.object({
     email: z.string(),
@@ -57,7 +60,7 @@ export const userReqSchema = z.object({
 
 
 
-export const productCommentBodySchema  = z.object({
+export const productCommentBodySchema = z.object({
     content: z.string()
 })
 
@@ -88,19 +91,17 @@ export type ArticleReqDto = z.infer<typeof articleBodySchema> &
         userId: string
     };
 
-export type ProductRequest = z.infer<typeof productReqSchema> &{
-    userId: string
-};
+
 
 export type UserSignUpDto = z.infer<typeof userReqSchema>;
 export type UserSignInDto = Omit<z.infer<typeof userReqSchema>, 'nickname'>;
 
 
-export type ProductCommentRequest = z.infer<typeof  productCommentBodySchema> &
+export type ProductCommentRequest = z.infer<typeof productCommentBodySchema> &
     z.infer<typeof productCommentParamSchema> & {
         userId: string
     };
-export type ArticleCommentRequest = z.infer<typeof articleCommentBodySchema> &
+export type ArticleCommentDto = z.infer<typeof articleCommentBodySchema> &
     z.infer<typeof articleCommentParamSchema> & {
         userId: string
     };
