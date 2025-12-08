@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IService } from "../../03-domain/I.service";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { ProductCommentRequest, productCommentSchema } from "../req-validator/req.validator";
+import { productCommentBodySchema, productCommentParamSchema } from "../req-validator/req.validator";
 import { ProductCommentResDto } from "../res-dto/product.comment.res.dto";
 
 
@@ -32,19 +32,16 @@ export class ProductCommentController extends BaseController {
 
 
     createProductComment = async (req: Request, res: Response) => {
+        const body = this.validate(productCommentBodySchema, req.body);
+        const params = this.validate(productCommentParamSchema, req.params);
 
-        const result = productCommentSchema.safeParse({
-            body: req.body,
-            params: req.params,
-            user: req.user
-        })
+        const productCommentResDto = await this.#service.productCommentService.createProductComment({
+            ...body,
+            ...params,
+            userId: req.user.userId
+        });
 
-        if (result.success) {
-            const productCommentResDto = await this.#service.productCommentService.createProductComment(result.data);
-            return res.json(productCommentResDto);
-        } else {
-            throw new HttpError("Invalid Product Comment Request", 400);
-        }
+        return res.json(productCommentResDto);
     }
 
 
@@ -56,19 +53,16 @@ export class ProductCommentController extends BaseController {
 
 
     modifyProductComment = async (req: Request, res: Response) => {
+        const body = this.validate(productCommentBodySchema, req.body);
+        const params = this.validate(productCommentParamSchema, req.params);
 
-        const result = productCommentSchema.safeParse({
-            body: req.body,
-            params: req.params,
-            user: req.user
-        })
+        const productCommentResDto = await this.#service.productCommentService.updateProductComment({
+            ...body,
+            ...params,
+            userId: req.user.userId
+        });
 
-        if (result.success) {
-            const productCommentResDto = await this.#service.productCommentService.updateProductComment(result.data);
-            return res.json(productCommentResDto);
-        } else {
-            throw new HttpError("Invalid Product Comment Request", 400);
-        }
+        return res.json(productCommentResDto);
     }
 
 

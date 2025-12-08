@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository"
 import { Article } from "../../03-domain/entity/article";
 import { PrismaClient } from "@prisma/client/extension";
-import { ArticleRequest, QueryType } from "../../02-controller/req-validator/req.validator";
+import { ArticleReqDto, QueryType } from "../../02-controller/req-validator/req.validator";
 
 export interface IArticleRepository {
 
@@ -9,9 +9,9 @@ export interface IArticleRepository {
 
     findById(id: string): Promise<Article>
 
-    save(dto: ArticleRequest): Promise<Article>
+    save(dto: ArticleReqDto): Promise<Article>
 
-    updateById(entity: ArticleRequest): Promise<Article>
+    updateById(entity: ArticleReqDto): Promise<Article>
 
     deleteById(id: string): void
 }
@@ -56,9 +56,9 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
         return Article.forCreate(article);
     }
 
-    async save(dto: ArticleRequest) {
-        const { title, content } = dto.body;
-        const { userId } = dto.user;
+    async save(dto: ArticleReqDto) {
+        const { title, content, userId } = dto;
+
 
         const article = await this.prisma.article.create({
             data: {
@@ -71,11 +71,9 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
         return Article.forCreate(article);
     }
 
-    async updateById(dto: ArticleRequest) {
+    async updateById(dto: ArticleReqDto) {
         console.log(dto);
-
-        const id = dto.params?.id;
-        const { title, content } = dto.body;
+        const { id, title, content } = dto;
 
         const article = await this.prisma.article.update({
             where: { id },

@@ -9,20 +9,22 @@ export const querySchema = z.object({
 
 
 
-export const articleReqSchema = querySchema.extend({
-    body: z.object({
-        title: z.string(),
-        content: z.string(),
-    }),
-
-    user: z.object({
-        userId: z.string()
-    }),
-
-    params: z.object({
-        id: z.string().optional()
-    }).optional()
+export const articleBodySchema = querySchema.extend({
+    title: z.string(),
+    content: z.string(),
 })
+
+export const articleParamSchema = z.object({
+    id: z.string().optional()
+})
+
+
+
+
+
+
+
+
 
 
 
@@ -53,47 +55,51 @@ export const userReqSchema = z.object({
 })
 
 
-export const productCommentSchema = z.object({
-    body: z.object({
-        content: z.string()
-    }),
-    params: z.object({
-        productId: z.string(),
-        commentId: z.string().optional()
-    }),
 
-    user: z.object({
-        userId: z.string()
-    })
 
+export const productCommentBodySchema  = z.object({
+    content: z.string()
+})
+
+export const productCommentParamSchema = z.object({
+    productId: z.string(),
+    commentId: z.string().optional()
 })
 
 
 
 
-export const articleCommentSchema = z.object({
-    body: z.object({
-        content: z.string()
-    }),
-    params: z.object({
-        articleId: z.string(),
-        commentId: z.string().optional()
-    }),
-
-    user: z.object({
-        userId: z.string()
-    })
-
+export const articleCommentBodySchema = z.object({
+    content: z.string()
 })
+
+export const articleCommentParamSchema = z.object({
+    articleId: z.string(),
+    commentId: z.string().optional()
+})
+
+
+
 
 export type QueryType = z.infer<typeof querySchema>;
-export type ArticleRequest = z.infer<typeof articleReqSchema>;
+
+export type ArticleReqDto = z.infer<typeof articleBodySchema> &
+    z.infer<typeof articleParamSchema> & {
+        userId: string
+    };
+
 export type ProductRequest = z.infer<typeof productReqSchema>;
 
 export type UserSignUpDto = z.infer<typeof userReqSchema>;
 export type UserSignInDto = Omit<z.infer<typeof userReqSchema>, 'nickname'>;
 
 
-export type ProductCommentRequest = z.infer<typeof productCommentSchema>;
-export type ArticleCommentRequest = z.infer<typeof articleCommentSchema>;
+export type ProductCommentRequest = z.infer<typeof  productCommentBodySchema> &
+    z.infer<typeof productCommentParamSchema> & {
+        userId: string
+    };
+export type ArticleCommentRequest = z.infer<typeof articleCommentBodySchema> &
+    z.infer<typeof articleCommentParamSchema> & {
+        userId: string
+    };
 

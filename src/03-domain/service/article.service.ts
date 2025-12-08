@@ -1,4 +1,4 @@
-import { ArticleRequest, QueryType } from "../../02-controller/req-validator/req.validator";
+import { ArticleReqDto, QueryType } from "../../02-controller/req-validator/req.validator";
 import { ArticleResDto } from "../../02-controller/res-dto/article.res.dto";
 import { IBaseRepository } from "../../04-repository/I.base.repository";
 import { Authenticator } from "../../external/authenticator";
@@ -13,9 +13,9 @@ export interface IArticleService {
 
     getArticle(id: string): Promise<ArticleResDto>
 
-    createArticle(dto: ArticleRequest): Promise<ArticleResDto>
+    createArticle(dto: ArticleReqDto): Promise<ArticleResDto>
 
-    updateArticle(dto: ArticleRequest): Promise<ArticleResDto>
+    updateArticle(dto: ArticleReqDto): Promise<ArticleResDto>
 
     deleteArticle(id: string): void
 }
@@ -38,14 +38,14 @@ export class ArticleService implements IArticleService {
         return new ArticleResDto(articleEntity);
     }
 
-    async createArticle(dto: ArticleRequest) {
+    async createArticle(dto: ArticleReqDto) {
 
         const newarticle = await this.#repos.articleRepo.save(dto);
 
         return new ArticleResDto(newarticle);
     }
 
-    async updateArticle(dto: ArticleRequest) {
+    async updateArticle(dto: ArticleReqDto) {
 
         const updatedArticle = await this.#repos.articleRepo.updateById(dto);
         return new ArticleResDto(updatedArticle);

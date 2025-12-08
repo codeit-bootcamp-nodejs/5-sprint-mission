@@ -26,12 +26,10 @@ export class ArticleCommentService implements IArticleCommentService {
 
 
     async createArticleComment(dto: ArticleCommentRequest) {
-        const { content } = dto.body;
-        const { articleId } = dto.params;
-        const { userId } = dto.user;
+        const { articleId, userId, content } = dto;
 
         console.log(userId);
-        
+
         const articleCommentResDto = await this.#repos.articleCommentRepo.save(userId, articleId, content);
 
         return articleCommentResDto;
@@ -48,13 +46,13 @@ export class ArticleCommentService implements IArticleCommentService {
     }
 
     async updateArticleComment(dto: ArticleCommentRequest) {
-        const { content } = dto.body;
-        const { articleId} = dto.params;
-        const commentId = dto.params.commentId ?? "";
-        const { userId } = dto.user;
+        const { articleId, commentId, content, userId } = dto;
+        if (!commentId) {
+            throw new Error('Comment ID is required for updating a comment.');
+        }
 
 
-        const articleCommentResDto = await this.#repos.articleCommentRepo.update(userId, articleId, commentId , content);
+        const articleCommentResDto = await this.#repos.articleCommentRepo.update(userId, articleId, commentId, content);
 
         return articleCommentResDto;
     }

@@ -25,12 +25,11 @@ export class ProductCommentService implements IProductCommentService {
 
 
     async createProductComment(dto: ProductCommentRequest) {
-        const { content } = dto.body;
-        const { productId } = dto.params;
-        const { userId } = dto.user;
+        const {content, productId, userId } = dto;
+
 
         console.log(userId);
-        
+
         const productCommentResDto = await this.#repos.productCommentRepo.save(userId, productId, content);
 
         return productCommentResDto;
@@ -48,13 +47,12 @@ export class ProductCommentService implements IProductCommentService {
     }
 
     async updateProductComment(dto: ProductCommentRequest) {
-        const { content } = dto.body;
-        const { productId} = dto.params;
-        const commentId = dto.params.commentId ?? "";
-        const { userId } = dto.user;
+        const { content, productId, commentId, userId } = dto;
+        if (!commentId) {
+            throw new Error('Comment ID is required for updating a comment.');
+        }
 
-
-        const productCommentResDto = await this.#repos.productCommentRepo.update(userId, productId, commentId , content);
+        const productCommentResDto = await this.#repos.productCommentRepo.update(userId, productId, commentId, content);
 
         return productCommentResDto;
     }

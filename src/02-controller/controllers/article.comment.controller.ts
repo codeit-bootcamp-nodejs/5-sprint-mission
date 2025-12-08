@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IService } from "../../03-domain/I.service";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { articleCommentSchema } from "../req-validator/req.validator";
+import { articleCommentBodySchema, articleCommentParamSchema } from "../req-validator/req.validator";
 
 
 
@@ -31,20 +31,17 @@ export class ArticleCommentController extends BaseController {
 
 
     createArticleComment = async (req: Request, res: Response) => {
-        const result = articleCommentSchema.safeParse({
-            body: req.body,
-            params: req.params,
-            user: req.user
-        })
+        const body = this.validate(articleCommentBodySchema, req.body);
+        const params = this.validate(articleCommentParamSchema, req.params);
 
-        if (result.success) {
-            console.log(result.data);
-            const articleCommentResDto = await this.#service.articleCommentService.createArticleComment(result.data);
-            return res.json(articleCommentResDto);
-        } else {
-            throw new HttpError("Invalid article Comment Request", 400);
-        }
+        const articleCommentResDto = await this.#service.articleCommentService.createArticleComment({
+            ...body,
+            ...params,
+            userId: req.user.userId
+        });
+        return res.json(articleCommentResDto);
     }
+
 
 
     getArticleComments = async (req: Request, res: Response) => {
@@ -55,19 +52,15 @@ export class ArticleCommentController extends BaseController {
 
 
     modifyArticleComment = async (req: Request, res: Response) => {
+        const body = this.validate(articleCommentBodySchema, req.body);
+        const params = this.validate(articleCommentParamSchema, req.params);
 
-        const result = articleCommentSchema.safeParse({
-            body: req.body,
-            params: req.params,
-            user: req.user
-        })
-
-        if (result.success) {
-            const articleCommentResDto = await this.#service.articleCommentService.updateArticleComment(result.data);
-            return res.json(articleCommentResDto);
-        } else {
-            throw new HttpError("Invalid article Comment Request", 400);
-        }
+        const articleCommentResDto = await this.#service.articleCommentService.updateArticleComment({
+            ...body,
+            ...params,
+            userId: req.user.userId
+        });
+        return res.json(articleCommentResDto);
     }
 
 

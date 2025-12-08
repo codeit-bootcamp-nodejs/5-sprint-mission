@@ -1,4 +1,4 @@
-import { ArticleRequest } from '../../02-controller/req-validator/req.validator';
+import { ArticleReqDto } from '../../02-controller/req-validator/req.validator';
 import { ArticleResDto } from '../../02-controller/res-dto/article.res.dto';
 import { Exception } from '../../common/exception/exception';
 
