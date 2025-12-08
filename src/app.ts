@@ -1,5 +1,6 @@
 import { DependencyInjector } from "./dependency-injector";
 
-const { server } = new DependencyInjector();
+const { httpServer, wsServer } = new DependencyInjector();
 
-server.run();
+httpServer.run();
+wsServer.start();

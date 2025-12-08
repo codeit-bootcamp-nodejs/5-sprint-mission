@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { IService } from "../port/i.service";
+import { IServices } from "../port/i.service";
 import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
 
 
@@ -13,7 +13,7 @@ export class ArticleCommentController extends BaseController {
     #service
     #auth
 
-    constructor(service: IService, auth: Authenticator) {
+    constructor(service: IServices, auth: Authenticator) {
         super('/article')
         this.#service = service;
         this.#auth = auth;

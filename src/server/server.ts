@@ -4,17 +4,18 @@ import morgan from 'morgan'
 import { Exception } from '../common/exception/exception'
 import { Prisma } from '@prisma/client'
 import cookieParser from "cookie-parser";
-import { request, response } from 'express'
-import { HttpError } from '../external/authenticator'
+import http, { Server as DefaultHttpServer } from "http";
 
-
-export class Server {
+export class HttpServer {
     #controllers
     #server
+    public readonly defaultHttpServer: DefaultHttpServer;
 
     constructor(controllers: any) {
         this.#controllers = controllers;
         this.#server = express();
+        this.defaultHttpServer = http.createServer(this.#server);
+
     }
 
     registerMiddleWare() {
@@ -23,7 +24,7 @@ export class Server {
         this.#server.use(express.json({ strict: false })); // must come first
         this.#server.use(cookieParser());
     }
-    
+
 
     registerExceptionHandler() {
         // this.#server.use((err: Error, req: Request, res: Response, next: NextFunction) => {

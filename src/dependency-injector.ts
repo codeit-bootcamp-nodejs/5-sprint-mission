@@ -1,4 +1,4 @@
-import { Server } from "./server/server";
+import { HttpServer } from "./server/server";
 import { ArticleController } from "./01-inbound/controllers/article.controller";
 
 import { ProductController } from "./01-inbound/controllers/product.controller";
@@ -23,12 +23,19 @@ import { ArticleCommentRepository } from "./03-outbound/repo/article.comment.rep
 import { ArticleCommentService } from "./02-domain/service/article.comment.service";
 import { ArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
 import { NotificationRepository } from "./03-outbound/repo/notification.repository";
+import { NotificationGateway } from "./01-inbound/gateways/notification.gateway";
+import { Gateways } from "./01-inbound/gateways";
+import { WsServer } from "./server/ws.server";
 
 
 export class DependencyInjector {
-    #server
+    public readonly httpServer: HttpServer;
+    public readonly wsServer: WsServer;
+    
     constructor() {
-        this.#server = this.inject();
+        const { httpServer, wsServer } = this.inject();
+        this.httpServer = httpServer;
+        this.wsServer = wsServer;
     }
 
 
@@ -82,12 +89,17 @@ export class DependencyInjector {
             articlecommentController
         ];
 
-        // Server
-        const server = new Server(controllers);
-        return server;
-    }
 
-    get server() {
-        return this.#server;
+
+        // Gateway
+        const notificationGateway = new NotificationGateway(services);
+        const gateways = new Gateways(notificationGateway);
+
+        // Server
+        const httpServer = new HttpServer(controllers);
+        const wsServer = new WsServer(
+            httpServer.defaultHttpServer,
+            gateways);
+        return { httpServer, wsServer };
     }
 }

@@ -5,6 +5,8 @@ import { Exception } from '../common/exception/exception';
 import { BaseRepository } from '../03-outbound/repo/base.repository';
 import { NextFunction, Request, Response } from 'express';
 import { IBaseRepository } from '../02-domain/port/I.base.repository';
+import { ExtendedError } from 'socket.io/dist/namespace';
+import { Socket } from 'socket.io/dist/socket';
 
 
 
@@ -46,6 +48,24 @@ export class Authenticator {
 
         this.#repos = repos;
     }
+
+    checkAuthWs = (socket: Socket, next: (err?: ExtendedError) => void) => {
+        const authHeader = socket.handshake.headers.authorization;
+        if (
+            !authHeader ||
+            authHeader.split(" ").length !== 2 ||
+            authHeader.split(" ")[0] !== "Bearer"
+        ) {
+            return next();
+        }
+
+        const accessToken = authHeader.split(" ")[1];
+        try {
+            const payload = jwt.verify(accessToken, process.env.JWT_SECRET !) as { userId: string };
+            socket.data.userId = payload.userId;
+        } catch (err) { }
+        return next();
+    };
 
 
     filterSensitiveUserData(user: any) {
@@ -108,6 +128,7 @@ export class Authenticator {
             return next(error);
         }
     }
+
 
 
     verifyArticleAuth = async (req: Request, res: Response, next: NextFunction) => {

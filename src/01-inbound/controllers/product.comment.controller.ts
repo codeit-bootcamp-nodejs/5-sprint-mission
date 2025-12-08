@@ -3,7 +3,7 @@ import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productCommentBodySchema, productCommentParamSchema } from "../request/req.validator";
 import { ProductCommentResDto } from "../response/product.comment.res.dto";
-import { IService } from "../port/i.service";
+import { IServices } from "../port/i.service";
 
 
 
@@ -14,7 +14,7 @@ export class ProductCommentController extends BaseController {
     #service
     #auth
 
-    constructor(service: IService, auth: Authenticator) {
+    constructor(service: IServices, auth: Authenticator) {
         super('/product')
         this.#service = service;
         this.#auth = auth;

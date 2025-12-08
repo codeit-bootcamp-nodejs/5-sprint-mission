@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productReqSchema, querySchema } from "../request/req.validator";
-import { IService } from "../port/i.service";
+import { IServices } from "../port/i.service";
 
 
 
@@ -11,7 +11,7 @@ export class ProductController extends BaseController {
     #service
     #auth
 
-    constructor(service: IService, auth: Authenticator) {
+    constructor(service: IServices, auth: Authenticator) {
         super('/products');
         this.#service = service;
         this.#auth = auth;

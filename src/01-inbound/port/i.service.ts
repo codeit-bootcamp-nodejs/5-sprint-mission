@@ -4,7 +4,7 @@ import { IProductCommentService } from "./services/i.product.comment.service";
 import { IProductService } from "./services/i.product.service";
 import { IUserService } from "./services/i.user.service";
 
-export interface IService {
+export interface IServices {
     product: IProductService,
     article: IArticleService,
     user: IUserService,

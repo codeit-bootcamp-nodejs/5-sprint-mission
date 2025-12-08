@@ -1,4 +1,6 @@
+import { PersistNotificationEntity } from "../../entity/notification";
+
 export interface INotificationRepository {
-    createArticleCommentNotification(userId: string): Promise<void>;
-    createProductCommentNotification(userId: string): Promise<void>;
+    createArticleCommentNotification(userId: string): Promise<PersistNotificationEntity>;
+    createProductCommentNotification(userId: string): Promise<PersistNotificationEntity>;
 }
