@@ -1,12 +1,17 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { Product } from "../../02-domain/entity/product";
+import { NewProduct, PersistedProduct, Product } from "../../02-domain/entity/product";
 import { BaseRepository } from "./base.repository";
-import { ProductRequest, QueryType } from "../../01-inbound/request/req.validator";
+import { ProductReqDto, QueryType } from "../../01-inbound/request/req.validator";
 import { IProductRepository } from "../../02-domain/port/repositories/I.product.repository";
+import { Prisma } from "@prisma/client";
+import { ProductMapper } from "../mapper/product.mapper";
 
 
 
 
+
+
+export type PersistProduct = Prisma.ProductGetPayload<{}>;
 
 
 
@@ -14,6 +19,24 @@ export class ProductRepository extends BaseRepository implements IProductReposit
     constructor(prisma: PrismaClient) {
         super(prisma)
     }
+
+
+    async save(entity: NewProduct) {
+        const { name, description, price, tags, userId } = entity;
+
+        const product = await this.prisma.product.create({
+            data: {
+                name,
+                description,
+                price,
+                tags,
+                userId
+            }
+        });
+
+        return ProductMapper.toPersist(product);
+    }
+
 
     async findAll(query: QueryType) {
 
@@ -37,8 +60,8 @@ export class ProductRepository extends BaseRepository implements IProductReposit
             },
         });
 
-        const productEntities = products.map((product: Product) => {
-            return Product.forCreate(product);
+        const productEntities = products.map((product: PersistProduct) => {
+            return ProductMapper.toPersist(product);
         });
 
         return productEntities;
@@ -48,64 +71,48 @@ export class ProductRepository extends BaseRepository implements IProductReposit
         const product = await this.prisma.product.findUnique({
             where: { id },
         });
-        return Product.forCreate(product);
+        return ProductMapper.toPersist(product);
     }
 
-    async save(dto: ProductRequest) {
-        const { name, description, price, tags } = dto.body
-        const { userId } = dto.user;
-
-        const product = await this.prisma.product.create({
-            data: {
-                name: name,
-                description: description,
-                price: price,
-                tags: tags,
-                userId: userId
-            }
-        });
-
-        return Product.forCreate(product);
-    }
-
-    async updateById(dto: ProductRequest) {
-        const { name, description, price, tags } = dto.body
-        const { userId } = dto.user;
-        const id = dto.params?.id;
-
-        const product = await this.prisma.product.update({
-            where: { id },
-            data: {
-                name: name,
-                description: description,
-                price: price,
-                tags: tags,
-                userId: userId
-            }
-        });
-
-        return Product.forCreate(product);
-    }
-
-    async deleteById(id: string) {
-        await this.prisma.product.delete({
-            where: { id },
-        });
-    }
-
+    
     async findByUserId(userId: string) {
         const products = await this.prisma.product.findMany({
             where: { userId }
         });
 
 
-        const productList = products.map((product: Product) => {
+        const productList = products.map((product: PersistProduct) => {
 
-            return Product.forCreate(product)
+            return ProductMapper.toPersist(product);
         });
 
         return productList;
 
+    }
+
+
+    async updateById(entity: PersistedProduct) {
+        const { id, name, description, price, tags, userId } = entity;
+
+        const product = await this.prisma.product.update({
+            where: { id },
+            data: {
+                name,
+                description,
+                price,
+                tags,
+                userId
+            }
+        });
+
+        return ProductMapper.toPersist(product);
+    }
+
+
+    async deleteById(id: string) {
+        await this.prisma.product.delete({
+            where: { id },
+        });
     }
 
 
@@ -116,6 +123,6 @@ export class ProductRepository extends BaseRepository implements IProductReposit
             where: { id },
             data: { isLiked: like },
         });
-        return Product.forCreate(product);
+        return ProductMapper.toPersist(product);
     }
 }

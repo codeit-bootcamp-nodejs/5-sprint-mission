@@ -1,9 +1,18 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { BaseRepository } from "./base.repository";
-import { ProductCommentResDto } from "../../01-inbound/response/product.comment.res.dto";
 import { IProductCommentRepository } from "../../02-domain/port/repositories/I.product.comment.repository";
+import { ProductCommentResDto } from "../../01-inbound/response/product.comment.response";
+import { Prisma } from "@prisma/client";
+import { ProductCommentMapper } from "../mapper/product.comment.mapper";
+import { NewProduct, PersistedProduct } from "../../02-domain/entity/product";
+import { NewProductComment, PersistedProductComment } from "../../02-domain/entity/product.comment.entity";
 
 
+
+
+
+
+export type PersistProductComment = Prisma.ProductCommentGetPayload<{}>;
 
 
 export class ProductCommentRepository extends BaseRepository implements IProductCommentRepository {
@@ -12,16 +21,14 @@ export class ProductCommentRepository extends BaseRepository implements IProduct
         super(prisma);
     }
 
-    async save(userId: string, productId: string, content: string) {
+    async save(entity: NewProductComment): Promise<PersistedProductComment> {
         const productComment = await this.prisma.productComment.create({
             data: {
-                userId,
-                productId,
-                content
+                ...entity
             }
         });
 
-        return new ProductCommentResDto(productComment);
+        return ProductCommentMapper.toPersist(productComment);
     }
 
     async findProductComments(productId: string) {
@@ -29,24 +36,31 @@ export class ProductCommentRepository extends BaseRepository implements IProduct
             where: { productId }
         });
 
-        const productResDtos = productComment.map((record: any) => {
-            return new ProductCommentResDto(record);
+        return productComment.map((record: PersistProductComment) => {
+            return ProductCommentMapper.toPersist(record);
         })
-
-        return productResDtos;
     }
+
+
+    async findProductComment(commentId: string): Promise<PersistedProductComment> {
+        const productComment = await this.prisma.productComment.findUnique({
+            where: { id: commentId }
+        });
+        return ProductCommentMapper.toPersist(productComment);
+    }
+
 
     async deleteProductComment(commentId: string) {
         await this.prisma.productComment.delete({
             where: { id: commentId }
         });
-        console.log(`Deleted ${commentId}`);
-
     }
 
-    async update(userId: string, productId: string, commentId: string, content: string) {
+    async update(entity: PersistedProductComment) {
+
+        const { userId, productId, content, id } = entity;
         const productComment = await this.prisma.productComment.update({
-            where: {id :commentId},
+            where: { id },
             data: {
                 userId,
                 productId,
@@ -54,7 +68,7 @@ export class ProductCommentRepository extends BaseRepository implements IProduct
             }
         });
 
-        return new ProductCommentResDto(productComment);
+        return ProductCommentMapper.toPersist(productComment);
     }
 }
 

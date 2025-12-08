@@ -1,7 +1,13 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "../../02-domain/port/repositories/I.user.repository";
+import { Prisma } from "@prisma/client";
 
+
+
+
+
+export type PersistUser = Prisma.UserGetPayload<{}>;
 
 
 export class UserRepository extends BaseRepository implements IUserRepository {

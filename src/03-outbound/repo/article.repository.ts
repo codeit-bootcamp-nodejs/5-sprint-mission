@@ -1,8 +1,14 @@
 import { BaseRepository } from "./base.repository"
-import { Article } from "../../02-domain/entity/article";
-import { PrismaClient } from "@prisma/client/extension";
+import { Article, NewArticleEntity, PersistArticleEntity } from "../../02-domain/entity/article";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
 import { IArticleRepository } from "../../02-domain/port/repositories/I.article.repository";
+import { ArticleMapper } from "../mapper/article.mapper";
+
+
+
+
+export type PersistArticle = Prisma.ArticleGetPayload<{}>;
 
 
 export class ArticleRepository extends BaseRepository implements IArticleRepository {
@@ -26,61 +32,60 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
         const articles = await this.prisma.article.findMany({
             where: condition,
             skip: offset,
+            take: limit,
             orderBy: {
                 createdAt: sort,
             },
         });
 
-        const articleEntities = articles.map((article: Article) => {
-            return Article.forCreate(article);
+        const articleEntities = articles.map((article: PersistArticle) => {
+            return ArticleMapper.toPersist(article);
         });
 
         return articleEntities;
     }
 
+
     async findById(id: string) {
         const article = await this.prisma.article.findUnique({
             where: { id },
         });
-        return Article.forCreate(article);
+        return ArticleMapper.toPersist(article);
     }
 
-    async save(dto: ArticleReqDto) {
-        const { title, content, userId } = dto;
 
+
+    async save(entity: NewArticleEntity) {
+        const { title, content, userId } = entity;
 
         const article = await this.prisma.article.create({
             data: {
-                title: title,
-                content: content,
-                userId: userId
+                title,
+                content,
+                userId
             }
         });
 
-        return Article.forCreate(article);
+        return ArticleMapper.toPersist(article);
     }
 
-    async updateById(dto: ArticleReqDto) {
-        console.log(dto);
-        const { id, title, content } = dto;
+    async updateArticle(entity: PersistArticleEntity) {
+        const { id, title, content } = entity;
 
         const article = await this.prisma.article.update({
             where: { id },
             data: {
-                id: id,
-                title: title,
-                content: content,
+                title,
+                content,
             }
         });
 
-        return Article.forCreate(article);
+        return ArticleMapper.toPersist(article);
     }
 
     async deleteById(id: string) {
         await this.prisma.article.delete({
-            where: {
-                id: id,
-            },
+            where: { id }
         });
     }
 }
