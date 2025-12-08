@@ -17,11 +17,39 @@ export class ArticleController extends BaseController {
     }
 
     registerRoutes() {
-        this.router.get('/', this.getArticles);
-        this.router.get('/:id', this.getArticle);
-        this.router.post('/', this.#auth.verifyAccessToken, this.createArticle);
-        this.router.patch('/:id', this.#auth.verifyAccessToken, this.#auth.verifyArticleAuth, this.updateArticle);
-        this.router.delete('/:id', this.#auth.verifyAccessToken, this.#auth.verifyArticleAuth, this.deleteArticle);
+        // 모든 글 조회
+        this.router.get(
+            '/',
+            this.catch(this.getArticles)
+        );
+
+        // 특정 글 조회
+        this.router.get(
+            '/:id',
+            this.catch(this.getArticle)
+        );
+
+        // 글 작성
+        this.router.post(
+            '/',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.createArticle)
+        );
+
+
+        // 글 수정
+        this.router.patch(
+            '/:id',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.updateArticle)
+        );
+
+        // 글 삭제
+        this.router.delete(
+            '/:id',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.deleteArticle)
+        );
     }
 
     getArticles = async (req: Request, res: Response) => {
@@ -53,7 +81,7 @@ export class ArticleController extends BaseController {
     updateArticle = async (req: Request, res: Response) => {
         const body = this.validate(articleBodySchema, req.body);
         const params = this.validate(articleParamSchema, req.params);
-        
+
         const articleResDto = await this.#service.article.updateArticle({
             ...body,
             ...params,
@@ -64,7 +92,8 @@ export class ArticleController extends BaseController {
 
     deleteArticle = async (req: Request, res: Response) => {
         const id = req.params.id;
-        await this.#service.article.deleteArticle(id);
+        const userId = req.user.userId;
+        await this.#service.article.deleteArticle(id, userId);
         res.status(200).json();
     }
 }

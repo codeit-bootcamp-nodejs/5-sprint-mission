@@ -21,11 +21,32 @@ export class ArticleCommentController extends BaseController {
     }
 
     registerRoutes() {
-        // article Comments
-        this.router.post('/:articleId/comments', this.#auth.verifyAccessToken, this.createArticleComment);
-        this.router.get('/:articleId/comments', this.getArticleComments);
-        this.router.patch('/:articleId/comments/:commentId', this.#auth.verifyAccessToken, this.modifyArticleComment);
-        this.router.delete('/:articleId/comments/:commentId', this.#auth.verifyAccessToken, this.deleteArticleComment);
+        // 댓글 작성
+        this.router.post(
+            '/:articleId/comments',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.createArticleComment)
+        );
+
+        // 댓글 조회
+        this.router.get(
+            '/:articleId/comments',
+            this.catch(this.getArticleComments)
+        );
+
+        // 댓글 수정
+        this.router.patch(
+            '/:articleId/comments/:commentId',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.modifyArticleComment)
+        );
+
+        // 댓글 삭제
+        this.router.delete(
+            '/:articleId/comments/:commentId',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.deleteArticleComment)
+        );
     }
 
 
@@ -66,7 +87,9 @@ export class ArticleCommentController extends BaseController {
 
     deleteArticleComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
-        await this.#service.articleComment.deleteArticleComments(commentId);
+        const articleId = req.params.articleId;
+        const userId = req.user.userId;
+        await this.#service.articleComment.deleteArticleComments(articleId, commentId, userId);
         return res.status(200).json();
     }
 }

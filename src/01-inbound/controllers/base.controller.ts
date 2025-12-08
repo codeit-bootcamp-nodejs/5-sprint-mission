@@ -1,4 +1,9 @@
-import express from 'express'
+import express, {
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+} from "express"
 import z from 'zod';
 
 export class BaseController {
@@ -19,6 +24,15 @@ export class BaseController {
         return result.data;
     }
 
+    catch(handler: RequestHandler) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                await handler(req, res, next);
+            } catch (err) {
+                next(err);
+            }
+        };
+    }
 
     get basePath() {
         return this.#basePath;

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productCommentBodySchema, productCommentParamSchema } from "../request/req.validator";
-import { ProductCommentResDto } from "../response/product.comment.res.dto";
 import { IServices } from "../port/i.service";
 
 

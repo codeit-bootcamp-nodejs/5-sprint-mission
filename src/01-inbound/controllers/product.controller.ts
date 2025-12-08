@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { productReqSchema, querySchema } from "../request/req.validator";
+import { productBodySchema, productParamSchema, querySchema } from "../request/req.validator";
 import { IServices } from "../port/i.service";
 
 
@@ -19,18 +19,57 @@ export class ProductController extends BaseController {
     }
 
     registerRoutes() {
-        this.router.get('/', this.getProducts);
-        this.router.get('/:id', this.getProduct);
-        this.router.patch('/:id/likes', this.#auth.verifyAccessToken, this.likeProduct);
-        this.router.post('/', this.#auth.verifyAccessToken, this.createProduct);
-        this.router.patch('/:id', this.#auth.verifyAccessToken, this.#auth.verifyProductAuth, this.updateProduct);
-        this.router.delete('/:id', this.#auth.verifyAccessToken, this.#auth.verifyProductAuth, this.deleteProduct);
+
+        // 상품 생성
+        this.router.post(
+            '/',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.createProduct)
+        );
+
+        // 상품 조회
+        this.router.get(
+            '/',
+            this.catch(this.getProducts)
+        );
+
+        // 상품 상세 조회
+        this.router.get(
+            '/:id',
+            this.catch(this.getProduct)
+        );
+
+        // 상품 수정
+        this.router.patch(
+            '/:id',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.updateProduct)
+        );
+
+        // 상품 삭제
+        this.router.delete(
+            '/:id',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.deleteProduct)
+        );
+
+        // 상품 좋아요
+        this.router.patch(
+            '/:id/likes',
+            this.catch(this.#auth.verifyAccessToken),
+            this.catch(this.likeProduct)
+        );
     }
 
-    likeProduct = async (req: Request, res: Response) => {
-        const id = req.params.id;
-        const product = await this.#service.product.likeProduct(id);
-        return res.json(product);
+    createProduct = async (req: Request, res: Response) => { //
+        const body = this.validate(productBodySchema, req.body);
+        const params = this.validate(productParamSchema, req.params);
+        const newProductResDto = await this.#service.product.createProduct({
+            ...body,
+            ...params,
+            userId: req.user.userId
+        })
+        return res.status(201).json(newProductResDto);
     }
 
     getProducts = async (req: Request, res: Response) => {
@@ -39,26 +78,16 @@ export class ProductController extends BaseController {
         return res.json(productsResDto);
     }
 
-
     getProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
         const productResDto = await this.#service.product.getProduct(id);
         return res.json(productResDto);
     }
 
-    createProduct = async (req: Request, res: Response) => { //
-        const body = this.validate(productReqSchema, req.body);
-        const newProductResDto = await this.#service.product.createProduct({
-            ...body,
-            userId: req.user.userId
-        })
-        return res.status(201).json(newProductResDto);
-    }
-
     updateProduct = async (req: Request, res: Response) => {
-        const body = this.validate(productReqSchema, req.body);
-        const params = this.validate(productReqSchema, req.params);
-        const query = this.validate(productReqSchema, req.query);
+        const body = this.validate(productBodySchema, req.body);
+        const params = this.validate(productParamSchema, req.params);
+        const query = this.validate(querySchema, req.query);
 
         const updatedProductResDto = await this.#service.product.updateProduct({
             ...body,
@@ -69,10 +98,16 @@ export class ProductController extends BaseController {
         res.status(201).json(updatedProductResDto);
     }
 
-
     deleteProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        await this.#service.product.deleteProduct(id);
+        const userId = req.user.userId;
+        await this.#service.product.deleteProduct(id, userId);
         res.status(200).json();
+    }
+
+    likeProduct = async (req: Request, res: Response) => {
+        const id = req.params.id;
+        const product = await this.#service.product.likeProduct(id);
+        return res.json(product);
     }
 }

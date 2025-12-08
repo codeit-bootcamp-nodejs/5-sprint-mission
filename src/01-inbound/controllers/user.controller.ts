@@ -18,12 +18,46 @@ export class UserController extends BaseController {
 
 
     registerRoutes() {
-        this.router.post('/signUp', this.signUp);
-        this.router.post('/signIn', this.signIn);
-        this.router.post('/token/refresh', this.#auth.verifyRefreshToken, this.getNewToken);
-        this.router.get('/me', this.#auth.verifyAccessToken, this.userInfo);
-        this.router.patch('/me', this.#auth.verifyAccessToken, this.#auth.verifyUserAuth, this.editUserInfo);
-        this.router.get('/me/products', this.#auth.verifyAccessToken, this.userProducts)
+        // 회원가입
+        this.router.post(
+            '/signUp',
+            this.catch(this.signUp)
+        );
+
+        // 로그인
+        this.router.post(
+            '/signIn',
+            this.catch(this.signIn)
+        );
+
+        // 토큰 재발급
+        this.router.post(
+            '/token/refresh',
+            this.#auth.verifyRefreshToken,
+            this.catch(this.getNewToken)
+        );
+        
+        // 내 정보 조회
+        this.router.get(
+            '/me',
+            this.#auth.verifyAccessToken,
+            this.catch(this.userInfo)
+        );
+        
+        // 내 정보 수정
+        this.router.patch(
+            '/me',
+            this.#auth.verifyAccessToken,
+            this.#auth.verifyUserAuth,
+            this.catch(this.editUserInfo)
+        );
+
+        // 내 상품 조회
+        this.router.get(
+            '/me/products',
+            this.#auth.verifyAccessToken,
+            this.catch(this.userProducts)
+        );
     }
 
     signUp = async (req: Request, res: Response) => {
