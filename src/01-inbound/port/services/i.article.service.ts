@@ -6,5 +6,5 @@ export interface IArticleService {
     getArticle(id: string): Promise<ArticleResDto>
     createArticle(dto: ArticleReqDto): Promise<ArticleResDto>
     updateArticle(dto: ArticleReqDto): Promise<ArticleResDto>
-    deleteArticle(id: string): void
+    deleteArticle(id: string, userId: string): void
 }
