@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { Authenticator, HttpError } from "../../external/authenticator";
-import { articleBodySchema, articleParamSchema, querySchema } from "../request/req.validator";
 import { IService } from "../port/i.service";
+import { querySchema, articleBodySchema, articleParamSchema } from "../request/req.validator";
 
 
 export class ArticleController extends BaseController {
@@ -26,13 +26,13 @@ export class ArticleController extends BaseController {
 
     getArticles = async (req: Request, res: Response) => {
         const articleReqDto = this.validate(querySchema, req.query);
-        const articlesResDtos = await this.#service.articleService.getAllArticles(articleReqDto);
+        const articlesResDtos = await this.#service.article.getAllArticles(articleReqDto);
         return res.json(articlesResDtos);
     }
 
     getArticle = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const articleResDto = await this.#service.articleService.getArticle(id);
+        const articleResDto = await this.#service.article.getArticle(id);
         return res.json(articleResDto);
     }
 
@@ -40,7 +40,7 @@ export class ArticleController extends BaseController {
         const body = this.validate(articleBodySchema, req.body);
         const params = this.validate(articleParamSchema, req.params);
 
-        const articleResDto = await this.#service.articleService.createArticle({
+        const articleResDto = await this.#service.article.createArticle({
             ...body,
             ...params,
             userId: req.user.userId
@@ -54,7 +54,7 @@ export class ArticleController extends BaseController {
         const body = this.validate(articleBodySchema, req.body);
         const params = this.validate(articleParamSchema, req.params);
         
-        const articleResDto = await this.#service.articleService.updateArticle({
+        const articleResDto = await this.#service.article.updateArticle({
             ...body,
             ...params,
             userId: req.user.userId
@@ -64,7 +64,7 @@ export class ArticleController extends BaseController {
 
     deleteArticle = async (req: Request, res: Response) => {
         const id = req.params.id;
-        await this.#service.articleService.deleteArticle(id);
+        await this.#service.article.deleteArticle(id);
         res.status(200).json();
     }
 }

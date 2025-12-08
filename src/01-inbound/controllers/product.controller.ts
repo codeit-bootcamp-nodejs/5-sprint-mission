@@ -29,26 +29,26 @@ export class ProductController extends BaseController {
 
     likeProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const product = await this.#service.productService.likeProduct(id);
+        const product = await this.#service.product.likeProduct(id);
         return res.json(product);
     }
 
     getProducts = async (req: Request, res: Response) => {
         const query = this.validate(querySchema, req.query);
-        const productsResDto = this.#service.productService.getAllProducts(query);
+        const productsResDto = this.#service.product.getAllProducts(query);
         return res.json(productsResDto);
     }
 
 
     getProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const productResDto = await this.#service.productService.getProduct(id);
+        const productResDto = await this.#service.product.getProduct(id);
         return res.json(productResDto);
     }
 
     createProduct = async (req: Request, res: Response) => { //
         const body = this.validate(productReqSchema, req.body);
-        const newProductResDto = await this.#service.productService.createProduct({
+        const newProductResDto = await this.#service.product.createProduct({
             ...body,
             userId: req.user.userId
         })
@@ -60,7 +60,7 @@ export class ProductController extends BaseController {
         const params = this.validate(productReqSchema, req.params);
         const query = this.validate(productReqSchema, req.query);
 
-        const updatedProductResDto = await this.#service.productService.updateProduct({
+        const updatedProductResDto = await this.#service.product.updateProduct({
             ...body,
             ...params,
             ...query,
@@ -72,7 +72,7 @@ export class ProductController extends BaseController {
 
     deleteProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        await this.#service.productService.deleteProduct(id);
+        await this.#service.product.deleteProduct(id);
         res.status(200).json();
     }
 }

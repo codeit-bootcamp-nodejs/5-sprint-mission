@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
 import { IService } from "../port/i.service";
+import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
 
 
 
@@ -34,7 +34,7 @@ export class ArticleCommentController extends BaseController {
         const body = this.validate(articleCommentBodySchema, req.body);
         const params = this.validate(articleCommentParamSchema, req.params);
 
-        const articleCommentResDto = await this.#service.articleCommentService.createArticleComment({
+        const articleCommentResDto = await this.#service.articleComment.createArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -46,7 +46,7 @@ export class ArticleCommentController extends BaseController {
 
     getArticleComments = async (req: Request, res: Response) => {
         const articleId = req.params.articleId;
-        const comments = await this.#service.articleCommentService.getArticleComments(articleId);
+        const comments = await this.#service.articleComment.getArticleComments(articleId);
         return res.json(comments);
     }
 
@@ -55,7 +55,7 @@ export class ArticleCommentController extends BaseController {
         const body = this.validate(articleCommentBodySchema, req.body);
         const params = this.validate(articleCommentParamSchema, req.params);
 
-        const articleCommentResDto = await this.#service.articleCommentService.updateArticleComment({
+        const articleCommentResDto = await this.#service.articleComment.updateArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -66,7 +66,7 @@ export class ArticleCommentController extends BaseController {
 
     deleteArticleComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
-        await this.#service.articleCommentService.deleteArticleComments(commentId);
+        await this.#service.articleComment.deleteArticleComments(commentId);
         return res.status(200).json();
     }
 }

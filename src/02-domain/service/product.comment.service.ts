@@ -1,9 +1,7 @@
-import { IBaseRepository } from "../../03-outbound/I.base.repository";
 import { Authenticator } from "../../external/authenticator";
-
-import { ProductCommentResDto } from "../../01-inbound/response/product.comment.res.dto";
-import { ProductCommentRequest } from "../../01-inbound/request/req.validator";
 import { IProductCommentService } from "../../01-inbound/port/services/i.product.comment.service";
+import { IBaseRepository } from "../port/I.base.repository";
+import { ProductCommentRequest } from "../../01-inbound/request/req.validator";
 
 
 
@@ -21,17 +19,18 @@ export class ProductCommentService implements IProductCommentService {
 
     async createProductComment(dto: ProductCommentRequest) {
         const {content, productId, userId } = dto;
-        const productCommentResDto = await this.#repos.productCommentRepo.save(userId, productId, content);
+        const productCommentResDto = await this.#repos.productComment.save(userId, productId, content);
+        await this.#repos.notification.createProductCommentNotification(userId);
         return productCommentResDto;
     }
 
     async getProductComments(productId: string) {
-        const productCommentResDtos = await this.#repos.productCommentRepo.findProductComments(productId);
+        const productCommentResDtos = await this.#repos.productComment.findProductComments(productId);
         return productCommentResDtos;
     }
 
     async deleteProductComments(commentId: string) {
-        await this.#repos.productCommentRepo.deleteProductComment(commentId);
+        await this.#repos.productComment.deleteProductComment(commentId);
     }
 
     async updateProductComment(dto: ProductCommentRequest) {
@@ -40,7 +39,7 @@ export class ProductCommentService implements IProductCommentService {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
-        const productCommentResDto = await this.#repos.productCommentRepo.update(userId, productId, commentId, content);
+        const productCommentResDto = await this.#repos.productComment.update(userId, productId, commentId, content);
         return productCommentResDto;
     }
 

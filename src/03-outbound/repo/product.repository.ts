@@ -2,23 +2,12 @@ import { PrismaClient } from "@prisma/client/extension";
 import { Product } from "../../02-domain/entity/product";
 import { BaseRepository } from "./base.repository";
 import { ProductRequest, QueryType } from "../../01-inbound/request/req.validator";
+import { IProductRepository } from "../../02-domain/port/repositories/I.product.repository";
 
 
 
 
 
-export interface IProductRepository {
-
-
-    save(dto: ProductRequest): Promise<Product>;
-    findById(id: string): Promise<Product>;
-    likeById(id: string, like: boolean): Promise<Product>;
-    findAll(query: QueryType): Promise<Product[]>;
-    updateById(dto: ProductRequest): Promise<Product>
-    deleteById(id: string): void;
-    findByUserId(userId: string): Promise<Product[]>
-
-}
 
 
 export class ProductRepository extends BaseRepository implements IProductRepository {

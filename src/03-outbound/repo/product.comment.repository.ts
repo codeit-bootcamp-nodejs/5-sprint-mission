@@ -1,15 +1,10 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { BaseRepository } from "./base.repository";
 import { ProductCommentResDto } from "../../01-inbound/response/product.comment.res.dto";
+import { IProductCommentRepository } from "../../02-domain/port/repositories/I.product.comment.repository";
 
 
 
-export interface IProductCommentRepository {
-    save(userId: string, productId: string, content: string): Promise<ProductCommentResDto>
-    findProductComments(productId: string): Promise<ProductCommentResDto[]>;
-    deleteProductComment(commentId: string): void;
-    update(userId: string, productId: string, commentId: string, content: string): Promise<ProductCommentResDto>
-}
 
 export class ProductCommentRepository extends BaseRepository implements IProductCommentRepository {
 

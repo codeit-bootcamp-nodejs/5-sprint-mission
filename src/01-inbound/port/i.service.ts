@@ -5,10 +5,10 @@ import { IProductService } from "./services/i.product.service";
 import { IUserService } from "./services/i.user.service";
 
 export interface IService {
-    productService: IProductService,
-    articleService: IArticleService,
-    userService: IUserService,
-    articleCommentService:  IArticleCommentService,
-    productCommentService: IProductCommentService
+    product: IProductService,
+    article: IArticleService,
+    user: IUserService,
+    articleComment:  IArticleCommentService,
+    productComment: IProductCommentService,  
 }
     

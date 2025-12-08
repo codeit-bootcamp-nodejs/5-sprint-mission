@@ -22,6 +22,7 @@ import { ProductCommentController } from "./01-inbound/controllers/product.comme
 import { ArticleCommentRepository } from "./03-outbound/repo/article.comment.repository";
 import { ArticleCommentService } from "./02-domain/service/article.comment.service";
 import { ArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
+import { NotificationRepository } from "./03-outbound/repo/notification.repository";
 
 
 export class DependencyInjector {
@@ -40,14 +41,16 @@ export class DependencyInjector {
         const productRepository = new ProductRepository(prisma);
         const productCommentRepository = new ProductCommentRepository(prisma);
         const articleCommentRepository = new ArticleCommentRepository(prisma);
-
+        const notificationRepository = new NotificationRepository(prisma);
         const repos = {
-            productRepo: productRepository,
-            articleRepo: articleRepository,
-            userRepo: userRepository,
-            productCommentRepo: productCommentRepository,
-            articleCommentRepo: articleCommentRepository
+            product: productRepository,
+            article: articleRepository,
+            user: userRepository,
+            productComment: productCommentRepository,
+            articleComment: articleCommentRepository,
+            notification: notificationRepository
         };
+
 
         const authenticator = new Authenticator(repos);
 
@@ -58,13 +61,12 @@ export class DependencyInjector {
         const articleService = new ArticleService(repos, authenticator);
         const productCommentService = new ProductCommentService(repos, authenticator);
         const articleCommentService = new ArticleCommentService(repos, authenticator);
-
         const services = {
-            productService: productService,
-            articleService: articleService,
-            userService: userService,
-            articleCommentService: articleCommentService,
-            productCommentService: productCommentService
+            product: productService,
+            article: articleService,
+            user: userService,
+            articleComment: articleCommentService,
+            productComment: productCommentService,
         }
 
 
@@ -74,8 +76,11 @@ export class DependencyInjector {
         const articleController = new ArticleController(services, authenticator);
         const productcommentController = new ProductCommentController(services, authenticator);
         const articlecommentController = new ArticleCommentController(services, authenticator);
-
-        const controllers = [productController, articleController, userController, productcommentController, articlecommentController];
+        const controllers = [
+            productController, articleController,
+            userController, productcommentController,
+            articlecommentController
+        ];
 
         // Server
         const server = new Server(controllers);

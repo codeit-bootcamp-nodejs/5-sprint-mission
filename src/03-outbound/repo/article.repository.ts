@@ -2,19 +2,8 @@ import { BaseRepository } from "./base.repository"
 import { Article } from "../../02-domain/entity/article";
 import { PrismaClient } from "@prisma/client/extension";
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
+import { IArticleRepository } from "../../02-domain/port/repositories/I.article.repository";
 
-export interface IArticleRepository {
-
-    findAll(query: QueryType): Promise<Article[]>
-
-    findById(id: string): Promise<Article>
-
-    save(dto: ArticleReqDto): Promise<Article>
-
-    updateById(entity: ArticleReqDto): Promise<Article>
-
-    deleteById(id: string): void
-}
 
 export class ArticleRepository extends BaseRepository implements IArticleRepository {
     constructor(prisma: PrismaClient) {

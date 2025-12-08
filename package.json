@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
+    "format": "npx pretter --write .",
     "build": "tsc -p .",
     "start": "npm run build && node dist/app.js",
     "dev": "nodemon --watch src --exec ts-node ./src/app.ts"
@@ -12,7 +13,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "prisma": "^6.15.0",
     "@prisma/client": "^6.15.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "prisma": "^6.15.0",
     "uuid": "^13.0.0",
     "zod": "^4.1.12"
   },
@@ -35,6 +36,7 @@
     "@types/express": "^5.0.4",
     "@types/morgan": "^1.9.10",
     "nodemon": "^3.1.10",
+    "prettier": "^3.7.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

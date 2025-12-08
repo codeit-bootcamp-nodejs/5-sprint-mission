@@ -1,10 +1,10 @@
 import { request } from "express";
 import { UserSignInDto, UserSignUpDto } from "../../01-inbound/request/req.validator";
 import { ProductResDto } from "../../01-inbound/response/product.res.dto";
-import { IBaseRepository } from "../../03-outbound/I.base.repository";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { Product } from "../entity/product";
 import { IUserService } from "../../01-inbound/port/services/i.user.service";
+import { IBaseRepository } from "../port/I.base.repository";
 
 
 
@@ -25,14 +25,14 @@ export class UserService implements IUserService {
         const { email, nickname, password } = dto;
         const refreshToken = this.#auth.createToken({ email }, 'refresh');
         const hashPassword = await this.#auth.createHashPassword(password);
-        const newUser = await this.#repos.userRepo.save({ email, nickname, hashPassword, refreshToken });
+        const newUser = await this.#repos.user.save({ email, nickname, hashPassword, refreshToken });
         return this.#auth.filterSensitiveUserData(newUser);
         // return newUser;
     }
 
     async getTokens(dto: UserSignInDto) {
         const { email, password } = dto;
-        const savedUser = await this.#repos.userRepo.findByEmail(email);
+        const savedUser = await this.#repos.user.findByEmail(email);
         if (!savedUser) {
             const error = new HttpError('Unauthorized', 401);
             throw error;
@@ -48,7 +48,7 @@ export class UserService implements IUserService {
     }
 
     async getInfo(userId: string) {
-        const savedUser = await this.#repos.userRepo.findById(userId);
+        const savedUser = await this.#repos.user.findById(userId);
         return this.#auth.filterSensitiveUserData(savedUser);
     }
 
@@ -57,12 +57,12 @@ export class UserService implements IUserService {
             info.password = await this.#auth.createHashPassword(info.password);
         }
 
-        const updatedUser = await this.#repos.userRepo.updateById({ userId, info });
+        const updatedUser = await this.#repos.user.updateById({ userId, info });
         return this.#auth.filterSensitiveUserData(updatedUser);
     }
 
     async getUserProducts(userId: string) {
-        const productEntities = await this.#repos.productRepo.findByUserId(userId);
+        const productEntities = await this.#repos.product .findByUserId(userId);
         const productDtos = productEntities.map((entity: Product) => new ProductResDto(entity));
 
         return productDtos;

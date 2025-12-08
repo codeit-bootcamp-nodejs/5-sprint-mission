@@ -35,7 +35,7 @@ export class ProductCommentController extends BaseController {
         const body = this.validate(productCommentBodySchema, req.body);
         const params = this.validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.productCommentService.createProductComment({
+        const productCommentResDto = await this.#service.productComment.createProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -47,7 +47,7 @@ export class ProductCommentController extends BaseController {
 
     getProductComments = async (req: Request, res: Response) => {
         const productId = req.params.productId;
-        const comments = await this.#service.productCommentService.getProductComments(productId);
+        const comments = await this.#service.productComment.getProductComments(productId);
         return res.json(comments);
     }
 
@@ -56,7 +56,7 @@ export class ProductCommentController extends BaseController {
         const body = this.validate(productCommentBodySchema, req.body);
         const params = this.validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.productCommentService.updateProductComment({
+        const productCommentResDto = await this.#service.productComment.updateProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -68,7 +68,7 @@ export class ProductCommentController extends BaseController {
 
     deleteProductComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
-        await this.#service.productCommentService.deleteProductComments(commentId);
+        await this.#service.productComment.deleteProductComments(commentId);
         return res.status(200).json();
     }
 }

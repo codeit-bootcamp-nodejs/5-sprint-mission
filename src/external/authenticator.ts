@@ -4,7 +4,7 @@ import { expressjwt } from 'express-jwt';
 import { Exception } from '../common/exception/exception';
 import { BaseRepository } from '../03-outbound/repo/base.repository';
 import { NextFunction, Request, Response } from 'express';
-import { IBaseRepository } from '../03-outbound/I.base.repository';
+import { IBaseRepository } from '../02-domain/port/I.base.repository';
 
 
 
@@ -79,7 +79,7 @@ export class Authenticator {
 
 
     refreshToken = async (userId: string, refreshToken: string) => {
-        const user = await this.#repos.userRepo.findById(userId);
+        const user = await this.#repos.user.findById(userId);
         if (!user || user.refreshToken !== refreshToken) {
             const error = new HttpError('Unauthorized', 401);
             throw error;
@@ -93,7 +93,7 @@ export class Authenticator {
         const { id } = req.params;
 
         try {
-            const product = await this.#repos.productRepo.findById(id);
+            const product = await this.#repos.product.findById(id);
 
             if (!product) {
                 throw new Exception('상품을 찾을 수 없습니다', 404);
@@ -114,7 +114,7 @@ export class Authenticator {
         const { id } = req.params;
 
         try {
-            const article = await this.#repos.articleRepo.findById(id);
+            const article = await this.#repos.article.findById(id);
 
             if (!article) {
                 throw new Exception('글을 찾을 수 없습니다', 404);
@@ -157,7 +157,7 @@ export class Authenticator {
 
         try {
             const userId = req.user.userId
-            const user = await this.#repos.userRepo.findById(userId);
+            const user = await this.#repos.user.findById(userId);
 
             if (!user) {
                 throw new Exception('유저를 찾을 수 없습니다', 404);

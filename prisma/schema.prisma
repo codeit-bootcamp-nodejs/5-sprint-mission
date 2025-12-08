@@ -13,6 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum NotificationType {
+  ARTICLE_COMMENT
+  PRODUCT_COMMENT
+}
+
+model notification {
+  id        String           @id @default(uuid())
+  type      NotificationType
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
+  userId    String
+}
+
 model Product {
   id             String           @id @default(uuid())
   name           String
@@ -75,4 +90,5 @@ model User {
   article        Article[]
   articleComment ArticleComment[]
   ProductComment ProductComment[]
+  notification   notification[]
 }
