@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  nickname     String    @unique
+  image        String?
+  password     String
+  
+  refreshToken String?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  products        Product[]
+  articles        Article[]
+  productComments ProductComment[]
+  articleComments ArticleComment[]
+  productLikes    ProductLike[]
+  articleLikes    ArticleLike[]
+  alrams          alram[]
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  tags        String[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+
+  comments  ProductComment[]
+
+  likes     ProductLike[]
+
+  alrams    alram[]
+}
+
+model Article {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+
+  comments  ArticleComment[]
+
+  likes     ArticleLike[]
+
+  alrams    alram[]
+}
+
+model ProductComment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  
+  createdAt DateTime  @default(now())
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+}
+
+model ArticleComment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  
+  createdAt DateTime  @default(now())
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+}
+
+model ProductLike {
+  id        Int      @id @default(autoincrement())
+  
+  createdAt DateTime @default(now())
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+
+  @@unique([productId, userId])
+}
+
+model ArticleLike {
+  id        Int      @id @default(autoincrement())
+  
+  createdAt DateTime @default(now())
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+
+  @@unique([articleId, userId])
+}
+
+model alram {
+  id        Int      @id @default(autoincrement())
+  message   String
+  isRead    Boolean  @default(false)
+  type      AlramType
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  articleId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+enum AlramType {
+  PRODUCT_PRICE_UPDATE
+  ARTICLE_COMMENT
+  PRODUCT_COMMENT
+}
