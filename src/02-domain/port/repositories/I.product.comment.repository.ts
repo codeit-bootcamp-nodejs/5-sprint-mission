@@ -1,8 +1,9 @@
-import { ProductCommentResDto } from "../../../01-inbound/response/product.comment.res.dto";
+import { NewProductComment, PersistedProductComment } from "../../entity/product.comment.entity";
 
 export interface IProductCommentRepository {
-    save(userId: string, productId: string, content: string): Promise<ProductCommentResDto>
-    findProductComments(productId: string): Promise<ProductCommentResDto[]>;
+    save(entity: NewProductComment): Promise<PersistedProductComment>
+    findProductComments(productId: string): Promise<PersistedProductComment[]>;
+    findProductComment(commentId: string): Promise<PersistedProductComment>;
     deleteProductComment(commentId: string): void;
-    update(userId: string, productId: string, commentId: string, content: string): Promise<ProductCommentResDto>
+    update(entity: PersistedProductComment): Promise<PersistedProductComment>
 }

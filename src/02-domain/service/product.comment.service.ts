@@ -2,6 +2,7 @@ import { Authenticator } from "../../external/authenticator";
 import { IProductCommentService } from "../../01-inbound/port/services/i.product.comment.service";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ProductCommentRequest } from "../../01-inbound/request/req.validator";
+import { ProductComment } from "../entity/product.comment.entity";
 
 
 
@@ -18,8 +19,9 @@ export class ProductCommentService implements IProductCommentService {
 
 
     async createProductComment(dto: ProductCommentRequest) {
-        const {content, productId, userId } = dto;
-        const productCommentResDto = await this.#repos.productComment.save(userId, productId, content);
+        const { content, productId, userId } = dto;
+        const productComment = ProductComment.createNew({ productId, content, userId });
+        const productCommentResDto = await this.#repos.productComment.save(productComment);
         await this.#repos.notification.createProductCommentNotification(userId);
         return productCommentResDto;
     }
@@ -39,7 +41,18 @@ export class ProductCommentService implements IProductCommentService {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
-        const productCommentResDto = await this.#repos.productComment.update(userId, productId, commentId, content);
+        const productComment = await this.#repos.productComment.findProductComment(commentId);
+        if (!productComment) {
+            throw new Error('Product comment not found.');
+        }
+
+        if (productComment.userId !== userId) {
+            throw new Error('Unauthorized: You can only update your own comments.');
+        }
+
+        productComment.update(content)
+
+        const productCommentResDto = await this.#repos.productComment.update(productComment);
         return productCommentResDto;
     }
 

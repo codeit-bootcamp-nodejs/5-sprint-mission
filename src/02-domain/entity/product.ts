@@ -1,49 +1,49 @@
-import { ProductResDto } from '../../01-inbound/response/product.res.dto';
 import { Exception } from '../../common/exception/exception';
 
 
-export class Product {
-    private _id;
-    private _name;
-    private _description;
-    private _price;
-    private _tags;
-    private _createdAt;
-    private _updatedAt;
-    private _userId;
-    private _isLiked;
-    private _imageUrl;
+export type PersistedProduct = Product & {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
-    constructor({
-        id,
-        name,
-        description,
-        price,
-        tags,
-        userId,
-        isLiked,
-        imageUrl,
-    }: {
-        id: string;
-        name: string;
-        description: string;
-        price: number;
-        tags: string[];
-        userId: string;
-        isLiked?: boolean | false;
-        imageUrl?: string | "";
+export type NewProduct = Omit<PersistedProduct, 'id' | 'createdAt' | 'updatedAt'>;
+
+
+export class Product {
+    private readonly _id?: string;
+    private _name: string;
+    private _description: string;
+    private _price: number;
+    private _tags: string[];
+    private _userId: string;
+    private _isLiked: boolean;
+    private _imageUrl?: string;
+    private readonly _createdAt?: Date;
+    private readonly _updatedAt?: Date;
+
+    constructor(params: {
+        id?: string,
+        name: string,
+        description: string,
+        price: number,
+        tags: string[],
+        userId: string,
+        isLiked?: boolean,
+        imageUrl?: string,
+        createdAt?: Date,
+        updatedAt?: Date,
     }) {
-        this._id = id;
-        this._name = name;
-        this._description = description;
-        this._price = price;
-        this._tags = tags;
-        this._createdAt = new Date();
-        this._updatedAt = new Date();
-        this._userId = userId;
-        this._isLiked = isLiked ?? false;
-        this._imageUrl = imageUrl ?? "";
+        this._id = params.id;
+        this._name = params.name;
+        this._description = params.description;
+        this._price = params.price;
+        this._tags = params.tags;
+        this._userId = params.userId;
+        this._isLiked = params.isLiked || false;
+        this._imageUrl = params.imageUrl;
     }
+
 
     get id() { return this._id; }
     get name() { return this._name; }
@@ -56,19 +56,66 @@ export class Product {
     get isLiked() { return this._isLiked; }
     get imageUrl() { return this._imageUrl; }
 
-    static forCreate(dto: ProductResDto) {
-        const { id, name, description, price, tags, userId } = dto;
-
-        this.validateName(name);
-        this.validateDescription(description);
-        this.validatePrice(price);
-        this.validateTags(tags);
-
-        return new Product({ id, name, description, price, tags, userId });
+    update(params: {
+        name: string,
+        description: string,
+        price: number,
+        tags: string[],
+        userId: string,
+        imageUrl?: string,
+    }) {
+        this._name = params.name;
+        this._description = params.description;
+        this._price = params.price;
+        this._tags = params.tags;
+        this._userId = params.userId;
+        this._imageUrl = params.imageUrl;
     }
 
-    static validateName(name: string) {
-        if (!name) throw new Exception("상품명을 입력해주세요", 400);
+    static createNew(params: {
+        name: string,
+        description: string,
+        price: number,
+        tags: string[],
+        userId: string,
+        imageUrl?: string,
+    }) {
+        this.validateDescription(params.description);
+        this.validatePrice(params.price);
+        this.validateTags(params.tags);
+        return new Product({
+            name: params.name,
+            description: params.description,
+            price: params.price,
+            tags: params.tags,
+            userId: params.userId,
+            imageUrl: params.imageUrl,
+        });
+    }
+
+    static createPersisted(params: {
+        id: string,
+        name: string,
+        description: string,
+        price: number,
+        tags: string[],
+        userId: string,
+        isLiked: boolean,
+        createdAt: Date,
+        updatedAt: Date,
+    }) {
+
+        return new Product({
+            id: params.id,
+            name: params.name,
+            description: params.description,
+            price: params.price,
+            tags: params.tags,
+            userId: params.userId,
+            isLiked: params.isLiked,
+            createdAt: params.createdAt,
+            updatedAt: params.updatedAt,
+        }) as PersistedProduct;
     }
 
     static validateDescription(description: string) {

@@ -1,9 +1,10 @@
+import { ar } from "zod/v4/locales";
 import { IArticleService } from "../../01-inbound/port/services/i.article.service";
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
-import { ArticleResDto } from "../../01-inbound/response/article.res.dto";
 import { Authenticator } from "../../external/authenticator";
-import { Article } from "../entity/article";
+import { Article, PersistArticleEntity } from "../entity/article";
 import { IBaseRepository } from "../port/I.base.repository";
+import { ArticleResDto } from "../../01-inbound/response/article.response";
 
 
 
@@ -19,7 +20,7 @@ export class ArticleService implements IArticleService {
 
     async getAllArticles(query: QueryType) {
         const articleEntities = await this.#repos.article.findAll(query);
-        const articleResDtos = articleEntities.map((entity: Article) => new ArticleResDto(entity));
+        const articleResDtos = articleEntities.map((entity: PersistArticleEntity) => new ArticleResDto(entity));
         return articleResDtos;
     }
 
@@ -29,20 +30,43 @@ export class ArticleService implements IArticleService {
     }
 
     async createArticle(dto: ArticleReqDto) {
-
-        const newarticle = await this.#repos.article.save(dto);
-
+        const articleEntity = Article.createNew(dto);
+        const newarticle = await this.#repos.article.save(articleEntity);
         return new ArticleResDto(newarticle);
     }
 
     async updateArticle(dto: ArticleReqDto) {
+        const { userId, id, title, content } = dto;
+        if (!id) {
+            throw new Error('Article ID is required for updating an article.');
+        }
 
-        const updatedArticle = await this.#repos.article.updateById(dto);
+        const article = await this.#repos.article.findById(id);
+
+        if (article.userId !== userId) {
+            throw new Error('You are not authorized to update this article.');
+        }
+
+        article.update({
+            title,
+            content
+        });
+
+        const updatedArticle = await this.#repos.article.updateArticle(article);
         return new ArticleResDto(updatedArticle);
     }
 
 
-    async deleteArticle(id: string) {
+    async deleteArticle(id: string, userId: string) {
+        const article = await this.#repos.article.findById(id);
+        if (!article) {
+            throw new Error('Article not found.');
+        }
+
+        if (article.userId !== userId) {
+            throw new Error('You are not authorized to delete this article.');
+        }
+
         await this.#repos.article.deleteById(id);
     }
 }

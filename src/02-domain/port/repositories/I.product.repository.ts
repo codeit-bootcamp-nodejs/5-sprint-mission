@@ -1,12 +1,12 @@
-import { ProductRequest, QueryType } from "../../../01-inbound/request/req.validator";
-import { Product } from "../../entity/product";
+import { ProductReqDto, QueryType } from "../../../01-inbound/request/req.validator";
+import { NewProduct, PersistedProduct } from "../../entity/product";
 
 export interface IProductRepository {
-    save(dto: ProductRequest): Promise<Product>;
-    findById(id: string): Promise<Product>;
-    likeById(id: string, like: boolean): Promise<Product>;
-    findAll(query: QueryType): Promise<Product[]>;
-    updateById(dto: ProductRequest): Promise<Product>
+    save(entity: NewProduct): Promise<PersistedProduct>;
+    findById(id: string): Promise<PersistedProduct>;
+    likeById(id: string, like: boolean): Promise<PersistedProduct>;
+    findAll(query: QueryType): Promise<PersistedProduct[]>;
+    updateById(entity: PersistedProduct): Promise<PersistedProduct>
     deleteById(id: string): void;
-    findByUserId(userId: string): Promise<Product[]>
+    findByUserId(userId: string): Promise<PersistedProduct[]>
 }

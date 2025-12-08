@@ -1,10 +1,11 @@
 import { request } from "express";
 import { UserSignInDto, UserSignUpDto } from "../../01-inbound/request/req.validator";
-import { ProductResDto } from "../../01-inbound/response/product.res.dto";
 import { Authenticator, HttpError } from "../../external/authenticator";
-import { Product } from "../entity/product";
+import { PersistedProduct, Product } from "../entity/product";
 import { IUserService } from "../../01-inbound/port/services/i.user.service";
 import { IBaseRepository } from "../port/I.base.repository";
+import { ProductResDto } from "../../01-inbound/response/product.response";
+import { NewUserEntity } from "../entity/user.entity";
 
 
 
@@ -52,7 +53,8 @@ export class UserService implements IUserService {
         return this.#auth.filterSensitiveUserData(savedUser);
     }
 
-    async updateUser({ userId, info }: { userId: string, info: any }) {
+    async updateUser(params: { userId: string, info: any }) {
+        const { userId, info } = params;
         if (info.password) {
             info.password = await this.#auth.createHashPassword(info.password);
         }
@@ -62,8 +64,8 @@ export class UserService implements IUserService {
     }
 
     async getUserProducts(userId: string) {
-        const productEntities = await this.#repos.product .findByUserId(userId);
-        const productDtos = productEntities.map((entity: Product) => new ProductResDto(entity));
+        const productEntities = await this.#repos.product.findByUserId(userId);
+        const productDtos = productEntities.map((entity: PersistedProduct) => new ProductResDto(entity));
 
         return productDtos;
     }

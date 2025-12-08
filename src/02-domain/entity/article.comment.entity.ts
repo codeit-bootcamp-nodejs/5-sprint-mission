@@ -1,35 +1,70 @@
 
 
-type ArticleCommentParams = {
-    id?: string;
-    articleId?: string;
-    content: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    userId: string;
-}
+export type NewArticleComment = Omit<ArticleComment, 'id' | 'createdAt' | 'updatedAt'>;
 
 
-export type PersistedArticleComment = ArticleComment & { 
-    id : string
+export type PersistedArticleComment = ArticleComment & {
+    id: string
 }
 
 
 export class ArticleComment {
-    private _id;
-    private _articleId;
+    private readonly _id?;
+    private readonly _articleId?;
     private _content;
-    private _createdAt;
-    private _updatedAt;
-    private _userId;
+    private readonly _userId;
+    private readonly _createdAt?;
+    private readonly _updatedAt?;
 
-    constructor({ id, articleId, content, createdAt, updatedAt, userId }: ArticleCommentParams) {
-        this._id = id;
-        this._articleId = articleId;
+    private constructor(params: {
+        id?: string;
+        articleId?: string;
+        content: string;
+        createdAt?: Date;
+        updatedAt?: Date;
+        userId: string;
+    }) {
+        this._id = params.id;
+        this._articleId = params.articleId;
+        this._content = params.content;
+        this._createdAt = params.createdAt;
+        this._updatedAt = params.updatedAt;
+        this._userId = params.userId;
+    }
+
+    static createNew(params: {
+        articleId: string;
+        content: string;
+        userId: string;
+    }) {
+        return new ArticleComment({
+            articleId: params.articleId,
+            content: params.content,
+            userId: params.userId,
+        }) as NewArticleComment;
+    }
+
+
+    static createPersisted(params: {
+        id: string;
+        articleId: string;
+        content: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+    }) {
+        return new ArticleComment({
+            id: params.id,
+            articleId: params.articleId,
+            content: params.content,
+            createdAt: params.createdAt,
+            updatedAt: params.updatedAt,
+            userId: params.userId,
+        }) as PersistedArticleComment;
+    }
+
+    update(content: string) {
         this._content = content;
-        this._createdAt = createdAt;
-        this._updatedAt = updatedAt;
-        this._userId = userId;
     }
 
     get id() {
@@ -55,7 +90,4 @@ export class ArticleComment {
     get userId() {
         return this._userId;
     }
-
-
-
 }
