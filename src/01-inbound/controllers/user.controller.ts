@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { Authenticator, } from "../../external/authenticator";
+import { Authenticator, AuthenticatorType, } from "../../external/authenticator";
 import { BaseController } from "./base.controller";
 import { userReqSchema } from "../request/req.validator";
 import { UserServiceType } from "../../02-domain/service/user.service";
 
 
-export const createUserController = (service: UserServiceType, auth: Authenticator) => {
+export const createUserController = (service: UserServiceType, auth: AuthenticatorType) => {
     const { basePath,
         router,
         validate,

@@ -13,7 +13,7 @@ export type PersistProduct = Prisma.ProductGetPayload<{}>;
 
 
 
-export const ProductRepository = (prisma: PrismaClient) => {
+export const createProductRepository = (prisma: PrismaClient) => {
 
 
     const save = async (entity: NewProduct) => {

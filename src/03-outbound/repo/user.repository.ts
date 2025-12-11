@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { BaseRepository } from "./base.repository";
-import { IUserRepository } from "../../02-domain/port/repositories/I.user.repository";
 import { Prisma } from "@prisma/client";
 
 
@@ -10,14 +8,11 @@ import { Prisma } from "@prisma/client";
 export type PersistUser = Prisma.UserGetPayload<{}>;
 
 
-export class UserRepository extends BaseRepository implements IUserRepository {
-    constructor(prisma: PrismaClient) {
-        super(prisma)
-    }
+export const createUserRepository = (prisma: PrismaClient) => {
 
-    async save({ email, nickname, hashPassword, refreshToken }:
-        { email: string, nickname: string, hashPassword: string, refreshToken: string }) {
-        const user = await this.prisma.user.create({
+    const save = async ({ email, nickname, hashPassword, refreshToken }:
+        { email: string, nickname: string, hashPassword: string, refreshToken: string }) => {
+        const user = await prisma.user.create({
             data: {
                 email: email,
                 nickname: nickname,
@@ -29,26 +24,26 @@ export class UserRepository extends BaseRepository implements IUserRepository {
         return user;
     }
 
-    async findById(id: string) {
-        const user = await this.prisma.user.findUnique({
+    const findById = async (id: string) => {
+        const user = await prisma.user.findUnique({
             where: { id }
         });
 
         return user;
     }
 
-    async findByEmail(email: string) {
-        const user = await this.prisma.user.findUnique({
+    const findByEmail = async (email: string) => {
+        const user = await prisma.user.findUnique({
             where: { email }
         });
 
         return user;
     }
 
-    async updateById({ userId, info }:
-        { userId: string, info: any }) {
+    const updateById = async ({ userId, info }:
+        { userId: string, info: any }) => {
 
-        const updateUser = await this.prisma.user.update({
+        const updateUser = await prisma.user.update({
             where: { id: userId },
             data: info
         });
@@ -56,14 +51,22 @@ export class UserRepository extends BaseRepository implements IUserRepository {
         return updateUser;
     }
 
-    async updateUser({id, data}:{
+    const updateUser = async ({ id, data }: {
         id: string, data: any
-    }) {
+    }) => {
 
 
-        return await this.prisma.user.update({
+        return await prisma.user.update({
             where: { id },
             data: data
         });
+    }
+
+    return {
+        save,
+        findById,
+        findByEmail,
+        updateById,
+        updateUser
     }
 }   

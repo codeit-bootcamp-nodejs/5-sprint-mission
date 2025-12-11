@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { BaseController } from "./base.controller";
-import { Authenticator } from "../../external/authenticator";
+import { Authenticator, AuthenticatorType } from "../../external/authenticator";
 import { querySchema, articleBodySchema, articleParamSchema } from "../request/req.validator";
 import { ArticleServiceType } from "../../02-domain/service/article.service";
 
 
-export const createArticleController = (_service: ArticleServiceType, _auth: Authenticator) => {
+export const createArticleController = (_service: ArticleServiceType, _auth: AuthenticatorType) => {
     const { basePath, router, validate, errorHandler } = BaseController('/articles');
     const service = _service;
     const auth = _auth;

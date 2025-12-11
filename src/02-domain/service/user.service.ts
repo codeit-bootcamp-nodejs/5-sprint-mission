@@ -1,5 +1,5 @@
 import { UserSignInDto, UserSignUpDto } from "../../01-inbound/request/req.validator";
-import { Authenticator, HttpError } from "../../external/authenticator";
+import { Authenticator, AuthenticatorType, HttpError } from "../../external/authenticator";
 import { PersistedProduct } from "../entity/product";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ProductResDto } from "../../01-inbound/response/product.response";
@@ -9,7 +9,7 @@ import { ProductResDto } from "../../01-inbound/response/product.response";
 
 
 
-export const createUserService = (repos: IBaseRepository, auth: Authenticator) => {
+export const createUserService = (repos: IBaseRepository, auth: AuthenticatorType) => {
    
 
 

@@ -10,7 +10,7 @@ import { ArticleMapper } from "../mapper/article.mapper";
 export type PersistArticle = Prisma.ArticleGetPayload<{}>;
 
 
-export const ArticleRepository = (prisma: PrismaClient) => {
+export const createArticleRepository = (prisma: PrismaClient) => {
 
     const findAll = async (query: QueryType) => {
 

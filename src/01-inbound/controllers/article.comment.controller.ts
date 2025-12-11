@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Authenticator } from "../../external/authenticator";
+import { Authenticator, AuthenticatorType } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
 import { createArticleCommentService, ArticleCommentServiceType } from "../../02-domain/service/article.comment.service";
@@ -11,7 +11,7 @@ import { createArticleCommentService, ArticleCommentServiceType } from "../../02
 
 export const createArticleCommentController = (
     _service: ArticleCommentServiceType,
-    _auth: Authenticator
+    _auth: AuthenticatorType
 ) => {
 
     const { basePath, router, validate, errorHandler } = BaseController('/article')

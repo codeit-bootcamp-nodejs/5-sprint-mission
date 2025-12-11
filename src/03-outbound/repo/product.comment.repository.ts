@@ -13,7 +13,7 @@ import { NewProductComment, PersistedProductComment } from "../../02-domain/enti
 export type PersistProductComment = Prisma.ProductCommentGetPayload<{}>;
 
 
-export const ProductCommentRepository = (prisma: PrismaClient) => {
+export const createProductCommentRepository = (prisma: PrismaClient) => {
 
     const save = async (entity: NewProductComment): Promise<PersistedProductComment> => {
         const { productId, content, userId } = entity;

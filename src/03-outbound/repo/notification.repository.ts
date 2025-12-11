@@ -7,7 +7,7 @@ import { NotificationMapper } from "../mapper/notification.mapper";
 export type PersistNotification = Prisma.NotificationGetPayload<{}>;
 
 
-export const NotificationRepository = (prisma: PrismaClient) => {
+export const createNotificationRepository = (prisma: PrismaClient) => {
 
 
     // Implementation for notification repository

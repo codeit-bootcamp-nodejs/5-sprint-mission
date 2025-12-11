@@ -8,7 +8,7 @@ import { ArticleCommentMapper } from "../mapper/article.comment.mapper";
 
 export type PersistArticleComment = Prisma.ArticleCommentGetPayload<{}>
 
-export const ArticleCommentRepository = (prisma: PrismaClient) => {
+export const createArticleCommentRepository = (prisma: PrismaClient) => {
 
 
 

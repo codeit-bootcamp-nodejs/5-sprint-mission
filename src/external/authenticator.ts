@@ -2,7 +2,6 @@ import bcrypt, { hash } from 'bcrypt'
 import jwt, { SignOptions, Secret } from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import { Exception } from '../common/exception/exception';
-import { BaseRepository } from '../03-outbound/repo/base.repository';
 import { NextFunction, Request, Response } from 'express';
 import { IBaseRepository } from '../02-domain/port/I.base.repository';
 import { ExtendedError } from 'socket.io/dist/namespace';
@@ -11,45 +10,40 @@ import { Socket } from 'socket.io/dist/socket';
 
 
 export class HttpError extends Error {
-    code: number;
-
     constructor(message: string, code: number) {
         super(message);
-        this.code = code;
+        code = code;
     }
 }
 
 
-export class Authenticator {
+export const Authenticator = (repos: IBaseRepository) => {
 
-    verifyAccessToken;
-    verifyRefreshToken;
-    #repos;
 
-    constructor(repos: IBaseRepository) {
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
-            throw new Exception("JWT 비밀키가 존재하지 않습니다!", 401);
-        }
 
-        this.verifyAccessToken = expressjwt({
-            secret: jwtSecret,
-            algorithms: ['HS256'],
-            requestProperty: 'user'
-        });
-
-        this.verifyRefreshToken = expressjwt({
-            secret: jwtSecret,
-            algorithms: ['HS256'],
-            getToken: (req) => {
-                return req.cookies?.refreshToken;
-            },
-        })
-
-        this.#repos = repos;
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        throw new Exception("JWT 비밀키가 존재하지 않습니다!", 401);
     }
 
-    checkAuthWs = (socket: Socket, next: (err?: ExtendedError) => void) => {
+    const verifyAccessToken = expressjwt({
+        secret: jwtSecret,
+        algorithms: ['HS256'],
+        requestProperty: 'user'
+    });
+
+    const verifyRefreshToken = expressjwt({
+        secret: jwtSecret,
+        algorithms: ['HS256'],
+        getToken: (req) => {
+            return req.cookies?.refreshToken;
+        },
+    })
+
+
+
+
+    const checkAuthWs = (socket: Socket, next: (err?: ExtendedError) => void) => {
         const authHeader = socket.handshake.headers.authorization;
         if (
             !authHeader ||
@@ -61,19 +55,19 @@ export class Authenticator {
 
         const accessToken = authHeader.split(" ")[1];
         try {
-            const payload = jwt.verify(accessToken, process.env.JWT_SECRET !) as { userId: string };
+            const payload = jwt.verify(accessToken, process.env.JWT_SECRET!) as { userId: string };
             socket.data.userId = payload.userId;
         } catch (err) { }
         return next();
     };
 
 
-    filterSensitiveUserData(user: any) {
+    const filterSensitiveUserData = (user: any) => {
         const { password, refreshToken, ...nonSensitiveUserData } = user;
         return nonSensitiveUserData;
     }
 
-    async verifyPassword(inputPassword: string, savedPassword: string) {
+    const verifyPassword = async (inputPassword: string, savedPassword: string) => {
         const isMatch = await bcrypt.compare(inputPassword, savedPassword);
         if (!isMatch) {
             const error = new HttpError('Unauthorized', 401);
@@ -81,13 +75,13 @@ export class Authenticator {
         }
     }
 
-    async createHashPassword(password: string) {
+    const createHashPassword = async (password: string) => {
         const saltRounds = 10;
         return await bcrypt.hash(password, saltRounds);
     }
 
 
-    createToken(user: any, type?: 'access' | 'refresh') {
+    const createToken = (user: any, type?: 'access' | 'refresh') => {
         const payload = { userId: user.id };
         const options: SignOptions = {
             expiresIn: type === 'refresh' ? '2w' : '1h',
@@ -98,23 +92,23 @@ export class Authenticator {
     }
 
 
-    refreshToken = async (userId: string, refreshToken: string) => {
-        const user = await this.#repos.user.findById(userId);
+    const refreshToken = async (userId: string, refreshToken: string) => {
+        const user = await repos.user.findById(userId);
         if (!user || user.refreshToken !== refreshToken) {
             const error = new HttpError('Unauthorized', 401);
             throw error;
         }
 
-        return this.createToken(user);
+        return createToken(user);
     }
 
 
 
-    verifyUserAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const verifyUserAuth = async (req: Request, res: Response, next: NextFunction) => {
 
         try {
             const userId = req.user.userId
-            const user = await this.#repos.user.findById(userId);
+            const user = await repos.user.findById(userId);
 
             if (!user) {
                 throw new Exception('유저를 찾을 수 없습니다', 404);
@@ -126,4 +120,18 @@ export class Authenticator {
             return next(error);
         }
     }
+
+    return {
+        verifyAccessToken,
+        verifyRefreshToken,
+        filterSensitiveUserData,
+        verifyPassword,
+        createHashPassword,
+        createToken,
+        refreshToken,
+        checkAuthWs,
+        verifyUserAuth
+    }
 }
+
+export type AuthenticatorType = ReturnType<typeof Authenticator>;

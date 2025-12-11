@@ -6,28 +6,23 @@ import { Prisma } from '@prisma/client'
 import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 
-export class HttpServer {
-    #controllers
-    #server
-    public readonly defaultHttpServer: DefaultHttpServer;
+export const createHttpServer = (controllers: any) => {
 
-    constructor(controllers: any) {
-        this.#controllers = controllers;
-        this.#server = express();
-        this.defaultHttpServer = http.createServer(this.#server);
+    const server = express();
+    const defaultHttpServer = http.createServer(server);
 
-    }
 
-    registerMiddleWare() {
-        this.#server.use(morgan('dev'));
-        this.#server.use(cors());
-        this.#server.use(express.json({ strict: false })); // must come first
-        this.#server.use(cookieParser());
+
+    const registerMiddleWare = () => {
+        server.use(morgan('dev'));
+        server.use(cors());
+        server.use(express.json({ strict: false })); // must come first
+        server.use(cookieParser());
     }
 
 
-    registerExceptionHandler() {
-        // this.#server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    const registerExceptionHandler = () => {
+        // #server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         //     if (err instanceof Exception) {
         //         res.status(err.statusCode).json(err.message);
         //     } else if (
@@ -53,23 +48,29 @@ export class HttpServer {
         // });
     }
 
-    registerRouters() {
-        for (const controller of this.#controllers) {
-            this.#server.use(controller.basePath, controller.router);
+    const registerRouters = () => {
+        for (const controller of controllers) {
+            server.use(controller.basePath, controller.router);
         }
     }
 
-    listen() {
-        this.#server.listen(3000, () => {
+    const listen = () => {
+        server.listen(3000, () => {
             console.log("listening at port 3000");
         })
     }
 
 
-    run() {
-        this.registerMiddleWare();
-        this.registerRouters();
-        this.registerExceptionHandler();
-        this.listen();
+    const run = () => {
+        registerMiddleWare();
+        registerRouters();
+        registerExceptionHandler();
+        listen();
+    }
+
+    return {
+        run
     }
 }
+
+export type HttpServerType = ReturnType<typeof createHttpServer>;

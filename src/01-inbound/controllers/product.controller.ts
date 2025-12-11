@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Authenticator, HttpError } from "../../external/authenticator";
+import { Authenticator, AuthenticatorType, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productBodySchema, productParamSchema, querySchema } from "../request/req.validator";
 import { ProductServiceType } from "../../02-domain/service/product.service";
@@ -7,7 +7,7 @@ import { ProductServiceType } from "../../02-domain/service/product.service";
 
 
 
-export const createProductController = (service: ProductServiceType, auth: Authenticator) => {
+export const createProductController = (service: ProductServiceType, auth: AuthenticatorType) => {
 
     const { basePath,
         router,
