@@ -1,4 +1,3 @@
-import { IArticleCommentService } from "../../01-inbound/port/services/i.article.comment.service";
 import { ArticleCommentDto } from "../../01-inbound/request/req.validator";
 import { ArticleCommentResDto } from "../../01-inbound/response/article.comment.response";
 import { Authenticator } from "../../external/authenticator";
@@ -8,7 +7,7 @@ import { IBaseRepository } from "../port/I.base.repository";
 
 
 
-export class ArticleCommentService implements IArticleCommentService {
+export class ArticleCommentService {
     #repos
 
     constructor(repos: IBaseRepository, auth: Authenticator) {
@@ -16,12 +15,9 @@ export class ArticleCommentService implements IArticleCommentService {
     }
 
 
-
-
     async createArticleComment(dto: ArticleCommentDto) {
         const { articleId, userId, content } = dto;
         const articleCommentResDto = await this.#repos.articleComment.save(userId, articleId, content);
-        await this.#repos.notification.createArticleCommentNotification(userId);
         return new ArticleCommentResDto(articleCommentResDto);   
 
     }

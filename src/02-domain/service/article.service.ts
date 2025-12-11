@@ -1,18 +1,18 @@
-import { ar } from "zod/v4/locales";
-import { IArticleService } from "../../01-inbound/port/services/i.article.service";
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
 import { Authenticator } from "../../external/authenticator";
 import { Article, PersistArticleEntity } from "../entity/article";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ArticleResDto } from "../../01-inbound/response/article.response";
+import { ArticleCreatedEvent } from "../event/article.event";
 
 
 
 
 
 
-export class ArticleService implements IArticleService {
+export class ArticleService {
     #repos
+
 
     constructor(repos: IBaseRepository, auth: Authenticator) {
         this.#repos = repos;
@@ -31,7 +31,7 @@ export class ArticleService implements IArticleService {
 
     async createArticle(dto: ArticleReqDto) {
         const articleEntity = Article.createNew(dto);
-        const newarticle = await this.#repos.article.save(articleEntity);
+        const newarticle = await this.#repos.article.save(articleEntity);;
         return new ArticleResDto(newarticle);
     }
 

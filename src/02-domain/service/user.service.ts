@@ -1,18 +1,15 @@
-import { request } from "express";
 import { UserSignInDto, UserSignUpDto } from "../../01-inbound/request/req.validator";
 import { Authenticator, HttpError } from "../../external/authenticator";
-import { PersistedProduct, Product } from "../entity/product";
-import { IUserService } from "../../01-inbound/port/services/i.user.service";
+import { PersistedProduct } from "../entity/product";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ProductResDto } from "../../01-inbound/response/product.response";
-import { NewUserEntity } from "../entity/user.entity";
 
 
 
 
 
 
-export class UserService implements IUserService {
+export class UserService {
     #repos
     #auth
 

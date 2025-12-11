@@ -1,14 +1,14 @@
 import { Authenticator } from "../../external/authenticator";
-import { IProductCommentService } from "../../01-inbound/port/services/i.product.comment.service";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ProductCommentRequest } from "../../01-inbound/request/req.validator";
 import { ProductComment } from "../entity/product.comment.entity";
+import { ProductCommentResDto } from "../../01-inbound/response/product.comment.response";
 
 
 
 
 
-export class ProductCommentService implements IProductCommentService {
+export class ProductCommentService {
     #repos
 
     constructor(repos: IBaseRepository, auth: Authenticator) {
@@ -20,19 +20,18 @@ export class ProductCommentService implements IProductCommentService {
 
     async createProductComment(dto: ProductCommentRequest) {
         const { content, productId, userId } = dto;
-        const productComment = ProductComment.createNew({ productId, content, userId });
-        const productCommentResDto = await this.#repos.productComment.save(productComment);
-        await this.#repos.notification.createProductCommentNotification(userId);
-        return productCommentResDto;
+        const productCommentEntity = ProductComment.createNew({ productId, content, userId });
+        const productComment = await this.#repos.productComment.save(productCommentEntity);
+
+        return new ProductCommentResDto(productComment);
     }
 
     async getProductComments(productId: string) {
-        const productCommentResDtos = await this.#repos.productComment.findProductComments(productId);
-        return productCommentResDtos;
-    }
+        const productComments = await this.#repos.productComment.findProductComments(productId);
 
-    async deleteProductComments(commentId: string) {
-        await this.#repos.productComment.deleteProductComment(commentId);
+        return productComments.map((productComment) => {
+            return new ProductCommentResDto(productComment);
+        })
     }
 
     async updateProductComment(dto: ProductCommentRequest) {
@@ -52,8 +51,13 @@ export class ProductCommentService implements IProductCommentService {
 
         productComment.update(content)
 
-        const productCommentResDto = await this.#repos.productComment.update(productComment);
-        return productCommentResDto;
+        const productCommentEntity = await this.#repos.productComment.update(productComment);
+        return new ProductCommentResDto(productCommentEntity);
     }
+
+    async deleteProductComments(commentId: string) {
+        await this.#repos.productComment.deleteProductComment(commentId);
+    }
+
 
 }

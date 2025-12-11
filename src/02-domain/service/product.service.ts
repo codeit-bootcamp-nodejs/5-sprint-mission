@@ -1,4 +1,3 @@
-import { IProductService } from "../../01-inbound/port/services/i.product.service";
 import { ProductReqDto, QueryType } from "../../01-inbound/request/req.validator";
 import { ProductResDto } from "../../01-inbound/response/product.response";
 import { PersistedProduct, Product } from "../entity/product";
@@ -7,7 +6,7 @@ import { IBaseRepository } from "../port/I.base.repository";
 
 
 
-export class ProductService implements IProductService {
+export class ProductService {
     #repos
 
     constructor(repos: IBaseRepository) {
@@ -35,12 +34,15 @@ export class ProductService implements IProductService {
 
     async updateProduct(dto: ProductReqDto) {
         const { id, userId, ...data } = dto;
+        if (!id) {
+            throw new Error("상품 ID가 필요합니다");
+        }
         const product = await this.#repos.product.findById(id);
         if (!product){
             throw new Error("상품이 존재하지 않습니다");
         }
     
-        if (product.userId === userId) {
+        if (product.userId !== userId) {
             throw new Error("수정 권한이 없습니다.");
         }
 
@@ -75,14 +77,14 @@ export class ProductService implements IProductService {
 
     async likeProduct(id: string) {
         const product = await this.#repos.product.findById(id);
-        let like = true;
+        
         if (product.isLiked) {
-            like = false;
+            product.unlike();
         } else {
-            like = true;
+            product.like();
         };
         ;
-        const productEntity = await this.#repos.product.likeById(id, like);
+        const productEntity = await this.#repos.product.like(product);
         return new ProductResDto(productEntity);
     }
 
