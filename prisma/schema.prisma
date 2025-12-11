@@ -18,14 +18,16 @@ enum NotificationType {
   PRODUCT_COMMENT
 }
 
-model notification {
-  id        String           @id @default(uuid())
-  type      NotificationType
-  message   String
-  read      Boolean          @default(false)
-  createdAt DateTime         @default(now())
-  user      User             @relation(fields: [userId], references: [id])
-  userId    String
+model Notification {
+  id      String           @id @default(uuid())
+  type    NotificationType
+  message String
+  read    Boolean          @default(false)
+  senderId   String
+  receiverId String
+  createdAt  DateTime @default(now())
+  sender   User @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  receiver User @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model Product {
@@ -83,12 +85,13 @@ model User {
   image        String?
   refreshToken String?
 
-  password       String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  product        Product[]
-  article        Article[]
-  articleComment ArticleComment[]
-  ProductComment ProductComment[]
-  notification   notification[]
+  password              String
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  product               Product[]
+  article               Article[]
+  articleComment        ArticleComment[]
+  ProductComment        ProductComment[]
+  NotificationsSent     Notification[]   @relation("NotificationSender")
+  NotificationsReceived Notification[]   @relation("NotificationReceiver")
 }

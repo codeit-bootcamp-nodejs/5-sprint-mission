@@ -1,14 +1,15 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { BaseRepository } from "./base.repository";
-import { IArticleCommentRepository } from "../../02-domain/port/repositories/i.article.comment.repository";
 import { Prisma } from "@prisma/client";
-import { ArticleComment, PersistedArticleComment } from "../../02-domain/entity/article.comment.entity";
+import { NewArticleComment, PersistedArticleComment } from "../../02-domain/entity/article.comment.entity";
 import { ArticleCommentMapper } from "../mapper/article.comment.mapper";
+import { IArticleCommentRepository } from "../../02-domain/port/repositories/I.article.comment.repository";
 
 
 
 
-export type PersistArticleComment = Prisma.ArticleCommentGetPayload<{}>;
+export type PersistArticleComment = Prisma.ArticleCommentGetPayload<{}>
+
 export class ArticleCommentRepository extends BaseRepository implements IArticleCommentRepository {
 
     constructor(prisma: PrismaClient) {
@@ -17,7 +18,8 @@ export class ArticleCommentRepository extends BaseRepository implements IArticle
 
 
 
-    async save(userId: string, articleId: string, content: string) {
+    async save(entity: NewArticleComment) {
+        const { userId, articleId, content } = entity;
         const articleComment = await this.prisma.articleComment.create({
             data: {
                 userId,

@@ -13,11 +13,11 @@ import { EventBus } from "../../application/event.bus";
 
 export class ArticleService {
     #repos
-    #eventBus
 
-    constructor(repos: IBaseRepository, auth: Authenticator, eventBus: EventBus) {
+
+    constructor(repos: IBaseRepository) {
         this.#repos = repos;
-        this.#eventBus = eventBus;
+
     }
 
     async getAllArticles(query: QueryType) {
@@ -34,8 +34,6 @@ export class ArticleService {
     async createArticle(dto: ArticleReqDto) {
         const articleEntity = Article.createNew(dto);
         const newarticle = await this.#repos.article.save(articleEntity);
-        const event = new ArticleCreatedEvent(newarticle.id, newarticle.userId)
-        this.#eventBus.publish(event)
 
         return new ArticleResDto(newarticle);
     }

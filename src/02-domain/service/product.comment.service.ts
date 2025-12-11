@@ -11,7 +11,7 @@ import { ProductCommentResDto } from "../../01-inbound/response/product.comment.
 export class ProductCommentService {
     #repos
 
-    constructor(repos: IBaseRepository, auth: Authenticator) {
+    constructor(repos: IBaseRepository) {
         this.#repos = repos;
     }
 

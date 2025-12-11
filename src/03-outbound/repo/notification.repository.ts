@@ -1,26 +1,31 @@
-import { NotificationType } from "@prisma/client";
+import { NotificationType, Prisma, PrismaClient } from "@prisma/client";
 import { INotificationRepository } from "../../02-domain/port/repositories/I.notification.repository";
 import { BaseRepository } from "./base.repository";
-import { PersistNotificationEntity } from "../../02-domain/entity/notification";
+import { NewNotificationEntity, NotificationEntity, PersistNotificationEntity } from "../../02-domain/entity/notification";
+import { NotificationMapper } from "../mapper/notification.mapper";
+
+
+
+export type PersistNotification = Prisma.NotificationGetPayload<{}>;
+
 
 export class NotificationRepository extends BaseRepository implements INotificationRepository {
-    // Implementation for notification repository
-    async createArticleCommentNotification(userId: string): Promise<PersistNotificationEntity> {
-        return await this.prisma.notification.create({
-            data: {
-                userId,
-                type: NotificationType.ARTICLE_COMMENT,
-                message: "You have a new article comment notification.",
-            },
-        });
+    constructor(prisma: PrismaClient) {
+        super(prisma);
     }
-    async createProductCommentNotification(userId: string): Promise<PersistNotificationEntity> {
-        return await this.prisma.notification.create({
+
+    // Implementation for notification repository
+    async create(entity: NewNotificationEntity): Promise<PersistNotificationEntity> {
+        const notification = await this.prisma.notification.create({
             data: {
-                userId,
-                type: NotificationType.PRODUCT_COMMENT,
-                message: "You have a new product comment notification.",
-            },
-        });
+                type: entity.type,
+                message: entity.message,
+                read: entity.read,
+                senderId: entity.senderId,
+                receiverId: entity.receiverId,
+            }
+        })
+
+        return NotificationMapper.createPersist(notification);
     }
 }

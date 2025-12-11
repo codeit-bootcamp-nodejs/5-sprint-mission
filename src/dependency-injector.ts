@@ -23,8 +23,7 @@ import { ArticleCommentRepository } from "./03-outbound/repo/article.comment.rep
 import { ArticleCommentService } from "./02-domain/service/article.comment.service";
 import { ArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
 import { EventBus } from "./application/event.bus";
-import { NotificationService } from "./02-domain/service/notification.service";
-import { ArticleCreatedHandler } from "./application/article.created.handler";
+import { NotificationRepository } from "./03-outbound/repo/notification.repository";
 
 export class DependencyInjector {
     public readonly httpServer: HttpServer;
@@ -44,12 +43,14 @@ export class DependencyInjector {
         const productRepository = new ProductRepository(prisma);
         const productCommentRepository = new ProductCommentRepository(prisma);
         const articleCommentRepository = new ArticleCommentRepository(prisma);
+        const notificationRepository = new NotificationRepository(prisma);
         const repos = {
             product: productRepository,
             article: articleRepository,
             user: userRepository,
             productComment: productCommentRepository,
             articleComment: articleCommentRepository,
+            notification : notificationRepository
         };
 
         const authenticator = new Authenticator(repos);
@@ -57,18 +58,13 @@ export class DependencyInjector {
 
         // Application 
         const eventBus = new EventBus();                     
-        const notificationService = new NotificationService(); 
-        eventBus.subscribe(
-            "ArticleCreatedEvent",
-            (event: any) => new ArticleCreatedHandler(notificationService).handle(event)
-        );
 
         // Service
         const userService = new UserService(repos, authenticator);
         const productService = new ProductService(repos);
-        const articleService = new ArticleService(repos, authenticator, eventBus);
-        const productCommentService = new ProductCommentService(repos, authenticator);
-        const articleCommentService = new ArticleCommentService(repos, authenticator);
+        const articleService = new ArticleService(repos);
+        const productCommentService = new ProductCommentService(repos);
+        const articleCommentService = new ArticleCommentService(repos, eventBus);
 
 
 
