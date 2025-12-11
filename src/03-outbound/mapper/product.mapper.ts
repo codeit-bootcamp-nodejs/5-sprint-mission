@@ -1,3 +1,4 @@
+import { productCommentBodySchema } from "../../01-inbound/request/req.validator";
 import { PersistedProduct, Product } from "../../02-domain/entity/product";
 import { PersistProduct } from "../repo/product.repository";
 
@@ -10,7 +11,7 @@ export class ProductMapper {
             price: product.price,
             tags: product.tags, 
             userId: product.userId,
-            isLiked: false,
+            isLiked: product.isLiked,
             imageUrl: product.imageUrl ?? undefined,
             createdAt: product.createdAt,
             updatedAt: product.updatedAt,

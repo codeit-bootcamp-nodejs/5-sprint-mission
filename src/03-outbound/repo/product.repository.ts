@@ -74,7 +74,7 @@ export class ProductRepository extends BaseRepository implements IProductReposit
         return ProductMapper.toPersist(product);
     }
 
-    
+
     async findByUserId(userId: string) {
         const products = await this.prisma.product.findMany({
             where: { userId }
@@ -116,12 +116,10 @@ export class ProductRepository extends BaseRepository implements IProductReposit
     }
 
 
-    async likeById(id: string, like: boolean) {
-
-
+    async like(entity: PersistedProduct) {
         const product = await this.prisma.product.update({
-            where: { id },
-            data: { isLiked: like },
+            where: { id: entity.id },
+            data: { isLiked: entity.isLiked },
         });
         return ProductMapper.toPersist(product);
     }

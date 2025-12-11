@@ -22,9 +22,12 @@ export class ProductCommentRepository extends BaseRepository implements IProduct
     }
 
     async save(entity: NewProductComment): Promise<PersistedProductComment> {
+        const { productId, content, userId } = entity;
         const productComment = await this.prisma.productComment.create({
             data: {
-                ...entity
+                productId,
+                content,
+                userId
             }
         });
 
