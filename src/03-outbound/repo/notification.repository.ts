@@ -1,7 +1,5 @@
-import { NotificationType, Prisma, PrismaClient } from "@prisma/client";
-import { INotificationRepository } from "../../02-domain/port/repositories/I.notification.repository";
-import { BaseRepository } from "./base.repository";
-import { NewNotificationEntity, NotificationEntity, PersistNotificationEntity } from "../../02-domain/entity/notification";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { NewNotificationEntity, PersistNotificationEntity } from "../../02-domain/entity/notification";
 import { NotificationMapper } from "../mapper/notification.mapper";
 
 
@@ -9,14 +7,12 @@ import { NotificationMapper } from "../mapper/notification.mapper";
 export type PersistNotification = Prisma.NotificationGetPayload<{}>;
 
 
-export class NotificationRepository extends BaseRepository implements INotificationRepository {
-    constructor(prisma: PrismaClient) {
-        super(prisma);
-    }
+export const NotificationRepository = (prisma: PrismaClient) => {
+
 
     // Implementation for notification repository
-    async create(entity: NewNotificationEntity): Promise<PersistNotificationEntity> {
-        const notification = await this.prisma.notification.create({
+    const create = async (entity: NewNotificationEntity): Promise<PersistNotificationEntity> => {
+        const notification = await prisma.notification.create({
             data: {
                 type: entity.type,
                 message: entity.message,
@@ -27,5 +23,9 @@ export class NotificationRepository extends BaseRepository implements INotificat
         })
 
         return NotificationMapper.createPersist(notification);
+    }
+
+    return {
+        create
     }
 }

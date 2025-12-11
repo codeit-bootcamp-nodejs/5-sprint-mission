@@ -1,26 +1,20 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { BaseRepository } from "./base.repository";
 import { Prisma } from "@prisma/client";
 import { NewArticleComment, PersistedArticleComment } from "../../02-domain/entity/article.comment.entity";
 import { ArticleCommentMapper } from "../mapper/article.comment.mapper";
-import { IArticleCommentRepository } from "../../02-domain/port/repositories/I.article.comment.repository";
 
 
 
 
 export type PersistArticleComment = Prisma.ArticleCommentGetPayload<{}>
 
-export class ArticleCommentRepository extends BaseRepository implements IArticleCommentRepository {
-
-    constructor(prisma: PrismaClient) {
-        super(prisma);
-    }
+export const ArticleCommentRepository = (prisma: PrismaClient) => {
 
 
 
-    async save(entity: NewArticleComment) {
+    const save = async (entity: NewArticleComment) => {
         const { userId, articleId, content } = entity;
-        const articleComment = await this.prisma.articleComment.create({
+        const articleComment = await prisma.articleComment.create({
             data: {
                 userId,
                 articleId,
@@ -32,8 +26,8 @@ export class ArticleCommentRepository extends BaseRepository implements IArticle
     }
 
 
-    async findArticleComments(articleId: string) {
-        const articleComment = await this.prisma.articleComment.findMany({
+    const findArticleComments = async (articleId: string) => {
+        const articleComment = await prisma.articleComment.findMany({
             where: { articleId }
         });
 
@@ -44,23 +38,23 @@ export class ArticleCommentRepository extends BaseRepository implements IArticle
         return articleEntites;
     }
 
-    async findArticleComment(commentId: string) {
-        const articleComment = await this.prisma.articleComment.findUnique({
+    const findArticleComment = async (commentId: string) => {
+        const articleComment = await prisma.articleComment.findUnique({
             where: { id: commentId }
         });
 
         return ArticleCommentMapper.toPersist(articleComment);
     }
 
-    async deleteArticleComment(commentId: string) {
-        await this.prisma.articleComment.delete({
+    const deleteArticleComment = async (commentId: string) => {
+        await prisma.articleComment.delete({
             where: { id: commentId }
         });
     }
 
-    async update(entity: PersistedArticleComment) {
+    const update = async (entity: PersistedArticleComment) => {
         const { userId, articleId, content, id } = entity;
-        const articleComment = await this.prisma.articleComment.update({
+        const articleComment = await prisma.articleComment.update({
             where: { id },
             data: {
                 userId,
@@ -70,6 +64,14 @@ export class ArticleCommentRepository extends BaseRepository implements IArticle
         });
 
         return ArticleCommentMapper.toPersist(articleComment);
+    }
+
+    return { 
+        save,
+        findArticleComments,
+        findArticleComment,
+        deleteArticleComment,
+        update
     }
 }
 

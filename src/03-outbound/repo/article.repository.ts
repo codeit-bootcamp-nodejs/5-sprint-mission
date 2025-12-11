@@ -1,4 +1,3 @@
-import { BaseRepository } from "./base.repository"
 import { Article, NewArticleEntity, PersistArticleEntity } from "../../02-domain/entity/article";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
@@ -11,16 +10,13 @@ import { ArticleMapper } from "../mapper/article.mapper";
 export type PersistArticle = Prisma.ArticleGetPayload<{}>;
 
 
-export class ArticleRepository extends BaseRepository implements IArticleRepository {
-    constructor(prisma: PrismaClient) {
-        super(prisma)
-    }
+export const ArticleRepository = (prisma: PrismaClient) => {
 
-    async findAll(query: QueryType) {
+    const findAll = async (query: QueryType) => {
 
         const { offset, limit, search, sort } = query;
 
-        const condition = search
+        const condition: Prisma.ArticleWhereInput = search
             ? {
                 OR: [
                     { title: { contains: search, mode: "insensitive" } },
@@ -29,12 +25,12 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
             }
             : {};
 
-        const articles = await this.prisma.article.findMany({
+        const articles = await prisma.article.findMany({
             where: condition,
             skip: offset,
             take: limit,
             orderBy: {
-                createdAt: sort,
+                createdAt: sort ? "desc" : "asc",
             },
         });
 
@@ -46,19 +42,24 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
     }
 
 
-    async findById(id: string) {
-        const article = await this.prisma.article.findUnique({
+    const findById = async (id: string) => {
+        const article = await prisma.article.findUnique({
             where: { id },
         });
+
+        if (!article) {
+            throw new Error("글을 찾을 수 없습니다.");
+        }
+
         return ArticleMapper.toPersist(article);
     }
 
 
 
-    async save(entity: NewArticleEntity) {
+    const save = async (entity: NewArticleEntity) => {
         const { title, content, userId } = entity;
 
-        const article = await this.prisma.article.create({
+        const article = await prisma.article.create({
             data: {
                 title,
                 content,
@@ -69,10 +70,10 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
         return ArticleMapper.toPersist(article);
     }
 
-    async updateArticle(entity: PersistArticleEntity) {
+    const updateArticle = async (entity: PersistArticleEntity) => {
         const { id, title, content } = entity;
 
-        const article = await this.prisma.article.update({
+        const article = await prisma.article.update({
             where: { id },
             data: {
                 title,
@@ -83,9 +84,17 @@ export class ArticleRepository extends BaseRepository implements IArticleReposit
         return ArticleMapper.toPersist(article);
     }
 
-    async deleteById(id: string) {
-        await this.prisma.article.delete({
+    const deleteById = async (id: string) => {
+        await prisma.article.delete({
             where: { id }
         });
+    }
+
+    return {
+        findAll,
+        findById,
+        save,
+        updateArticle,
+        deleteById
     }
 }

@@ -14,8 +14,8 @@ export class NotificationEntity {
     private _type: NotificationType;
     private _message: string;
     private _read: boolean;
-    private _senderId: String
-    private _receiverId: String
+    private _senderId: string
+    private _receiverId: string
     private readonly _createdAt?: Date;
 
     private constructor(params: {
@@ -23,8 +23,8 @@ export class NotificationEntity {
         type: NotificationType;
         message: string;
         read: boolean;
-        senderId: String
-        receiverId: String
+        senderId: string
+        receiverId: string
         createdAt?: Date;
     }) {
         this._id = params.id;
@@ -40,8 +40,8 @@ export class NotificationEntity {
         type: NotificationType;
         message: string;
         read: boolean;
-        senderId: String
-        receiverId: String
+        senderId: string
+        receiverId: string
     }) {
         return new NotificationEntity({
             type: params.type,
@@ -57,8 +57,8 @@ export class NotificationEntity {
         type: NotificationType;
         message: string;
         read: boolean;
-        senderId: String
-        receiverId: String
+        senderId: string
+        receiverId: string
         createdAt: Date;
     }) {
         return new NotificationEntity({

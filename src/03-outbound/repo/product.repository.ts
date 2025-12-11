@@ -1,8 +1,6 @@
 import { PrismaClient } from "@prisma/client/extension";
-import { NewProduct, PersistedProduct, Product } from "../../02-domain/entity/product";
-import { BaseRepository } from "./base.repository";
-import { ProductReqDto, QueryType } from "../../01-inbound/request/req.validator";
-import { IProductRepository } from "../../02-domain/port/repositories/I.product.repository";
+import { NewProduct, PersistedProduct } from "../../02-domain/entity/product";
+import {  QueryType } from "../../01-inbound/request/req.validator";
 import { Prisma } from "@prisma/client";
 import { ProductMapper } from "../mapper/product.mapper";
 
@@ -15,16 +13,13 @@ export type PersistProduct = Prisma.ProductGetPayload<{}>;
 
 
 
-export class ProductRepository extends BaseRepository implements IProductRepository {
-    constructor(prisma: PrismaClient) {
-        super(prisma)
-    }
+export const ProductRepository = (prisma: PrismaClient) => {
 
 
-    async save(entity: NewProduct) {
+    const save = async (entity: NewProduct) => {
         const { name, description, price, tags, userId } = entity;
 
-        const product = await this.prisma.product.create({
+        const product = await prisma.product.create({
             data: {
                 name,
                 description,
@@ -38,7 +33,7 @@ export class ProductRepository extends BaseRepository implements IProductReposit
     }
 
 
-    async findAll(query: QueryType) {
+    const findAll = async (query: QueryType) => {
 
         const { offset = 0, limit = 10, search = "", sort = "desc" } = query;
 
@@ -51,7 +46,7 @@ export class ProductRepository extends BaseRepository implements IProductReposit
             }
             : {};
 
-        const products = await this.prisma.product.findMany({
+        const products = await prisma.product.findMany({
             where: condition,
             skip: offset,
             take: limit,
@@ -67,16 +62,16 @@ export class ProductRepository extends BaseRepository implements IProductReposit
         return productEntities;
     }
 
-    async findById(id: string) {
-        const product = await this.prisma.product.findUnique({
+    const findById = async (id: string) => {
+        const product = await prisma.product.findUnique({
             where: { id },
         });
         return ProductMapper.toPersist(product);
     }
 
 
-    async findByUserId(userId: string) {
-        const products = await this.prisma.product.findMany({
+    const findByUserId = async (userId: string) => {
+        const products = await prisma.product.findMany({
             where: { userId }
         });
 
@@ -91,10 +86,10 @@ export class ProductRepository extends BaseRepository implements IProductReposit
     }
 
 
-    async updateById(entity: PersistedProduct) {
+    const updateById = async (entity: PersistedProduct) => {
         const { id, name, description, price, tags, userId } = entity;
 
-        const product = await this.prisma.product.update({
+        const product = await prisma.product.update({
             where: { id },
             data: {
                 name,
@@ -109,18 +104,28 @@ export class ProductRepository extends BaseRepository implements IProductReposit
     }
 
 
-    async deleteById(id: string) {
-        await this.prisma.product.delete({
+    const deleteById = async (id: string) => {
+        await prisma.product.delete({
             where: { id },
         });
     }
 
 
-    async like(entity: PersistedProduct) {
-        const product = await this.prisma.product.update({
+    const like = async (entity: PersistedProduct) => {
+        const product = await prisma.product.update({
             where: { id: entity.id },
             data: { isLiked: entity.isLiked },
         });
         return ProductMapper.toPersist(product);
+    }
+
+    return {
+        save,
+        findAll,
+        findById,
+        findByUserId,
+        updateById,
+        deleteById,
+        like
     }
 }
