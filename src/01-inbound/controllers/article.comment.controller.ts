@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Authenticator, HttpError } from "../../external/authenticator";
+import { Authenticator } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
-import { IServices } from "../port/i.service";
 import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
+import { ArticleCommentService } from "../../02-domain/service/article.comment.service";
 
 
 
@@ -13,7 +13,7 @@ export class ArticleCommentController extends BaseController {
     #service
     #auth
 
-    constructor(service: IServices, auth: Authenticator) {
+    constructor(service: ArticleCommentService, auth: Authenticator) {
         super('/article')
         this.#service = service;
         this.#auth = auth;
@@ -55,7 +55,7 @@ export class ArticleCommentController extends BaseController {
         const body = this.validate(articleCommentBodySchema, req.body);
         const params = this.validate(articleCommentParamSchema, req.params);
 
-        const articleCommentResDto = await this.#service.articleComment.createArticleComment({
+        const articleCommentResDto = await this.#service.createArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -67,7 +67,7 @@ export class ArticleCommentController extends BaseController {
 
     getArticleComments = async (req: Request, res: Response) => {
         const articleId = req.params.articleId;
-        const comments = await this.#service.articleComment.getArticleComments(articleId);
+        const comments = await this.#service.getArticleComments(articleId);
         return res.json(comments);
     }
 
@@ -76,7 +76,7 @@ export class ArticleCommentController extends BaseController {
         const body = this.validate(articleCommentBodySchema, req.body);
         const params = this.validate(articleCommentParamSchema, req.params);
 
-        const articleCommentResDto = await this.#service.articleComment.updateArticleComment({
+        const articleCommentResDto = await this.#service.updateArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -89,7 +89,7 @@ export class ArticleCommentController extends BaseController {
         const commentId = req.params.commentId;
         const articleId = req.params.articleId;
         const userId = req.user.userId;
-        await this.#service.articleComment.deleteArticleComments(articleId, commentId, userId);
+        await this.#service.deleteArticleComments(articleId, commentId, userId);
         return res.status(200).json();
     }
 }

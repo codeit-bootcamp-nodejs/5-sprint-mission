@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Authenticator, HttpError } from "../../external/authenticator";
+import { Authenticator } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productCommentBodySchema, productCommentParamSchema } from "../request/req.validator";
-import { IServices } from "../port/i.service";
+import { ProductCommentService } from "../../02-domain/service/product.comment.service";
 
 
 
@@ -13,7 +13,7 @@ export class ProductCommentController extends BaseController {
     #service
     #auth
 
-    constructor(service: IServices, auth: Authenticator) {
+    constructor(service: ProductCommentService, auth: Authenticator) {
         super('/product')
         this.#service = service;
         this.#auth = auth;
@@ -21,11 +21,32 @@ export class ProductCommentController extends BaseController {
     }
 
     registerRoutes() {
-        // Product Comments
-        this.router.post('/:productId/comments', this.#auth.verifyAccessToken, this.createProductComment);
-        this.router.get('/:productId/comments', this.getProductComments);
-        this.router.patch('/:productId/comments/:commentId', this.#auth.verifyAccessToken, this.modifyProductComment);
-        this.router.delete('/:productId/comments/:commentId', this.#auth.verifyAccessToken, this.deleteProductComment);
+        // 상품 댓글 생성   
+        this.router.post(
+            '/:productId/comments',
+            this.#auth.verifyAccessToken,
+            this.createProductComment
+        );
+
+        // 상품 댓글 조회
+        this.router.get(
+            '/:productId/comments',
+            this.getProductComments
+        );
+
+        // 상품 댓글 수정
+        this.router.patch(
+            '/:productId/comments/:commentId',
+            this.#auth.verifyAccessToken,
+            this.modifyProductComment
+        );
+
+        // 상품 댓글 삭제
+        this.router.delete(
+            '/:productId/comments/:commentId',
+            this.#auth.verifyAccessToken,
+            this.deleteProductComment
+        );
     }
 
 
@@ -34,7 +55,7 @@ export class ProductCommentController extends BaseController {
         const body = this.validate(productCommentBodySchema, req.body);
         const params = this.validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.productComment.createProductComment({
+        const productCommentResDto = await this.#service.createProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -46,7 +67,7 @@ export class ProductCommentController extends BaseController {
 
     getProductComments = async (req: Request, res: Response) => {
         const productId = req.params.productId;
-        const comments = await this.#service.productComment.getProductComments(productId);
+        const comments = await this.#service.getProductComments(productId);
         return res.json(comments);
     }
 
@@ -55,7 +76,7 @@ export class ProductCommentController extends BaseController {
         const body = this.validate(productCommentBodySchema, req.body);
         const params = this.validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.productComment.updateProductComment({
+        const productCommentResDto = await this.#service.updateProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -67,7 +88,7 @@ export class ProductCommentController extends BaseController {
 
     deleteProductComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
-        await this.#service.productComment.deleteProductComments(commentId);
+        await this.#service.deleteProductComments(commentId);
         return res.status(200).json();
     }
 }

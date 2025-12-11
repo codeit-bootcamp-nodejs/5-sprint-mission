@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from "express";
-import { Authenticator, HttpError } from "../../external/authenticator";
+import { Request, Response } from "express";
+import { Authenticator, } from "../../external/authenticator";
 import { BaseController } from "./base.controller";
-import { IServices } from "../port/i.service";
 import { userReqSchema } from "../request/req.validator";
+import { UserService } from "../../02-domain/service/user.service";
 
 
 export class UserController extends BaseController {
     #service
     #auth
 
-    constructor(service: IServices, auth: Authenticator) {
+    constructor(service: UserService, auth: Authenticator) {
         super('/users');
         this.#service = service;
         this.#auth = auth;
@@ -62,12 +62,12 @@ export class UserController extends BaseController {
 
     signUp = async (req: Request, res: Response) => {
         const userReqDto = this.validate(userReqSchema, req.body);
-        const userResDto = await this.#service.user.createUser(userReqDto);
+        const userResDto = await this.#service.createUser(userReqDto);
         return res.json(userResDto);
     }
 
     signIn = async (req: Request, res: Response) => {
-        const { accessToken, refreshToken } = await this.#service.user.getTokens(req.body);
+        const { accessToken, refreshToken } = await this.#service.getTokens(req.body);
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             sameSite: 'lax',
@@ -77,7 +77,7 @@ export class UserController extends BaseController {
     }
 
 
-    getNewToken = async (req: Request, res: Response, next: NextFunction) => {
+    getNewToken = async (req: Request, res: Response) => {
         const { refreshToken } = req.cookies;
         const { userId } = req.auth;
         const accessToken = await this.#auth.refreshToken(userId, refreshToken);
@@ -85,18 +85,18 @@ export class UserController extends BaseController {
     }
 
     userInfo = async (req: Request, res: Response) => {
-        const user = await this.#service.user.getInfo(req.user.userId);
+        const user = await this.#service.getInfo(req.user.userId);
         return res.json(user);
     }
 
 
     editUserInfo = async (req: Request, res: Response) => {
-        const updatedUser = await this.#service.user.updateUser({ userId: req.user.userId, info: req.body });
+        const updatedUser = await this.#service.updateUser({ userId: req.user.userId, info: req.body });
         return res.json(updatedUser);
     }
 
     userProducts = async (req: Request, res: Response) => {
-        const products = await this.#service.user.getUserProducts(req.user.userId);
+        const products = await this.#service.getUserProducts(req.user.userId);
         return res.json(products);
     }
 }

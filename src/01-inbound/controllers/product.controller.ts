@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productBodySchema, productParamSchema, querySchema } from "../request/req.validator";
-import { IServices } from "../port/i.service";
+import { ProductService } from "../../02-domain/service/product.service";
 
 
 
@@ -11,7 +11,7 @@ export class ProductController extends BaseController {
     #service
     #auth
 
-    constructor(service: IServices, auth: Authenticator) {
+    constructor(service: ProductService, auth: Authenticator) {
         super('/products');
         this.#service = service;
         this.#auth = auth;
@@ -64,7 +64,7 @@ export class ProductController extends BaseController {
     createProduct = async (req: Request, res: Response) => { //
         const body = this.validate(productBodySchema, req.body);
         const params = this.validate(productParamSchema, req.params);
-        const newProductResDto = await this.#service.product.createProduct({
+        const newProductResDto = await this.#service.createProduct({
             ...body,
             ...params,
             userId: req.user.userId
@@ -74,13 +74,13 @@ export class ProductController extends BaseController {
 
     getProducts = async (req: Request, res: Response) => {
         const query = this.validate(querySchema, req.query);
-        const productsResDto = this.#service.product.getAllProducts(query);
+        const productsResDto = await this.#service.getAllProducts(query);
         return res.json(productsResDto);
     }
 
     getProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const productResDto = await this.#service.product.getProduct(id);
+        const productResDto = await this.#service.getProduct(id);
         return res.json(productResDto);
     }
 
@@ -89,7 +89,7 @@ export class ProductController extends BaseController {
         const params = this.validate(productParamSchema, req.params);
         const query = this.validate(querySchema, req.query);
 
-        const updatedProductResDto = await this.#service.product.updateProduct({
+        const updatedProductResDto = await this.#service.updateProduct({
             ...body,
             ...params,
             ...query,
@@ -101,13 +101,13 @@ export class ProductController extends BaseController {
     deleteProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
         const userId = req.user.userId;
-        await this.#service.product.deleteProduct(id, userId);
+        await this.#service.deleteProduct(id, userId);
         res.status(200).json();
     }
 
     likeProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const product = await this.#service.product.likeProduct(id);
+        const product = await this.#service.likeProduct(id);
         return res.json(product);
     }
 }

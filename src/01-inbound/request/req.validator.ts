@@ -39,8 +39,8 @@ export const productBodySchema = z.object({
 
 
 export const productParamSchema = z.object({
-    id: z.string()
-})
+    id: z.string().optional()
+})      
 
 
 export type ProductReqDto = z.infer<typeof productBodySchema> & z.infer<typeof productParamSchema> &
