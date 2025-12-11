@@ -56,6 +56,14 @@ export class Product {
     get isLiked() { return this._isLiked; }
     get imageUrl() { return this._imageUrl; }
 
+    like() {
+        this._isLiked = true;
+    }
+
+    unlike(){
+        this._isLiked = false;
+    }
+
     update(params: {
         name: string,
         description: string,

@@ -9,6 +9,8 @@
 
 # prisma 
 /prisma/migrations/*
+package-lock.json
+
 
 # Created by git when using merge tools for conflicts
 *.BACKUP.*

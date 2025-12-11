@@ -22,6 +22,9 @@ import { ProductCommentController } from "./01-inbound/controllers/product.comme
 import { ArticleCommentRepository } from "./03-outbound/repo/article.comment.repository";
 import { ArticleCommentService } from "./02-domain/service/article.comment.service";
 import { ArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
+import { EventBus } from "./application/event.bus";
+import { NotificationService } from "./02-domain/service/notification.service";
+import { ArticleCreatedHandler } from "./application/article.created.handler";
 
 export class DependencyInjector {
     public readonly httpServer: HttpServer;
@@ -52,10 +55,18 @@ export class DependencyInjector {
         const authenticator = new Authenticator(repos);
 
 
+        // Application 
+        const eventBus = new EventBus();                     
+        const notificationService = new NotificationService(); 
+        eventBus.subscribe(
+            "ArticleCreatedEvent",
+            (event: any) => new ArticleCreatedHandler(notificationService).handle(event)
+        );
+
         // Service
         const userService = new UserService(repos, authenticator);
         const productService = new ProductService(repos);
-        const articleService = new ArticleService(repos, authenticator);
+        const articleService = new ArticleService(repos, authenticator, eventBus);
         const productCommentService = new ProductCommentService(repos, authenticator);
         const articleCommentService = new ArticleCommentService(repos, authenticator);
 

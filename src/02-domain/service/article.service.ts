@@ -4,6 +4,7 @@ import { Article, PersistArticleEntity } from "../entity/article";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ArticleResDto } from "../../01-inbound/response/article.response";
 import { ArticleCreatedEvent } from "../event/article.event";
+import { EventBus } from "../../application/event.bus";
 
 
 
@@ -12,10 +13,11 @@ import { ArticleCreatedEvent } from "../event/article.event";
 
 export class ArticleService {
     #repos
+    #eventBus
 
-
-    constructor(repos: IBaseRepository, auth: Authenticator) {
+    constructor(repos: IBaseRepository, auth: Authenticator, eventBus: EventBus) {
         this.#repos = repos;
+        this.#eventBus = eventBus;
     }
 
     async getAllArticles(query: QueryType) {
@@ -31,7 +33,10 @@ export class ArticleService {
 
     async createArticle(dto: ArticleReqDto) {
         const articleEntity = Article.createNew(dto);
-        const newarticle = await this.#repos.article.save(articleEntity);;
+        const newarticle = await this.#repos.article.save(articleEntity);
+        const event = new ArticleCreatedEvent(newarticle.id, newarticle.userId)
+        this.#eventBus.publish(event)
+
         return new ArticleResDto(newarticle);
     }
 
