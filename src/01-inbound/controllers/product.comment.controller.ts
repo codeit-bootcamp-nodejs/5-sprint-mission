@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { Authenticator } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productCommentBodySchema, productCommentParamSchema } from "../request/req.validator";
-import { ProductCommentService } from "../../02-domain/service/product.comment.service";
+import {  ProductCommentServiceType } from "../../02-domain/service/product.comment.service";
 
 
 
 
 
 
-export const ProductCommentController = (service: ProductCommentService, auth: Authenticator) => {
+export const createProductCommentController = (service: ProductCommentServiceType, auth: Authenticator) => {
     const { basePath, router, validate, errorHandler } = BaseController('/product');
 
 
@@ -31,14 +31,14 @@ export const ProductCommentController = (service: ProductCommentService, auth: A
         // 상품 댓글 수정
         router.patch(
             '/:productId/comments/:commentId',
-            #auth.verifyAccessToken,
+            auth.verifyAccessToken,
             modifyProductComment
         );
 
         // 상품 댓글 삭제
         router.delete(
             '/:productId/comments/:commentId',
-            #auth.verifyAccessToken,
+            auth.verifyAccessToken,
             deleteProductComment
         );
     }

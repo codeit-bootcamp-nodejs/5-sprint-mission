@@ -11,28 +11,22 @@ import { IBaseRepository } from "../port/I.base.repository";
 
 
 
-export class ArticleCommentService {
-    #repos
-    #eventBus
+export const createArticleCommentService = (
+    repos: IBaseRepository, eventBus: EventBus
+) => {
 
-    constructor(repos: IBaseRepository, eventBus: EventBus) {
-        this.#repos = repos;
-        this.#eventBus = eventBus;
-    }
-
-
-    async createArticleComment(dto: ArticleCommentDto) {
+    const createArticleComment = async (dto: ArticleCommentDto) => {
         const { articleId, userId, content } = dto;
 
         // 글 생성자 조회
-        const articleEntity = await this.#repos.article.findById(articleId);
+        const articleEntity = await repos.article.findById(articleId);
         if (!articleEntity) {
             throw new Error("글이 존재하지 않습니다.");
         }
 
         // 댓글 생성
         const articleCommentEntity = ArticleComment.createNew({ articleId, content, userId })
-        const articleComment = await this.#repos.articleComment.save(articleCommentEntity);
+        const articleComment = await repos.articleComment.save(articleCommentEntity);
 
 
         // 댓글 알림 생성
@@ -43,26 +37,26 @@ export class ArticleCommentService {
             senderId: articleComment.userId,
             receiverId: articleEntity.userId
         })
-        const notification = await this.#repos.notification.create(notificationEntity);
-        this.#eventBus.publish(notification);
+        const notification = await repos.notification.create(notificationEntity);
+        eventBus.publish(notification);
 
-    
+
         return new ArticleCommentResDto(articleComment);
     }
 
-    async getArticleComments(articleId: string) {
-        const articleCommentResDtos = await this.#repos.articleComment.findArticleComments(articleId);
+    const getArticleComments = async (articleId: string) => {
+        const articleCommentResDtos = await repos.articleComment.findArticleComments(articleId);
         return articleCommentResDtos.map(dto => new ArticleCommentResDto(dto));
     }
 
-    async updateArticleComment(dto: ArticleCommentDto) {
+    const updateArticleComment = async (dto: ArticleCommentDto) =>   {
         const { articleId, commentId, content, userId } = dto;
         if (!commentId) {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
 
-        const articleComment = await this.#repos.articleComment.findArticleComment(commentId);
+        const articleComment = await repos.articleComment.findArticleComment(commentId);
         if (!articleComment) {
             throw new Error('Article comments not found.');
         }
@@ -71,12 +65,12 @@ export class ArticleCommentService {
         }
 
         articleComment.update(content);
-        const articleCommentResDto = await this.#repos.articleComment.update(articleComment);
+        const articleCommentResDto = await repos.articleComment.update(articleComment);
         return new ArticleCommentResDto(articleCommentResDto);
     }
 
-    async deleteArticleComments(articleId: string, commentId: string, userId: string) {
-        const articleComment = await this.#repos.articleComment.findArticleComment(commentId);
+    const deleteArticleComments = async (articleId: string, commentId: string, userId: string) => {
+        const articleComment = await repos.articleComment.findArticleComment(commentId);
         if (!articleComment) {
             throw new Error('Article comments not found.');
         }
@@ -85,7 +79,16 @@ export class ArticleCommentService {
             throw new Error('Unauthorized to delete this comment.');
         }
 
-        await this.#repos.articleComment.deleteArticleComment(commentId);
+        await repos.articleComment.deleteArticleComment(commentId);
     }
 
+
+    return {
+        createArticleComment,
+        getArticleComments,
+        updateArticleComment,
+        deleteArticleComments
+    }
 }
+
+export type ArticleCommentServiceType = ReturnType<typeof createArticleCommentService>;

@@ -9,61 +9,68 @@ import { ProductResDto } from "../../01-inbound/response/product.response";
 
 
 
-export class UserService {
-    #repos
-    #auth
-
-    constructor(repos: IBaseRepository, auth: Authenticator) {
-        this.#repos = repos;
-        this.#auth = auth;
-    }
+export const createUserService = (repos: IBaseRepository, auth: Authenticator) => {
+   
 
 
-    async createUser(dto: UserSignUpDto) {
+    const createUser = async (dto: UserSignUpDto) => {
         const { email, nickname, password } = dto;
-        const refreshToken = this.#auth.createToken({ email }, 'refresh');
-        const hashPassword = await this.#auth.createHashPassword(password);
-        const newUser = await this.#repos.user.save({ email, nickname, hashPassword, refreshToken });
-        return this.#auth.filterSensitiveUserData(newUser);
-        // return newUser;
+        const refreshToken = auth.createToken({ email }, 'refresh');
+        const hashPassword = await auth.createHashPassword(password);
+        const newUser = await repos.user.save({ email, nickname, hashPassword, refreshToken });
+        return auth.filterSensitiveUserData(newUser);
+        auth = auth;
     }
 
-    async getTokens(dto: UserSignInDto) {
+
+
+    const getTokens = async (dto: UserSignInDto) => {
         const { email, password } = dto;
-        const savedUser = await this.#repos.user.findByEmail(email);
+        const savedUser = await repos.user.findByEmail(email);
         if (!savedUser) {
             const error = new HttpError('Unauthorized', 401);
             throw error;
         }
 
-        await this.#auth.verifyPassword(password, savedUser.password);
-        const accessToken = this.#auth.createToken(savedUser);
-        const refreshToken = this.#auth.createToken(savedUser, 'refresh');
+        await auth.verifyPassword(password, savedUser.password);
+        const accessToken = auth.createToken(savedUser);
+        const refreshToken = auth.createToken(savedUser, 'refresh');
         console.log(refreshToken);
-        // await this.#repos.userRepo.updateUser({savedUser.id, refreshToken }); // 추가
+        // await repos.userRepo.updateUser({savedUser.id, refreshToken }); // 추가
 
         return { accessToken, refreshToken };
     }
 
-    async getInfo(userId: string) {
-        const savedUser = await this.#repos.user.findById(userId);
-        return this.#auth.filterSensitiveUserData(savedUser);
+    const getInfo = async (userId: string) => {
+        const savedUser = await repos.user.findById(userId);
+        return auth.filterSensitiveUserData(savedUser);
     }
 
-    async updateUser(params: { userId: string, info: any }) {
+    const updateUser = async (params: { userId: string, info: any }) => {
         const { userId, info } = params;
         if (info.password) {
-            info.password = await this.#auth.createHashPassword(info.password);
+            info.password = await auth.createHashPassword(info.password);
         }
 
-        const updatedUser = await this.#repos.user.updateById({ userId, info });
-        return this.#auth.filterSensitiveUserData(updatedUser);
+        const updatedUser = await repos.user.updateById({ userId, info });
+        return auth.filterSensitiveUserData(updatedUser);
     }
 
-    async getUserProducts(userId: string) {
-        const productEntities = await this.#repos.product.findByUserId(userId);
+    const getUserProducts = async (userId: string) => {
+        const productEntities = await repos.product.findByUserId(userId);
         const productDtos = productEntities.map((entity: PersistedProduct) => new ProductResDto(entity));
 
         return productDtos;
     }
+
+    return { 
+        createUser,
+        getTokens,
+        getInfo,
+        updateUser,
+        getUserProducts
+    }
 }
+
+
+export type UserServiceType = ReturnType<typeof createUserService>;

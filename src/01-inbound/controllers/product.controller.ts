@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import { Authenticator, HttpError } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { productBodySchema, productParamSchema, querySchema } from "../request/req.validator";
-import { ProductService } from "../../02-domain/service/product.service";
+import { ProductServiceType } from "../../02-domain/service/product.service";
 
 
 
 
-export const ProductController = (service: ProductService, auth: Authenticator) => {
+export const createProductController = (service: ProductServiceType, auth: Authenticator) => {
 
     const { basePath,
         router,
@@ -39,21 +39,21 @@ export const ProductController = (service: ProductService, auth: Authenticator) 
         // 상품 수정
         router.patch(
             '/:id',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(updateProduct)
         );
 
         // 상품 삭제
         router.delete(
             '/:id',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(deleteProduct)
         );
 
         // 상품 좋아요
         router.patch(
             '/:id/likes',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(likeProduct)
         );
     }

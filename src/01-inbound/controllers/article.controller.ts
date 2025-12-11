@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { Authenticator } from "../../external/authenticator";
 import { querySchema, articleBodySchema, articleParamSchema } from "../request/req.validator";
-import { ArticleService } from "../../02-domain/service/article.service";
+import { ArticleServiceType } from "../../02-domain/service/article.service";
 
 
-export const ArticleController = (_service: ArticleService, _auth: Authenticator) => {
+export const createArticleController = (_service: ArticleServiceType, _auth: Authenticator) => {
     const { basePath, router, validate, errorHandler } = BaseController('/articles');
     const service = _service;
     const auth = _auth;
@@ -28,7 +28,7 @@ export const ArticleController = (_service: ArticleService, _auth: Authenticator
         // 글 작성
         router.post(
             '/',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(createArticle)
         );
 
@@ -36,14 +36,14 @@ export const ArticleController = (_service: ArticleService, _auth: Authenticator
         // 글 수정
         router.patch(
             '/:id',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(updateArticle)
         );
 
         // 글 삭제
         router.delete(
             '/:id',
-            errorHandler(#auth.verifyAccessToken),
+            errorHandler(auth.verifyAccessToken),
             errorHandler(deleteArticle)
         );
     }

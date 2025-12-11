@@ -6,38 +6,34 @@ import { IBaseRepository } from "../port/I.base.repository";
 
 
 
-export class ProductService {
-    #repos
+export const createProductService = (repos: IBaseRepository) => {
+ 
 
-    constructor(repos: IBaseRepository) {
-        this.#repos = repos;
-    }
-
-    async createProduct(dto: ProductReqDto) {
+    const createProduct = async (dto: ProductReqDto) => {
         const productEntity = Product.createNew(dto);
-        const newProduct = await this.#repos.product.save(productEntity);
+        const newProduct = await repos.product.save(productEntity);
         return new ProductResDto(newProduct);
     }
 
 
-    async getAllProducts(query: QueryType) {
-        const productEntities = await this.#repos.product.findAll(query);
+    const getAllProducts = async (query: QueryType) => {
+        const productEntities = await repos.product.findAll(query);
         const productDtos = productEntities.map((entity: PersistedProduct) => new ProductResDto(entity));
         return productDtos;
     }
 
-    async getProduct(id: string) {
-        const productEntity = await this.#repos.product.findById(id);
+    const getProduct = async (id: string) => {
+        const productEntity = await repos.product.findById(id);
         return new ProductResDto(productEntity);
     }
 
 
-    async updateProduct(dto: ProductReqDto) {
+    const updateProduct = async (dto: ProductReqDto) => {
         const { id, userId, ...data } = dto;
         if (!id) {
             throw new Error("상품 ID가 필요합니다");
         }
-        const product = await this.#repos.product.findById(id);
+        const product = await repos.product.findById(id);
         if (!product){
             throw new Error("상품이 존재하지 않습니다");
         }
@@ -55,13 +51,13 @@ export class ProductService {
             imageUrl: data.imageUrl,
         })
 
-        const updatedProduct = await this.#repos.product.updateById(product);
+        const updatedProduct = await repos.product.updateById(product);
         return new ProductResDto(updatedProduct);
     }
 
 
-    async deleteProduct(id: string, userId: string) {
-        const product = await this.#repos.product.findById(id);
+    const deleteProduct = async (id: string, userId: string) => {
+        const product = await repos.product.findById(id);
 
         if (!product) {
             throw new Error("상품이 존재하지 않습니다");
@@ -71,12 +67,12 @@ export class ProductService {
             throw new Error("수정 권한이 없습니다.");
         }
 
-        await this.#repos.product.deleteById(id);
+        await repos.product.deleteById(id);
     }
 
 
-    async likeProduct(id: string) {
-        const product = await this.#repos.product.findById(id);
+    const likeProduct = async (id: string) => {
+        const product = await repos.product.findById(id);
         
         if (product.isLiked) {
             product.unlike();
@@ -84,8 +80,18 @@ export class ProductService {
             product.like();
         };
         ;
-        const productEntity = await this.#repos.product.like(product);
+        const productEntity = await repos.product.like(product);
         return new ProductResDto(productEntity);
     }
 
+    return {
+        createProduct,
+        getAllProducts,
+        getProduct,
+        updateProduct,
+        deleteProduct,
+        likeProduct
+    }
 }
+
+export type ProductServiceType = ReturnType<typeof createProductService>;

@@ -8,39 +8,34 @@ import { ProductCommentResDto } from "../../01-inbound/response/product.comment.
 
 
 
-export class ProductCommentService {
-    #repos
-
-    constructor(repos: IBaseRepository) {
-        this.#repos = repos;
-    }
+export const createProductCommentService = (repos: IBaseRepository) => {
 
 
 
 
-    async createProductComment(dto: ProductCommentRequest) {
+    const createProductComment = async (dto: ProductCommentRequest) => {
         const { content, productId, userId } = dto;
         const productCommentEntity = ProductComment.createNew({ productId, content, userId });
-        const productComment = await this.#repos.productComment.save(productCommentEntity);
+        const productComment = await repos.productComment.save(productCommentEntity);
 
         return new ProductCommentResDto(productComment);
     }
 
-    async getProductComments(productId: string) {
-        const productComments = await this.#repos.productComment.findProductComments(productId);
+    const getProductComments = async (productId: string) => {
+        const productComments = await repos.productComment.findProductComments(productId);
 
         return productComments.map((productComment) => {
             return new ProductCommentResDto(productComment);
         })
     }
 
-    async updateProductComment(dto: ProductCommentRequest) {
+    const updateProductComment = async (dto: ProductCommentRequest) => {
         const { content, productId, commentId, userId } = dto;
         if (!commentId) {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
-        const productComment = await this.#repos.productComment.findProductComment(commentId);
+        const productComment = await repos.productComment.findProductComment(commentId);
         if (!productComment) {
             throw new Error('Product comment not found.');
         }
@@ -51,13 +46,20 @@ export class ProductCommentService {
 
         productComment.update(content)
 
-        const productCommentEntity = await this.#repos.productComment.update(productComment);
+        const productCommentEntity = await repos.productComment.update(productComment);
         return new ProductCommentResDto(productCommentEntity);
     }
 
-    async deleteProductComments(commentId: string) {
-        await this.#repos.productComment.deleteProductComment(commentId);
+    const deleteProductComments = async (commentId: string) => {
+        await repos.productComment.deleteProductComment(commentId);
     }
 
-
+    return {
+        createProductComment,
+        getProductComments,
+        updateProductComment,
+        deleteProductComments
+    }
 }
+
+export type ProductCommentServiceType = ReturnType<typeof createProductCommentService>;

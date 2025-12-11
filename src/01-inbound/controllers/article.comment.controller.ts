@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import { Authenticator } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; // 
 import { articleCommentBodySchema, articleCommentParamSchema } from "../request/req.validator";
-import { ArticleCommentService } from "../../02-domain/service/article.comment.service";
+import { createArticleCommentService, ArticleCommentServiceType } from "../../02-domain/service/article.comment.service";
 
 
 
 
 
 
-export const ArticleCommentController = (
-    _service: ArticleCommentService,
+export const createArticleCommentController = (
+    _service: ArticleCommentServiceType,
     _auth: Authenticator
 ) => {
 
