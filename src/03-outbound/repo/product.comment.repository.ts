@@ -53,9 +53,9 @@ export const createProductCommentRepository = (prisma: PrismaClient) => {
         });
     }
 
-    const update = async (entity: PersistedProductComment) => {
-
-        const { userId, productId, content, id } = entity;
+    const update = async (foundEntity: PersistedProductComment, newEntity: NewProductComment) => {
+        const { id } = foundEntity;
+        const { userId, productId, content } = newEntity;
         const productComment = await prisma.productComment.update({
             where: { id },
             data: {

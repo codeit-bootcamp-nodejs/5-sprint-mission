@@ -5,5 +5,5 @@ export interface IArticleCommentRepository {
     findArticleComments(articleId: string): Promise<PersistedArticleComment[]>;
     findArticleComment(commentId: string): Promise<PersistedArticleComment>;
     deleteArticleComment(commentId: string): void;
-    update(entity: PersistedArticleComment): Promise<PersistedArticleComment>
+    update(foundEntity: PersistedArticleComment, newEntity: NewArticleComment): Promise<PersistedArticleComment>
 }

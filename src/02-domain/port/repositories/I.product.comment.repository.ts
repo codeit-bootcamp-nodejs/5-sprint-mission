@@ -5,5 +5,5 @@ export interface IProductCommentRepository {
     findProductComments(productId: string): Promise<PersistedProductComment[]>;
     findProductComment(commentId: string): Promise<PersistedProductComment>;
     deleteProductComment(commentId: string): void;
-    update(entity: PersistedProductComment): Promise<PersistedProductComment>
+    update(foundEntity: PersistedProductComment, newEntity: NewProductComment): Promise<PersistedProductComment>
 }

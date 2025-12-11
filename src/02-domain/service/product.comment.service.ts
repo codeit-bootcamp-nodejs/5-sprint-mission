@@ -35,18 +35,22 @@ export const createProductCommentService = (repos: IBaseRepository) => {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
-        const productComment = await repos.productComment.findProductComment(commentId);
-        if (!productComment) {
+        const foundProductComment = await repos.productComment.findProductComment(commentId);
+        if (!foundProductComment) {
             throw new Error('Product comment not found.');
         }
 
-        if (productComment.userId !== userId) {
+        if (foundProductComment.userId !== userId) {
             throw new Error('Unauthorized: You can only update your own comments.');
         }
 
-        productComment.update(content)
+        const newProductComment = ProductComment.createNew({
+            productId,
+            content,
+            userId
+        }); 
 
-        const productCommentEntity = await repos.productComment.update(productComment);
+        const productCommentEntity = await repos.productComment.update(foundProductComment, newProductComment);
         return new ProductCommentResDto(productCommentEntity);
     }
 

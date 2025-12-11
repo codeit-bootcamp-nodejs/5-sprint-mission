@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { NewProduct, PersistedProduct } from "../../02-domain/entity/product";
-import {  QueryType } from "../../01-inbound/request/req.validator";
+import { QueryType } from "../../01-inbound/request/req.validator";
 import { Prisma } from "@prisma/client";
 import { ProductMapper } from "../mapper/product.mapper";
 
@@ -86,8 +86,9 @@ export const createProductRepository = (prisma: PrismaClient) => {
     }
 
 
-    const updateById = async (entity: PersistedProduct) => {
-        const { id, name, description, price, tags, userId } = entity;
+    const update = async (foundEntity: PersistedProduct, newEntity: NewProduct) => {
+        const { id } = foundEntity;
+        const { name, description, price, tags, userId } = newEntity;
 
         const product = await prisma.product.update({
             where: { id },
@@ -124,7 +125,7 @@ export const createProductRepository = (prisma: PrismaClient) => {
         findAll,
         findById,
         findByUserId,
-        updateById,
+        update,
         deleteById,
         like
     }

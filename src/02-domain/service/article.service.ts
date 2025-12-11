@@ -11,7 +11,7 @@ import { EventBus } from "../../application/event.bus";
 
 
 
-export const createArticleService =(repos: IBaseRepository) => {
+export const createArticleService = (repos: IBaseRepository) => {
 
 
 
@@ -39,18 +39,15 @@ export const createArticleService =(repos: IBaseRepository) => {
             throw new Error('Article ID is required for updating an article.');
         }
 
-        const article = await repos.article.findById(id);
+        const foundArticle = await repos.article.findById(id);
 
-        if (article.userId !== userId) {
+        if (foundArticle.userId !== userId) {
             throw new Error('You are not authorized to update this article.');
         }
 
-        article.update({
-            title,
-            content
-        });
+        const newArticle = Article.createNew(dto);
+        const updatedArticle = await repos.article.updateArticle(foundArticle, newArticle);
 
-        const updatedArticle = await repos.article.updateArticle(article);
         return new ArticleResDto(updatedArticle);
     }
 
@@ -68,7 +65,7 @@ export const createArticleService =(repos: IBaseRepository) => {
         await repos.article.deleteById(id);
     }
 
-    return { 
+    return {
         getAllArticles,
         getArticle,
         createArticle,

@@ -52,8 +52,9 @@ export const createArticleCommentRepository = (prisma: PrismaClient) => {
         });
     }
 
-    const update = async (entity: PersistedArticleComment) => {
-        const { userId, articleId, content, id } = entity;
+    const update = async (foundEntity: PersistedArticleComment, newEntity: NewArticleComment) => {
+        const { id } = foundEntity;
+        const { userId, articleId, content } = newEntity;
         const articleComment = await prisma.articleComment.update({
             where: { id },
             data: {
@@ -66,7 +67,7 @@ export const createArticleCommentRepository = (prisma: PrismaClient) => {
         return ArticleCommentMapper.toPersist(articleComment);
     }
 
-    return { 
+    return {
         save,
         findArticleComments,
         findArticleComment,

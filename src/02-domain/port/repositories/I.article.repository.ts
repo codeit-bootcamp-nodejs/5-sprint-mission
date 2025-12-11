@@ -9,7 +9,7 @@ export interface IArticleRepository {
 
     save(entity: NewArticleEntity): Promise<PersistArticleEntity>
 
-    updateArticle(entity: PersistArticleEntity): Promise<PersistArticleEntity>
+    updateArticle(foundEntity: PersistArticleEntity, newEntity: NewArticleEntity): Promise<PersistArticleEntity>
 
     deleteById(id: string): void
 }

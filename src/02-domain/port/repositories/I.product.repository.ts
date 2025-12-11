@@ -6,7 +6,7 @@ export interface IProductRepository {
     findById(id: string): Promise<PersistedProduct>;
     like(entity: PersistedProduct): Promise<PersistedProduct>;
     findAll(query: QueryType): Promise<PersistedProduct[]>;
-    updateById(entity: PersistedProduct): Promise<PersistedProduct>
+    update(foundEntity: PersistedProduct, newEntity: NewProduct): Promise<PersistedProduct>
     deleteById(id: string): void;
     findByUserId(userId: string): Promise<PersistedProduct[]>
 }

@@ -70,8 +70,9 @@ export const createArticleRepository = (prisma: PrismaClient) => {
         return ArticleMapper.toPersist(article);
     }
 
-    const updateArticle = async (entity: PersistArticleEntity) => {
-        const { id, title, content } = entity;
+    const updateArticle = async (foundEntity: PersistArticleEntity, newEntity: NewArticleEntity) => {
+        const { id } = foundEntity;
+        const { title, content } = newEntity;
 
         const article = await prisma.article.update({
             where: { id },

@@ -7,7 +7,7 @@ import { IBaseRepository } from "../port/I.base.repository";
 
 
 export const createProductService = (repos: IBaseRepository) => {
- 
+
 
     const createProduct = async (dto: ProductReqDto) => {
         const productEntity = Product.createNew(dto);
@@ -33,25 +33,21 @@ export const createProductService = (repos: IBaseRepository) => {
         if (!id) {
             throw new Error("상품 ID가 필요합니다");
         }
-        const product = await repos.product.findById(id);
-        if (!product){
+        const foundProduct = await repos.product.findById(id);
+        if (!foundProduct) {
             throw new Error("상품이 존재하지 않습니다");
         }
-    
-        if (product.userId !== userId) {
+
+        if (foundProduct.userId !== userId) {
             throw new Error("수정 권한이 없습니다.");
         }
 
-        product.update({
-            name: data.name,
-            description: data.description,
-            price: data.price,
-            tags: data.tags,
-            userId: userId,
-            imageUrl: data.imageUrl,
-        })
+        const newProduct = Product.createNew({
+            ...data,
+            userId
+        });
 
-        const updatedProduct = await repos.product.updateById(product);
+        const updatedProduct = await repos.product.update(foundProduct, newProduct);
         return new ProductResDto(updatedProduct);
     }
 
@@ -63,7 +59,7 @@ export const createProductService = (repos: IBaseRepository) => {
             throw new Error("상품이 존재하지 않습니다");
         }
 
-        if (product.userId !== userId){
+        if (product.userId !== userId) {
             throw new Error("수정 권한이 없습니다.");
         }
 
@@ -73,7 +69,7 @@ export const createProductService = (repos: IBaseRepository) => {
 
     const likeProduct = async (id: string) => {
         const product = await repos.product.findById(id);
-        
+
         if (product.isLiked) {
             product.unlike();
         } else {

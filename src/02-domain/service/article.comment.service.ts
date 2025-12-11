@@ -49,23 +49,27 @@ export const createArticleCommentService = (
         return articleCommentResDtos.map(dto => new ArticleCommentResDto(dto));
     }
 
-    const updateArticleComment = async (dto: ArticleCommentDto) =>   {
+    const updateArticleComment = async (dto: ArticleCommentDto) => {
         const { articleId, commentId, content, userId } = dto;
         if (!commentId) {
             throw new Error('Comment ID is required for updating a comment.');
         }
 
 
-        const articleComment = await repos.articleComment.findArticleComment(commentId);
-        if (!articleComment) {
+        const foundArticleComment = await repos.articleComment.findArticleComment(commentId);
+        if (!foundArticleComment) {
             throw new Error('Article comments not found.');
         }
-        if (articleComment.userId !== userId) {
+        if (foundArticleComment.userId !== userId) {
             throw new Error('Unauthorized to update this comment.');
         }
 
-        articleComment.update(content);
-        const articleCommentResDto = await repos.articleComment.update(articleComment);
+        const newArticleComment = ArticleComment.createNew({
+            articleId,
+            content,
+            userId
+        });
+        const articleCommentResDto = await repos.articleComment.update(foundArticleComment, newArticleComment);
         return new ArticleCommentResDto(articleCommentResDto);
     }
 
