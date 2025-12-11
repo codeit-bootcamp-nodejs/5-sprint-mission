@@ -6,16 +6,12 @@ import express, {
 } from "express"
 import z from 'zod';
 
-export class BaseController {
-    #basePath;
-    #router;
+export const BaseController = (_basePath: string) => {
+    const basePath = _basePath;
+    const router = express.Router();
 
-    constructor(basePath: string) {
-        this.#basePath = basePath;
-        this.#router = express.Router();
-    }
 
-    validate<T extends z.ZodType>(schema: T, data: unknown) {
+    const validate = <T extends z.ZodType>(schema: T, data: unknown) => {
         const result = schema.safeParse(data);
         if (!result.success) {
             const errorMessage = result.error.issues.pop()?.message ?? "요청 데이터가 유효하지 않습니다.";
@@ -24,7 +20,7 @@ export class BaseController {
         return result.data;
     }
 
-    catch(handler: RequestHandler) {
+    const errorHandler = (handler: RequestHandler) => {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 await handler(req, res, next);
@@ -34,11 +30,10 @@ export class BaseController {
         };
     }
 
-    get basePath() {
-        return this.#basePath;
-    }
-
-    get router() {
-        return this.#router;
+    return {
+        basePath,
+        router,
+        validate,
+        errorHandler
     }
 }

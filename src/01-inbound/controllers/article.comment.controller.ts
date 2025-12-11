@@ -9,53 +9,48 @@ import { ArticleCommentService } from "../../02-domain/service/article.comment.s
 
 
 
-export class ArticleCommentController extends BaseController {
-    #service
-    #auth
+export const ArticleCommentController = (
+    _service: ArticleCommentService,
+    _auth: Authenticator
+) => {
 
-    constructor(service: ArticleCommentService, auth: Authenticator) {
-        super('/article')
-        this.#service = service;
-        this.#auth = auth;
-        this.registerRoutes();
-    }
+    const { basePath, router, validate, errorHandler } = BaseController('/article')
+    const service = _service;
+    const auth = _auth;
 
-    registerRoutes() {
-        // 댓글 작성
-        this.router.post(
+    const registerRoutes = () => {
+        router.post(
             '/:articleId/comments',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.createArticleComment)
+            errorHandler(auth.verifyAccessToken),
+            errorHandler(createArticleComment)
         );
 
         // 댓글 조회
-        this.router.get(
+        router.get(
             '/:articleId/comments',
-            this.catch(this.getArticleComments)
+            errorHandler(getArticleComments)
         );
 
         // 댓글 수정
-        this.router.patch(
+        router.patch(
             '/:articleId/comments/:commentId',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.modifyArticleComment)
+            errorHandler(auth.verifyAccessToken),
+            errorHandler(modifyArticleComment)
         );
 
         // 댓글 삭제
-        this.router.delete(
+        router.delete(
             '/:articleId/comments/:commentId',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.deleteArticleComment)
+            errorHandler(auth.verifyAccessToken),
+            errorHandler(deleteArticleComment)
         );
     }
 
+    const createArticleComment = async (req: Request, res: Response) => {
+        const body = validate(articleCommentBodySchema, req.body);
+        const params = validate(articleCommentParamSchema, req.params);
 
-
-    createArticleComment = async (req: Request, res: Response) => {
-        const body = this.validate(articleCommentBodySchema, req.body);
-        const params = this.validate(articleCommentParamSchema, req.params);
-
-        const articleCommentResDto = await this.#service.createArticleComment({
+        const articleCommentResDto = await service.createArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -63,20 +58,17 @@ export class ArticleCommentController extends BaseController {
         return res.json(articleCommentResDto);
     }
 
-
-
-    getArticleComments = async (req: Request, res: Response) => {
+    const getArticleComments = async (req: Request, res: Response) => {
         const articleId = req.params.articleId;
-        const comments = await this.#service.getArticleComments(articleId);
+        const comments = await service.getArticleComments(articleId);
         return res.json(comments);
     }
 
+    const modifyArticleComment = async (req: Request, res: Response) => {
+        const body = validate(articleCommentBodySchema, req.body);
+        const params = validate(articleCommentParamSchema, req.params);
 
-    modifyArticleComment = async (req: Request, res: Response) => {
-        const body = this.validate(articleCommentBodySchema, req.body);
-        const params = this.validate(articleCommentParamSchema, req.params);
-
-        const articleCommentResDto = await this.#service.updateArticleComment({
+        const articleCommentResDto = await service.updateArticleComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -84,12 +76,17 @@ export class ArticleCommentController extends BaseController {
         return res.json(articleCommentResDto);
     }
 
-
-    deleteArticleComment = async (req: Request, res: Response) => {
+    const deleteArticleComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
         const articleId = req.params.articleId;
         const userId = req.user.userId;
-        await this.#service.deleteArticleComments(articleId, commentId, userId);
+        await service.deleteArticleComments(articleId, commentId, userId);
         return res.status(200).json();
     }
+
+    registerRoutes();
+    return {
+        basePath,
+        router
+    };
 }

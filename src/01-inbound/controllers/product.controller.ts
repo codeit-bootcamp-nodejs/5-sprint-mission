@@ -7,64 +7,61 @@ import { ProductService } from "../../02-domain/service/product.service";
 
 
 
-export class ProductController extends BaseController {
-    #service
-    #auth
+export const ProductController = (service: ProductService, auth: Authenticator) => {
 
-    constructor(service: ProductService, auth: Authenticator) {
-        super('/products');
-        this.#service = service;
-        this.#auth = auth;
-        this.registerRoutes();
-    }
+    const { basePath,
+        router,
+        validate,
+        errorHandler } = BaseController('/products');
 
-    registerRoutes() {
+
+    const registerRoutes = () => {
 
         // 상품 생성
-        this.router.post(
+        router.post(
             '/',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.createProduct)
+            errorHandler(auth.verifyAccessToken),
+            errorHandler(createProduct)
         );
 
         // 상품 조회
-        this.router.get(
+        router.get(
             '/',
-            this.catch(this.getProducts)
+            errorHandler(getProducts)
         );
 
         // 상품 상세 조회
-        this.router.get(
+        router.get(
             '/:id',
-            this.catch(this.getProduct)
+            errorHandler(getProduct)
         );
 
         // 상품 수정
-        this.router.patch(
+        router.patch(
             '/:id',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.updateProduct)
+            errorHandler(#auth.verifyAccessToken),
+            errorHandler(updateProduct)
         );
 
         // 상품 삭제
-        this.router.delete(
+        router.delete(
             '/:id',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.deleteProduct)
+            errorHandler(#auth.verifyAccessToken),
+            errorHandler(deleteProduct)
         );
 
         // 상품 좋아요
-        this.router.patch(
+        router.patch(
             '/:id/likes',
-            this.catch(this.#auth.verifyAccessToken),
-            this.catch(this.likeProduct)
+            errorHandler(#auth.verifyAccessToken),
+            errorHandler(likeProduct)
         );
     }
 
-    createProduct = async (req: Request, res: Response) => { //
-        const body = this.validate(productBodySchema, req.body);
-        const params = this.validate(productParamSchema, req.params);
-        const newProductResDto = await this.#service.createProduct({
+    const createProduct = async (req: Request, res: Response) => { //
+        const body = validate(productBodySchema, req.body);
+        const params = validate(productParamSchema, req.params);
+        const newProductResDto = await service.createProduct({
             ...body,
             ...params,
             userId: req.user.userId
@@ -72,24 +69,24 @@ export class ProductController extends BaseController {
         return res.status(201).json(newProductResDto);
     }
 
-    getProducts = async (req: Request, res: Response) => {
-        const query = this.validate(querySchema, req.query);
-        const productsResDto = await this.#service.getAllProducts(query);
+    const getProducts = async (req: Request, res: Response) => {
+        const query = validate(querySchema, req.query);
+        const productsResDto = await service.getAllProducts(query);
         return res.json(productsResDto);
     }
 
-    getProduct = async (req: Request, res: Response) => {
+    const getProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const productResDto = await this.#service.getProduct(id);
+        const productResDto = await service.getProduct(id);
         return res.json(productResDto);
     }
 
-    updateProduct = async (req: Request, res: Response) => {
-        const body = this.validate(productBodySchema, req.body);
-        const params = this.validate(productParamSchema, req.params);
-        const query = this.validate(querySchema, req.query);
+    const updateProduct = async (req: Request, res: Response) => {
+        const body = validate(productBodySchema, req.body);
+        const params = validate(productParamSchema, req.params);
+        const query = validate(querySchema, req.query);
 
-        const updatedProductResDto = await this.#service.updateProduct({
+        const updatedProductResDto = await service.updateProduct({
             ...body,
             ...params,
             ...query,
@@ -98,16 +95,23 @@ export class ProductController extends BaseController {
         res.status(201).json(updatedProductResDto);
     }
 
-    deleteProduct = async (req: Request, res: Response) => {
+    const deleteProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
         const userId = req.user.userId;
-        await this.#service.deleteProduct(id, userId);
+        await service.deleteProduct(id, userId);
         res.status(200).json();
     }
 
-    likeProduct = async (req: Request, res: Response) => {
+    const likeProduct = async (req: Request, res: Response) => {
         const id = req.params.id;
-        const product = await this.#service.likeProduct(id);
+        const product = await service.likeProduct(id);
         return res.json(product);
+    }
+
+    registerRoutes();
+
+    return {
+        basePath,
+        router
     }
 }

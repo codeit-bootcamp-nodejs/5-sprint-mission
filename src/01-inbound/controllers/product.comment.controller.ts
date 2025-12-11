@@ -9,53 +9,47 @@ import { ProductCommentService } from "../../02-domain/service/product.comment.s
 
 
 
-export class ProductCommentController extends BaseController {
-    #service
-    #auth
+export const ProductCommentController = (service: ProductCommentService, auth: Authenticator) => {
+    const { basePath, router, validate, errorHandler } = BaseController('/product');
 
-    constructor(service: ProductCommentService, auth: Authenticator) {
-        super('/product')
-        this.#service = service;
-        this.#auth = auth;
-        this.registerRoutes();
-    }
 
-    registerRoutes() {
+
+    const registerRoutes = () => {
         // 상품 댓글 생성   
-        this.router.post(
+        router.post(
             '/:productId/comments',
-            this.#auth.verifyAccessToken,
-            this.createProductComment
+            auth.verifyAccessToken,
+            createProductComment
         );
 
         // 상품 댓글 조회
-        this.router.get(
+        router.get(
             '/:productId/comments',
-            this.getProductComments
+            getProductComments
         );
 
         // 상품 댓글 수정
-        this.router.patch(
+        router.patch(
             '/:productId/comments/:commentId',
-            this.#auth.verifyAccessToken,
-            this.modifyProductComment
+            #auth.verifyAccessToken,
+            modifyProductComment
         );
 
         // 상품 댓글 삭제
-        this.router.delete(
+        router.delete(
             '/:productId/comments/:commentId',
-            this.#auth.verifyAccessToken,
-            this.deleteProductComment
+            #auth.verifyAccessToken,
+            deleteProductComment
         );
     }
 
 
 
-    createProductComment = async (req: Request, res: Response) => {
-        const body = this.validate(productCommentBodySchema, req.body);
-        const params = this.validate(productCommentParamSchema, req.params);
+    const createProductComment = async (req: Request, res: Response) => {
+        const body = validate(productCommentBodySchema, req.body);
+        const params = validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.createProductComment({
+        const productCommentResDto = await service.createProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -65,18 +59,18 @@ export class ProductCommentController extends BaseController {
     }
 
 
-    getProductComments = async (req: Request, res: Response) => {
+    const getProductComments = async (req: Request, res: Response) => {
         const productId = req.params.productId;
-        const comments = await this.#service.getProductComments(productId);
+        const comments = await service.getProductComments(productId);
         return res.json(comments);
     }
 
 
-    modifyProductComment = async (req: Request, res: Response) => {
-        const body = this.validate(productCommentBodySchema, req.body);
-        const params = this.validate(productCommentParamSchema, req.params);
+    const modifyProductComment = async (req: Request, res: Response) => {
+        const body = validate(productCommentBodySchema, req.body);
+        const params = validate(productCommentParamSchema, req.params);
 
-        const productCommentResDto = await this.#service.updateProductComment({
+        const productCommentResDto = await service.updateProductComment({
             ...body,
             ...params,
             userId: req.user.userId
@@ -86,9 +80,16 @@ export class ProductCommentController extends BaseController {
     }
 
 
-    deleteProductComment = async (req: Request, res: Response) => {
+    const deleteProductComment = async (req: Request, res: Response) => {
         const commentId = req.params.commentId;
-        await this.#service.deleteProductComments(commentId);
+        await service.deleteProductComments(commentId);
         return res.status(200).json();
     }
+
+    registerRoutes();
+
+    return {
+        basePath,
+        router
+    };
 }
