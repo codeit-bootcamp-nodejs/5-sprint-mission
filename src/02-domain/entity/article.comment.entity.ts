@@ -63,10 +63,6 @@ export class ArticleComment {
         }) as PersistedArticleComment;
     }
 
-    update(content: string) {
-        this._content = content;
-    }
-
     get id() {
         return this._id;
     }

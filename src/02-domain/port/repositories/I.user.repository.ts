@@ -1,19 +1,12 @@
+import { NewUserEntity, PersistedUserEntity } from "../../entity/user.entity"
+
 export interface IUserRepository {
-    save({ email, nickname, hashPassword, refreshToken }:
-        { email: string, nickname: string, hashPassword: string , refreshToken: string}
-    ): any
+    save(entity: NewUserEntity): Promise<PersistedUserEntity>
 
-    findById(id: string): any
+    findById(id: string): Promise<PersistedUserEntity>
 
-    findByEmail(email: string): any
+    findByEmail(email: string): Promise<PersistedUserEntity>
 
-    updateById({ userId, info }:
-        { userId: string, info: any }
-    ): any
-
-    updateUser({ id, data }: {
-        id: string, data: any
-    }): any
-
+    update(foundEntity: PersistedUserEntity, newEntity: NewUserEntity): Promise<PersistedUserEntity>
 }
 

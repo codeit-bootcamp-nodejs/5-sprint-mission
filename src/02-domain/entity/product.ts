@@ -64,22 +64,6 @@ export class Product {
         this._isLiked = false;
     }
 
-    update(params: {
-        name: string,
-        description: string,
-        price: number,
-        tags: string[],
-        userId: string,
-        imageUrl?: string,
-    }) {
-        this._name = params.name;
-        this._description = params.description;
-        this._price = params.price;
-        this._tags = params.tags;
-        this._userId = params.userId;
-        this._imageUrl = params.imageUrl;
-    }
-
     static createNew(params: {
         name: string,
         description: string,

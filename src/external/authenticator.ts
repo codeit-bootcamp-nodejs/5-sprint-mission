@@ -114,7 +114,6 @@ export const Authenticator = (repos: IBaseRepository) => {
                 throw new Exception('유저를 찾을 수 없습니다', 404);
             }
 
-
             return next();
         } catch (error) {
             return next(error);

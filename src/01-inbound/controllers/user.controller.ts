@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Authenticator, AuthenticatorType, } from "../../external/authenticator";
 import { BaseController } from "./base.controller";
-import { userReqSchema } from "../request/req.validator";
+import { userBodySchema } from "../request/req.validator";
 import { UserServiceType } from "../../02-domain/service/user.service";
 
 
@@ -58,8 +58,10 @@ export const createUserController = (service: UserServiceType, auth: Authenticat
     }
 
     const signUp = async (req: Request, res: Response) => {
-        const userReqDto = validate(userReqSchema, req.body);
-        const userResDto = await service.createUser(userReqDto);
+        const body = validate(userBodySchema, req.body);
+        const userResDto = await service.createUser({
+            ...body
+        });
         return res.json(userResDto);
     }
 
@@ -88,7 +90,11 @@ export const createUserController = (service: UserServiceType, auth: Authenticat
 
 
     const editUserInfo = async (req: Request, res: Response) => {
-        const updatedUser = await service.updateUser({ userId: req.user.userId, info: req.body });
+        const body = validate(userBodySchema, req.body);
+        const updatedUser = await service.updateUser({
+            ...body,
+            userId: req.user.userId
+        });
         return res.json(updatedUser);
     }
 

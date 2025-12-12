@@ -18,6 +18,7 @@ import { createUserService } from "./02-domain/service/user.service";
 import { createProductService } from "./02-domain/service/product.service";
 import { createProductCommentService } from "./02-domain/service/product.comment.service";
 import { createProductController } from "./01-inbound/controllers/product.controller";
+import { IBaseRepository } from "./02-domain/port/I.base.repository";
 
 export class DependencyInjector {
     public readonly httpServer: HttpServerType;
@@ -38,7 +39,7 @@ export class DependencyInjector {
         const productCommentRepository = createProductCommentRepository(prisma);
         const articleCommentRepository = createArticleCommentRepository(prisma);
         const notificationRepository = createNotificationRepository(prisma);
-        const repos = {
+        const repos: IBaseRepository = {
             product: productRepository,
             article: articleRepository,
             user: userRepository,

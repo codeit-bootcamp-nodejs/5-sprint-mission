@@ -1,10 +1,8 @@
 import { ArticleReqDto, QueryType } from "../../01-inbound/request/req.validator";
-import { Authenticator } from "../../external/authenticator";
 import { Article, PersistArticleEntity } from "../entity/article";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ArticleResDto } from "../../01-inbound/response/article.response";
-import { ArticleCreatedEvent } from "../event/article.event";
-import { EventBus } from "../../application/event.bus";
+
 
 
 

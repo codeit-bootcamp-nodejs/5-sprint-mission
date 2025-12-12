@@ -40,13 +40,6 @@ export class Article {
         this._updatedAt = params.updatedAt;
     }
 
-    update(params: {
-        title: string,
-        content: string
-    }) {
-        this._title = params.title;
-        this._content = params.content;
-    }
 
     static createPersist(params: {
         id: string,

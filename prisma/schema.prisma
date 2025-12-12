@@ -83,7 +83,7 @@ model User {
   email        String  @unique
   nickname     String
   image        String?
-  refreshToken String?
+  refreshToken String
 
   password              String
   createdAt             DateTime         @default(now())

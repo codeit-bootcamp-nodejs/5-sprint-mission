@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { Prisma } from "@prisma/client";
+import { UserMapper } from "../mapper/user.mapper";
+import { IUserRepository } from "../../02-domain/port/repositories/I.user.repository";
+import { NewUserEntity, PersistedUserEntity } from "../../02-domain/entity/user.entity";
 
 
 
@@ -10,18 +13,18 @@ export type PersistUser = Prisma.UserGetPayload<{}>;
 
 export const createUserRepository = (prisma: PrismaClient) => {
 
-    const save = async ({ email, nickname, hashPassword, refreshToken }:
-        { email: string, nickname: string, hashPassword: string, refreshToken: string }) => {
+    const save = async (entity: NewUserEntity) => {
+        const { email, nickname, password, refreshToken } = entity;
         const user = await prisma.user.create({
             data: {
-                email: email,
-                nickname: nickname,
-                password: hashPassword,
-                refreshToken: refreshToken
+                email,
+                nickname,
+                password,
+                refreshToken
             }
         });
 
-        return user;
+        return UserMapper.toPersist(user);
     }
 
     const findById = async (id: string) => {
@@ -29,7 +32,7 @@ export const createUserRepository = (prisma: PrismaClient) => {
             where: { id }
         });
 
-        return user;
+        return UserMapper.toPersist(user);
     }
 
     const findByEmail = async (email: string) => {
@@ -37,36 +40,26 @@ export const createUserRepository = (prisma: PrismaClient) => {
             where: { email }
         });
 
-        return user;
+        return UserMapper.toPersist(user);
     }
 
-    const updateById = async ({ userId, info }:
-        { userId: string, info: any }) => {
-
-        const updateUser = await prisma.user.update({
-            where: { id: userId },
-            data: info
+    const update = async (foundEntity: PersistedUserEntity, newEntity: NewUserEntity) => {
+        const updatedUser = await prisma.user.update({
+            where: { id: foundEntity.id },
+            data: {
+                email: newEntity.email,
+                nickname: newEntity.nickname,
+                password: newEntity.password,
+                refreshToken: newEntity.refreshToken
+            }
         });
-
-        return updateUser;
-    }
-
-    const updateUser = async ({ id, data }: {
-        id: string, data: any
-    }) => {
-
-
-        return await prisma.user.update({
-            where: { id },
-            data: data
-        });
+        return UserMapper.toPersist(updatedUser);
     }
 
     return {
         save,
         findById,
         findByEmail,
-        updateById,
-        updateUser
+        update
     }
 }   

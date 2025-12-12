@@ -63,10 +63,6 @@ export class ProductComment {
         }) as PersistedProductComment;
     }
 
-    update(content: string) {
-        this._content = content;
-    }
-
     get id() {
         return this._id;
     }
