@@ -37,15 +37,16 @@ model Product {
   name        String   @unique
   description String
   price       Int
-  tags        String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   ProductComment ProductComment[]
 
-  User        User          @relation(fields: [userId], references: [id])
+  User        User           @relation(fields: [userId], references: [id])
   userId      String
   ProductLike ProductLike[]
+  tags        ProductTag[]
+  images      ProductImage[]
 }
 
 model ProductComment {
@@ -61,7 +62,6 @@ model ProductComment {
 }
 
 model ProductLike {
-  id        String  @id @default(uuid())
   userId    String
   productId String
   isLiked   Boolean @default(true)
@@ -72,10 +72,41 @@ model ProductLike {
   @@unique([userId, productId])
 }
 
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  products ProductTag[]
+}
+
+model ProductTag {
+  productId String
+  tagId     Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+}
+
+model ProductImage {
+  productId String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([productId])
+}
+
 model Article {
   id        String   @id @default(uuid())
   title     String   @unique
   content   String
+  image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -99,11 +130,10 @@ model ArticleComment {
 }
 
 model ArticleLike {
-  id        String  @id @default(uuid())
   userId    String
   articleId String
   isLiked   Boolean @default(true)
-  
+
   user    User    @relation(fields: [userId], references: [id])
   article Article @relation(fields: [articleId], references: [id])
 

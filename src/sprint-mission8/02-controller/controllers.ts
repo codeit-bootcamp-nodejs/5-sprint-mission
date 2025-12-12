@@ -1,0 +1,31 @@
+import { services } from "../03-domain/service/services";
+import { ArticleCommentController, IArticleCommentController } from "./article.comment.controller";
+import { ArticleController, IArticleController } from "./article.controller";
+import { ArticleLikeController, IArticleLikeController } from "./article.like.controller";
+import { IImageController, ImageController } from "./image.controller";
+import { IProductCommentController, ProductCommentController } from "./product.comment.controller";
+import { IProductController, ProductController } from "./product.controller";
+import { IProductLikeController, ProductLikeController } from "./product.like.controller";
+import { IUserController, UserController } from "./user.controller";
+
+export interface IControllers {
+  user: IUserController;
+  product: IProductController;
+  productComment: IProductCommentController;
+  productLike: IProductLikeController;
+  article: IArticleController;
+  articleComment: IArticleCommentController
+  articleLike: IArticleLikeController;
+  image: IImageController
+}
+
+export const controllers: IControllers = {
+  user: new UserController(services),
+  product: new ProductController(services),
+  productComment: new ProductCommentController(services),
+  productLike: new ProductLikeController(services),
+  article: new ArticleController(services),
+  articleComment: new ArticleCommentController(services),
+  articleLike: new ArticleLikeController(services),
+  image: new ImageController()
+}
