@@ -64,7 +64,6 @@ model ProductComment {
 model ProductLike {
   userId    String
   productId String
-  isLiked   Boolean @default(true)
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
@@ -76,7 +75,6 @@ model Tag {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
 
   products ProductTag[]
 }
@@ -92,14 +90,12 @@ model ProductTag {
 }
 
 model ProductImage {
+  id        Int      @id @default(autoincrement())
   productId String
   url       String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@id([productId])
 }
 
 model Article {
@@ -132,7 +128,6 @@ model ArticleComment {
 model ArticleLike {
   userId    String
   articleId String
-  isLiked   Boolean @default(true)
 
   user    User    @relation(fields: [userId], references: [id])
   article Article @relation(fields: [articleId], references: [id])

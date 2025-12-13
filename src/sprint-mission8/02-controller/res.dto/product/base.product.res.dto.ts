@@ -1,4 +1,4 @@
-import { PersistedProductEntity } from "../../../03-domain/entity/product/product.entity";
+import { PersistedProductEntity } from "../../../domain/entity/product/product.entity";
 
 export class BaseProductResDto {
   public id: string;

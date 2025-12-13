@@ -1,4 +1,4 @@
-import { PersistedUserEntity } from "../../../03-domain/entity/user.entity";
+import { PersistedUserEntity } from "../../../domain/entity/user.entity";
 
 export class RefreshTokensResDto {
   public accessToken;

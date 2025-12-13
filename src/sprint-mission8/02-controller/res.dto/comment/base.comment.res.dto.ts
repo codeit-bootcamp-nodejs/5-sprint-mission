@@ -1,4 +1,4 @@
-import { CommentEntity, PersistedCommentEntity } from "../../../03-domain/entity/comment.entity";
+import { CommentEntity, PersistedCommentEntity } from "../../../domain/entity/comment/comment.entity";
 
 export class BaseCommentResDto {
   public id: number;

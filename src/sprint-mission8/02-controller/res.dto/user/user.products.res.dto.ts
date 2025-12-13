@@ -1,5 +1,5 @@
-import { ProductEntity } from "../../../03-domain/entity/product/product.entity";
-import { PersistedUserEntity } from "../../../03-domain/entity/user.entity";
+import { ProductEntity } from "../../../domain/entity/product/product.entity";
+import { PersistedUserEntity } from "../../../domain/entity/user.entity";
 
 export class UserProductsResDto {
   public email;

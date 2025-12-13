@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { ConfigManager } from "../common/util/config.manager";
-import { IManagers } from "../common/util/managers";
-import { Exception } from "../common/exception/exception";
+import { ConfigManager } from "../shared/util/config.manager";
+import { IManagers } from "../shared/util/managers";
+import { Exception } from "../shared/exception/exception";
 import { UserRouter } from "./router/user.router";
 import { ProductRouter } from "./router/product.router";
 import { ArticleRouter } from "./router/article.router";

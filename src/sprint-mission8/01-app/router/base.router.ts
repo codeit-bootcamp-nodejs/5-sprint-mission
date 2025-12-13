@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, RequestHandler, Response } from "express";
-import { IManagers } from "../../common/util/managers";
-import { Exception } from "../../common/exception/exception";
-import { EXCEPTIONS } from "../../common/const/exception.info";
+import { IManagers } from "../../shared/util/managers";
+import { Exception } from "../../shared/exception/exception";
+import { EXCEPTIONS } from "../../shared/const/exception.info";
 
 export class BaseRouter {
   public basePath;

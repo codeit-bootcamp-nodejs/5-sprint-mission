@@ -4,7 +4,7 @@ import { ProductRouter } from "./01-app/router/product.router";
 import { UserRouter } from "./01-app/router/user.router";
 import { Server } from "./01-app/server";
 import { controllers } from "./02-controller/controllers";
-import { managers } from "./common/util/managers";
+import { managers } from "./shared/util/managers";
 
 export class DepInjector {
   private _sever: Server;

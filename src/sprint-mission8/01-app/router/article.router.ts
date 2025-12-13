@@ -1,5 +1,5 @@
 import { IControllers } from "../../02-controller/controllers";
-import { IManagers } from "../../common/util/managers";
+import { IManagers } from "../../shared/util/managers";
 import { BaseRouter } from "./base.router";
 
 export class ArticleRouter extends BaseRouter {

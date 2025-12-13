@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { IServices } from "../03-domain/service/services";
+import { IServices } from "../domain/service/services";
 import { BaseController, ControllerHandler } from "./base.controller";
 import { refreshTokensReqSchema, signInReqSchema, signUpReqSchema, updatePasswordReqSchema, updateReqSchema, userIdReqSchema, userLikeListReqSchema, userProductsReqSchema } from "./req.validator/user/user.req.schemas";
-import { Exception } from "../common/exception/exception";
-import { EXCEPTIONS } from "../common/const/exception.info";
+import { Exception } from "../shared/exception/exception";
+import { EXCEPTIONS } from "../shared/const/exception.info";
 import { SignInResDto } from "./res.dto/user/signIn.res.dto";
 import { UserResDto } from "./res.dto/user/user.Res.Dto";
 import { SignOutResDto } from "./res.dto/user/signout.res.dto";

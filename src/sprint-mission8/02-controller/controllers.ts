@@ -1,4 +1,4 @@
-import { services } from "../03-domain/service/services";
+import { services } from "../domain/service/services";
 import { ArticleCommentController, IArticleCommentController } from "./article.comment.controller";
 import { ArticleController, IArticleController } from "./article.controller";
 import { ArticleLikeController, IArticleLikeController } from "./article.like.controller";

@@ -1,7 +1,7 @@
 import { ZodSafeParseResult } from "zod";
-import { IServices } from "../03-domain/service/services";
-import { Exception } from "../common/exception/exception";
-import { EXCEPTIONS } from "../common/const/exception.info";
+import { IServices } from "../domain/service/services";
+import { Exception } from "../shared/exception/exception";
+import { EXCEPTIONS } from "../shared/const/exception.info";
 import { NextFunction, Request, Response } from "express";
 import { fieldExceptionMap } from "./req.validator/validator.map";
 

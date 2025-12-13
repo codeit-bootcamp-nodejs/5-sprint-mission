@@ -1,4 +1,4 @@
-import { ArticleEntity } from "../../../03-domain/entity/article.entity";
+import { ArticleEntity } from "../../../domain/entity/article.entity";
 
 export class UserLikeArticlesResDto {
   public articles;

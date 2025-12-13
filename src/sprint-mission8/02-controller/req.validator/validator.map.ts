@@ -1,4 +1,4 @@
-import { EXCEPTIONS } from "../../common/const/exception.info";
+import { EXCEPTIONS } from "../../shared/const/exception.info";
 
 export const fieldExceptionMap: Record<string, any> = {
   // 공통

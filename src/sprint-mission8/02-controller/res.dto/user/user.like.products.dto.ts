@@ -1,4 +1,4 @@
-import { ProductEntity } from "../../../03-domain/entity/product/product.entity";
+import { ProductEntity } from "../../../domain/entity/product/product.entity";
 
 export class UserLikeProductsResDto {
   public products;

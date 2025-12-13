@@ -1,4 +1,4 @@
-import { IServices } from "../03-domain/service/services";
+import { IServices } from "../domain/service/services";
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createProductReqSchema, deleteProductReqSchema, getProductListReqSchema, getProductReqSchema, updateProductReqSchema } from "./req.validator/product/product.req.schemas";
 import { CreateProductResDto } from "./res.dto/product/create.product.res.dto";

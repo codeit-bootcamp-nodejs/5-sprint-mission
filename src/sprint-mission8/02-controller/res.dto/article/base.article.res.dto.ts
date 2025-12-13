@@ -1,4 +1,4 @@
-import { PersistedArticleEntity } from "../../../03-domain/entity/article.entity";
+import { PersistedArticleEntity } from "../../../domain/entity/article.entity";
 
 export class BaseArticleResDto {
   public id: string;
