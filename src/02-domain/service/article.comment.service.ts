@@ -1,18 +1,17 @@
 import { NotificationType } from "@prisma/client";
 import { ArticleCommentDto } from "../../01-inbound/request/req.validator";
 import { ArticleCommentResDto } from "../../01-inbound/response/article.comment.response";
-import { EventBus, EventBusType } from "../../application/event.bus";
-import { Authenticator } from "../../external/authenticator";
 import { ArticleComment } from "../entity/article.comment.entity";
 import { NotificationEntity } from "../entity/notification";
 import { IBaseRepository } from "../port/I.base.repository";
+import { ArticleCommentEventBusType } from "../../application/event.bus";
 
 
 
 
 
 export const createArticleCommentService = (
-    repos: IBaseRepository, eventBus: EventBusType
+    repos: IBaseRepository, eventBus: ArticleCommentEventBusType
 ) => {
 
     const createArticleComment = async (dto: ArticleCommentDto) => {

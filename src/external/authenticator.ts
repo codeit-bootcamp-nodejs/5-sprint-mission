@@ -18,9 +18,6 @@ export class HttpError extends Error {
 
 
 export const Authenticator = (repos: IBaseRepository) => {
-
-
-
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
         throw new Exception("JWT 비밀키가 존재하지 않습니다!", 401);

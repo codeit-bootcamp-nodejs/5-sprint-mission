@@ -19,15 +19,15 @@ enum NotificationType {
 }
 
 model Notification {
-  id      String           @id @default(uuid())
-  type    NotificationType
-  message String
-  read    Boolean          @default(false)
+  id         String           @id @default(uuid())
+  type       NotificationType
+  message    String
+  read       Boolean          @default(false)
   senderId   String
   receiverId String
-  createdAt  DateTime @default(now())
-  sender   User @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
-  receiver User @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  createdAt  DateTime         @default(now())
+  sender     User             @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  receiver   User             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model Product {
@@ -37,12 +37,24 @@ model Product {
   price          Int
   tags           String[]
   imageUrl       String?
-  isLiked        Boolean          @default(false)
+  likeCount      Int              @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   User           User             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId         String
+  productLikes        ProductLikes[]
   ProductComment ProductComment[]
+}
+
+model ProductLikes {
+  isLiked   Boolean @default(false)
+  userId    String
+  productId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+  @@index([productId])
 }
 
 model Article {
@@ -92,6 +104,7 @@ model User {
   article               Article[]
   articleComment        ArticleComment[]
   ProductComment        ProductComment[]
+  productLikes          ProductLikes[]
   NotificationsSent     Notification[]   @relation("NotificationSender")
   NotificationsReceived Notification[]   @relation("NotificationReceiver")
 }

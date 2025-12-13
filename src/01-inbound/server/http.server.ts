@@ -1,8 +1,6 @@
 import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import { Exception } from '../common/exception/exception'
-import { Prisma } from '@prisma/client'
 import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 

@@ -1,15 +1,20 @@
-import { ArticleComment } from "../02-domain/entity/article.comment.entity";
-import { PersistArticleComment } from "../03-outbound/repo/article.comment.repository";
+type Handler<T> = (event: T) => void;
 
-export const EventBus = () => {
-    const publish = (event: object) => {
-        console.log(event);
+export const ArticleCommentEventBus = () => {
+    let notifications: Handler<any> = () => { };
+
+    const subscribe = <T>(callback: Handler<T>) => {
+        notifications = callback;
     }
 
+    const publish = (event: object) => {
+        notifications(event);
+    }
+    
     return {
+        subscribe,
         publish
     }
 }
 
-
-export type EventBusType = ReturnType<typeof EventBus>;
+export type ArticleCommentEventBusType = ReturnType<typeof ArticleCommentEventBus>;

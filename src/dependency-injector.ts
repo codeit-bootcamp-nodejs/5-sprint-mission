@@ -1,4 +1,3 @@
-import { createHttpServer, HttpServerType } from "./server/server";
 import { createArticleController } from "./01-inbound/controllers/article.controller";
 import { createArticleService } from "./02-domain/service/article.service";
 import { PrismaClient } from '@prisma/client';
@@ -12,24 +11,18 @@ import { createProductCommentController } from "./01-inbound/controllers/product
 import { createArticleCommentRepository } from "./03-outbound/repo/article.comment.repository";
 import { createArticleCommentService } from "./02-domain/service/article.comment.service";
 import { createArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
-import { EventBus } from "./application/event.bus";
 import { createNotificationRepository } from "./03-outbound/repo/notification.repository";
 import { createUserService } from "./02-domain/service/user.service";
 import { createProductService } from "./02-domain/service/product.service";
 import { createProductCommentService } from "./02-domain/service/product.comment.service";
 import { createProductController } from "./01-inbound/controllers/product.controller";
 import { IBaseRepository } from "./02-domain/port/I.base.repository";
+import { createWsServer } from "./01-inbound/server/ws.server";
+import { createHttpServer } from "./01-inbound/server/http.server";
+import { ArticleCommentEventBus } from "./application/event.bus";
 
-export class DependencyInjector {
-    public readonly httpServer: HttpServerType;
-
-    constructor() {
-        const httpServer = this.inject();
-        this.httpServer = httpServer;
-    }
-
-
-    inject() {
+export const DependencyInjector = () => {
+    const inject = () => {
         const prisma = new PrismaClient();
 
         // Repository
@@ -52,14 +45,18 @@ export class DependencyInjector {
 
 
         // Application 
-        const eventBus = EventBus();
+        const articleCommentEventBus = ArticleCommentEventBus();
+        const eventBuses = {
+            articleComment: articleCommentEventBus
+        }
+
 
         // Service
         const userService = createUserService(repos, authenticator);
         const productService = createProductService(repos);
         const articleService = createArticleService(repos);
         const productCommentService = createProductCommentService(repos);
-        const articleCommentService = createArticleCommentService(repos, eventBus);
+        const articleCommentService = createArticleCommentService(repos, articleCommentEventBus);
 
 
 
@@ -78,6 +75,11 @@ export class DependencyInjector {
 
         // Server
         const httpServer = createHttpServer(controllers);
-        return httpServer;
+        const wsServer = createWsServer(eventBuses, authenticator);
+
+        return { httpServer, wsServer };
     }
+
+    const { httpServer, wsServer } = inject();
+    return { httpServer, wsServer };
 }
