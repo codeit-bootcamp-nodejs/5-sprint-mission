@@ -1,7 +1,7 @@
 import { NotificationType } from "@prisma/client";
 import { NewArticleComment } from "./article.comment.entity";
 
-export type PersistNotificationEntity = NotificationEntity & {
+export type PersistedNotificationEntity = NotificationEntity & {
     id: string;
     createdAt: Date;
 }
@@ -69,7 +69,7 @@ export class NotificationEntity {
             senderId: params.senderId,
             receiverId: params.receiverId,
             createdAt: params.createdAt
-        }) as PersistNotificationEntity
+        }) as PersistedNotificationEntity
     }
 
     get id() {

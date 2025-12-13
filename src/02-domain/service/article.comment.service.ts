@@ -4,7 +4,8 @@ import { ArticleCommentResDto } from "../../01-inbound/response/article.comment.
 import { ArticleComment } from "../entity/article.comment.entity";
 import { NotificationEntity } from "../entity/notification";
 import { IBaseRepository } from "../port/I.base.repository";
-import { ArticleCommentEventBusType } from "../../application/event.bus";
+import { ArticleCommentEventBusType } from "../../03-outbound/eventhandler/article.comment.event.bus";
+
 
 
 
@@ -29,13 +30,18 @@ export const createArticleCommentService = (
 
 
         // 댓글 알림 생성
+        if (userId == articleEntity.userId) { return }  // 자신의 글에 댓글 달았을때 알림 X
         const notificationEntity = NotificationEntity.createNew({
             type: NotificationType.ARTICLE_COMMENT,
             message: articleComment.content,
             read: false,
-            senderId: articleComment.userId,
+            senderId: userId,
             receiverId: articleEntity.userId
         })
+
+        console.log(userId);
+        console.log(articleEntity.userId);
+
         const notification = await repos.notification.create(notificationEntity);
         eventBus.publish(notification);
 
@@ -44,8 +50,8 @@ export const createArticleCommentService = (
     }
 
     const getArticleComments = async (articleId: string) => {
-        const articleCommentResDtos = await repos.articleComment.findArticleComments(articleId);
-        return articleCommentResDtos.map(dto => new ArticleCommentResDto(dto));
+        const articleComments = await repos.articleComment.findArticleComments(articleId);
+        return articleComments.map(dto => new ArticleCommentResDto(dto));
     }
 
     const updateArticleComment = async (dto: ArticleCommentDto) => {

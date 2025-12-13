@@ -11,8 +11,8 @@ export class ProductCommentResDto {
     userId
 
 
-    constructor(record: PersistedProductComment) {
-        const { id, productId, content, createdAt, updatedAt, userId } = record;
+    constructor(entity: PersistedProductComment) {
+        const { id, productId, content, createdAt, updatedAt, userId } = entity;
 
         this.id = id;
         this.productId = productId;

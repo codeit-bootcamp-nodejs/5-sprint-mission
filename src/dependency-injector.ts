@@ -19,7 +19,9 @@ import { createProductController } from "./01-inbound/controllers/product.contro
 import { IBaseRepository } from "./02-domain/port/I.base.repository";
 import { createWsServer } from "./01-inbound/server/ws.server";
 import { createHttpServer } from "./01-inbound/server/http.server";
-import { ArticleCommentEventBus } from "./application/event.bus";
+import { createNotificationController } from "./01-inbound/controllers/notification.controller";
+import { createNotificationService } from "./02-domain/service/notification.service";
+import { ArticleCommentEventBus } from "./03-outbound/eventhandler/article.comment.event.bus";
 
 export const DependencyInjector = () => {
     const inject = () => {
@@ -57,6 +59,7 @@ export const DependencyInjector = () => {
         const articleService = createArticleService(repos);
         const productCommentService = createProductCommentService(repos);
         const articleCommentService = createArticleCommentService(repos, articleCommentEventBus);
+        const notificationService = createNotificationService(repos);
 
 
 
@@ -66,10 +69,13 @@ export const DependencyInjector = () => {
         const articleController = createArticleController(articleService, authenticator);
         const productcommentController = createProductCommentController(productCommentService, authenticator);
         const articlecommentController = createArticleCommentController(articleCommentService, authenticator);
+        const notificationControler = createNotificationController(notificationService, authenticator);
+
         const controllers = [
             productController, articleController,
             userController, productcommentController,
-            articlecommentController
+            articlecommentController,
+            notificationControler
         ];
 
 

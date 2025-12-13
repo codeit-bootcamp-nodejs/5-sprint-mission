@@ -1,3 +1,5 @@
+import { PersistedNotificationEntity } from "../../02-domain/entity/notification";
+
 type Handler<T> = (event: T) => void;
 
 export const ArticleCommentEventBus = () => {
@@ -7,7 +9,7 @@ export const ArticleCommentEventBus = () => {
         notifications = callback;
     }
 
-    const publish = (event: object) => {
+    const publish = (event: PersistedNotificationEntity) => {
         notifications(event);
     }
     
