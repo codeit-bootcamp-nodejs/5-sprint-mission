@@ -1,24 +1,24 @@
 export class ProductTagVo {
-  private readonly _productId: string;
+  private readonly _name: string;
   private readonly _tagId: number
   constructor(attributes: {
-    productId: string;
     tagId: number;
+    name: string;
   }) {
-    this._productId = attributes.productId;
-    this._tagId = attributes.tagId
+    this._tagId = attributes.tagId;
+    this._name = attributes.name;
   }
 
   get tagId() {
     return this._tagId;
   }
-  get productId() {
-    return this._productId;
+  get name() {
+    return this._name;
   }
 
   static create(params: {
-    productId: string;
     tagId: number;
+    name: string;
   }): ProductTagVo {
     return new ProductTagVo(params);
   }

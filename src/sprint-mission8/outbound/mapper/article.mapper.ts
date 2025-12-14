@@ -1,35 +1,46 @@
-import { Article, ArticleLike } from "@prisma/client";
-import { ArticleEntity, PersistedArticleEntity } from "../../domain/entity/article.entity";
+import { Article } from "@prisma/client";
+import { ArticleEntity, NewArticleEntity, PersistArticleEntity } from "../../domain/entity/article.entity";
 
-interface ArticleWithLike extends Article {
-  ArticleLike?: ArticleLike[];
-}
+export type CreateArticleData = {
+  userId: string;
+  title: string;
+  content: string;
+  image?: string;
+};
+
+export type UpdateArticleData = {
+  title: string;
+  content: string;
+  image?: string;
+};
 
 export class ArticleMapper {
-  static toEntity(article: ArticleWithLike): PersistedArticleEntity {
-    return new ArticleEntity({
-      id: article.id,
-      userId: article.userId,
-      title: article.title,
-      content: article.content,
-      isLiked: article.ArticleLike?.[0]?.isLiked ?? false,
-      createdAt: article.createdAt,
-      updatedAt: article.updatedAt,
-    }) as PersistedArticleEntity;
-  }
-  static toPersistent(entity: ArticleEntity) {
+  static toCreateData(entity: NewArticleEntity): CreateArticleData {
     return {
       userId: entity.userId,
       title: entity.title,
       content: entity.content,
+      image: entity.image
     };
   }
-  static toPersistentForCreate(entity: PersistedArticleEntity) {
+
+  static toUpdateData(entity: PersistArticleEntity): UpdateArticleData {
     return {
+      title: entity.title,
+      content: entity.content,
+      image: entity.image
+    };
+  }
+
+  static toPersistEntity(entity: Article): PersistArticleEntity {
+    return ArticleEntity.createPersist({
+      id: entity.id,
       userId: entity.userId,
       title: entity.title,
       content: entity.content,
-    };
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt
+    });
   }
 
 }

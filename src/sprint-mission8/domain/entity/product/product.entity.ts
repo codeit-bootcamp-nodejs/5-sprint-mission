@@ -1,7 +1,7 @@
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { BaseEntity} from "../base.entity";
-import { ProductImageEntity } from "./product-image.entity";
+import { ProductImageVo } from "./product-image.vo";
 import { ProductTagVo } from "./product-tag.vo";
 
 export type NewProductEntity = Omit<
@@ -23,8 +23,8 @@ export class ProductEntity extends BaseEntity<string> {
   private _description : string;
   private _price : number;
 
-  private _tags: ProductTagVo[]  | undefined;
-  private _images: ProductImageEntity[]  | undefined;
+  private _tags: ProductTagVo[];
+  private _images: ProductImageVo[];
 
   constructor(attributes: {
     id?: string;
@@ -34,8 +34,8 @@ export class ProductEntity extends BaseEntity<string> {
     price: number;
     createdAt?: Date;
     updatedAt?: Date;
-    tags?: ProductTagVo[];
-    images?: ProductImageEntity[];
+    tags: ProductTagVo[];
+    images: ProductImageVo[];
   }) {
     super(attributes.id, attributes.createdAt, attributes.updatedAt );
     this._userId = attributes.userId;
@@ -43,6 +43,7 @@ export class ProductEntity extends BaseEntity<string> {
     this._description = attributes.description;
     this._price = attributes.price;
     this._tags = attributes.tags;
+    this._images = attributes.images
   }
 
   static createNew (params: {
@@ -51,7 +52,7 @@ export class ProductEntity extends BaseEntity<string> {
     description: string;
     price: number;
     tags: ProductTagVo[];
-    images: ProductImageEntity[];
+    images: ProductImageVo[];
   }): NewProductEntity {
     this.validateNameRule(params.name);
     this.validateDescriptionRule(params.description);
@@ -66,7 +67,7 @@ export class ProductEntity extends BaseEntity<string> {
     description: string;
     price: number;
     tags: ProductTagVo[];
-    images: ProductImageEntity[];
+    images: ProductImageVo[];
     createdAt: Date;
     updatedAt: Date;
   }): PersistProductEntity {
@@ -78,7 +79,7 @@ export class ProductEntity extends BaseEntity<string> {
     description?: string;
     price?: number;
     tags?: ProductTagVo[];
-    images?: ProductImageEntity[];
+    images?: ProductImageVo[];
   }): void {
     if (params.name) {
       ProductEntity.validateNameRule(params.name);
@@ -127,6 +128,9 @@ export class ProductEntity extends BaseEntity<string> {
   }
   get tags() {
     return this._tags;
+  }
+  get images() {
+    return this._images;
   }
   get userId() {
     return this._userId;

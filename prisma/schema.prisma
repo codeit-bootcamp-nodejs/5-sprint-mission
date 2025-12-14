@@ -90,12 +90,12 @@ model ProductTag {
 }
 
 model ProductImage {
-  id        Int      @id @default(autoincrement())
   productId String
   url       String
-  createdAt DateTime @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@id([productId])
 }
 
 model Article {

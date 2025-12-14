@@ -124,7 +124,9 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "닉네임이 너무 깁니다.",
   },
-
+  ZOD_FORM: {
+    statusCode: 400,
+  },
   // 필수 값 누락
   NAME_NOT_EXIST: {
     statusCode: 400,

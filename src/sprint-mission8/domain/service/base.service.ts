@@ -1,9 +1,13 @@
-import { IRepos } from "../../outbound/repos";
+import { IUtils } from "../../shared/util";
+import { IManagers } from "../port/managers.interface";
+import { IRepos } from "../port/repos.interface";
 
 export class BaseService {
-  protected _repos;
   
-  constructor(repos: IRepos) {
-    this._repos = repos;
+  constructor(
+    protected _repos: IRepos,
+    protected _managers: IManagers,
+    protected _utils: IUtils
+  ) {
   }
 }

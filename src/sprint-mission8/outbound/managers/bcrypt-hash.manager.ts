@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import { IConfigManager } from "../../shared/util/config.manager";
-import { IHashManager } from "../../domain/port/managers/i.hash.manager";
+import { IConfigUtil } from "../../shared/util/config.util";
+import { IHashManager } from "../../domain/port/managers/hash.manager.interface";
 
 export class BcryptHashManager implements IHashManager {
   private readonly _saltLevel;
 
-  constructor(configManager: IConfigManager) {
+  constructor(configManager: IConfigUtil) {
     this._saltLevel = configManager.getParsed().SALT_LEVEL;
   }
 

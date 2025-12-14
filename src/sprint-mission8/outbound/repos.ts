@@ -1,25 +1,22 @@
-import { PrismaClient } from "@prisma/client";
-import { ArticleRepo } from "./article.repo";
-import { CommentRepo } from "./comment.repo";
-import { ProductRepo } from "./product.repo";
-import { UserRepo } from "./user.repo";
-import { IUserRepo } from "../domain/port/repo/i.user.repo";
-import { IProductRepo } from "../domain/port/repo/i.product.repo";
-import { IArticleRepo } from "../domain/port/repo/i.article.repo";
-import { ICommentRepo } from "../domain/port/repo/i.comment.repo";
+import { IUserRepo } from "../domain/port/repo/user.repo.interface";
+import { IProductRepo } from "../domain/port/repo/product/product.repo.interface";
+import { IProductCommentRepo } from "../domain/port/repo/product/product-comment.repo.interface";
+import { IArticleCommentRepo } from "../domain/port/repo/article/article-comment.repo.interface";
+import { IRepos } from "../domain/port/repos.interface";
+import { IArticleRepo } from "../domain/port/repo/article/article.repo.interface";
+import { IUserLikesArticleRepo } from "../domain/port/repo/like/user-likes-article.repo.interface";
+import { ITagRepo } from "../domain/port/repo/tag.repo.interface";
+import { IUserLikesProductRepo } from "../domain/port/repo/like/user-likes-product.repo.interface";
 
-const prisma = new PrismaClient
-
-export interface IRepos {
-  user: IUserRepo;
-  product: IProductRepo;
-  article: IArticleRepo;
-  comment: ICommentRepo;
+export class Repos implements IRepos {
+  constructor(
+    public readonly user: IUserRepo,
+    public readonly article: IArticleRepo,
+    public readonly articleComment: IArticleCommentRepo,
+    public readonly product: IProductRepo,
+    public readonly productComment: IProductCommentRepo,
+    public readonly tag: ITagRepo,
+    public readonly userLikesProduct: IUserLikesProductRepo,
+    public readonly userLikesArticle: IUserLikesArticleRepo,
+  ) { }
 }
-
-export const repos: IRepos = {
-  user: new UserRepo(prisma),
-  product: new ProductRepo(prisma),
-  article: new ArticleRepo(prisma),
-  comment: new CommentRepo(prisma),
-};

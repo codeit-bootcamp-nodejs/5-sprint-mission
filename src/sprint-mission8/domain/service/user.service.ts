@@ -1,97 +1,45 @@
-import { IRepos } from "../../outbound/repos";
+import { IUserService } from "../../inbound/port/services/user.service.interface";
+import { SignUpDto, UpdateDto, UpdatePasswordDto, UserLikeListDto, UserProductsDto } from "../../inbound/requests/user/user.req.schemas";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Exception } from "../../shared/exception/exception";
-import { IManagers } from "../../shared/util/managers";
-import { BaseQueryType, Sort, UserKeys, UserSort } from "../../types/query";
-import { ArticleEntity } from "../entity/article.entity";
-import { ProductEntity } from "../entity/product/product.entity";
-import { PersistedUserEntity, UserEntity } from "../entity/user.entity";
+import { Sort, UserKeys } from "../../types/query";
+import { PersistArticleEntity } from "../entity/article.entity";
+import { PersistProductEntity } from "../entity/product/product.entity";
+import { PersistUserEntity, UserEntity } from "../entity/user.entity";
 import { BaseService } from "./base.service";
 
-export interface IUserService {
-  signUpUser: ({ email, nickname, image, password }: SignUpUserParams) => Promise<PersistedUserEntity>;
-  getUser: ({ id }: GetUserParams) => Promise<PersistedUserEntity>;
-  getUserProducts: ({ id, offset, limit, sort }: BaseUserQueryType) => Promise<{
-    user: PersistedUserEntity;
-    products: ProductEntity[];
-  }>;
-  getUserLikeProducts: ({ id, offset, limit }: BaseLikeQueryType) => Promise<ProductEntity[]>;
-  getUserLikeArticles: ({ id, offset, limit }: BaseLikeQueryType) => Promise<ArticleEntity[]>;
-  updateUser: ({ id, email, nickname, image }: UpdateUserParams) => Promise<PersistedUserEntity>;
-  updatePasswordUser: ({ id, password, updatePassword }: UpdatePasswordUserParams) => Promise<PersistedUserEntity>;
-  deleteUser: ({ id }: DeleteUserParams) => Promise<void>;
-}
-
-type BaseUserQueryType = BaseQueryType<UserSort> & {
-  id: string;
-};
-type BaseLikeQueryType = BaseQueryType<UserSort> & {
-  id: string;
-};
-type BaseUserParamsType = {
-  id: string;
-  email: string;
-  nickname: string;
-  image: string;
-  password: string;
-  updatePassword: string;
-}
-type SignUpUserParams = Omit<BaseUserParamsType, "id" | "updatePassword">;
-type GetUserParams = Pick<BaseUserParamsType, "id">;
-type UpdateUserParams = {
-  id: string;
-  email?: string;
-  nickname?: string;
-  image?: string;
-};
-type UpdatePasswordUserParams = Pick<BaseUserParamsType, "id" | "password" | "updatePassword">;
-type DeleteUserParams = Pick<BaseUserParamsType, 'id'>;
-
 export class UserService extends BaseService implements IUserService {
-  private _hashManager;
 
-  constructor(repos: IRepos, managers: IManagers) {
-    super(repos)
-    this._hashManager = managers.hash;
-  }
-
-  signUpUser = async ({ email, nickname, image, password }: SignUpUserParams) => {
-    const foundUser = await this._repos.user.findUserByEmail(email);
+  async signUpUser(dto: SignUpDto): Promise<PersistUserEntity> {
+    const foundUser = await this._repos.user.findUserByEmail(dto.email);
 
     if (foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_EXIST });
     }
 
-    const hashPassword = await this._hashManager.hashingPassword(password);
+    const newUser = UserEntity.createNew(dto);
 
-    const newUser = UserEntity.create({
-      email,
-      nickname,
-      image,
-      password: hashPassword,
-    });
-    if (!newUser.email || !newUser.nickname || !newUser.password) {
-      throw new Exception({ message: "Required fields are missing"});
-    }
     const createdUser = await this._repos.user.create(newUser);
 
     return createdUser;
   };
-  getUser = async ({ id }: GetUserParams) => {
+
+  async getUser(id: string): Promise<PersistUserEntity> {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
     return foundUser;
   };
-  getUserProducts = async ({ id, offset, limit, sort }: BaseUserQueryType) => {
+
+  async getUserProducts(dto: UserProductsDto): Promise<PersistProductEntity[]> {
     const orderBy: { field: UserKeys, sort: Sort } =
-      sort === "recent"
+      dto.sort === "recent"
         ? {
           field: "updatedAt",
           sort: "desc"
         }
-        : sort === "email-asc"
+        : dto.sort === "email-asc"
           ? {
             field: "email",
             sort: "asc"
@@ -101,46 +49,48 @@ export class UserService extends BaseService implements IUserService {
             sort: "desc"
           };
 
-    if (limit > 20) {
+    if (dto.limit > 20) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
     const productTotalCount = await this._repos.product.count();
-    if (productTotalCount < limit) {
+    if (productTotalCount < dto.limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: productTotalCount });
     }
 
-    const foundUser = await this._repos.user.findUserById(id);
+    const foundUser = await this._repos.user.findUserById(dto.id);
+
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserProducts = await this._repos.user.findUserProducts({
-      id,
-      offset,
-      limit,
+    const foundUserProducts = await this._repos.user.findUserProducts(
+      dto.id,
+      dto.offset,
+      dto.limit,
       orderBy,
-    });
+    );
     if (!foundUserProducts) {
       throw new Exception({ info: EXCEPTIONS.USER_PRODUCTS_NOT_EXIST });
     }
 
-    return { user: foundUser, products: foundUserProducts };
+    return foundUserProducts;
   };
-  getUserLikeProducts = async ({ id, offset = 0, limit }: BaseLikeQueryType) => {
-    if (limit > 20) {
+
+  async getUserLikeProducts(dto: UserLikeListDto): Promise<PersistProductEntity[]> {
+    if (dto.limit > 20) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const foundUser = await this._repos.user.findUserById(id);
+    const foundUser = await this._repos.user.findUserById(dto.userId);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserLikeProducts = await this._repos.user.findUserLikeProducts(
-      id,
-      offset,
-      limit,
+    const foundUserLikeProducts = await this._repos.product.findUserLikeProducts(
+      dto.userId,
+      dto.offset,
+      dto.limit,
     );
     if (!foundUserLikeProducts) {
       throw new Exception({ info: EXCEPTIONS.USER_LIKEPRODUCTS_NOT_EXIST });
@@ -148,20 +98,21 @@ export class UserService extends BaseService implements IUserService {
 
     return foundUserLikeProducts;
   };
-  getUserLikeArticles = async ({ id, offset = 0, limit }: BaseLikeQueryType) => {
-    if (limit > 20) {
+
+  async getUserLikeArticles(dto: UserLikeListDto): Promise<PersistArticleEntity[]> {
+    if (dto.limit > 20) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const foundUser = await this._repos.user.findUserById(id);
+    const foundUser = await this._repos.user.findUserById(dto.userId);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserLikeArticles = await this._repos.user.findUserLikeArticles(
-      id,
-      offset,
-      limit,
+    const foundUserLikeArticles = await this._repos.article.findUserLikeArticles(
+      dto.userId,
+      dto.offset,
+      dto.limit,
     );
     if (!foundUserLikeArticles) {
       throw new Exception({ info: EXCEPTIONS.USER_LIKEARTICLES_NOT_EXIST });
@@ -169,45 +120,41 @@ export class UserService extends BaseService implements IUserService {
 
     return foundUserLikeArticles;
   };
-  updateUser = async ({ id, email, nickname, image }: UpdateUserParams) => {
-    const foundUser = await this._repos.user.findUserById(id);
+
+  async updateUser(dto: UpdateDto): Promise<PersistUserEntity> {
+    const foundUser = await this._repos.user.findUserById(dto.id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const user = UserEntity.create({ id, email, nickname, image });
-    const updateUser = await this._repos.user.update(user);
+    foundUser.update(dto);
+
+    const updateUser = await this._repos.user.update(foundUser);
 
     return updateUser;
   };
-  updatePasswordUser = async ({ id, password, updatePassword }: UpdatePasswordUserParams) => {
-    const foundUser = await this._repos.user.findUserById(id);
+
+  async updatePasswordUser(dto: UpdatePasswordDto): Promise<PersistUserEntity> {
+    const foundUser = await this._repos.user.findUserById(dto.id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const isPasswordValid = await this._hashManager.verifyPassword(
-      password,
-      foundUser.password,
-    );
-    if (!isPasswordValid) {
+    if (!(await foundUser.isPasswordMatch(dto.password, this._managers.hash))) {
       throw new Exception({ info: EXCEPTIONS.PASSWORD_MISMATCH });
     }
 
-    const hashingUpdatePassword =
-      await this._hashManager.hashingPassword(updatePassword);
-    const user = UserEntity.create({ id, password: hashingUpdatePassword });
-    const updatedPassword = await this._repos.user.updatePassword(user);
+    await foundUser.updatePassword(dto.updatePassword, this._managers.hash);
 
-    return updatedPassword;
+    return await this._repos.user.update(foundUser)
   };
-  deleteUser = async ({ id }: DeleteUserParams) => {
+
+  async deleteUser(id: string): Promise<void> {
     const foundUser = await this._repos.user.findUserById(id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
-    const deletedUser = await this._repos.user.delete(id);
 
-    return deletedUser;
+    await this._repos.user.delete(id);
   };
 }

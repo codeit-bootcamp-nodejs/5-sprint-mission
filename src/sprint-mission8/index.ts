@@ -1,6 +1,6 @@
-import { DepInjector } from "./dep-injector";
+import { Injector } from "./injector";
 
 
-const { server } = new DepInjector();
+const { server } = new Injector();
 
 server.start();

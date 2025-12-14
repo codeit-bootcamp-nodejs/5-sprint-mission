@@ -1,6 +1,6 @@
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Exception } from "../../shared/exception/exception";
-import { IHashManager } from "../port/managers/i.hash.manager";
+import { IHashManager } from "../port/managers/hash.manager.interface";
 import { BaseEntity } from "./base.entity";
 
 
@@ -28,7 +28,7 @@ export class UserEntity extends BaseEntity<string> {
     nickname: string;
     image?: string;
     password: string;
-    refreshToken: string;
+    refreshToken?: string;
     createdAt?: Date;
     updatedAt?: Date;
   }) {
@@ -45,9 +45,6 @@ export class UserEntity extends BaseEntity<string> {
     nickname: string;
     image?: string;
     password: string;
-    refreshToken: string;
-    createdAt: Date;
-    updatedAt: Date;
   }): PersistUserEntity {
     return new UserEntity(params) as PersistUserEntity;
   }
@@ -58,15 +55,17 @@ export class UserEntity extends BaseEntity<string> {
     nickname: string;
     image?: string;
     password: string;
-    refreshToken: string;
-  }): NewUserEntity {
+    refreshToken?: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }): PersistUserEntity {
     if (params.email) {
       this.validateEmailRule(params.email);
     }
     if (params.nickname) {
       this.validateEmailRule(params.nickname);
     }
-    return new UserEntity(params) as NewUserEntity;
+    return new UserEntity(params) as PersistUserEntity;
   }
 
   update(params: {
@@ -121,7 +120,7 @@ export class UserEntity extends BaseEntity<string> {
   deleteRefreshToken(): void {
     this._refreshToken = undefined;
   }
-
+  
   static validateEmailRule(email: string) {
     if (email.length > 30) {
       throw new Exception({ info: EXCEPTIONS.EMAIL_TOO_LONG });

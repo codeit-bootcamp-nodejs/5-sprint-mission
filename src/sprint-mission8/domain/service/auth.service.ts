@@ -1,105 +1,67 @@
-import { IRepos } from "../../outbound/repos";
+import { IAuthService } from "../../inbound/port/services/auth.service.interface";
+import { SignInDto } from "../../inbound/requests/user/user.req.schemas";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Exception } from "../../shared/exception/exception";
-import { IManagers } from "../../shared/util/managers";
+import { PersistUserEntity } from "../entity/user.entity";
 import { BaseService } from "./base.service";
 
-export interface IAuthService {
-  signInUser: ({ email, password }: {
-    email: string;
-    password: string;
-  }) => Promise<{
-    accessToken: string;
-    authenticatedUser: PersistedUserEntity | null;
-  }>;
-  signOutUser: ({ id }: {
-    id: string;
-  }) => Promise<void>;
-  generateTokens: (userId: string) => Promise<{
-    accessToken: string;
-    authenticatedUser: PersistedUserEntity | null;
-  }>;
-  refreshTokens: (refreshToken: string) => Promise<{
-    accessToken: string;
-    user: PersistedUserEntity | null;
-  }>;
+export type AuthenticatedUserData = {
+  accessToken: string;
+  foundUser: PersistUserEntity
 }
-export class AuthService extends BaseService implements IAuthService{
-  private _tokenManager;
-  private _hashManager;
 
-  constructor(repos: IRepos, managers: IManagers) {
-    super(repos);
-    this._tokenManager = managers.token;
-    this._hashManager = managers.hash
-  }
-
-  signInUser = async ({ email, password }: {
-    email: string;
-    password: string;
-  }) => {
-    const user = await this._repos.user.findUserByEmail(email);
-    if (!user) {
+export class AuthService extends BaseService implements IAuthService {
+  async signInUser(dto: SignInDto): Promise<AuthenticatedUserData> {
+    const foundUser = await this._repos.user.findUserByEmail(dto.email);
+    if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
-    const isPasswordMatch = await this._hashManager.verifyPassword(
-      password,
-      user.password,
-    );
-    if (!isPasswordMatch) {
+
+    if (!(await foundUser.isPasswordMatch(dto.password, this._managers.hash))) {
       throw new Exception({ info: EXCEPTIONS.PASSWORD_MISMATCH });
     }
-    const { accessToken, authenticatedUser } = await this.generateTokens(user.id);
 
-    return { accessToken, authenticatedUser };
+    const refreshToken = this._utils.token.generateRefreshToken({ userId: foundUser.id });
+
+    foundUser.updateRefreshToken(refreshToken, this._managers.hash);
+    await this._repos.user.update(foundUser);
+
+    const accessToken = this._utils.token.generateAccessToken({ userId: foundUser.id });
+
+    return { accessToken, foundUser };
   };
 
-  signOutUser = async ({ id }: { id: string; }) => {
-    const foundUser = await this._repos.user.findUserByEmail(id);
-
-    if (foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_EXIST });
-    }
-
-    const createdUser = await this._repos.user.DeleteRefreshToken(id, null);
-  };
-
-  //다 만료 시에는 로그인 페이지로 이동하게 프론트엔트 코드를 구현하면 될 것 같다
-  generateTokens = async (userId: string) => {
-    const { accessToken, refreshToken } = this._tokenManager.generate({
-      userId,
-    });
-    const authenticatedUser = await this._repos.user.generate(
-      userId,
-      refreshToken,
-    );
-    return { accessToken, authenticatedUser };
-  };
-
-  refreshTokens = async (refreshToken: string) => {
-    // 엑세스 만료 시
-    const decoded = this._tokenManager.verify<{ userId: string }>(refreshToken);
-    const foundUser =
-      await this._repos.user.findUserByRefreshToken(refreshToken);
+  async signOutUser(id: string): Promise<void> {
+    const foundUser = await this._repos.user.findUserById(id);
 
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.REFRESHTOKEN_NOT_EXIST });
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    if (foundUser.id !== decoded.userId) {
-      throw new Exception({ info: EXCEPTIONS.REFRESHTOKEN_MISMATCH });
+    foundUser.deleteRefreshToken();
+    await this._repos.user.update(foundUser);
+  };
+
+  async refreshTokens(refreshToken: string): Promise<AuthenticatedUserData> {
+    const { userId } = this._utils.token.verifyToken(refreshToken);
+
+    const foundUser =
+      await this._repos.user.findUserById(userId);
+
+    if (!foundUser) {
+      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const { accessToken, refreshToken: updatedrefreshToken } =
-      this._tokenManager.generate({
-        userId: decoded.userId,
-      });
+    if (!(await foundUser.isRefreshTokenMatch(refreshToken, this._managers.hash))) {
+      throw new Exception({ info: EXCEPTIONS.INVALID_AUTH });
+    }
 
-    const user = await this._repos.user.generate(
-      decoded.userId,
-      updatedrefreshToken,
-    );
+    const newRefreshToken = this._utils.token.generateRefreshToken({ userId });
+    await foundUser.updateRefreshToken(newRefreshToken, this._managers.hash);
+    await this._repos.user.update(foundUser);
 
-    return { accessToken, user };
+    const newAccessToken = this._utils.token.generateAccessToken({ userId });
+
+    return { accessToken: newAccessToken, foundUser };
   };
 }

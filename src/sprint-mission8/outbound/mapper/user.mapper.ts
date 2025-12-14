@@ -1,9 +1,41 @@
 import { User } from "@prisma/client";
-import { PersistedUserEntity, UserEntity } from "../../domain/entity/user.entity";
+import { NewUserEntity, PersistUserEntity, UserEntity } from "../../domain/entity/user.entity";
+
+export type CreateUserData = {
+  email: string;
+  nickname: string;
+  image: string | undefined;
+  password: string;
+};
+
+export type UpdateUserData = {
+  nickname: string;
+  image: string | undefined;
+  password: string;
+  refreshToken?: string;
+};
 
 export class UserMapper {
-  static toEntity(entity: User) : PersistedUserEntity {
-    return new UserEntity({
+  static toCreateData(entity: NewUserEntity) : CreateUserData {
+    return {
+      email: entity.email,
+      nickname: entity.nickname,
+      image: entity.image ?? undefined,
+      password: entity.password,
+    };
+  }
+
+  static toUpdateData(entity: PersistUserEntity) : UpdateUserData {
+    return {
+      nickname: entity.nickname,
+      image: entity.image ?? undefined,
+      password: entity.password,
+      refreshToken: entity.refreshToken
+    };
+  }
+
+  static toPersistEntity(entity: User) {
+    return UserEntity.createPersist({
       id: entity.id,
       email: entity.email,
       nickname: entity.nickname,
@@ -12,15 +44,6 @@ export class UserMapper {
       refreshToken: entity.refreshToken ?? undefined,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
-    }) as PersistedUserEntity;
-  }
-  static toPersistent(entity: UserEntity) {
-    return {
-      email: entity.email!,
-      nickname: entity.nickname!,
-      image: entity.image,
-      password: entity.password!,
-      refreshToken: entity.refreshToken,
-    };
+    });
   }
 }
