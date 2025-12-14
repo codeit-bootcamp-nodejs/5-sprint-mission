@@ -16,6 +16,8 @@ datasource db {
 enum NotificationType {
   ARTICLE_COMMENT
   PRODUCT_COMMENT
+  PRODUCT_LIKE
+  PRODUCT_PRICE_CHANGE
 }
 
 model Notification {
@@ -42,12 +44,11 @@ model Product {
   updatedAt      DateTime         @updatedAt
   User           User             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId         String
-  productLikes        ProductLikes[]
+  productLikes        ProductLike[]
   ProductComment ProductComment[]
 }
 
-model ProductLikes {
-  isLiked   Boolean @default(false)
+model ProductLike {
   userId    String
   productId String
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -55,6 +56,7 @@ model ProductLikes {
 
   @@id([userId, productId])
   @@index([productId])
+	@@map("ProductLikes")
 }
 
 model Article {
@@ -104,7 +106,7 @@ model User {
   article               Article[]
   articleComment        ArticleComment[]
   ProductComment        ProductComment[]
-  productLikes          ProductLikes[]
+  productLikes          ProductLike[]
   NotificationsSent     Notification[]   @relation("NotificationSender")
   NotificationsReceived Notification[]   @relation("NotificationReceiver")
 }

@@ -1,69 +1,76 @@
 import { Authenticator } from "../../external/authenticator";
 import { IBaseRepository } from "../port/I.base.repository";
-import { ProductCommentRequest } from "../../01-inbound/request/req.validator";
 import { ProductComment } from "../entity/product.comment.entity";
 import { ProductCommentResDto } from "../../01-inbound/response/product.comment.response";
-
-
-
-
+import { ProductCommentDto } from "../../01-inbound/request/product.comment.request";
+import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
 
 export const createProductCommentService = (repos: IBaseRepository) => {
+  const createProductComment = async (dto: ProductCommentDto) => {
+    const { content, productId, userId } = dto;
+    const productCommentEntity = ProductComment.createNew({
+      productId,
+      content,
+      userId,
+    });
+    const productComment =
+      await repos.productComment.save(productCommentEntity);
+    return ProductCommentResDto(productComment);
+  };
 
+  const getProductComments = async (productId: string) => {
+    const productComments = await repos.productComment.findAll(productId);
+    return productComments.map((productComment) => {
+      return ProductCommentResDto(productComment);
+    });
+  };
 
-
-
-    const createProductComment = async (dto: ProductCommentRequest) => {
-        const { content, productId, userId } = dto;
-        const productCommentEntity = ProductComment.createNew({ productId, content, userId });
-        const productComment = await repos.productComment.save(productCommentEntity);
-
-        return new ProductCommentResDto(productComment);
+  const updateProductComment = async (dto: ProductCommentDto) => {
+    const { content, productId, commentId, userId } = dto;
+    if (!commentId) {
+      throw BusinessException({
+        type: BusinessExceptionType.WRONG_URL,
+      });
     }
 
-    const getProductComments = async (productId: string) => {
-        const productComments = await repos.productComment.findProductComments(productId);
-
-        return productComments.map((productComment) => {
-            return new ProductCommentResDto(productComment);
-        })
+    // 기존 댓글 조회
+    const foundProductComment = await repos.productComment.findById(commentId);
+    if (!foundProductComment) {
+      throw BusinessException({
+        type: BusinessExceptionType.DATA_NOT_FOUND,
+      });
+    }
+    if (foundProductComment.userId !== userId) {
+      throw BusinessException({
+        type: BusinessExceptionType.UNAUTORIZED_REQUEST,
+      });
     }
 
-    const updateProductComment = async (dto: ProductCommentRequest) => {
-        const { content, productId, commentId, userId } = dto;
-        if (!commentId) {
-            throw new Error('Comment ID is required for updating a comment.');
-        }
+    // 댓글 수정
+    const productComment = ProductComment.createNew({
+      productId,
+      content,
+      userId,
+    });
+    const productCommentEntity = await repos.productComment.update(
+      foundProductComment,
+      productComment,
+    );
+    return ProductCommentResDto(productCommentEntity);
+  };
 
-        const foundProductComment = await repos.productComment.findProductComment(commentId);
-        if (!foundProductComment) {
-            throw new Error('Product comment not found.');
-        }
+  const deleteProductComments = async (commentId: string) => {
+    await repos.productComment.remove(commentId);
+  };
 
-        if (foundProductComment.userId !== userId) {
-            throw new Error('Unauthorized: You can only update your own comments.');
-        }
+  return {
+    createProductComment,
+    getProductComments,
+    updateProductComment,
+    deleteProductComments,
+  };
+};
 
-        const newProductComment = ProductComment.createNew({
-            productId,
-            content,
-            userId
-        }); 
-
-        const productCommentEntity = await repos.productComment.update(foundProductComment, newProductComment);
-        return new ProductCommentResDto(productCommentEntity);
-    }
-
-    const deleteProductComments = async (commentId: string) => {
-        await repos.productComment.deleteProductComment(commentId);
-    }
-
-    return {
-        createProductComment,
-        getProductComments,
-        updateProductComment,
-        deleteProductComments
-    }
-}
-
-export type ProductCommentServiceType = ReturnType<typeof createProductCommentService>;
+export type ProductCommentServiceType = ReturnType<
+  typeof createProductCommentService
+>;

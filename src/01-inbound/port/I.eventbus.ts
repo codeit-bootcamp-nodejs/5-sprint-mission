@@ -1,5 +1,5 @@
-import { ArticleCommentEventBusType } from "../../03-outbound/eventhandler/event.bus";
+import { NotificationEventBusType } from "../../03-outbound/eventhandler/notification.event.bus";
 
 export interface IEventBus {
-    articleComment : ArticleCommentEventBusType
+  notification: NotificationEventBusType;
 }
