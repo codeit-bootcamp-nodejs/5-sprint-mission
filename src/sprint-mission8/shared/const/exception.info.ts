@@ -276,4 +276,8 @@ export const EXCEPTIONS = {
     statusCode: 403,
     message: "해당 댓글에 대한 권한이 없습니다.",
   },
+  CORS_ORIGIN_NOT_ALLOWED: {
+    statusCode: 403,
+    message: "허용되지 않은 도메인으로 연결을 시도했습니다.",
+  },
 };

@@ -1,4 +1,5 @@
 import express, { Application, NextFunction, Request, Response } from "express";
+import http, { Server as DefaultHttpServer } from "http";
 import cors from "cors";
 import morgan from "morgan";
 import { Routers } from "../routers";
@@ -7,12 +8,14 @@ import { Exception } from "../../shared/exception/exception";
 
 export class HttpServer {
   public readonly app: Application;
+  public readonly defaultHttpServer: DefaultHttpServer;
 
   constructor(
     public readonly routers: Routers,
     public readonly utils: IUtils
   ) {
     this.app = express();
+    this.defaultHttpServer = http.createServer(this.app);
   }
 
   listen = () => {

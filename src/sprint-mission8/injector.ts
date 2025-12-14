@@ -37,6 +37,8 @@ import { Controllers } from "./inbound/controllers";
 import { Routers } from "./inbound/routers";
 import { HttpServer } from "./inbound/servers/http-server";
 import { WsServer } from "./inbound/servers/ws-server";
+import { Gateways } from "./inbound/gateways";
+import { NotificationGateway } from "./inbound/gataways/notification.gateway";
 
 export class Injector {
   public readonly httpSever: HttpServer;
@@ -126,8 +128,13 @@ export class Injector {
       imageRouter
     );
     
+    const notificationGateway = new NotificationGateway(services, utils);
+    const gateways = new Gateways(
+      notificationGateway
+    );
+
     const httpServer = new HttpServer(routers, utils);
-    const wsServer = new WsServer();
+    const wsServer = new WsServer(httpServer.defaultHttpServer, gateways, utils);
     
     return {
       httpServer,
