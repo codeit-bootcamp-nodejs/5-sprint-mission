@@ -23,6 +23,7 @@ import { createNotificationController } from "./01-inbound/controllers/notificat
 import { createNotificationService } from "./02-domain/service/notification.service";
 import { createProductLikeRepository } from "./03-outbound/repository/product.like.repository";
 import { NotificationEventBus } from "./03-outbound/eventhandler/notification.event.bus";
+import { IEventBus } from "./01-inbound/port/I.eventbus";
 
 export const DependencyInjector = () => {
   const inject = () => {
@@ -53,20 +54,20 @@ export const DependencyInjector = () => {
 
     // Event buses
     const notificationEventBus = NotificationEventBus();
-    const eventBuses = {
+    const eventBuses: IEventBus = {
       notification: notificationEventBus,
     };
 
 
     // Service
     const userService = createUserService(repos, authenticator);
-    const productService = createProductService(repos, eventBuses);
+    const notificationService = createNotificationService(repos, eventBuses);
+    const productService = createProductService(repos,notificationService);
     const articleService = createArticleService(repos);
     const productCommentService = createProductCommentService(repos);
-    const notificationService = createNotificationService(repos);
     const articleCommentService = createArticleCommentService(
       repos,
-      eventBuses,
+      notificationService,
     );
 
 

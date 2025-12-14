@@ -6,10 +6,11 @@ import { ArticleCommentDto } from "../../01-inbound/request/article.comment.requ
 import { IEventBus } from "../../01-inbound/port/I.eventbus";
 import { ArticleComment } from "../entity/article.comment";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { NotificationServiceType } from "./notification.service";
 
 export const createArticleCommentService = (
   repos: IBaseRepository,
-  eventBus: IEventBus,
+  notificationService: NotificationServiceType
 ) => {
   const createArticleComment = async (dto: ArticleCommentDto) => {
     const { articleId, userId, content } = dto;
@@ -31,17 +32,16 @@ export const createArticleCommentService = (
     const articleComment =
       await repos.articleComment.save(articleCommentEntity);
 
+
     // 댓글 알림 생성 (자신의 글이 아닐 때만 알림)
     if (userId !== articleEntity.userId) {
-      const notificationEntity = Notification.createNew({
+      notificationService.createNotification({
         type: NotificationType.ARTICLE_COMMENT,
         message: "내가 판매 신청한 매물에 새로운 댓글이 달렸습니다.",
         read: false,
         senderId: userId,
         receiverId: articleEntity.userId,
       });
-      const notification = await repos.notification.create(notificationEntity);
-      eventBus.notification.publish(notification);
     }
 
     return ArticleCommentResDto(articleComment);

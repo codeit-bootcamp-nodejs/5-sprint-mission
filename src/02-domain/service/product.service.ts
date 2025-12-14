@@ -7,10 +7,11 @@ import { PersistedProduct, Product } from "../entity/product";
 import { IBaseRepository } from "../port/I.base.repository";
 import { QueryType } from "../../01-inbound/request/query.request";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { NotificationServiceType } from "./notification.service";
 
 export const createProductService = (
   repos: IBaseRepository,
-  eventBus: IEventBus,
+  notificationService: NotificationServiceType,
 ) => {
   const createProduct = async (dto: ProductDto) => {
     const productEntity = Product.createNew(dto);
@@ -66,22 +67,21 @@ export const createProductService = (
 
     // (좋아요를 누른 모든 유저에게) 가격 변경 알림 전송
     if (productLikes && foundProduct.price !== updatedProduct.price) {
-      productLikes.map(async (productLike) => {
-        if (productLike.userId !== foundProduct.userId) {
-          const notificationEntity = Notification.createNew({
-            type: NotificationType.PRODUCT_PRICE_CHANGE,
-            message: `내가 좋아요한 상품 가격이 변동했습니다. (${foundProduct.price} => ${updatedProduct.price})`,
-            read: false,
-            senderId: userId,
-            receiverId: productLike.userId,
-          });
-          const notification =
-            await repos.notification.create(notificationEntity);
-          eventBus.notification.publish(notification);
-        }
-      });
+      await Promise.all(  // 비동기 실패 누락 처리
+        productLikes
+          .filter((like) => like.userId !== foundProduct.userId)
+          .map(async (like) => {
+            notificationService.createNotification({
+              type: NotificationType.PRODUCT_PRICE_CHANGE,
+              message: `가격 변경: ${foundProduct.price} → ${updatedProduct.price}`,
+              read: false,
+              senderId: userId,
+              receiverId: like.userId,
+            });
+          }));
     }
     return ProductResDto(updatedProduct);
+
   };
 
   const deleteProduct = async (id: string, userId: string) => {
@@ -116,14 +116,13 @@ export const createProductService = (
 
     // 좋아요 알림 생성 (자신의 상품이 아닐 때만 알림)
     if (productLike && productLike.userId !== product.userId) {
-      const notificationEntity = Notification.createNew({
+      notificationService.createNotification({
         type: NotificationType.PRODUCT_LIKE,
         message: `${userId}님이 좋아요를 눌렀습니다!`,
         read: false,
         senderId: userId,
         receiverId: product.userId,
       });
-      eventBus.notification.publish(notificationEntity);
       return true;
     } else {
       return false;
@@ -138,6 +137,8 @@ export const createProductService = (
     deleteProduct,
     likeProduct,
   };
-};
+}
+
+
 
 export type ProductServiceType = ReturnType<typeof createProductService>;
