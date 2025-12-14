@@ -1,15 +1,17 @@
-import { ArticleReqDto, QueryType } from "../../../01-inbound/request/req.validator"
-import { Article, NewArticleEntity, PersistArticleEntity } from "../../entity/article"
+import { QueryType } from "../../../01-inbound/request/req.validator";
+import { NewArticle, PersistedArticle } from "../../entity/article";
 
 export interface IArticleRepository {
+  save(entity: NewArticle): Promise<PersistedArticle>;
 
-    findAll(query: QueryType): Promise<PersistArticleEntity[]>
+  findAll(query: QueryType): Promise<PersistedArticle[]>;
 
-    findById(id: string): Promise<PersistArticleEntity>
+  findById(id: string): Promise<PersistedArticle>;
 
-    save(entity: NewArticleEntity): Promise<PersistArticleEntity>
+  update(
+    foundEntity: PersistedArticle,
+    newEntity: NewArticle,
+  ): Promise<PersistedArticle>;
 
-    updateArticle(foundEntity: PersistArticleEntity, newEntity: NewArticleEntity): Promise<PersistArticleEntity>
-
-    deleteById(id: string): void
+  remove(id: string): void;
 }

@@ -1,20 +1,19 @@
-import { productCommentBodySchema } from "../../01-inbound/request/req.validator";
 import { PersistedProduct, Product } from "../../02-domain/entity/product";
-import { PersistProduct } from "../repo/product.repository";
+import { PersistProduct } from "../repository/product.repository";
 
-export class ProductMapper {
-    static toPersist(product: PersistProduct): PersistedProduct {
-        return new Product({
-            id: product.id,
-            name: product.name, 
-            description: product.description,
-            price: product.price,
-            tags: product.tags, 
-            userId: product.userId,
-            isLiked: product.isLiked,
-            imageUrl: product.imageUrl ?? undefined,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-        }) as PersistedProduct;
-    }
-}
+export const ProductMapper = {
+  toPersist: (product: PersistProduct): PersistedProduct => {
+    return Product.createPersist({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      tags: product.tags,
+      userId: product.userId,
+      imageUrl: product.imageUrl ?? undefined,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+      likeCount: product.likeCount,
+    }) as PersistedProduct;
+  },
+};

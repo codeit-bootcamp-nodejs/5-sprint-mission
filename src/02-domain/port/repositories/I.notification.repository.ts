@@ -1,9 +1,18 @@
-import { NewNotificationEntity, PersistedNotificationEntity } from "../../entity/notification";
+import {
+  NewNotification,
+  PersistedNotification,
+} from "../../entity/notification";
 
 export interface INotificationRepository {
-    create(entity: NewNotificationEntity): Promise<PersistedNotificationEntity>
-    findAll(userId: string): Promise<PersistedNotificationEntity[]>
-    findById(id: string): Promise<PersistedNotificationEntity>
-    remove(id: string): Promise<void>
-    removeAll(userId: string): Promise<void>
+  create(entity: NewNotification): Promise<PersistedNotification>;
+
+  findAll(userId: string): Promise<PersistedNotification[]>;
+
+  findById(id: string): Promise<PersistedNotification>;
+
+  update(id: string): Promise<PersistedNotification>;
+
+  removeAll(userId: string): Promise<void>;
+
+  remove(id: string): Promise<void>;
 }
