@@ -4,16 +4,24 @@ import { ArticleRepository } from "../repo/article.repository";
 import { CreateCommentDto, UpdateCommentDto } from "../dto/comment.dto";
 import { HttpError } from "../middlewares/error.handler";
 import { Prisma } from "@prisma/client";
+import { NotificationService } from "./notification.service";
 
 export class CommentService {
   private commentRepository;
   private productRepository;
   private articleRepository;
+  private notificationService;
 
-  constructor(commentRepository: CommentRepository, productRepository: ProductRepository, articleRepository: ArticleRepository) {
+  constructor(
+    commentRepository: CommentRepository,
+    productRepository: ProductRepository,
+    articleRepository: ArticleRepository,
+    notificationService: NotificationService,
+  ) {
     this.commentRepository = commentRepository;
     this.productRepository = productRepository;
     this.articleRepository = articleRepository;
+    this.notificationService = notificationService;
   }
 
   public async getProductComments(
@@ -33,11 +41,24 @@ export class CommentService {
     authorId: number,
     productId: number,
   ) {
-    const product = await this.productRepository.findProductByIdSimple(productId);
+    const product = await this.productRepository.findProductById(productId);
     if (!product) {
       throw new HttpError(404, "상품을 찾을 수 없습니다.");
     }
-    return this.commentRepository.createProductComment(data, authorId, productId);
+
+    const newComment = await this.commentRepository.createProductComment(data, authorId, productId);
+
+    if (product.authorId !== authorId) {
+      await this.notificationService.createNotification(
+        product.authorId,
+        `회원님이 등록하신 상품: "${product.name}"에 새로운 댓글이 달렸습니다.`,
+        "PRODUCT_COMMENT",
+        productId,
+        undefined
+      );
+    }
+
+    return newComment;
   }
 
   public async updateProductComment(
@@ -96,12 +117,24 @@ export class CommentService {
     authorId: number,
     articleId: number,
   ) {
-    const article =
-      await this.articleRepository.findArticleByIdSimple(articleId);
+    const article = await this.articleRepository.findArticleById(articleId);
     if (!article) {
       throw new HttpError(404, "게시글을 찾을 수 없습니다.");
     }
-    return this.commentRepository.createArticleComment(data, authorId, articleId);
+
+    const newComment = await this.commentRepository.createArticleComment(data, authorId, articleId);
+
+    if (article.authorId !== authorId) {
+      await this.notificationService.createNotification(
+        article.authorId,
+        `회원님이 등록하신 게시물: "${article.title}"에 새로운 댓글이 달렸습니다.`,
+        "ARTICLE_COMMENT",
+        undefined,
+        articleId
+      );
+    }
+
+    return newComment;    
   }
 
   public async updateArticleComment(

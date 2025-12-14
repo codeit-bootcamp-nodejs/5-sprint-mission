@@ -32,7 +32,7 @@ model User {
   articleComments ArticleComment[]
   productLikes    ProductLike[]
   articleLikes    ArticleLike[]
-  alrams          alram[]
+  notifications   Notification[]
 }
 
 model Product {
@@ -45,14 +45,14 @@ model Product {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  Int
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    Int
 
-  comments  ProductComment[]
+  comments         ProductComment[]
 
-  likes     ProductLike[]
+  likes            ProductLike[]
 
-  alrams    alram[]
+  notifications    Notification[]
 }
 
 model Article {
@@ -63,14 +63,14 @@ model Article {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
 
-  comments  ArticleComment[]
+  comments         ArticleComment[]
 
-  likes     ArticleLike[]
+  likes            ArticleLike[]
 
-  alrams    alram[]
+  notifications    Notification[]
 }
 
 model ProductComment {
@@ -79,10 +79,10 @@ model ProductComment {
   
   createdAt DateTime  @default(now())
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
 
-  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
 }
 
@@ -92,10 +92,10 @@ model ArticleComment {
   
   createdAt DateTime  @default(now())
 
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId Int
 
-  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
 }
 
@@ -104,10 +104,10 @@ model ProductLike {
   
   createdAt DateTime @default(now())
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
 
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 
   @@unique([productId, userId])
@@ -118,20 +118,20 @@ model ArticleLike {
   
   createdAt DateTime @default(now())
 
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId Int
 
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 
   @@unique([articleId, userId])
 }
 
-model alram {
+model Notification {
   id        Int      @id @default(autoincrement())
   message   String
   isRead    Boolean  @default(false)
-  type      AlramType
+  notiType  NotificationType
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,7 +144,7 @@ model alram {
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
 
-enum AlramType {
+enum NotificationType {
   PRODUCT_PRICE_UPDATE
   ARTICLE_COMMENT
   PRODUCT_COMMENT

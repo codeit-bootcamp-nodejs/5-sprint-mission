@@ -1,13 +1,19 @@
 import { ProductRepository } from "../repo/product.repository";
+import { NotificationService } from "./notification.service";
 import { CreateProductDto, UpdateProductDto, ProductListQueryDto } from "../dto/product.dto";
 import { HttpError } from "../middlewares/error.handler";
 import { Prisma } from "@prisma/client";
 
 export class ProductService {
   private productRepository;
+  private notificationService;
   
-  constructor(productRepository: ProductRepository) {
+  constructor(
+    productRepository: ProductRepository,
+    notificationService: NotificationService,
+  ) {
     this.productRepository = productRepository;
+    this.notificationService = notificationService;
   }
 
   async createProduct(authorId: number, data: CreateProductDto) {
@@ -59,7 +65,7 @@ export class ProductService {
     userId: number,
     data: UpdateProductDto,
   ) {
-    const product = await this.productRepository.findProductByIdSimple(id);
+    const product = await this.productRepository.findProductById(id);
     if (!product) {
       throw new HttpError(404, "상품을 찾을 수 없습니다.");
     }
@@ -67,7 +73,25 @@ export class ProductService {
       throw new HttpError(403, "상품을 수정할 권한이 없습니다.");
     }
 
-    return this.productRepository.updateProduct(id, data);
+    const updatedProduct = await this.productRepository.updateProduct(id, data);
+    if (product.price !== updatedProduct.price) {
+      const likedUsers = await this.productRepository.findUsersByLikedProduct(id);
+
+      const message = `좋아요한 상품 '${(updatedProduct.name)}'의 가격이 변경되었습니다.`;
+
+      await Promise.all(
+        likedUsers.map((user) => 
+          this.notificationService.createNotification(
+            user.id,
+            message,
+            "PRODUCT_PRICE_UPDATE",
+            id,
+            undefined
+          ))
+      );
+    }
+
+    return updatedProduct;
   }
 
   async deleteProduct(id: number, userId: number) {
@@ -91,7 +115,7 @@ export class ProductService {
     }
   }
 
-  async toggleProductLike(userId: number, productId: number) {
+  async toggleProductLike(productId: number, userId: number) {
     const product = await this.productRepository.findProductByIdSimple(productId);
     if (!product) {
       throw new HttpError(404, "상품을 찾을 수 없습니다.");
