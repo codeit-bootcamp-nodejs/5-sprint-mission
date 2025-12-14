@@ -1,39 +1,37 @@
-export type NewProductComment = Omit<
-  ProductComment,
+export type NewArticleComment = Omit<
+  ArticleComment,
   "id" | "createdAt" | "updatedAt"
 >;
 
-export type PersistedProductComment = ProductComment & {
+export type PersistedArticleComment = ArticleComment & {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-type ProductComment = {
+type ArticleComment = {
   readonly id?: string;
-  productId: string;
+  readonly articleId?: string;
   content: string;
+  userId: string;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
-  userId: string;
 };
 
-export const ProductComment = {
+export const ArticleComment = {
   createNew: (params: {
-    productId: string;
+    articleId: string;
     content: string;
     userId: string;
   }) => {
     return {
-      productId: params.productId,
+      articleId: params.articleId,
       content: params.content,
       userId: params.userId,
-    } as NewProductComment;
+    } as NewArticleComment;
   },
 
-  createPersist: (params: {
+  createPersisted: (params: {
     id: string;
-    productId: string;
+    articleId: string;
     content: string;
     createdAt: Date;
     updatedAt: Date;
@@ -41,11 +39,11 @@ export const ProductComment = {
   }) => {
     return {
       id: params.id,
-      productId: params.productId,
+      articleId: params.articleId,
       content: params.content,
       createdAt: params.createdAt,
       updatedAt: params.updatedAt,
       userId: params.userId,
-    } as PersistedProductComment;
+    } as PersistedArticleComment;
   },
 };

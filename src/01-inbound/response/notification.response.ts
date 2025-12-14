@@ -1,21 +1,28 @@
-import { NotificationType } from "@prisma/client";
-import { PersistedNotificationEntity } from "../../02-domain/entity/notification";
+import { PersistedNotification } from "../../02-domain/entity/notification";
 
-export class NotificationResDto {
-    private id: string;
-    private type: NotificationType;
-    private message: string;
-    private read: boolean;
-    private senderId: string
-    private receiverId: string
+export const NotificationResDto = (entity: PersistedNotification) => {
+  const { id, type, message, read, senderId, receiverId, createdAt } = entity;
 
+  return {
+    id,
+    type,
+    message,
+    read,
+    senderId,
+    receiverId,
+    createdAt
+  };
+};
 
-    constructor(entity: PersistedNotificationEntity) {
-        this.id = entity.id;
-        this.type = entity.type
-        this.message = entity.message;
-        this.read = entity.read;
-        this.senderId = entity.senderId;
-        this.receiverId = entity.receiverId;
-    }
-}
+export const NotificationResDtos = (entities: PersistedNotification[]) => {
+  const data = entities.map((entity) => {
+    return NotificationResDto(entity);
+  });
+
+  const total = data.length;
+
+  return {
+    data,
+    total,
+  };
+};
