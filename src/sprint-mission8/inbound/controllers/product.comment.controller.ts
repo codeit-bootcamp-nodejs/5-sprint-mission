@@ -1,17 +1,11 @@
-import { IServices } from "../domain/service/services";
-import { BaseController, ControllerHandler } from "./base.controller";
 import { createProductCommentReqSchema, deleteProductCommentReqSchema, getProductCommentReqSchema, updateProductCommentReqSchema } from "../requests/product/product.req.schemas";
-import { CreateCommentResDto } from "../responses/comment/create.comment.res.dto";
-import { DeleteCommentResDto } from "../responses/comment/delete.comment.res.dto";
-import { GetCommentListResDto } from "../responses/comment/get.comment.list.res.dto";
-import { UpdateCommentResDto } from "../responses/comment/update.comment.res.dto";
+import { CreateProductCommentResDto } from "../responses/comment/product/create.product.comment.res.dto";
+import { DeleteProductCommentResDto } from "../responses/comment/product/delete.product.comment.res.dto";
+import { GetProductCommentListResDto } from "../responses/comment/product/get.product.comment.list.res.dto";
+import { UpdateProductCommentResDto } from "../responses/comment/product/update.product.comment.res.dto";
+import { BaseController, ControllerHandler } from "./base.controller";
 
 export class ProductCommentController extends BaseController {
-
-  constructor(services: IServices) {
-    super(services);
-  }
-
   createProductCommentController: ControllerHandler = async (req, res, next) => {
     const resDto = this.validateOrThrow(createProductCommentReqSchema.safeParse({
       userId: req.userId,
@@ -19,8 +13,8 @@ export class ProductCommentController extends BaseController {
       ...req.body
     }))
     const createdComment =
-      await this._commentService.createComment(resDto);
-    const createdCommentResDto = new CreateCommentResDto(createdComment);
+      await this._services.productComment.createComment(resDto);
+    const createdCommentResDto = new CreateProductCommentResDto(createdComment);
     return res.json(createdCommentResDto);
   };
 
@@ -31,8 +25,8 @@ export class ProductCommentController extends BaseController {
     }));
 
     const getCommentList =
-      await this._commentService.getCommentList(resDto);
-    const getCommentListResDto = new GetCommentListResDto(getCommentList);
+      await this._services.productComment.getCommentList(resDto);
+    const getCommentListResDto = new GetProductCommentListResDto(getCommentList);
     return res.json(getCommentListResDto);
   };
 
@@ -43,8 +37,8 @@ export class ProductCommentController extends BaseController {
       ...req.params
     }));
     const updatedComment =
-      await this._commentService.updateComment(resDto);
-    const updatedCommentResDto = new UpdateCommentResDto(updatedComment);
+      await this._services.productComment.updateComment(resDto);
+    const updatedCommentResDto = new UpdateProductCommentResDto(updatedComment);
     return res.json(updatedCommentResDto);
   };
 
@@ -53,8 +47,8 @@ export class ProductCommentController extends BaseController {
       userId: req.userId,
       ...req.params
     }));
-      await this._commentService.deleteComment(resDto);
-    const deletedCommentResDto = new DeleteCommentResDto();
+    await this._services.productComment.deleteComment(resDto);
+    const deletedCommentResDto = new DeleteProductCommentResDto();
     return res.json(deletedCommentResDto);
   };
 }

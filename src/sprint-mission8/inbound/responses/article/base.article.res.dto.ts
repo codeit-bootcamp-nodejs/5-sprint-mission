@@ -1,4 +1,4 @@
-import { PersistedArticleEntity } from "../../../domain/entity/article.entity";
+import { PersistArticleEntity } from "../../../domain/entity/article.entity";
 
 export class BaseArticleResDto {
   public id: string;
@@ -7,7 +7,7 @@ export class BaseArticleResDto {
   public createdAt: Date;
   public updatedAt: Date;
 
-  constructor(entity: PersistedArticleEntity) {
+  constructor(entity: PersistArticleEntity) {
     this.id = entity.id;
     this.title = entity.title;
     this.content = entity.content;

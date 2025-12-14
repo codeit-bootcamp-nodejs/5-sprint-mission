@@ -1,9 +1,9 @@
-import { ProductEntity } from "../../../domain/entity/product/product.entity";
+import { PersistProductEntity } from "../../../domain/entity/product/product.entity";
 
 export class UserLikeProductsResDto {
   public products;
   
-  constructor(likeProducts: ProductEntity[]) {
+  constructor(likeProducts: PersistProductEntity[]) {
     this.products = likeProducts.map((product) => ({
       ownerId: product.userId,
       id: product.id,
@@ -11,7 +11,7 @@ export class UserLikeProductsResDto {
       description: product.description,
       price: product.price,
       tags: product.tags,
-      isLiked: product.isLiked,
+      imags: product.images,
     }));
   }
 }

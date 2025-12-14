@@ -1,4 +1,4 @@
-export class DeleteCommentResDto {
+export class DeleteProductCommentResDto {
   public message;
   
   constructor() {

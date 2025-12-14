@@ -1,7 +1,8 @@
-import { IServices } from "../domain/service/services";
 import { BaseController, ControllerHandler } from "./base.controller";
 import { productLikeReqSchema } from "../requests/product/product.req.schemas";
-import { ProductLikeResDto } from "../responses/product/product.like.res.dto";
+import { LikeProductResDto } from "../responses/product/like.product.res.dto";
+import { IServices } from "../port/services.interface";
+import { UnlikeProductResDto } from "../responses/product/unlike.product.res.dto";
 
 export class ProductLikeController extends BaseController{
 
@@ -15,8 +16,8 @@ export class ProductLikeController extends BaseController{
       ...req.params,
     }));
 
-    const product = await this._productService.productLike(reqDto);
-    const resDto = new ProductLikeResDto(product);
+    await this._services.product.likeProduct(reqDto);
+    const resDto = new LikeProductResDto();
 
     return res.json(resDto);
   };
@@ -26,8 +27,8 @@ export class ProductLikeController extends BaseController{
       ...req.params,
     }));
 
-    const product = await this._productService.cancelProductLike(reqDto);
-    const resDto = new ProductLikeResDto(product);
+    await this._services.product.unlikeProduct(reqDto);
+    const resDto = new UnlikeProductResDto();
 
     return res.json(resDto);
   };

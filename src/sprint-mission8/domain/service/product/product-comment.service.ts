@@ -1,5 +1,5 @@
 import { IProductCommentService } from "../../../inbound/port/services/product/product-comment.service.interface";
-import { CreateProductCommentDto, GetProductCommentDto, UpdateProductCommentDto } from "../../../inbound/requests/product/product.req.schemas";
+import { CreateProductCommentDto, DeleteProductCommentDto, GetProductCommentDto, UpdateProductCommentDto } from "../../../inbound/requests/product/product.req.schemas";
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
@@ -86,16 +86,16 @@ export class ProductCommentService extends BaseService implements IProductCommen
     return updatedComment;
   };
 
-  async deleteComment(userId: string, commentId: number): Promise<void> {
-    const foundComment = await this._repos.productComment.findCommentById(commentId);
+  async deleteComment(dto: DeleteProductCommentDto): Promise<void> {
+    const foundComment = await this._repos.productComment.findCommentById(dto.commentId);
 
     if (!foundComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
     }
-    if (userId !== foundComment.userId) {
+    if (dto.userId !== foundComment.userId) {
       throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
     }
 
-    await this._repos.productComment.delete(commentId);
+    await this._repos.productComment.delete(dto.commentId);
   };
 }

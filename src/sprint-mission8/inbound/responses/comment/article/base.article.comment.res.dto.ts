@@ -1,12 +1,12 @@
-import { CommentEntity, PersistedCommentEntity } from "../../../domain/entity/comment/comment.entity";
+import { PersitstArticleCommentEntity } from "../../../../domain/entity/comment/article-comment.entity";
 
-export class BaseCommentResDto {
+export class BaseArticleCommentResDto {
   public id: number;
   public content: string;
   public createdAt: Date;
   public updatedAt: Date;
 
-  constructor(entity: PersistedCommentEntity) {
+  constructor(entity: PersitstArticleCommentEntity) {
     this.id = entity.id;
     this.content =entity.content;
     this.createdAt = entity.createdAt;

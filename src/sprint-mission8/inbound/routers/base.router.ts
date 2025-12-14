@@ -1,18 +1,18 @@
 import express, { NextFunction, Request, RequestHandler, Response } from "express";
-import { IManagers } from "../../shared/util";
+import { IUtils } from "../../shared/util";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
+import { Controllers } from "../controllers";
 
 export class BaseRouter {
-  public basePath;
   public router;
-  protected _tokeManager;
-  protected _fileManager;
 
-  constructor(basePath: string, managers: IManagers) {
+  constructor(
+    public readonly basePath: string,
+    public readonly controllers: Controllers,
+    public readonly utils: IUtils
+  ) {
     this.basePath = basePath;
-    this._tokeManager = managers.token;
-    this._fileManager = managers.file;
     this.router = express.Router();
   }
 
@@ -36,7 +36,7 @@ export class BaseRouter {
 
     const [_, token] = req.headers.authorization.split(" ");
     
-    const decoded = this._tokeManager.verify<{ userId: string }>(token);
+    const decoded = this.utils.token.verifyToken(token);
     req.userId = decoded.userId;
     if(!req.userId){
       throw new Exception({info: EXCEPTIONS.USERID_NOT_EXIST});

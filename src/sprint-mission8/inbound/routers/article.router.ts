@@ -1,12 +1,10 @@
-import { IControllers } from "../../controllers/controllers";
-import { IManagers } from "../../shared/util";
+import { IUtils } from "../../shared/util";
+import { Controllers } from "../controllers";
 import { BaseRouter } from "./base.router";
 
 export class ArticleRouter extends BaseRouter {
-  #controllers;
-  constructor(controllers: IControllers, managers: IManagers) {
-    super("/api/articles", managers);
-    this.#controllers = controllers;
+  constructor(controllers: Controllers, utils: IUtils) {
+    super("/api/articles", controllers, utils);
     this.registerArticleRouter();
   }
 
@@ -14,25 +12,25 @@ export class ArticleRouter extends BaseRouter {
     this.router.post(
       "/",
       this.isAuthenticate,
-      this.catchException(this.#controllers.article.createArticleController),
+      this.catchException(this.controllers.article.createArticleController),
     );
     this.router.get(
       "/:articleId",
-      this.catchException(this.#controllers.article.getArticleController),
+      this.catchException(this.controllers.article.getArticleController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#controllers.article.getArticleListController),
+      this.catchException(this.controllers.article.getArticleListController),
     );
     this.router.patch(
       "/:articleId",
       this.isAuthenticate,
-      this.catchException(this.#controllers.article.updateArticleController),
+      this.catchException(this.controllers.article.updateArticleController),
     );
     this.router.delete(
       "/:articleId",
       this.isAuthenticate,
-      this.catchException(this.#controllers.article.deleteArticleController),
+      this.catchException(this.controllers.article.deleteArticleController),
     );
 
     // 댓글 기능
@@ -40,27 +38,27 @@ export class ArticleRouter extends BaseRouter {
       "/:articleId/comments",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.articleComment.createArticleCommentController,
+        this.controllers.articleComment.createArticleCommentController,
       ),
     );
     this.router.get(
       "/:articleId/comments",
       this.catchException(
-        this.#controllers.articleComment.getArticleCommentListController,
+        this.controllers.articleComment.getArticleCommentListController,
       ),
     );
     this.router.patch(
       "/:articleId/comment/:commentId",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.articleComment.updateArticleCommentController,
+        this.controllers.articleComment.updateArticleCommentController,
       ),
     );
     this.router.delete(
       "/:articleId/comment/:commentId",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.articleComment.deleteArticleCommentController,
+        this.controllers.articleComment.deleteArticleCommentController,
       ),
     );
 
@@ -69,14 +67,14 @@ export class ArticleRouter extends BaseRouter {
       "/:articleId/like",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.articleLike.addArticleLikeController,
+        this.controllers.articleLike.addArticleLikeController,
       ),
     );
     this.router.delete(
       "/:articleId/like",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.articleLike.cancelArticleLikeController,
+        this.controllers.articleLike.cancelArticleLikeController,
       ),
     );
   };

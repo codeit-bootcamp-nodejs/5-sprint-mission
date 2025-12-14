@@ -1,6 +1,6 @@
 import { Injector } from "./injector";
 
 
-const { server } = new Injector();
+const { httpSever, wsServer } = new Injector();
 
-server.start();
+httpSever.start();

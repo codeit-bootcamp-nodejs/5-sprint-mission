@@ -3,7 +3,6 @@ import { ArticleRouter } from "./inbound/routers/article.router";
 import { ImageRouter } from "./inbound/routers/image.router";
 import { ProductRouter } from "./inbound/routers/product.router";
 import { UserRouter } from "./inbound/routers/user.router";
-import { Server } from "./01-app/server";
 import { ConfigUtil } from "./shared/util/config.util";
 import { FileUtil } from "./shared/util/file.util";
 import { TokenUtil } from "./shared/util/token.util";
@@ -15,7 +14,6 @@ import { ProductCommentRepo } from "./outbound/repos/product/product-comment.rep
 import { Repos } from "./outbound/repos";
 import { UserService } from "./domain/service/user.service";
 import { ArticleService } from "./domain/service/article/article.service";
-import { CommentService } from "./domain/service/comment.service";
 import { AuthService } from "./domain/service/auth.service";
 import { ProductService } from "./domain/service/product/product.service";
 import { Services } from "./domain/services";
@@ -27,16 +25,26 @@ import { UserLikesProductRepo } from "./outbound/repos/like/user-likes-product.r
 import { UserLikesArticleRepo } from "./outbound/repos/like/user-likes-article.repo";
 import { TagRepo } from "./outbound/repos/tag.repo";
 import { ArticleCommentRepo } from "./outbound/repos/article/article-comment.repo";
+import { UserController } from "./inbound/controllers/user.controller";
+import { ProductController } from "./inbound/controllers/product.controller";
+import { ProductCommentController } from "./inbound/controllers/product.comment.controller";
+import { ProductLikeController } from "./inbound/controllers/product.like.controller";
+import { ArticleController } from "./inbound/controllers/article.controller";
+import { ArticleCommentController } from "./inbound/controllers/article.comment.controller";
+import { ArticleLikeController } from "./inbound/controllers/article.like.controller";
+import { ImageController } from "./inbound/controllers/image.controller";
+import { Controllers } from "./inbound/controllers";
+import { Routers } from "./inbound/routers";
+import { HttpServer } from "./inbound/servers/http-server";
+import { WsServer } from "./inbound/servers/ws-server";
 
 export class Injector {
-  private _sever: Server;
-
+  public readonly httpSever: HttpServer;
+  public readonly wsServer: WsServer;
   constructor() {
-    this._sever = this.inject();
-  }
-
-  get server() {
-    return this._sever;
+    const {httpServer, wsServer} = this.inject();
+    this.httpSever = httpServer;
+    this.wsServer = wsServer;
   }
 
   inject() {
@@ -96,23 +104,34 @@ export class Injector {
     const articleCommentController = new ArticleCommentController(services);
     const articleLikeController = new ArticleLikeController(services);
     const imageController = new ImageController();
-    const controllers = {
-      user: userController,
-      product: productController,
-      productComment: productCommentController,
-      productLike: productLikeController,
-      article: articleController,
-      articleComment: articleCommentController,
-      articleLike: articleLikeController,
-      image: imageController,
-    };
+    const controllers = new Controllers (
+      userController,
+      productController,
+      productCommentController,
+      productLikeController,
+      articleController,
+      articleCommentController,
+      articleLikeController,
+      imageController,
+    );
 
     const userRouter = new UserRouter(controllers, utils);
     const productRouter = new ProductRouter(controllers, utils);
     const articleRouter = new ArticleRouter(controllers, utils);
     const imageRouter = new ImageRouter(controllers, utils);
-    const routers = [userRouter, productRouter, articleRouter, imageRouter];
-
-    return new Server({ routers, Utils: utils });
+    const routers = new Routers(
+      userRouter,
+      productRouter,
+      articleRouter,
+      imageRouter
+    );
+    
+    const httpServer = new HttpServer(routers, utils);
+    const wsServer = new WsServer();
+    
+    return {
+      httpServer,
+      wsServer,
+    };
   }
 }

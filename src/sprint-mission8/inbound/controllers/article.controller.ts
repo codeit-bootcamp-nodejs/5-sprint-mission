@@ -1,4 +1,3 @@
-import { IServices } from "../domain/service/services";
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createArticleReqSchema, deleteArticleReqSchema, getArticleListReqSchema, getArticleReqSchema, updateArticleReqSchema } from "../requests/article/article.req.schemas";
 import { CreateArticleResDto } from "../responses/article/create.article.res.dto";
@@ -6,6 +5,7 @@ import { DeleteArticleResDto } from "../responses/article/delete.article.res.dto
 import { GetArticleListResDto } from "../responses/article/get.article.list.res.dto";
 import { GetArticleResDto } from "../responses/article/get.article.res.dto";
 import { UpdateArticleResDto } from "../responses/article/update.article.res.dto";
+import { IServices } from "../port/services.interface";
 
 export class ArticleController extends BaseController {
 
@@ -19,7 +19,7 @@ export class ArticleController extends BaseController {
       ...req.body
     }));
     const createdArticle =
-      await this._articleService.createArticle(reqDto);
+      await this._services.article.createArticle(reqDto);
     const createdArticleResDto = new CreateArticleResDto(createdArticle);
     return res.json(createdArticleResDto);
   };
@@ -29,7 +29,7 @@ export class ArticleController extends BaseController {
       req.params
     ));
     const getArticle =
-      await this._articleService.getArticle(reqDto);
+      await this._services.article.getArticle(reqDto);
     const getArticleResDto = new GetArticleResDto(getArticle);
     return res.json(getArticleResDto);
   };
@@ -39,7 +39,7 @@ export class ArticleController extends BaseController {
       req.query
     ));
     const getArticleList =
-      await this._articleService.getArticleList(reqDto);
+      await this._services.article.getArticleList(reqDto);
     const getArticleListResDto = new GetArticleListResDto(getArticleList);
     return res.json(getArticleListResDto);
   };
@@ -51,7 +51,7 @@ export class ArticleController extends BaseController {
       ...req.body
     }));
     const updatedArticle =
-      await this._articleService.updateArticle(reqDto);
+      await this._services.article.updateArticle(reqDto);
     const updatedArticleResDto = new UpdateArticleResDto(updatedArticle);
     return res.json(updatedArticleResDto);
   };
@@ -61,7 +61,7 @@ export class ArticleController extends BaseController {
       userId: req.userId,
       ...req.params
     }));
-    await this._articleService.deleteArticle(reqDto);
+    await this._services.article.deleteArticle(reqDto);
     const deletedArticleResDto = new DeleteArticleResDto();
     return res.json(deletedArticleResDto);
   };

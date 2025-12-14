@@ -1,13 +1,10 @@
-import { IControllers } from "../../controllers/controllers";
-import { IManagers } from "../../shared/util";
+import { IUtils } from "../../shared/util";
+import { Controllers } from "../controllers";
 import { BaseRouter } from "./base.router";
 
 export class ProductRouter extends BaseRouter {
-  #controllers;
-
-  constructor(controllers: IControllers, managers: IManagers) {
-    super("/api/products", managers);
-    this.#controllers = controllers;
+  constructor(controllers: Controllers, utils: IUtils) {
+    super("/api/products", controllers, utils);
     this.registerProductRouter();
   }
 
@@ -15,25 +12,25 @@ export class ProductRouter extends BaseRouter {
     this.router.post(
       "/",
       this.isAuthenticate,
-      this.catchException(this.#controllers.product.createProductController),
+      this.catchException(this.controllers.product.createProductController),
     );
     this.router.get(
       "/:productId",
-      this.catchException(this.#controllers.product.getProductController),
+      this.catchException(this.controllers.product.getProductController),
     );
     this.router.get(
       "/",
-      this.catchException(this.#controllers.product.getProductListController),
+      this.catchException(this.controllers.product.getProductListController),
     );
     this.router.patch(
       "/:productId",
       this.isAuthenticate,
-      this.catchException(this.#controllers.product.updateProductController),
+      this.catchException(this.controllers.product.updateProductController),
     );
     this.router.delete(
       "/:productId",
       this.isAuthenticate,
-      this.catchException(this.#controllers.product.deleteProductController),
+      this.catchException(this.controllers.product.deleteProductController),
     );
 
     // 댓글 기능
@@ -41,27 +38,27 @@ export class ProductRouter extends BaseRouter {
       "/:productId/comments",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.productComment.createProductCommentController,
+        this.controllers.productComment.createProductCommentController,
       ),
     );
     this.router.get(
       "/:productId/comments",
       this.catchException(
-        this.#controllers.productComment.getProductCommentListController,
+        this.controllers.productComment.getProductCommentListController,
       ),
     );
     this.router.patch(
       "/:productId/comment/:commentId",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.productComment.updateProductCommentController,
+        this.controllers.productComment.updateProductCommentController,
       ),
     );
     this.router.delete(
       "/:productId/comment/:commentId",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.productComment.deleteProductCommentController,
+        this.controllers.productComment.deleteProductCommentController,
       ),
     );
 
@@ -70,14 +67,14 @@ export class ProductRouter extends BaseRouter {
       "/:productId/like",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.productLike.addProductLikeController,
+        this.controllers.productLike.addProductLikeController,
       ),
     );
     this.router.delete(
       "/:productId/like",
       this.isAuthenticate,
       this.catchException(
-        this.#controllers.productLike.cancelProductLikeController,
+        this.controllers.productLike.cancelProductLikeController,
       ),
     );
   };

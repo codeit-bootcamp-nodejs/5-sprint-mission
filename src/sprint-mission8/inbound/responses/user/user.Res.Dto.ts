@@ -1,4 +1,4 @@
-import { PersistedUserEntity } from "../../../domain/entity/user.entity";
+import { PersistUserEntity } from "../../../domain/entity/user.entity";
 
 export class UserResDto {
   public id;
@@ -7,7 +7,7 @@ export class UserResDto {
   public nickname;
   public refreshToken;
   
-  constructor(user: PersistedUserEntity) {
+  constructor(user: PersistUserEntity) {
     this.id = user.id;
     this.email = user.email;
     this.image = user.image;

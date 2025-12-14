@@ -1,9 +1,9 @@
-import { ArticleEntity } from "../../../domain/entity/article.entity";
+import { PersistArticleEntity } from "../../../domain/entity/article.entity";
 
 export class UserLikeArticlesResDto {
   public articles;
   
-  constructor(likeArticles: ArticleEntity[]) {
+  constructor(likeArticles: PersistArticleEntity[]) {
     this.articles = likeArticles.map((article) => ({
       ownerId: article.userId,
       id: article.id,
@@ -11,7 +11,6 @@ export class UserLikeArticlesResDto {
       content: article.content,
       createdAt: article.createdAt,
       updatedAt: article.updatedAt,
-      isLiked: article.isLiked,
     }));
   }
 }

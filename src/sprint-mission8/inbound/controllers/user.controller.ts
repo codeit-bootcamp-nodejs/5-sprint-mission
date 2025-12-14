@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { BaseController, ControllerHandler } from "./base.controller";
+import { BaseController } from "./base.controller";
 import { refreshTokensReqSchema, signInReqSchema, signUpReqSchema, updatePasswordReqSchema, updateReqSchema, userIdReqSchema, userLikeListReqSchema, userProductsReqSchema } from "../requests/user/user.req.schemas";
 import { SignInResDto } from "../responses/user/signIn.res.dto";
 import { UserResDto } from "../responses/user/user.Res.Dto";
@@ -9,33 +9,27 @@ import { UserLikeProductsResDto } from "../responses/user/user.like.products.dto
 import { UserLikeArticlesResDto } from "../responses/user/user.like.articles.dto";
 import { DeleteUserResDto } from "../responses/user/delete.user.res.dto";
 import { RefreshTokensResDto } from "../responses/user/refresh.tokens.res.dto";
-import { IServices } from "../port/services.interface";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 
 export class UserController extends BaseController{
-
-  constructor(services: IServices) {
-    super(services);
-  }
-
   signInUserController = async (req: Request, res: Response, next: NextFunction) => {
     const reqDto = this.validateOrThrow(signInReqSchema.safeParse(req.body));
 
-    const { accessToken, authenticatedUser } =
-      await this._authService.signInUser(reqDto);
-    if (!authenticatedUser) {
+    const { accessToken, foundUser } =
+      await this._services.auth.signInUser(reqDto);
+    if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const resDto = new SignInResDto(accessToken, authenticatedUser);
+    const resDto = new SignInResDto(accessToken, foundUser);
     return res.json(resDto);
   };
 
   signUpUserController = async (req: Request, res: Response, next: NextFunction) => {
     const reqDto = this.validateOrThrow(signUpReqSchema.safeParse(req.body));
 
-    const user = await this._userService.signUpUser(reqDto);
+    const user = await this._services.user.signUpUser(reqDto);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -43,7 +37,7 @@ export class UserController extends BaseController{
   signOutUserController = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
-    await this._authService.signOutUser({ id: userId });
+    await this._services.auth.signOutUser(userId);
     const resDto = new SignOutResDto();
     return res.json(resDto);
   };
@@ -51,7 +45,7 @@ export class UserController extends BaseController{
   getUserController = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
-    const user = await this._userService.getUser(userId);
+    const user = await this._services.user.getUser(userId);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -62,9 +56,9 @@ export class UserController extends BaseController{
       ...req.query
     }));
     const id = reqDto.userId;
-    const { user, products } =
-      await this._userService.getUserProducts(reqDto);
-    const resDto = new UserProductsResDto({ user, products });
+    const products =
+      await this._services.user.getUserProducts(reqDto);
+    const resDto = new UserProductsResDto(products);
     return res.json(resDto);
   };
 
@@ -75,7 +69,7 @@ export class UserController extends BaseController{
     }));
 
     const likeProducts =
-      await this._userService.getUserLikeProducts(reqDto);
+      await this._services.user.getUserLikeProducts(reqDto);
     const resDto = new UserLikeProductsResDto(likeProducts);
 
     return res.json(resDto);
@@ -88,7 +82,7 @@ export class UserController extends BaseController{
     }));
 
     const likeArticles =
-      await this._userService.getUserLikeArticles(reqDto);
+      await this._services.user.getUserLikeArticles(reqDto);
     const resDto = new UserLikeArticlesResDto(likeArticles);
 
     return res.json(resDto);
@@ -100,7 +94,7 @@ export class UserController extends BaseController{
       ...req.body
     }));
 
-    const user = await this._userService.updateUser(reqDto);
+    const user = await this._services.user.updateUser(reqDto);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -112,7 +106,7 @@ export class UserController extends BaseController{
     }));
 
     const user =
-      await this._userService.updatePasswordUser(reqDto);
+      await this._services.user.updatePasswordUser(reqDto);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -120,16 +114,16 @@ export class UserController extends BaseController{
   deleteUserController = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
-    await this._userService.deleteUser({ id: userId });
+    await this._services.user.deleteUser(userId);
     const resDto = new DeleteUserResDto();
     return res.json(resDto);
   };
 
   refreshTokensController = async (req: Request, res: Response, next: NextFunction) => {
     const { refreshToken } = this.validateOrThrow(refreshTokensReqSchema.safeParse({ refreshToken: req.body.refreshToken }));
-    const { accessToken, user } = await this._authService.refreshTokens(refreshToken);
+    const { accessToken, foundUser } = await this._services.auth.refreshTokens(refreshToken);
 
-    const resDto = new RefreshTokensResDto({ accessToken, user: user! });
+    const resDto = new RefreshTokensResDto(accessToken, foundUser);
     return res.json(resDto);
   };
 }

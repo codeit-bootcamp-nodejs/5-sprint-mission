@@ -1,21 +1,19 @@
-import { IControllers } from "../../controllers/controllers";
-import { IManagers } from "../../shared/util";
+import { IUtils } from "../../shared/util";
+import { Controllers } from "../controllers";
 import { BaseRouter } from "./base.router";
 
 export class ImageRouter extends BaseRouter {
-  #controllers;
 
-  constructor(controllers:IControllers, managers: IManagers) {
-    super("/api/images", managers);
-    this.#controllers = controllers;
+  constructor(controllers: Controllers, utils: IUtils) {
+    super("/api/images", controllers, utils);
     this.registerImageRouter();
   }
 
   registerImageRouter = () => {
     this.router.post(
       "/",
-      this._fileManager.uploadFileMiddleware("image"),
-      this.catchException(this.#controllers.image.uploadImageController),
+      this.utils.file.uploadFileMiddleware("image"),
+      this.catchException(this.controllers.image.uploadImageController),
     );
   };
 }

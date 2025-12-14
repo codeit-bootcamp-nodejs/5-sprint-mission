@@ -11,17 +11,7 @@ export type ControllerHandler = (
 ) => Promise<Response<any>>;
 
 export class BaseController {
-  protected _userService;
-  protected _authService;
-  protected _articleService;
-  protected _productService;
-
-
-  constructor(services: IServices) {
-    this._userService = services.user;
-    this._authService = services.auth;
-    this._articleService = services.article;
-    this._productService = services.product;
+  constructor(protected readonly _services: IServices) {
   }
 
   validateOrThrow = <T>(result: ZodSafeParseResult<T>): T => {

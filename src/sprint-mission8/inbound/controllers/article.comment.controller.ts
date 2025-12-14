@@ -1,10 +1,10 @@
-import { IServices } from "../domain/service/services";
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createArticleCommentReqSchema, deleteArticleCommentReqSchema, getArticleCommentReqSchema, updateArticleCommentReqSchema } from "../requests/article/article.req.schemas";
-import { CreateCommentResDto } from "../responses/comment/create.comment.res.dto";
-import { DeleteCommentResDto } from "../responses/comment/delete.comment.res.dto";
-import { GetCommentListResDto } from "../responses/comment/get.comment.list.res.dto";
-import { UpdateCommentResDto } from "../responses/comment/update.comment.res.dto";
+import { IServices } from "../port/services.interface";
+import { CreateArticleCommentResDto } from "../responses/comment/article/create.article.comment.res.dto";
+import { GetArticleCommentListResDto } from "../responses/comment/article/get.article.comment.list.res.dto";
+import { UpdateArticleCommentResDto } from "../responses/comment/article/update.article.comment.res.dto";
+import { DeleteArticleCommentResDto } from "../responses/comment/article/delete.article.comment.res.dto";
 
 export class ArticleCommentController extends BaseController {
 
@@ -19,8 +19,8 @@ export class ArticleCommentController extends BaseController {
       ...req.body
     }));
     const createdComment =
-      await this._commentService.createComment(reqDto);
-    const createdCommentResDto = new CreateCommentResDto(createdComment);
+      await this._services.articleComment.createComment(reqDto);
+    const createdCommentResDto = new CreateArticleCommentResDto(createdComment);
     return res.json(createdCommentResDto);
   };
 
@@ -30,8 +30,8 @@ export class ArticleCommentController extends BaseController {
       ...req.query
     }));
     const getCommentList =
-      await this._commentService.getCommentList(reqDto);
-    const getCommentListResDto = new GetCommentListResDto(getCommentList);
+      await this._services.articleComment.getCommentList(reqDto);
+    const getCommentListResDto = new GetArticleCommentListResDto(getCommentList);
     return res.json(getCommentListResDto);
   };
 
@@ -42,8 +42,8 @@ export class ArticleCommentController extends BaseController {
       ...req.body
     }));
     const updatedComment =
-      await this._commentService.updateComment(reqDto);
-    const updatedCommentResDto = new UpdateCommentResDto(updatedComment);
+      await this._services.articleComment.updateComment(reqDto);
+    const updatedCommentResDto = new UpdateArticleCommentResDto(updatedComment);
     return res.json(updatedCommentResDto);
   };
 
@@ -52,8 +52,8 @@ export class ArticleCommentController extends BaseController {
       userId: req.userId,
       ...req.params,
     }));
-    await this._commentService.deleteComment(reqDto);
-    const deletedCommentResDto = new DeleteCommentResDto();
+    await this._services.articleComment.deleteComment(reqDto);
+    const deletedCommentResDto = new DeleteArticleCommentResDto();
     return res.json(deletedCommentResDto);
   };
 }
