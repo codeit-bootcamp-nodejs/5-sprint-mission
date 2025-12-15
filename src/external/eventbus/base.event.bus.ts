@@ -1,19 +1,21 @@
-export type Handler<T> = (event: T) => void;
 
 export const BaseEventBus = <T>() => {
-  let callback: Handler<T> = () => { };
-  let callbackAll: Handler<T> = () => { };
+  let callback: (event: T) => void;
+  let callbackAll: (event: T) => void;
 
-  const subscribe = (_callback: Handler<T>) => {
+  // 특정 유저에게 메세지 전송
+  const subscribe = (_callback: (event: T) => void) => {
     callback = _callback;
-  };
-
-  const subscribeAll = (_callback: Handler<T>) => {
-    callbackAll = _callback;
   };
 
   const publish = (event: T) => {
     callback(event);
+  };
+
+
+  // 다수의 유저에게 메세지 전송
+  const subscribeAll = (_callback: (event: T) => void) => {
+    callbackAll = _callback;
   };
 
   const publishAll = (event: T) => {

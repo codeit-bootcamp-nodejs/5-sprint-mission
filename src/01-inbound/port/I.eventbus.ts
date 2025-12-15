@@ -1,5 +1,5 @@
-import { NotificationEventBusType } from "../../external/eventbus/notification.event.bus";
+import { INotificationEventBus } from "./eventbuses/notification.eventbus";
 
 export interface IEventBus {
-  notification: NotificationEventBusType;
+  notification: INotificationEventBus;
 }
