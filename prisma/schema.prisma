@@ -18,6 +18,7 @@ enum NotificationType {
   PRODUCT_COMMENT
   PRODUCT_LIKE
   PRODUCT_PRICE_CHANGE
+  NEW_PRODUCT
 }
 
 model Notification {
@@ -26,10 +27,10 @@ model Notification {
   message    String
   read       Boolean          @default(false)
   senderId   String
-  receiverId String
+  receiverId String?
   createdAt  DateTime         @default(now())
   sender     User             @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
-  receiver   User             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiver   User?             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model Product {
