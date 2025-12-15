@@ -16,6 +16,12 @@ export const createProductService = (
   const createProduct = async (dto: ProductDto) => {
     const productEntity = Product.createNew(dto);
     const newProduct = await repos.product.save(productEntity);
+    notificationService.notifyAll({
+      type: NotificationType.NEW_PRODUCT,
+      message: `새로운 상품이 등록되었습니다!`,
+      read: false,
+      senderId: newProduct.userId
+    })
     return ProductResDto(newProduct);
   };
 
@@ -71,7 +77,7 @@ export const createProductService = (
         productLikes
           .filter((like) => like.userId !== foundProduct.userId)
           .map(async (like) => {
-            notificationService.createNotification({
+            notificationService.notify({
               type: NotificationType.PRODUCT_PRICE_CHANGE,
               message: `가격 변경: ${foundProduct.price} → ${updatedProduct.price}`,
               read: false,
@@ -116,7 +122,7 @@ export const createProductService = (
 
     // 좋아요 알림 생성 (자신의 상품이 아닐 때만 알림)
     if (productLike && productLike.userId !== product.userId) {
-      notificationService.createNotification({
+      notificationService.notify({
         type: NotificationType.PRODUCT_LIKE,
         message: `${userId}님이 좋아요를 눌렀습니다!`,
         read: false,

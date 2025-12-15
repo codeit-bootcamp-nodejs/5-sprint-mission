@@ -14,7 +14,7 @@ export const createNotificationService = (
 
 
   // 알림 생성
-  const createNotification = async (params: {
+  const notify = async (params: {
     type: NotificationType,
     message: string,
     read: boolean,
@@ -30,6 +30,23 @@ export const createNotificationService = (
     eventBus.notification.publish(notification);
   }
 
+  const notifyAll = async (params: {
+    type: NotificationType,
+    message: string,
+    read: boolean,
+    senderId: string,
+  }) => {
+    // 알림 DB에 저장
+    const notifcationEntity = Notification.createNew({
+      ...params,
+    });
+
+    const notification =
+      await repos.notification.create(notifcationEntity);
+
+    // 알림 이벤트 생성
+    eventBus.notification.publishAll(notification);
+  }
 
   // 모든 알림 조회
   const getNotifications = async (userId: string) => {
@@ -80,7 +97,8 @@ export const createNotificationService = (
   };
 
   return {
-    createNotification,
+    notify,
+    notifyAll,
     getNotifications,
     readNotification,
     deleteNotification,

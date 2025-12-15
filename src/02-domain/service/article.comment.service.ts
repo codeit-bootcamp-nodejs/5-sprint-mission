@@ -35,7 +35,7 @@ export const createArticleCommentService = (
 
     // 댓글 알림 생성 (자신의 글이 아닐 때만 알림)
     if (userId !== articleEntity.userId) {
-      notificationService.createNotification({
+      notificationService.notify({
         type: NotificationType.ARTICLE_COMMENT,
         message: "내가 판매 신청한 매물에 새로운 댓글이 달렸습니다.",
         read: false,
