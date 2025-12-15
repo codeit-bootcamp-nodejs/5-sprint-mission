@@ -4,52 +4,66 @@ import { CreateCommentDTO, UpdateCommentDTO } from "../types/dto";
 import { commentService } from "../services/comment.service";
 
 export const listForProduct: RequestHandler = async (req, res) => {
-  const productId = Number(req.params.productId);
-  const comments = await commentService.listByProduct(productId);
-  res.json(comments);
+  res.json(
+    await commentService.listByProduct(
+      req.params.productId as unknown as number,
+    ),
+  );
 };
 
 export const listForArticle: RequestHandler = async (req, res) => {
-  const articleId = Number(req.params.articleId);
-  const comments = await commentService.listByArticle(articleId);
-  res.json(comments);
+  res.json(
+    await commentService.listByArticle(
+      req.params.articleId as unknown as number,
+    ),
+  );
 };
 
 export const createForProduct: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest &
+  const { user, validated } = req as AuthedRequest &
     Validated<CreateCommentDTO>;
-  const productId = Number(req.params.productId);
-  const comment = await commentService.createForProduct(
-    user.id,
-    productId,
-    validated,
-  );
-  res.status(201).json(comment);
+  res
+    .status(201)
+    .json(
+      await commentService.createForProduct(
+        user.id,
+        req.params.productId as unknown as number,
+        validated,
+      ),
+    );
 };
 
 export const createForArticle: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest &
+  const { user, validated } = req as AuthedRequest &
     Validated<CreateCommentDTO>;
-  const articleId = Number(req.params.articleId);
-  const comment = await commentService.createForArticle(
-    user.id,
-    articleId,
-    validated,
-  );
-  res.status(201).json(comment);
+  res
+    .status(201)
+    .json(
+      await commentService.createForArticle(
+        user.id,
+        req.params.articleId as unknown as number,
+        validated,
+      ),
+    );
 };
 
 export const update: RequestHandler = async (req, res) => {
-  const { user, validated } = req as unknown as AuthedRequest &
+  const { user, validated } = req as AuthedRequest &
     Validated<UpdateCommentDTO>;
-  const commentId = Number(req.params.commentId);
-  const updated = await commentService.update(user.id, commentId, validated);
-  res.json(updated);
+  res.json(
+    await commentService.update(
+      user.id,
+      req.params.commentId as unknown as number,
+      validated,
+    ),
+  );
 };
 
 export const remove: RequestHandler = async (req, res) => {
   const { user } = req as AuthedRequest;
-  const commentId = Number(req.params.commentId);
-  await commentService.remove(user.id, commentId);
+  await commentService.remove(
+    user.id,
+    req.params.commentId as unknown as number,
+  );
   res.status(204).end();
 };

@@ -5,7 +5,7 @@ console.log("소켓 테스트 시작");
 const socket = io("http://localhost:3000", {
   auth: {
     token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYXNkQGFzZC5jb20iLCJuaWNrbmFtZSI6IuyngO2YnCIsImlhdCI6MTc2NTc4OTY0MCwiZXhwIjoxNzY1NzkzMjQwfQ.vU_yTP2yBVpNE8HwUiTz1Pzy7Kf7DhUTrriaINqpuF4", // ⚠️ Bearer 붙이지 말 것
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYXNkQGFzZC5jb20iLCJuaWNrbmFtZSI6IuyngO2YnCIsImlhdCI6MTc2NTc5NTU0NywiZXhwIjoxNzY1Nzk5MTQ3fQ.ylK55vKFi78B1w1fw29JnhFb5hK_DpxC0U_aPS4tL6g",
   },
   transports: ["websocket"],
 });

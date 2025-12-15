@@ -1,23 +1,21 @@
+import { RequestHandler } from "express";
+import { AuthedRequest } from "../types/http";
 import { notificationRepository } from "../repositories/notification.repository";
-import { Request, Response } from "express";
 
-export const notificationController = {
-  async list(req: Request, res: Response) {
-    const userId = req.user.id;
-    const notifications = await notificationRepository.findByUser(userId);
-    res.json(notifications);
-  },
+export const list: RequestHandler = async (req, res) => {
+  const { user } = req as AuthedRequest;
+  res.json(await notificationRepository.findByUser(user.id));
+};
 
-  async unreadCount(req: Request, res: Response) {
-    const userId = req.user.id;
-    const count = await notificationRepository.countUnread(userId);
-    res.json({ count });
-  },
+export const unreadCount: RequestHandler = async (req, res) => {
+  const { user } = req as AuthedRequest;
+  res.json({
+    count: await notificationRepository.countUnread(user.id),
+  });
+};
 
-  async read(req: Request, res: Response) {
-    const userId = req.user.id;
-    const id = Number(req.params.id);
-    await notificationRepository.read(id, userId);
-    res.status(204).end();
-  },
+export const read: RequestHandler = async (req, res) => {
+  const { user } = req as AuthedRequest;
+  await notificationRepository.read(Number(req.params.id), user.id);
+  res.status(204).end();
 };

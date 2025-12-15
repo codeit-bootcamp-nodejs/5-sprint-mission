@@ -10,14 +10,13 @@ import * as p from "../controllers/product.controller";
 const router = Router();
 
 router.get("/", optionalAuthenticate, p.list);
+router.get("/mine", authenticate, p.mine);
 router.get(
   "/:productId",
   optionalAuthenticate,
   parseIdParam("productId"),
   p.getById,
 );
-
-router.get("/mine", authenticate, p.mine);
 
 router.post("/", authenticate, validateCreateProduct, p.create);
 
