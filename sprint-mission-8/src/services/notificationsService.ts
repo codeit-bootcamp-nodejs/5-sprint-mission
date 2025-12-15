@@ -7,7 +7,7 @@ import {
   getNotiByUserId,
   getNotificationById,
   updateNotificaion,
-} from '../repositories/notificationRepository';
+} from '../repositories/notificationsRepository';
 import { Notification } from '../types/Notification';
 import { CursorPaginationParams } from '../types/pagination';
 import { sendNotification } from './socketService';
