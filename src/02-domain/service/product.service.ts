@@ -11,17 +11,25 @@ import { NotificationServiceType } from "./notification.service";
 
 export const createProductService = (
   repos: IBaseRepository,
-  notificationService: NotificationServiceType,
+  eventBus: IEventBus,
 ) => {
   const createProduct = async (dto: ProductDto) => {
+    // 상품 생성
     const productEntity = Product.createNew(dto);
     const newProduct = await repos.product.save(productEntity);
-    notificationService.notifyAll({
+
+
+    // 알림 이벤트 생성
+    const notifcationEntity = Notification.createNew({
       type: NotificationType.NEW_PRODUCT,
       message: `새로운 상품이 등록되었습니다!`,
       read: false,
       senderId: newProduct.userId
-    })
+    });
+    
+    const notification =
+      await repos.notification.create(notifcationEntity);
+    eventBus.notification.publishAll(notification);
     return ProductResDto(newProduct);
   };
 
@@ -46,6 +54,7 @@ export const createProductService = (
       });
     }
 
+
     // 기존 상품 조회
     const foundProduct = await repos.product.findById(id);
     if (!foundProduct) {
@@ -53,6 +62,7 @@ export const createProductService = (
         type: BusinessExceptionType.DATA_NOT_FOUND,
       });
     }
+
 
     if (foundProduct.userId !== userId) {
       throw BusinessException({
@@ -71,19 +81,25 @@ export const createProductService = (
     // 상품 좋아요를 누른 유저 조회
     const productLikes = await repos.productLike.findAll(id);
 
-    // (좋아요를 누른 모든 유저에게) 가격 변경 알림 전송
+    // (좋아요를 누른 모든 유저에게) 가격 변경 알림 전송 
     if (productLikes && foundProduct.price !== updatedProduct.price) {
       await Promise.all(  // 비동기 실패 누락 처리
         productLikes
           .filter((like) => like.userId !== foundProduct.userId)
           .map(async (like) => {
-            notificationService.notify({
+            // 알림 DB에 저장
+            const notifcationEntity = Notification.createNew({
               type: NotificationType.PRODUCT_PRICE_CHANGE,
-              message: `가격 변경: ${foundProduct.price} → ${updatedProduct.price}`,
+              message: `가격이 변동되었습니다. (${foundProduct.price} -> ${updatedProduct.price})`,
               read: false,
               senderId: userId,
-              receiverId: like.userId,
+              receiverId: like.userId
             });
+            const notification =
+              await repos.notification.create(notifcationEntity);
+
+            // 알림 이벤트 생성
+            eventBus.notification.publish(notification);
           }));
     }
     return ProductResDto(updatedProduct);
@@ -122,13 +138,19 @@ export const createProductService = (
 
     // 좋아요 알림 생성 (자신의 상품이 아닐 때만 알림)
     if (productLike && productLike.userId !== product.userId) {
-      notificationService.notify({
+      const notifcationEntity = Notification.createNew({
         type: NotificationType.PRODUCT_LIKE,
         message: `${userId}님이 좋아요를 눌렀습니다!`,
         read: false,
         senderId: userId,
         receiverId: product.userId,
       });
+
+      const notification =
+        await repos.notification.create(notifcationEntity);
+
+      // 알림 이벤트 생성
+      eventBus.notification.publish(notification);
       return true;
     } else {
       return false;

@@ -22,8 +22,9 @@ import { createHttpServer } from "./01-inbound/server/http.server";
 import { createNotificationController } from "./01-inbound/controllers/notification.controller";
 import { createNotificationService } from "./02-domain/service/notification.service";
 import { createProductLikeRepository } from "./03-outbound/repository/product.like.repository";
-import { NotificationEventBus } from "./03-outbound/eventhandler/notification.event.bus";
+import { NotificationEventBus } from "./external/eventbus/notification.event.bus";
 import { IEventBus } from "./01-inbound/port/I.eventbus";
+import { NotificationHandler } from "./01-inbound/eventhandlers/notification.handler";
 
 export const DependencyInjector = () => {
   const inject = () => {
@@ -52,24 +53,20 @@ export const DependencyInjector = () => {
     const authenticator = Authenticator(repos);
 
 
-    // Event buses
+    // Event Buses
     const notificationEventBus = NotificationEventBus();
     const eventBuses: IEventBus = {
       notification: notificationEventBus,
     };
 
 
-    // Service
-    const userService = createUserService(repos, authenticator);
     const notificationService = createNotificationService(repos, eventBuses);
-    const productService = createProductService(repos,notificationService);
-    const articleService = createArticleService(repos);
+    const productService = createProductService(repos, eventBuses); 
+    const articleCommentService = createArticleCommentService(repos, eventBuses);
+    const userService = createUserService(repos, authenticator);
     const productCommentService = createProductCommentService(repos);
-    const articleCommentService = createArticleCommentService(
-      repos,
-      notificationService,
-    );
-
+    const articleService = createArticleService(repos);
+    
 
     // Controller
     const userController = createUserController(userService, authenticator);
@@ -85,11 +82,13 @@ export const DependencyInjector = () => {
       productCommentService,
       authenticator,
     );
+
     const articlecommentController = createArticleCommentController(
       articleCommentService,
       authenticator,
     );
-    const notificationControler = createNotificationController(
+
+    const notificationController = createNotificationController(
       notificationService,
       authenticator,
     );
@@ -100,16 +99,23 @@ export const DependencyInjector = () => {
       userController,
       productcommentController,
       articlecommentController,
-      notificationControler,
+      notificationController,
     ];
 
-    
+
+    // EventHandler
+    const notificationHandler = NotificationHandler(eventBuses);
+    const eventHandlers = [
+      notificationHandler
+    ]
+
+
     // Server
     const httpServer = createHttpServer(controllers);
-    const wsServer = createWsServer(httpServer.defaultHttpServer, eventBuses);
-
+    const wsServer = createWsServer(httpServer.defaultHttpServer, eventHandlers);
     return { httpServer, wsServer };
   };
+
 
   const { httpServer, wsServer } = inject();
   return { httpServer, wsServer };

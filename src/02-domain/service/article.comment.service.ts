@@ -10,7 +10,7 @@ import { NotificationServiceType } from "./notification.service";
 
 export const createArticleCommentService = (
   repos: IBaseRepository,
-  notificationService: NotificationServiceType
+  eventBus: IEventBus
 ) => {
   const createArticleComment = async (dto: ArticleCommentDto) => {
     const { articleId, userId, content } = dto;
@@ -35,13 +35,15 @@ export const createArticleCommentService = (
 
     // 댓글 알림 생성 (자신의 글이 아닐 때만 알림)
     if (userId !== articleEntity.userId) {
-      notificationService.notify({
+      const notifcationEntity = Notification.createNew({
         type: NotificationType.ARTICLE_COMMENT,
         message: "내가 판매 신청한 매물에 새로운 댓글이 달렸습니다.",
         read: false,
         senderId: userId,
         receiverId: articleEntity.userId,
       });
+      const notification = await repos.notification.create(notifcationEntity);
+      eventBus.notification.publish(notification);
     }
 
     return ArticleCommentResDto(articleComment);
