@@ -10,6 +10,7 @@ import articleCommentsRouter from "./routes/articleComments.route";
 import usersRouter from "./routes/users.route";
 
 import { errorHandler } from "./middlewares/error";
+import notificationRoute from "./routes/notification.route";
 
 const app = express();
 
@@ -19,12 +20,13 @@ app.use(morgan("dev"));
 
 app.get("/health", (_req, res) => res.send("ok"));
 
-app.use("/api/auth", authRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/articles", articlesRouter);
-app.use("/api/products/:productId/comments", productCommentsRouter);
-app.use("/api/articles/:articleId/comments", articleCommentsRouter);
-app.use("/api/users", usersRouter);
+app.use("/auth", authRouter);
+app.use("/products", productsRouter);
+app.use("/articles", articlesRouter);
+app.use("/products/:productId/comments", productCommentsRouter);
+app.use("/articles/:articleId/comments", articleCommentsRouter);
+app.use("/users", usersRouter);
+app.use("/notifications", notificationRoute);
 
 app.use(errorHandler);
 

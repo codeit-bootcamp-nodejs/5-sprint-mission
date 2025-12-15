@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { RequestHandler, Response } from "express";
 import { AuthedRequest, Validated } from "../types/http";
 import { CreateProductDTO, UpdateProductDTO } from "@/types/dto";
 import { productService } from "../services/product.service";
@@ -35,20 +35,20 @@ export const mine = async (req: AuthedRequest, res: Response) => {
   res.json(data);
 };
 
-export const create = async (
-  req: AuthedRequest & Validated<CreateProductDTO>,
-  res: Response,
-) => {
-  const created = await productService.create(req.user.id, req.validated);
+export const create: RequestHandler = async (req, res) => {
+  const { user, validated } = req as AuthedRequest &
+    Validated<CreateProductDTO>;
+
+  const created = await productService.create(user.id, validated);
   res.status(201).json(created);
 };
 
-export const update = async (
-  req: AuthedRequest & Validated<UpdateProductDTO>,
-  res: Response,
-) => {
+export const update: RequestHandler = async (req, res) => {
+  const { user, validated } = req as AuthedRequest &
+    Validated<UpdateProductDTO>;
+
   const id = Number(req.params.id);
-  const updated = await productService.update(req.user.id, id, req.validated);
+  const updated = await productService.update(user.id, id, validated);
   res.json(updated);
 };
 
