@@ -1,43 +1,77 @@
 import type { PrismaClient } from "@prisma/client";
-import { CreateArticleDTO } from "../common/dto";
+import { NotificationType } from "@prisma/client";
+import type { NotificationService } from "./notificationService";
 
 export class ArticleService {
-  #prisma: PrismaClient;
-  constructor(prisma: PrismaClient) { this.#prisma = prisma; }
+  private prisma: PrismaClient;
+  private notificationService: NotificationService;
 
-  async createArticle(userId: string, data: CreateArticleDTO) {
-    return this.#prisma.article.create({
-      data: { ...data, userId },
-      include: { likes: true, comments: true }
+  constructor(prisma: PrismaClient, notificationService: NotificationService) {
+    this.prisma = prisma;
+    this.notificationService = notificationService;
+  }
+
+  // 게시글 생성
+  async createArticle(userId: string, title: string, content: string) {
+    return this.prisma.article.create({
+      data: { userId, title, content },
     });
   }
 
-  async getArticles(userId: string | null) {
-    const items = await this.#prisma.article.findMany({
-      include: { likes: true, comments: true },
-      orderBy: { createdAt: "desc" }
+  // 게시글 목록 조회
+  async getArticles() {
+    return this.prisma.article.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { id: true, nickname: true } },
+        _count: { select: { comments: true, likes: true } },
+      },
     });
-
-    return items.map(a => ({
-      ...a,
-      isLiked: !!(userId && a.likes.some(l => l.userId === userId && l.isLiked)),
-    }));
   }
 
-  async toggleLike(userId: string, articleId: string) {
-    const like = await this.#prisma.articleLike.findUnique({
-      where: { userId_articleId: { userId, articleId } }
+  // 게시글 좋아요 토글
+  async toggleLike(articleId: string, userId: string) {
+    const existed = await this.prisma.articleLike.findFirst({
+      where: {
+        articleId,
+        userId,
+      },
     });
 
-    if (like) {
-      return this.#prisma.articleLike.update({
-        where: { userId_articleId: { userId, articleId } },
-        data: { isLiked: !like.isLiked }
+    if (existed) {
+      await this.prisma.articleLike.delete({
+        where: { id: existed.id },
       });
+      return { liked: false };
     }
 
-    return this.#prisma.articleLike.create({
-      data: { userId, articleId }
+    await this.prisma.articleLike.create({
+      data: {
+        articleId,
+        userId,
+      },
     });
+
+    return { liked: true };
+  }
+
+  // 댓글 생성 및 알림
+  async createComment(userId: string, articleId: string, content: string) {
+    const comment = await this.prisma.articleComment.create({
+      data: { content, userId, articleId },
+      include: {
+        article: { select: { userId: true, title: true } },
+      },
+    });
+
+    if (comment.article.userId !== userId) {
+      await this.notificationService.createNotification(
+        comment.article.userId,
+        NotificationType.ARTICLE_COMMENT_CREATED,
+        `게시글 "${comment.article.title}"에 새로운 댓글이 달렸습니다.`,
+      );
+    }
+
+    return comment;
   }
 }

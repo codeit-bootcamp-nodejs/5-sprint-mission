@@ -1,11 +1,11 @@
 export type UUID = string;
 
-export interface CreateArticleDTO {
+export interface CreateArticleDto {
   title: string;
   content: string;
 }
 
-export interface CreateProductDTO {
+export interface CreateProductDto {
   name: string;
   description: string;
   price: number;
@@ -13,29 +13,29 @@ export interface CreateProductDTO {
   images?: string[];
 }
 
-export interface CreateCommentDTO {
+export interface CreateCommentDto {
   content: string;
   productId?: string;
   articleId?: string;
 }
 
-export interface SignupDTO {
+export interface SignupDto {
   email: string;
   nickname: string;
   password: string;
 }
 
-export interface LoginDTO {
+export interface LoginDto {
   email: string;
   password: string;
 }
 
-export interface ChangePasswordDTO {
+export interface ChangePasswordDto {
   oldPassword: string;
   newPassword: string;
 }
 
-export interface UpdateProfileDTO {
+export interface UpdateProfileDto {
   nickname?: string;
   image?: string | null;
 }

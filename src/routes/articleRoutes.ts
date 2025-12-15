@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { authMiddleware } from "../middelware/auth";
+import { authMiddleware } from "../middleware/auth";
 
 export const articleRoutesFactory = (articleController: any): Router => {
   const router = express.Router();

@@ -1,3 +1,6 @@
+export const PORT = Number(process.env.PORT) || 3000;
+export const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:4000";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -24,4 +27,3 @@ export class Config {
 }
 
 export const config = new Config();
-

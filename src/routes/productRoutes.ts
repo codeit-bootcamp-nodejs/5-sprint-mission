@@ -1,12 +1,15 @@
-import express, { Router } from "express";
-import { authMiddleware } from "../middelware/auth";
+import { Router } from "express";
+import { ProductController } from "../controller/productController";
 
-export const productRoutesFactory = (productController: any): Router => {
-  const router = express.Router();
+export const productRoutesFactory = (productController: ProductController) => {
+  const router = Router();
 
-  router.post("/", authMiddleware, productController.createProduct);
-  router.get("/", authMiddleware, productController.getProducts);
-  router.post("/:productId/like", authMiddleware, productController.toggleLike);
+  // 상품 생성
+  router.post("/", productController.createProduct);
+  // 상품 목록 조회
+  router.get("/", productController.getProducts);
+  // 좋아요 토글
+  router.post("/:productId/like", productController.toggleLike);
 
   return router;
 };

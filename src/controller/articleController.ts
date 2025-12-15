@@ -1,36 +1,45 @@
-import type { Request, Response, NextFunction } from "express";
-import type { ArticleService } from "../service/articleService";
-import { CreateArticleDTO } from "../common/dto";
+import { Request, Response, NextFunction } from "express";
+import { ArticleService } from "../service/articleService";
 
 export class ArticleController {
-  #articleService: ArticleService;
-  constructor(articleService: ArticleService) {
-    this.#articleService = articleService;
-  }
+  constructor(private articleService: ArticleService) {}
 
   createArticle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.id;
-      const payload = req.body as CreateArticleDTO;
-      const article = await this.#articleService.createArticle(userId, payload);
+      const { title, content } = req.body;
+
+      const article = await this.articleService.createArticle(
+        userId,
+        title,
+        content,
+      );
+
       res.status(201).json(article);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   };
 
   getArticles = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user?.id;
-      const articles = await this.#articleService.getArticles(userId ?? null);
-      res.status(200).json(articles);
-    } catch (err) { next(err); }
+      const articles = await this.articleService.getArticles();
+      res.json(articles);
+    } catch (err) {
+      next(err);
+    }
   };
 
   toggleLike = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.id;
       const { articleId } = req.params;
-      const like = await this.#articleService.toggleLike(userId, articleId);
-      res.status(200).json(like);
-    } catch (err) { next(err); }
+
+      const result = await this.articleService.toggleLike(articleId, userId);
+
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   };
 }
