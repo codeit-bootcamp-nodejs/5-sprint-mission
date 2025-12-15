@@ -31,8 +31,7 @@ export const createNotificationRepository = (
   const findAll = async (userId: string): Promise<PersistedNotification[]> => {
     const records = await prisma.notification.findMany({
       where: {
-        receiverId: userId,
-        read: false,
+        receiverId: userId
       },
     });
 

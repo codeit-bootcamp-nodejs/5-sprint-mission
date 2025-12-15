@@ -15,14 +15,20 @@ export const NotificationResDto = (entity: PersistedNotification) => {
 };
 
 export const NotificationResDtos = (entities: PersistedNotification[]) => {
-  const data = entities.map((entity) => {
-    return NotificationResDto(entity);
-  });
+  let unread = 0;
+  let total = entities.length;
 
-  const total = data.length;
+  const data = entities.map((entity : PersistedNotification) => {
+      if (entity.read === false) unread += 1;
+      return NotificationResDto(entity);
+    });
+
+  
+
 
   return {
     data,
+    unread,
     total,
   };
 };
