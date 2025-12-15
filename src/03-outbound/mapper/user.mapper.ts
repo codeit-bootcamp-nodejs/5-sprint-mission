@@ -1,8 +1,8 @@
 import { UserEntity } from "../../02-domain/entity/user.entity";
 import { PersistUser } from "../repository/user.repository";
 
-export class UserMapper {
-  static toPersist(record: PersistUser) {
+export const UserMapper = {
+  toPersist(record: PersistUser) {
     return UserEntity.createPersist({
       id: record.id,
       createdAt: record.createdAt,

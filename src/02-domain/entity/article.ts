@@ -45,9 +45,11 @@ export const Article = {
   },
 
   validateTitle(title: string) {
-    throw BusinessException({
-      type: BusinessExceptionType.PARSE_BODY_ERROR
-    })
+    if (!title) {
+      throw BusinessException({
+        type: BusinessExceptionType.PARSE_BODY_ERROR
+      })
+    }
   },
 
   validateContent(content: string) {
