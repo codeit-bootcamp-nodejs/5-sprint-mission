@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 import { Prisma } from "@prisma/client";
 import { HttpError } from "../../external/authenticator";
-import { BusinessException } from "../../common/exception/exception";
+import { isBusinessException } from "../../common/exception/exception";
 
 export const createHttpServer = (controllers: any) => {
   const server = express();
@@ -26,8 +26,11 @@ export const createHttpServer = (controllers: any) => {
   const registerExceptionHandler = () => {
     server.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (err instanceof BusinessException) {
-          res.json(err.message);
+        if (isBusinessException(err)) {
+          console.log("business exception");
+          console.log(err);
+          const { statusCode = 400, message } = err;
+          return res.status(statusCode).json({ message });
         } else if (
           err.name === "StructError" ||
           err instanceof Prisma.PrismaClientValidationError

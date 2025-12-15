@@ -97,14 +97,35 @@ const BusinessExceptionTable: Record<
   },
 };
 
+export type BusinessExceptionObject = {
+  statusCode?: number;
+  type: BusinessExceptionType;
+  error?: Error;
+  message: string;
+  isBusinessException: true;
+};
+
 export const BusinessException = (options: {
   statusCode?: number,
   type: BusinessExceptionType,
   error?: Error
-}) => {
-  const statusCode = options.statusCode
+}): BusinessExceptionObject => {
+  const statusCode = options.statusCode;
   const type = options.type;
   const error = options.error;
-}
+  const message = BusinessExceptionTable[type].message;
+
+  return {
+    statusCode,
+    type, 
+    error,
+    message,
+    isBusinessException: true
+  };
+};
+
+export const isBusinessException = (error: any): error is BusinessExceptionObject => {
+  return error && error.isBusinessException === true;
+};
 
 

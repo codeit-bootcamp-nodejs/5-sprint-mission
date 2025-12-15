@@ -14,7 +14,6 @@ export const BaseController = (_basePath: string) => {
   const validate = <T extends z.ZodType>(schema: T, data: unknown) => {
     const result = schema.safeParse(data);
     if (!result.success) {
-      const errorMessage =
         result.error.issues.pop()?.message ??
         "요청 데이터가 유효하지 않습니다.";
       throw BusinessException({
