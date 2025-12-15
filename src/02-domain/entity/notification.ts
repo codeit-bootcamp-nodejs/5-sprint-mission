@@ -13,7 +13,7 @@ type Notification = {
   message: string;
   read: boolean;
   senderId: string;
-  receiverId: string;
+  receiverId?: string;
   readonly createdAt?: Date;
 };
 
@@ -23,7 +23,7 @@ export const Notification = {
     message: string;
     read: boolean;
     senderId: string;
-    receiverId: string;
+    receiverId?: string;
   }) => {
     return {
       type: params.type,
@@ -40,7 +40,7 @@ export const Notification = {
     message: string;
     read: boolean;
     senderId: string;
-    receiverId: string;
+    receiverId?: string;
     createdAt: Date;
   }) => {
     return {

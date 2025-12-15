@@ -9,7 +9,7 @@ export const NotificationMapper = {
       message: record.message,
       read: record.read,
       senderId: record.senderId,
-      receiverId: record.receiverId,
+      receiverId: record.receiverId ?? undefined,
       createdAt: record.createdAt,
     });
   },

@@ -21,7 +21,7 @@ export const createNotificationRepository = (
         message: entity.message,
         read: entity.read,
         senderId: entity.senderId,
-        receiverId: entity.receiverId,
+        receiverId: entity.receiverId ?? null,
       },
     });
 
