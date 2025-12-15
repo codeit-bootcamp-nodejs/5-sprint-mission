@@ -4,8 +4,9 @@ import { ArticleResDto } from "../../01-inbound/response/article.response";
 import { ArticleReqDto } from "../../01-inbound/request/article.request";
 import { QueryType } from "../../01-inbound/request/query.request";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { IEventBus } from "../../01-inbound/port/I.eventbus";
 
-export const createArticleService = (repos: IBaseRepository) => {
+export const createArticleService = (repos: IBaseRepository, eventBuses: IEventBus) => {
   const getAllArticles = async (query: QueryType) => {
     const articleEntities = await repos.article.findAll(query);
     const articleResDtos = articleEntities.map((entity) =>

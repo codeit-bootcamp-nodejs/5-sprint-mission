@@ -3,14 +3,14 @@ import { ArticleCommentResDto } from "../../01-inbound/response/article.comment.
 import { Notification } from "../entity/notification";
 import { IBaseRepository } from "../port/I.base.repository";
 import { ArticleCommentDto } from "../../01-inbound/request/article.comment.request";
-import { IEventBus } from "../../01-inbound/port/I.eventbus";
 import { ArticleComment } from "../entity/article.comment";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
 import { NotificationServiceType } from "./notification.service";
+import { IEventBus } from "../../01-inbound/port/I.eventbus";
 
 export const createArticleCommentService = (
   repos: IBaseRepository,
-  eventBus: IEventBus
+  eventBuses: IEventBus
 ) => {
   const createArticleComment = async (dto: ArticleCommentDto) => {
     const { articleId, userId, content } = dto;
@@ -43,7 +43,7 @@ export const createArticleCommentService = (
         receiverId: articleEntity.userId,
       });
       const notification = await repos.notification.create(notifcationEntity);
-      eventBus.notification.publish(notification);
+      eventBuses.notification.publish(notification);
     }
 
     return ArticleCommentResDto(articleComment);

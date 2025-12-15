@@ -7,11 +7,10 @@ import { BusinessException, BusinessExceptionType } from "../../common/exception
 import { IBaseRepository } from "../port/I.base.repository";
 import { Notification, PersistedNotification } from "../entity/notification";
 import { IEventBus } from "../../01-inbound/port/I.eventbus";
-import { Handler } from "../../external/eventbus/base.event.bus";
 
 export const createNotificationService = (
   repos: IBaseRepository,
-  eventBus: IEventBus) => {
+  eventBuses: IEventBus) => {
 
   // 모든 알림 조회
   const getNotifications = async (userId: string) => {

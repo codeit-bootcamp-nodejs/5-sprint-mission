@@ -1,6 +1,4 @@
 import { WebSocketServer } from "ws";
-import { AuthenticatorType } from "../../external/authenticator";
-import { IEventBus } from "../port/I.eventbus";
 import { createServer, Server as HttpServer, IncomingMessage } from "node:http";
 import jwt from "jsonwebtoken";
 import { PersistedNotification } from "../../02-domain/entity/notification";

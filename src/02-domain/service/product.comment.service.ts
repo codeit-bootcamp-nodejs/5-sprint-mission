@@ -4,8 +4,9 @@ import { ProductComment } from "../entity/product.comment.entity";
 import { ProductCommentResDto } from "../../01-inbound/response/product.comment.response";
 import { ProductCommentDto } from "../../01-inbound/request/product.comment.request";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { IEventBus } from "../../01-inbound/port/I.eventbus";
 
-export const createProductCommentService = (repos: IBaseRepository) => {
+export const createProductCommentService = (repos: IBaseRepository, eventBuses: IEventBus) => {
   const createProductComment = async (dto: ProductCommentDto) => {
     const { content, productId, userId } = dto;
     const productCommentEntity = ProductComment.createNew({

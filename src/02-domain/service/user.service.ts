@@ -10,10 +10,12 @@ import {
   UserSignInDto,
 } from "../../01-inbound/request/user.request";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { IEventBus } from "../../01-inbound/port/I.eventbus";
 
 export const createUserService = (
   repos: IBaseRepository,
   auth: AuthenticatorType,
+  eventBuses : IEventBus
 ) => {
   const createUser = async (dto: UserSignUpDto) => {
     const { email, nickname, password } = dto;

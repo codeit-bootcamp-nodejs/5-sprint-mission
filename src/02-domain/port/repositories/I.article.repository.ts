@@ -1,4 +1,4 @@
-import { QueryType } from "../../../01-inbound/request/req.validator";
+import { QueryType } from "../../../01-inbound/request/query.request";
 import { NewArticle, PersistedArticle } from "../../entity/article";
 
 export interface IArticleRepository {

@@ -7,11 +7,10 @@ import { PersistedProduct, Product } from "../entity/product";
 import { IBaseRepository } from "../port/I.base.repository";
 import { QueryType } from "../../01-inbound/request/query.request";
 import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
-import { NotificationServiceType } from "./notification.service";
 
 export const createProductService = (
   repos: IBaseRepository,
-  eventBus: IEventBus,
+  eventBuses: IEventBus,
 ) => {
   const createProduct = async (dto: ProductDto) => {
     // 상품 생성
@@ -26,10 +25,9 @@ export const createProductService = (
       read: false,
       senderId: newProduct.userId
     });
-    
     const notification =
       await repos.notification.create(notifcationEntity);
-    eventBus.notification.publishAll(notification);
+    eventBuses.notification.publishAll(notification);
     return ProductResDto(newProduct);
   };
 
@@ -99,7 +97,7 @@ export const createProductService = (
               await repos.notification.create(notifcationEntity);
 
             // 알림 이벤트 생성
-            eventBus.notification.publish(notification);
+            eventBuses.notification.publish(notification);
           }));
     }
     return ProductResDto(updatedProduct);
@@ -150,7 +148,7 @@ export const createProductService = (
         await repos.notification.create(notifcationEntity);
 
       // 알림 이벤트 생성
-      eventBus.notification.publish(notification);
+      eventBuses.notification.publish(notification);
       return true;
     } else {
       return false;

@@ -1,121 +1,93 @@
-import { createArticleController } from "./01-inbound/controllers/article.controller";
-import { createArticleService } from "./02-domain/service/article.service";
 import { PrismaClient } from "@prisma/client";
-import { createArticleRepository } from "./03-outbound/repository/article.repository";
-import { createProductRepository } from "./03-outbound/repository/product.repository";
-import { createUserRepository } from "./03-outbound/repository/user.repository";
-import { createUserController } from "./01-inbound/controllers/user.controller";
-import { Authenticator } from "./external/authenticator";
-import { createProductCommentRepository } from "./03-outbound/repository/product.comment.repository";
-import { createProductCommentController } from "./01-inbound/controllers/product.comment.controller";
-import { createArticleCommentRepository } from "./03-outbound/repository/article.comment.repository";
-import { createArticleCommentService } from "./02-domain/service/article.comment.service";
+
+import { createHttpServer } from "./01-inbound/server/http.server";
+import { createWsServer } from "./01-inbound/server/ws.server";
+
+import { createArticleController } from "./01-inbound/controllers/article.controller";
 import { createArticleCommentController } from "./01-inbound/controllers/article.comment.controller";
-import { createNotificationRepository } from "./03-outbound/repository/notification.repository";
-import { createUserService } from "./02-domain/service/user.service";
+import { createNotificationController } from "./01-inbound/controllers/notification.controller";
+import { createProductController } from "./01-inbound/controllers/product.controller";
+import { createProductCommentController } from "./01-inbound/controllers/product.comment.controller";
+import { createUserController } from "./01-inbound/controllers/user.controller";
+
+import { NotificationHandler } from "./01-inbound/eventhandlers/notification.handler";
+
+import { createArticleService } from "./02-domain/service/article.service";
+import { createArticleCommentService } from "./02-domain/service/article.comment.service";
+import { createNotificationService } from "./02-domain/service/notification.service";
 import { createProductService } from "./02-domain/service/product.service";
 import { createProductCommentService } from "./02-domain/service/product.comment.service";
-import { createProductController } from "./01-inbound/controllers/product.controller";
+import { createUserService } from "./02-domain/service/user.service";
 import { IBaseRepository } from "./02-domain/port/I.base.repository";
-import { createWsServer } from "./01-inbound/server/ws.server";
-import { createHttpServer } from "./01-inbound/server/http.server";
-import { createNotificationController } from "./01-inbound/controllers/notification.controller";
-import { createNotificationService } from "./02-domain/service/notification.service";
+
+import { createArticleRepository } from "./03-outbound/repository/article.repository";
+import { createArticleCommentRepository } from "./03-outbound/repository/article.comment.repository";
+import { createNotificationRepository } from "./03-outbound/repository/notification.repository";
+import { createProductRepository } from "./03-outbound/repository/product.repository";
+import { createProductCommentRepository } from "./03-outbound/repository/product.comment.repository";
 import { createProductLikeRepository } from "./03-outbound/repository/product.like.repository";
+import { createUserRepository } from "./03-outbound/repository/user.repository";
+
+import { Authenticator } from "./external/authenticator";
 import { NotificationEventBus } from "./external/eventbus/notification.event.bus";
 import { IEventBus } from "./01-inbound/port/I.eventbus";
-import { NotificationHandler } from "./01-inbound/eventhandlers/notification.handler";
 
 export const DependencyInjector = () => {
   const inject = () => {
     const prisma = new PrismaClient();
 
-    // Repository
-    const articleRepository = createArticleRepository(prisma);
-    const userRepository = createUserRepository(prisma);
-    const productRepository = createProductRepository(prisma);
-    const productCommentRepository = createProductCommentRepository(prisma);
-    const articleCommentRepository = createArticleCommentRepository(prisma);
-    const notificationRepository = createNotificationRepository(prisma);
-    const productLikeRepository = createProductLikeRepository(prisma);
+    // Repositories
     const repos: IBaseRepository = {
-      product: productRepository,
-      article: articleRepository,
-      user: userRepository,
-      productComment: productCommentRepository,
-      articleComment: articleCommentRepository,
-      notification: notificationRepository,
-      productLike: productLikeRepository,
+      article: createArticleRepository(prisma),
+      articleComment: createArticleCommentRepository(prisma),
+      product: createProductRepository(prisma),
+      productComment: createProductCommentRepository(prisma),
+      productLike: createProductLikeRepository(prisma),
+      user: createUserRepository(prisma),
+      notification: createNotificationRepository(prisma),
     };
-
 
     // Authenticator
     const authenticator = Authenticator(repos);
 
-
-    // Event Buses
+    // Event Bus
     const notificationEventBus = NotificationEventBus();
     const eventBuses: IEventBus = {
       notification: notificationEventBus,
     };
 
-
+    // Services
     const notificationService = createNotificationService(repos, eventBuses);
-    const productService = createProductService(repos, eventBuses); 
+    const productService = createProductService(repos, eventBuses);
+    const articleService = createArticleService(repos, eventBuses);
     const articleCommentService = createArticleCommentService(repos, eventBuses);
-    const userService = createUserService(repos, authenticator);
-    const productCommentService = createProductCommentService(repos);
-    const articleService = createArticleService(repos);
-    
+    const productCommentService = createProductCommentService(repos, eventBuses);
+    const userService = createUserService(repos, authenticator, eventBuses);
 
-    // Controller
-    const userController = createUserController(userService, authenticator);
-    const productController = createProductController(
-      productService,
-      authenticator,
-    );
-    const articleController = createArticleController(
-      articleService,
-      authenticator,
-    );
-    const productcommentController = createProductCommentController(
-      productCommentService,
-      authenticator,
-    );
-
-    const articlecommentController = createArticleCommentController(
-      articleCommentService,
-      authenticator,
-    );
-
-    const notificationController = createNotificationController(
-      notificationService,
-      authenticator,
-    );
-
+    // Controllers
     const controllers = [
-      productController,
-      articleController,
-      userController,
-      productcommentController,
-      articlecommentController,
-      notificationController,
+      createProductController(productService, authenticator),
+      createArticleController(articleService, authenticator),
+      createUserController(userService, authenticator),
+      createProductCommentController(productCommentService, authenticator),
+      createArticleCommentController(articleCommentService, authenticator),
+      createNotificationController(notificationService, authenticator),
     ];
 
-
-    // EventHandler
-    const notificationHandler = NotificationHandler(eventBuses);
+    // Event Handlers
     const eventHandlers = [
-      notificationHandler
-    ]
+      NotificationHandler(eventBuses),
+    ];
 
-
-    // Server
+    // Servers
     const httpServer = createHttpServer(controllers);
-    const wsServer = createWsServer(httpServer.defaultHttpServer, eventHandlers);
+    const wsServer = createWsServer(
+      httpServer.defaultHttpServer,
+      eventHandlers,
+    );
+
     return { httpServer, wsServer };
   };
-
 
   const { httpServer, wsServer } = inject();
   return { httpServer, wsServer };
