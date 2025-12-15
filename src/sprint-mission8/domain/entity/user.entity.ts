@@ -40,13 +40,19 @@ export class UserEntity extends BaseEntity<string> {
     this._refreshToken = attributes.refreshToken;
   }
 
-  static createNew(params: {
+  static async createNew(params: {
     email: string;
     nickname: string;
     image?: string;
     password: string;
-  }): PersistUserEntity {
-    return new UserEntity(params) as PersistUserEntity;
+    hashManager: IHashManager
+  }): Promise<NewUserEntity> {
+    const hashedPassword = await params.hashManager.hash(params.password);
+
+    return new UserEntity({
+      ...params,
+      password: hashedPassword
+    }) as NewUserEntity;
   }
 
   static createPersist(params: {

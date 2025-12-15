@@ -164,6 +164,10 @@ export const EXCEPTIONS = {
     statusCode: 404,
     message: "상품이 존재하지 않습니다.",
   },
+  NOTIFICATION_NOT_EXIST: {
+    statusCode: 404,
+    message: "알림이 존재하지 않습니다.",
+  },
   LIKE_NOT_EXIST: {
     statusCode: 404,
     message: "이미 좋아요가 안 눌러져 있습니다.",

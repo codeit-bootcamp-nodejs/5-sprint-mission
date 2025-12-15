@@ -3,6 +3,7 @@ import { IUtils } from "../../shared/util";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Controllers } from "../controllers";
+import { Gateways } from "../gateways";
 
 export class BaseRouter {
   public router;
@@ -10,7 +11,7 @@ export class BaseRouter {
   constructor(
     public readonly basePath: string,
     public readonly controllers: Controllers,
-    public readonly utils: IUtils
+    public readonly utils: IUtils,
   ) {
     this.basePath = basePath;
     this.router = express.Router();

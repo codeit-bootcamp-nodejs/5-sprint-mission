@@ -39,12 +39,19 @@ import { HttpServer } from "./inbound/servers/http-server";
 import { WsServer } from "./inbound/servers/ws-server";
 import { Gateways } from "./inbound/gateways";
 import { NotificationGateway } from "./inbound/gataways/notification.gateway";
+import { NotificationRepo } from "./outbound/repos/notification.repo";
+import { EventBus } from "./shared/util/event-bus.util";
+import { NotificationService } from "./domain/service/notification.service";
+import { NotificationController } from "./inbound/controllers/notification.controller";
+import { NotificationRouter } from "./inbound/routers/notification.router";
+import { Middlewares } from "./inbound/middlewares";
+import { AuthMiddleware } from "./inbound/middlewares/auth.middleware";
 
 export class Injector {
   public readonly httpSever: HttpServer;
   public readonly wsServer: WsServer;
   constructor() {
-    const {httpServer, wsServer} = this.inject();
+    const { httpServer, wsServer } = this.inject();
     this.httpSever = httpServer;
     this.wsServer = wsServer;
   }
@@ -55,10 +62,17 @@ export class Injector {
     const configUtil = new ConfigUtil();
     const fileUtil = new FileUtil();
     const tokenUtil = new TokenUtil(configUtil);
+    const eventBus = new EventBus();
     const utils = new Utils(
       configUtil,
       fileUtil,
-      tokenUtil
+      tokenUtil,
+      eventBus
+    );
+
+    const authMiddleware = new AuthMiddleware(utils);
+    const middlewares = new Middlewares(
+      authMiddleware
     );
 
     const hashManager = new BcryptHashManager(configUtil);
@@ -72,6 +86,7 @@ export class Injector {
     const tagRepo = new TagRepo(prisma);
     const userLikesProductRepo = new UserLikesProductRepo(prisma);
     const userLikesArticleRepo = new UserLikesArticleRepo(prisma);
+    const notificationRepo = new NotificationRepo(prisma);
     const repos = new Repos(
       userRepo,
       articleRepo,
@@ -81,6 +96,7 @@ export class Injector {
       tagRepo,
       userLikesProductRepo,
       userLikesArticleRepo,
+      notificationRepo,
     );
 
     const userService = new UserService(repos, managers, utils);
@@ -89,6 +105,7 @@ export class Injector {
     const articleCommentService = new ArticleCommentService(repos, managers, utils);
     const productService = new ProductService(repos, managers, utils);
     const productCommentService = new ProductCommentService(repos, managers, utils);
+    const notificationService = new NotificationService(repos, managers, utils)
     const services = new Services(
       userService,
       authService,
@@ -96,6 +113,7 @@ export class Injector {
       articleCommentService,
       productService,
       productCommentService,
+      notificationService,
     );
 
     const userController = new UserController(services);
@@ -106,7 +124,8 @@ export class Injector {
     const articleCommentController = new ArticleCommentController(services);
     const articleLikeController = new ArticleLikeController(services);
     const imageController = new ImageController();
-    const controllers = new Controllers (
+    const notificationController = new NotificationController(services);
+    const controllers = new Controllers(
       userController,
       productController,
       productCommentController,
@@ -115,27 +134,30 @@ export class Injector {
       articleCommentController,
       articleLikeController,
       imageController,
+      notificationController,
     );
 
     const userRouter = new UserRouter(controllers, utils);
     const productRouter = new ProductRouter(controllers, utils);
     const articleRouter = new ArticleRouter(controllers, utils);
     const imageRouter = new ImageRouter(controllers, utils);
+    const notification = new NotificationRouter(controllers, utils)
     const routers = new Routers(
       userRouter,
       productRouter,
       articleRouter,
-      imageRouter
+      imageRouter,
+      notification,
     );
-    
-    const notificationGateway = new NotificationGateway(services, utils);
+
+    const notificationGateway = new NotificationGateway(services, utils, middlewares);
     const gateways = new Gateways(
       notificationGateway
     );
 
     const httpServer = new HttpServer(routers, utils);
     const wsServer = new WsServer(httpServer.defaultHttpServer, gateways, utils);
-    
+
     return {
       httpServer,
       wsServer,

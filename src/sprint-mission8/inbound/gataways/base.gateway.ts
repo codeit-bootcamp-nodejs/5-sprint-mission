@@ -4,11 +4,13 @@ import { IServices } from "../port/services.interface";
 import { IUtils } from "../../shared/util";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
+import { Middlewares } from "../middlewares";
 
 export abstract class BaseGateway {
   constructor(
     public readonly services: IServices,
     public readonly utils: IUtils,
+    public readonly middlewares: Middlewares
   ) { }
 
   abstract register(io: DefaultWsServer): void;

@@ -30,6 +30,7 @@ model User {
   articleComments ArticleComment[]
   ProductLike     ProductLike[]
   ArticleLike     ArticleLike[]
+  notifications   Notification[]
 }
 
 model Product {
@@ -94,7 +95,7 @@ model ProductImage {
   url       String
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
+
   @@id([productId])
 }
 
@@ -133,4 +134,22 @@ model ArticleLike {
   article Article @relation(fields: [articleId], references: [id])
 
   @@unique([userId, articleId])
+}
+
+enum NotificationType {
+  PRODUCT_PRICE_CHANGED
+  ARTICLE_COMMENT_CREATED
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  type      NotificationType
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
 }

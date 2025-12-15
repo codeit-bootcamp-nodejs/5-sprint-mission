@@ -7,6 +7,7 @@ import { IArticleRepo } from "../domain/port/repo/article/article.repo.interface
 import { IUserLikesArticleRepo } from "../domain/port/repo/like/user-likes-article.repo.interface";
 import { ITagRepo } from "../domain/port/repo/tag.repo.interface";
 import { IUserLikesProductRepo } from "../domain/port/repo/like/user-likes-product.repo.interface";
+import { INotificationRepo } from "../domain/port/repo/notification.repo.interface";
 
 export class Repos implements IRepos {
   constructor(
@@ -18,5 +19,6 @@ export class Repos implements IRepos {
     public readonly tag: ITagRepo,
     public readonly userLikesProduct: IUserLikesProductRepo,
     public readonly userLikesArticle: IUserLikesArticleRepo,
+    public readonly notification: INotificationRepo,
   ) { }
 }

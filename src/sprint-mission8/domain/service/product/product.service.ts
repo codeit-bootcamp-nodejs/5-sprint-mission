@@ -1,14 +1,17 @@
+import { NotificationType } from "@prisma/client";
 import { IProductService } from "../../../inbound/port/services/product/product.service.interface";
 import { CreateProductDto, DeleteProductDto, GetLikedProductsDto, GetProductDto, GetProductListDto, UpdateProductDto } from "../../../inbound/requests/product/product.req.schemas";
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { ProductKeys, Sort } from "../../../types/query";
 import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
+import { NotificationEntity } from "../../entity/notification.entity";
 import { ProductImageVo } from "../../entity/product/product-image.vo";
 import { ProductTagVo } from "../../entity/product/product-tag.vo";
 import { PersistProductEntity, ProductEntity } from "../../entity/product/product.entity";
 import { TagEntity } from "../../entity/tag.entity";
 import { BaseService } from "../base.service";
+import { NotificationPriceChangeEvent } from "../../event/notification-price-change.event";
 
 export class ProductService extends BaseService implements IProductService {
 
@@ -130,8 +133,35 @@ export class ProductService extends BaseService implements IProductService {
 
     const updatedProduct = await this._repos.product.update(foundProduct);
 
+    if (dto.price && dto.price !== foundProduct.price) {
+      const likeUserIds = await this._repos.userLikesProduct.findLikeUserIdsByProduct(updatedProduct.id);
+
+
+      if (likeUserIds.length > 0) {
+        const notifications = await Promise.all(
+          likeUserIds.map(userId => {
+            const notification = NotificationEntity.createNew({
+              userId,
+              type: NotificationType.PRODUCT_PRICE_CHANGED,
+              message: "좋아요한 상품의 가격이 변동되었습니다.",
+            });
+
+            return this._repos.notification.save(notification);
+          })
+        );
+
+        this._utils.even.publish(
+          new NotificationPriceChangeEvent({
+            productId: updatedProduct.id,
+            userIds: likeUserIds,
+            type: NotificationType.PRODUCT_PRICE_CHANGED,
+            message: "좋아요한 상품의 가격이 변동되었습니다.",
+          }),
+        );
+      }
+    };
     return updatedProduct;
-  };
+  }
 
   async deleteProduct(dto: DeleteProductDto): Promise<void> {
     const foundProduct = await this._repos.product.findProductById(dto.productId);

@@ -5,16 +5,7 @@ export type ArticleKeys = "updatedAt" | "title"
 export type ProductKeys = "updatedAt" | "price";
 export type CommentKeys = "updatedAt" | "id";
 export type UserKeys = "updatedAt" | "email";
-
-export type QueryType<TKey extends string> = {
-  offset?: number;
-  cursor?: number;
-  limit: number;
-  orderBy: {
-    field: TKey,
-    sort: Sort;
-  };
-}
+export type NotificationKeys = "createdAt";
 
 export type ArticleSort = "recent" | "title-asc" | "title-desc";
 export type ProductSort = "recent" | "price-lowest" | "price-highest";

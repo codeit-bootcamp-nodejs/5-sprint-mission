@@ -1,4 +1,5 @@
 import { IConfigUtil } from "./util/config.util";
+import { IEventBus } from "./util/event-bus.util";
 import { IFileUtil } from "./util/file.util";
 import { ITokenUtil } from "./util/token.util";
 
@@ -6,6 +7,7 @@ export interface IUtils {
   config: IConfigUtil;
   file: IFileUtil;
   token: ITokenUtil;
+  even: IEventBus;
 };
 
 export class Utils implements IUtils {
@@ -13,5 +15,6 @@ export class Utils implements IUtils {
     public readonly config: IConfigUtil,
     public readonly file: IFileUtil,
     public readonly token: ITokenUtil,
+    public readonly even: IEventBus,
   ) { }
 }

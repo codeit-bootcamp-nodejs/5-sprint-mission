@@ -17,10 +17,12 @@ export class UserService extends BaseService implements IUserService {
       throw new Exception({ info: EXCEPTIONS.USER_EXIST });
     }
 
-    const newUser = UserEntity.createNew(dto);
-
+    const newUser = await UserEntity.createNew({
+      ...dto,
+      hashManager: this._managers.hash
+    });
+    
     const createdUser = await this._repos.user.create(newUser);
-
     return createdUser;
   };
 

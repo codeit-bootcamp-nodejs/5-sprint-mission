@@ -19,7 +19,7 @@ export class HttpServer {
   }
 
   listen = () => {
-    this.app.listen(this.utils.config.getParsed().PORT, () => {
+    this.defaultHttpServer.listen(this.utils.config.getParsed().PORT, () => {
       console.log(
         `app server listening on port ${this.utils.config.getParsed().PORT}`,
       );
@@ -62,7 +62,7 @@ export class HttpServer {
 
   start = () => {
     this.registerBaseMiddlewares();
-    
+
     // router
     this.app.use(
       this.routers.article.basePath,
@@ -71,10 +71,12 @@ export class HttpServer {
     this.app.use(this.routers.product.basePath, this.routers.product.router);
     this.app.use(this.routers.user.basePath, this.routers.user.router);
     this.app.use(this.routers.image.basePath, this.routers.image.router);
+    this.app.use(this.routers.notification.basePath, this.routers.notification.router);
+    this.registerExceptionMiddleware();
     this.app.use((req, res, next) => {
+      if (req.headers.upgrade?.toLowerCase() === "websocket") return next();
       next(new Error("경로가 없습니다."));
     });
-    this.registerExceptionMiddleware();
     this.listen();
   };
 }

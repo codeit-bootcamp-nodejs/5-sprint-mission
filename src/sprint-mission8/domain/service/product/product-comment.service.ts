@@ -1,10 +1,13 @@
+import { NotificationType } from "@prisma/client";
 import { IProductCommentService } from "../../../inbound/port/services/product/product-comment.service.interface";
 import { CreateProductCommentDto, DeleteProductCommentDto, GetProductCommentDto, UpdateProductCommentDto } from "../../../inbound/requests/product/product.req.schemas";
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstProductCommentEntity, ProductCommentEntity } from "../../entity/comment/product-comment.entity";
+import { NotificationEntity } from "../../entity/notification.entity";
 import { BaseService } from "../base.service";
+import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event copy";
 
 export class ProductCommentService extends BaseService implements IProductCommentService {
   async getCommentList(dto: GetProductCommentDto): Promise<PersitstProductCommentEntity[]> {
@@ -60,6 +63,27 @@ export class ProductCommentService extends BaseService implements IProductCommen
     if (!createdComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
     }
+
+    const createNotification = NotificationEntity.createNew({
+      userId: dto.userId,
+      type: NotificationType.ARTICLE_COMMENT_CREATED,
+      message: "작성한 게시글에 댓글이 달렸습니다.",
+    });
+
+    const notification = await this._repos.notification.save(createNotification);
+
+    const notificationEventPayload = {
+      id: notification.id,
+      userId: notification.userId,
+      type: notification.type,
+      message: notification.message,
+      productId: createdComment.productId
+    }
+
+    this._utils.even.publish(
+      new NotificationCommentCreatedEvent(notificationEventPayload),
+    );
+
     return createdComment;
   };
 

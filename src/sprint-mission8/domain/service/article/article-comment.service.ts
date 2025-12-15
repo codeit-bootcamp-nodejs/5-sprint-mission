@@ -1,10 +1,13 @@
+import { NotificationType } from "@prisma/client";
 import { IArticleCommentService } from "../../../inbound/port/services/article/article-comment.service.interface";
 import { CreateArticleCommentDto, DeleteArticleCommentDto, GetArticleCommentDto, UpdateArticleCommentDto } from "../../../inbound/requests/article/article.req.schemas";
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstArticleCommentEntity, ArticleCommentEntity } from "../../entity/comment/article-comment.entity";
+import { NotificationEntity } from "../../entity/notification.entity";
 import { BaseService } from "../base.service";
+import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event copy";
 
 export class ArticleCommentService extends BaseService implements IArticleCommentService {
   async getCommentList(dto: GetArticleCommentDto): Promise<PersitstArticleCommentEntity[]> {
@@ -56,10 +59,30 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
     const createCommentEntity = ArticleCommentEntity.createNew(dto);
 
     const createdComment = await this._repos.articleComment.create(createCommentEntity);
-
     if (!createdComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
     }
+
+    const createNotification = NotificationEntity.createNew({
+      userId: dto.userId,
+      type: NotificationType.ARTICLE_COMMENT_CREATED,
+      message: "작성한 게시글에 댓글이 달렸습니다.",
+    })
+
+    const notification = await this._repos.notification.save(createNotification);
+    
+    const notificationEventPayload = {
+      id: notification.id,
+      userId: notification.userId,
+      type: notification.type,
+      message: notification.message,
+      productId: createdComment.articleId
+    }
+
+    this._utils.even.publish(
+      new NotificationCommentCreatedEvent(notificationEventPayload),
+    );
+
     return createdComment;
   };
 

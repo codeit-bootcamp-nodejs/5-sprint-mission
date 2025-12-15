@@ -2,6 +2,7 @@ import { ArticleCommentController } from "./controllers/article.comment.controll
 import { ArticleController } from "./controllers/article.controller";
 import { ArticleLikeController } from "./controllers/article.like.controller";
 import { ImageController } from "./controllers/image.controller";
+import { NotificationController } from "./controllers/notification.controller";
 import { ProductCommentController } from "./controllers/product.comment.controller";
 import { ProductController } from "./controllers/product.controller";
 import { ProductLikeController } from "./controllers/product.like.controller";
@@ -16,6 +17,7 @@ export class Controllers {
     public readonly article: ArticleController,
     public readonly articleComment: ArticleCommentController,
     public readonly articleLike: ArticleLikeController,
-    public readonly image: ImageController
+    public readonly image: ImageController,
+    public readonly notification: NotificationController
   ) { }
 }

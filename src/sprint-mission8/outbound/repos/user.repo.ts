@@ -3,13 +3,9 @@ import { IUserRepo } from "../../domain/port/repo/user.repo.interface";
 import { UserMapper } from "../mapper/user.mapper";
 import { NewUserEntity, PersistUserEntity } from "../../domain/entity/user.entity";
 import { ProductMapper } from "../mapper/product.mapper";
-import { QueryType, Sort, UserKeys } from "../../types/query";
+import { Sort, UserKeys } from "../../types/query";
 import { PersistProductEntity } from "../../domain/entity/product/product.entity";
 import { productInclude } from "./product/product.repo";
-
-export type UserListQueryType = QueryType<UserKeys> & {
-  id: string;
-};
 
 export class UserRepo extends BaseRepo implements IUserRepo {
 
