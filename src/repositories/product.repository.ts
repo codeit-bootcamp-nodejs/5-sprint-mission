@@ -61,4 +61,10 @@ export const productRepository = {
       select: { productId: true },
     });
   },
+  findLikedUsers(productId: number) {
+    return prisma.likeProduct.findMany({
+      where: { productId },
+      select: { userId: true },
+    });
+  },
 };

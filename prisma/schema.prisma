@@ -27,6 +27,7 @@ model User {
   comments        Comment[]
   likesOnProducts LikeProduct[]
   likesOnArticles LikeArticle[]
+  notification  Notification[]
 }
 
 model Product {
@@ -102,4 +103,15 @@ model LikeArticle {
   article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

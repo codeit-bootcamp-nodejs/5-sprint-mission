@@ -19,6 +19,8 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "prettier": "^3.6.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "superstruct": "^1.0.4",
     "zod": "^4.1.12"
   },
@@ -31,6 +33,7 @@
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.1",
+    "@types/socket.io": "^3.0.1",
     "nodemon": "^3.1.10",
     "prisma": "^6.16.2",
     "ts-node": "^10.9.2",

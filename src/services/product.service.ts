@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { CreateProductDTO, UpdateProductDTO, WithIsLiked } from "../types/dto";
 import { productRepository } from "../repositories/product.repository";
+import { notificationService } from "./notification.service";
 
 export const productService = {
   async list(
@@ -68,7 +69,26 @@ export const productService = {
     if (exists.userId !== userId)
       throw Object.assign(new Error("수정 권한이 없습니다."), { status: 403 });
 
-    return productRepository.update(id, dto);
+    // 1. 가격 변경 여부 체크
+    const priceChanged = dto.price !== undefined && dto.price !== exists.price;
+
+    // 2. 업데이트
+    const updated = await productRepository.update(id, dto);
+
+    // 3. 좋아요 누른 유저에게 알림
+    if (priceChanged) {
+      const likedUsers = await productRepository.findLikedUsers(id);
+
+      for (const { userId } of likedUsers) {
+        await notificationService.send(
+          userId,
+          "PRODUCT_PRICE",
+          "좋아요한 상품의 가격이 변경되었습니다",
+        );
+      }
+    }
+
+    return updated;
   },
 
   async remove(userId: number, id: number) {

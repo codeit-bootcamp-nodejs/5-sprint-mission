@@ -1,7 +1,8 @@
-import { CreateCommentDTO, UpdateCommentDTO } from "@/types/dto";
+import { CreateCommentDTO, UpdateCommentDTO } from "../types/dto";
 import { commentRepository } from "../repositories/comment.repository";
 import { articleRepository } from "../repositories/article.repository";
 import { productRepository } from "../repositories/product.repository";
+import { notificationService } from "./notification.service";
 
 export const commentService = {
   listByProduct(productId: number) {
@@ -39,11 +40,24 @@ export const commentService = {
       throw Object.assign(new Error("게시글이 존재하지 않습니다."), {
         status: 404,
       });
-    return commentRepository.createForArticle({
+
+    // 1. 댓글 생성
+    const comment = await commentRepository.createForArticle({
       userId,
       articleId,
       content: dto.content,
     });
+
+    // 2. 알림 (본인 제외)
+    if (exists.userId !== userId) {
+      await notificationService.send(
+        exists.userId,
+        "COMMENT",
+        "작성한 게시글에 댓글이 달렸습니다",
+      );
+    }
+
+    return comment;
   },
 
   async update(userId: number, commentId: number, dto: UpdateCommentDTO) {
