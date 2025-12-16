@@ -139,4 +139,19 @@ export class ProductRepository {
       where: { productId },
     });
   }
+
+  async findUsersByLikedProduct(productId: number) {
+    return prisma.user.findMany({
+      where: {
+        productLikes: {
+          some: {
+            productId: productId,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
 }
