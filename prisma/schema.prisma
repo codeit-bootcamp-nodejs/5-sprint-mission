@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -14,20 +10,21 @@ datasource db {
 }
 
 model Article {
-  id             Int       @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   title          String
   content        String
   image          String?
   ArticleComment Comment[]
   userId         Int
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   likes          Like[]
+  notifications  Notification[]
 }
 
 model Product {
-  id             Int       @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   name           String
   description    String
   price          Int
@@ -35,23 +32,25 @@ model Product {
   images         String[]
   ProductComment Comment[]
   userId         Int
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   likes          Like[]
+  notifications  Notification[]
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int?
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int?
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int            @id @default(autoincrement())
+  content       String
+  product       Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     Int?
+  article       Article?       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId     Int?
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model User {
@@ -67,6 +66,10 @@ model User {
   articles     Article[]
   comments     Comment[]
   likes        Like[]
+
+  recipientNotifications Notification[] @relation("NotificationRecipient")
+
+  actorNotifications Notification[] @relation("NotificationActor")
 }
 
 model Like {
@@ -78,4 +81,34 @@ model Like {
   productId Int?
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+
+  recipientId Int
+  recipient   User @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  actorId Int
+  actor   User @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  type String
+
+  articleId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  message String
+
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recipientId])
+  @@index([actorId])
+  @@index([isRead])
+  @@index([createdAt])
 }

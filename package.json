@@ -7,7 +7,10 @@
     "dev": "npm run dev:watch",
     "dev:watch": "nodemon --exec tsx ./src/main.ts --watch src --ext ts",
     "seed": "tsx ./prisma/seed.js",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "prisma": {
     "seed": "tsx ./prisma/seed.js"
@@ -16,13 +19,18 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.10.4",
+    "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^10.0.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "prisma": "^5.16.2",
+    "socket.io-client": "^4.8.1",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
@@ -35,6 +43,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.8.1",
     "superstruct": "^2.0.2",
     "uuid": "^11.0.5"
   }
