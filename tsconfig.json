@@ -1,8 +1,8 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "rootDir": "./src/sprint-mission5",
-    "outDir": "./dist/sprint-mission5",
+    "rootDir": "./src/sprint-mission8",
+    "outDir": "./dist/sprint-mission8",
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,      
@@ -15,8 +15,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleDetection": "force",
-    "typeRoots": ["src/sprint-mission5/types", "node_modules/@types"],
+    "typeRoots": ["src/sprint-mission8/types", "node_modules/@types"],
   },
-  "include": ["./src/sprint-mission5"],
+  "include": ["./src/sprint-mission8"],
   "exclude": ["node_modules"]
 }
