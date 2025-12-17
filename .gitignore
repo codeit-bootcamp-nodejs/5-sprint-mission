@@ -5,6 +5,20 @@
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
 *.orig
+et --hard
+
+# prisma 
+/prisma/migrations/*
+package-lock.json
+
+# git reset logs
+et\ --hard\ *
+
+
+# in .gitignore
+.vscode/launch.json
+.github/PULL_REQUEST_TEMPLATE.md
+
 
 # Created by git when using merge tools for conflicts
 *.BACKUP.*
@@ -15,6 +29,7 @@
 *_BASE_*.txt
 *_LOCAL_*.txt
 *_REMOTE_*.txt
+.vscode/settings.json
 
 ### Node ###
 # Logs

@@ -1,0 +1,21 @@
+import { ArticleComment } from "../../02-domain/entity/article.comment";
+import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { PersistArticleComment } from "../repository/article.comment.repository";
+
+export const ArticleCommentMapper = {
+  toPersist: (entity: PersistArticleComment | null) => {
+    if (!entity) {
+      throw BusinessException({
+        type: BusinessExceptionType.DATA_NOT_FOUND,
+      });
+    }
+    return ArticleComment.createPersisted({
+      id: entity.id,
+      articleId: entity.articleId,
+      content: entity.content,
+      userId: entity.userId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    });
+  },
+};

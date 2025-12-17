@@ -13,6 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum NotificationType {
+  ARTICLE_COMMENT
+  PRODUCT_COMMENT
+  PRODUCT_LIKE
+  PRODUCT_PRICE_CHANGE
+  NEW_PRODUCT
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  type       NotificationType
+  message    String
+  read       Boolean          @default(false)
+  senderId   String
+  receiverId String?
+  createdAt  DateTime         @default(now())
+  sender     User             @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  receiver   User?             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
 model Product {
   id             String           @id @default(uuid())
   name           String
@@ -20,12 +40,24 @@ model Product {
   price          Int
   tags           String[]
   imageUrl       String?
-  isLiked        Boolean          @default(false)
+  likeCount      Int              @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  User           User?            @relation(fields: [userId], references: [id])
+  User           User             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId         String
+  productLikes        ProductLike[]
   ProductComment ProductComment[]
+}
+
+model ProductLike {
+  userId    String
+  productId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+  @@index([productId])
+	@@map("ProductLikes")
 }
 
 model Article {
@@ -34,7 +66,7 @@ model Article {
   content        String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  User           User?            @relation(fields: [userId], references: [id])
+  User           User             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId         String
   ArticleComment ArticleComment[]
 }
@@ -44,9 +76,9 @@ model ArticleComment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  article   Article  @relation(fields: [articleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId String
 }
 
@@ -55,9 +87,9 @@ model ProductComment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 }
 
@@ -66,13 +98,16 @@ model User {
   email        String  @unique
   nickname     String
   image        String?
-  refreshToken String?
+  refreshToken String
 
-  password       String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  product        Product[]
-  article        Article[]
-  articleComment ArticleComment[]
-  ProductComment ProductComment[]
+  password              String
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  product               Product[]
+  article               Article[]
+  articleComment        ArticleComment[]
+  ProductComment        ProductComment[]
+  productLikes          ProductLike[]
+  NotificationsSent     Notification[]   @relation("NotificationSender")
+  NotificationsReceived Notification[]   @relation("NotificationReceiver")
 }

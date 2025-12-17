@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
+    "format": "npx pretter --write .",
     "build": "tsc -p .",
     "start": "npm run build && node dist/app.js",
-    "dev": "nodemon --watch src --exec ts-node ./src/app.ts"
+    "dev": "nodemon --watch src --exec ts-node ./src/app.ts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^6.16.2",
+    "@prisma/client": "^6.15.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -21,19 +23,28 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "prisma": "^6.15.0",
+    "socket.io": "^4.8.1",
     "uuid": "^13.0.0",
+    "ws": "^8.18.3",
     "zod": "^4.1.12"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.4",
+    "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
+    "@types/ws": "^8.18.1",
+    "babel-jest": "^30.2.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
+    "prettier": "^3.7.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
