@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Notification" ALTER COLUMN "url" DROP NOT NULL,
+ALTER COLUMN "url" SET DATA TYPE TEXT;
