@@ -6,12 +6,21 @@ import { Sort, UserKeys } from "../../types/query";
 import { PersistArticleEntity } from "../entity/article.entity";
 import { PersistProductEntity } from "../entity/product/product.entity";
 import { PersistUserEntity, UserEntity } from "../entity/user.entity";
-import { BaseService } from "./base.service";
+import { IHashManager } from "../port/managers/hash.manager.interface";
+import { IArticleRepo } from "../port/repo/article/article.repo.interface";
+import { IProductRepo } from "../port/repo/product/product.repo.interface";
+import { IUserRepo } from "../port/repo/user.repo.interface";
 
-export class UserService extends BaseService implements IUserService {
+export class UserService implements IUserService {
+  constructor(
+    private readonly _userRepo: IUserRepo,
+    private readonly _productRepo: IProductRepo,
+    private readonly _articleRepo: IArticleRepo,
+    private readonly _hashManager: IHashManager
+  ){}
 
   async signUpUser(dto: SignUpDto): Promise<PersistUserEntity> {
-    const foundUser = await this._repos.user.findUserByEmail(dto.email);
+    const foundUser = await this._userRepo.findUserByEmail(dto.email);
 
     if (foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_EXIST });
@@ -19,15 +28,15 @@ export class UserService extends BaseService implements IUserService {
 
     const newUser = await UserEntity.createNew({
       ...dto,
-      hashManager: this._managers.hash
+      hashManager: this._hashManager
     });
     
-    const createdUser = await this._repos.user.create(newUser);
+    const createdUser = await this._userRepo.create(newUser);
     return createdUser;
   };
 
   async getUser(id: string): Promise<PersistUserEntity> {
-    const foundUser = await this._repos.user.findUserById(id);
+    const foundUser = await this._userRepo.findUserById(id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
@@ -55,18 +64,18 @@ export class UserService extends BaseService implements IUserService {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const productTotalCount = await this._repos.product.count();
+    const productTotalCount = await this._productRepo.count();
     if (productTotalCount < dto.limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: productTotalCount });
     }
 
-    const foundUser = await this._repos.user.findUserById(dto.id);
+    const foundUser = await this._userRepo.findUserById(dto.id);
 
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserProducts = await this._repos.user.findUserProducts(
+    const foundUserProducts = await this._userRepo.findUserProducts(
       dto.id,
       dto.offset,
       dto.limit,
@@ -84,12 +93,12 @@ export class UserService extends BaseService implements IUserService {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const foundUser = await this._repos.user.findUserById(dto.userId);
+    const foundUser = await this._userRepo.findUserById(dto.userId);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserLikeProducts = await this._repos.product.findUserLikeProducts(
+    const foundUserLikeProducts = await this._productRepo.findUserLikeProducts(
       dto.userId,
       dto.offset,
       dto.limit,
@@ -106,12 +115,12 @@ export class UserService extends BaseService implements IUserService {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const foundUser = await this._repos.user.findUserById(dto.userId);
+    const foundUser = await this._userRepo.findUserById(dto.userId);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    const foundUserLikeArticles = await this._repos.article.findUserLikeArticles(
+    const foundUserLikeArticles = await this._articleRepo.findUserLikeArticles(
       dto.userId,
       dto.offset,
       dto.limit,
@@ -124,39 +133,39 @@ export class UserService extends BaseService implements IUserService {
   };
 
   async updateUser(dto: UpdateDto): Promise<PersistUserEntity> {
-    const foundUser = await this._repos.user.findUserById(dto.id);
+    const foundUser = await this._userRepo.findUserById(dto.id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
     foundUser.update(dto);
 
-    const updateUser = await this._repos.user.update(foundUser);
+    const updateUser = await this._userRepo.update(foundUser);
 
     return updateUser;
   };
 
   async updatePasswordUser(dto: UpdatePasswordDto): Promise<PersistUserEntity> {
-    const foundUser = await this._repos.user.findUserById(dto.id);
+    const foundUser = await this._userRepo.findUserById(dto.id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    if (!(await foundUser.isPasswordMatch(dto.password, this._managers.hash))) {
+    if (!(await foundUser.isPasswordMatch(dto.password, this._hashManager))) {
       throw new Exception({ info: EXCEPTIONS.PASSWORD_MISMATCH });
     }
 
-    await foundUser.updatePassword(dto.updatePassword, this._managers.hash);
+    await foundUser.updatePassword(dto.updatePassword, this._hashManager);
 
-    return await this._repos.user.update(foundUser)
+    return await this._userRepo.update(foundUser)
   };
 
   async deleteUser(id: string): Promise<void> {
-    const foundUser = await this._repos.user.findUserById(id);
+    const foundUser = await this._userRepo.findUserById(id);
     if (!foundUser) {
       throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
     }
 
-    await this._repos.user.delete(id);
+    await this._userRepo.delete(id);
   };
 }

@@ -5,11 +5,14 @@ import { CreateArticleCommentResDto } from "../responses/comment/article/create.
 import { GetArticleCommentListResDto } from "../responses/comment/article/get.article.comment.list.res.dto";
 import { UpdateArticleCommentResDto } from "../responses/comment/article/update.article.comment.res.dto";
 import { DeleteArticleCommentResDto } from "../responses/comment/article/delete.article.comment.res.dto";
+import { ArticleCommentService } from "../../domain/service/article/article-comment.service";
 
 export class ArticleCommentController extends BaseController {
 
-  constructor(services: IServices) {
-    super(services);
+  constructor(
+    private readonly _articleCommentService: ArticleCommentService
+  ) {
+    super();
   }
 
   createArticleCommentController: ControllerHandler = async (req, res, next) => {
@@ -19,7 +22,7 @@ export class ArticleCommentController extends BaseController {
       ...req.body
     }));
     const createdComment =
-      await this._services.articleComment.createComment(reqDto);
+      await this._articleCommentService.createComment(reqDto);
     const createdCommentResDto = new CreateArticleCommentResDto(createdComment);
     return res.json(createdCommentResDto);
   };
@@ -30,7 +33,7 @@ export class ArticleCommentController extends BaseController {
       ...req.query
     }));
     const getCommentList =
-      await this._services.articleComment.getCommentList(reqDto);
+      await this._articleCommentService.getCommentList(reqDto);
     const getCommentListResDto = new GetArticleCommentListResDto(getCommentList);
     return res.json(getCommentListResDto);
   };
@@ -42,7 +45,7 @@ export class ArticleCommentController extends BaseController {
       ...req.body
     }));
     const updatedComment =
-      await this._services.articleComment.updateComment(reqDto);
+      await this._articleCommentService.updateComment(reqDto);
     const updatedCommentResDto = new UpdateArticleCommentResDto(updatedComment);
     return res.json(updatedCommentResDto);
   };
@@ -52,7 +55,7 @@ export class ArticleCommentController extends BaseController {
       userId: req.userId,
       ...req.params,
     }));
-    await this._services.articleComment.deleteComment(reqDto);
+    await this._articleCommentService.deleteComment(reqDto);
     const deletedCommentResDto = new DeleteArticleCommentResDto();
     return res.json(deletedCommentResDto);
   };

@@ -1,80 +1,87 @@
-import { IUtils } from "../../shared/util";
-import { Controllers } from "../controllers";
+import { ArticleCommentController } from "../controllers/article.comment.controller";
+import { ArticleController } from "../controllers/article.controller";
+import { ArticleLikeController } from "../controllers/article.like.controller";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 import { BaseRouter } from "./base.router";
 
 export class ArticleRouter extends BaseRouter {
-  constructor(controllers: Controllers, utils: IUtils) {
-    super("/api/articles", controllers, utils);
+  constructor(
+    private readonly _authMiddleware: AuthMiddleware,
+    private readonly _articleController: ArticleController,
+    private readonly _articleCommentController: ArticleCommentController,
+    private readonly _articleLikeController: ArticleLikeController
+  ) {
+    super("/api/articles");
     this.registerArticleRouter();
   }
 
   registerArticleRouter = () => {
     this.router.post(
       "/",
-      this.isAuthenticate,
-      this.catchException(this.controllers.article.createArticleController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._articleController.createArticleController),
     );
     this.router.get(
       "/:articleId",
-      this.catchException(this.controllers.article.getArticleController),
+      this.catchException(this._articleController.getArticleController),
     );
     this.router.get(
       "/",
-      this.catchException(this.controllers.article.getArticleListController),
+      this.catchException(this._articleController.getArticleListController),
     );
     this.router.patch(
       "/:articleId",
-      this.isAuthenticate,
-      this.catchException(this.controllers.article.updateArticleController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._articleController.updateArticleController),
     );
     this.router.delete(
       "/:articleId",
-      this.isAuthenticate,
-      this.catchException(this.controllers.article.deleteArticleController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._articleController.deleteArticleController),
     );
 
     // 댓글 기능
     this.router.post(
       "/:articleId/comments",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.articleComment.createArticleCommentController,
+        this._articleCommentController.createArticleCommentController,
       ),
     );
     this.router.get(
       "/:articleId/comments",
       this.catchException(
-        this.controllers.articleComment.getArticleCommentListController,
+        this._articleCommentController.getArticleCommentListController,
       ),
     );
     this.router.patch(
       "/:articleId/comment/:commentId",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.articleComment.updateArticleCommentController,
+        this._articleCommentController.updateArticleCommentController,
       ),
     );
     this.router.delete(
       "/:articleId/comment/:commentId",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.articleComment.deleteArticleCommentController,
+        this._articleCommentController.deleteArticleCommentController,
       ),
     );
 
     // 좋아요 기능
     this.router.post(
       "/:articleId/like",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.articleLike.addArticleLikeController,
+        this._articleLikeController.addArticleLikeController,
       ),
     );
     this.router.delete(
       "/:articleId/like",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.articleLike.cancelArticleLikeController,
+        this._articleLikeController.cancelArticleLikeController,
       ),
     );
   };

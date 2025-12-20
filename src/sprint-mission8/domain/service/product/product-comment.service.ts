@@ -6,10 +6,17 @@ import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstProductCommentEntity, ProductCommentEntity } from "../../entity/comment/product-comment.entity";
 import { NotificationEntity } from "../../entity/notification.entity";
-import { BaseService } from "../base.service";
-import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event copy";
+import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event";
+import { IProductCommentRepo } from "../../port/repo/product/product-comment.repo.interface";
+import { INotificationRepo } from "../../port/repo/notification.repo.interface";
+import { IEventBusUtil } from "../../../shared/util/event-bus.util";
 
-export class ProductCommentService extends BaseService implements IProductCommentService {
+export class ProductCommentService implements IProductCommentService {
+  constructor(
+    private readonly _productCommentRepo: IProductCommentRepo,
+    private readonly _notificationRepo: INotificationRepo,
+    private readonly _evenBusUtil: IEventBusUtil
+  ) { }
   async getCommentList(dto: GetProductCommentDto): Promise<PersitstProductCommentEntity[]> {
     const { productId, cursor, limit, sort } = dto;
 
@@ -36,13 +43,13 @@ export class ProductCommentService extends BaseService implements IProductCommen
       throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
     }
 
-    const commentTotalCount = await this._repos.productComment.count(productId);
+    const commentTotalCount = await this._productCommentRepo.count(productId);
 
     if (commentTotalCount < limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: commentTotalCount });
     }
 
-    const comments = await this._repos.productComment.findCommentList(
+    const comments = await this._productCommentRepo.findCommentList(
       productId,
       cursor,
       limit,
@@ -58,7 +65,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
 
     const createCommentEntity = ProductCommentEntity.createNew(dto);
 
-    const createdComment = await this._repos.productComment.create(createCommentEntity);
+    const createdComment = await this._productCommentRepo.create(createCommentEntity);
 
     if (!createdComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
@@ -70,7 +77,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
       message: "작성한 게시글에 댓글이 달렸습니다.",
     });
 
-    const notification = await this._repos.notification.save(createNotification);
+    const notification = await this._notificationRepo.save(createNotification);
 
     const notificationEventPayload = {
       id: notification.id,
@@ -80,7 +87,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
       productId: createdComment.productId
     }
 
-    this._utils.even.publish(
+    this._evenBusUtil.publish(
       new NotificationCommentCreatedEvent(notificationEventPayload),
     );
 
@@ -89,7 +96,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
 
   async updateComment(dto: UpdateProductCommentDto): Promise<PersitstProductCommentEntity> {
 
-    const foundComment = await this._repos.productComment.findCommentById(
+    const foundComment = await this._productCommentRepo.findCommentById(
       dto.commentId
     );
     if (!foundComment) {
@@ -101,7 +108,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
 
     foundComment.updateContent(dto.content);
 
-    const updatedComment = await this._repos.productComment.update(foundComment);
+    const updatedComment = await this._productCommentRepo.update(foundComment);
 
     if (!updatedComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
@@ -111,7 +118,7 @@ export class ProductCommentService extends BaseService implements IProductCommen
   };
 
   async deleteComment(dto: DeleteProductCommentDto): Promise<void> {
-    const foundComment = await this._repos.productComment.findCommentById(dto.commentId);
+    const foundComment = await this._productCommentRepo.findCommentById(dto.commentId);
 
     if (!foundComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
@@ -120,6 +127,6 @@ export class ProductCommentService extends BaseService implements IProductCommen
       throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
     }
 
-    await this._repos.productComment.delete(dto.commentId);
+    await this._productCommentRepo.delete(dto.commentId);
   };
 }

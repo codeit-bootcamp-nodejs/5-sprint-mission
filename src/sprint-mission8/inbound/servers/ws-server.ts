@@ -1,26 +1,26 @@
 import { Server as DefaultHttpServer } from "http";
 import { Server as DefaultWsServer } from "socket.io";
-import { Gateways } from "../gateways";
-import { IUtils } from "../../shared/util";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
+import { NotificationGateway } from "../gataways/notification.gateway";
+import { IConfigUtil } from "../../shared/util/config.util";
 
 export class WsServer {
   public readonly io: DefaultWsServer;
 
   constructor(
     public readonly defaultHttpServer: DefaultHttpServer,
-    public readonly gateways: Gateways,
-    public readonly utils: IUtils
+    public readonly notificationGateway: NotificationGateway,
+    public readonly configUtil: IConfigUtil
   ) {
     const path = "/socket.io";
 
     const protocol =
-      this.utils.config.getParsed().NODE_ENV === "development" ? "http" : "https";
+      this.configUtil.getParsed().NODE_ENV === "development" ? "http" : "https";
     const clientDomain =
-      this.utils.config.getParsed().NODE_ENV === "development"
-        ? `localhost:${this.utils.config.getParsed().PORT}`
-        : this.utils.config.getParsed().CLIENT_DOMAIN;
+      this.configUtil.getParsed().NODE_ENV === "development"
+        ? `localhost:${this.configUtil.getParsed().PORT}`
+        : this.configUtil.getParsed().CLIENT_DOMAIN;
     const whitelist = [
       `${protocol}://${clientDomain}`,
       `${protocol}://www.${clientDomain}`,
@@ -47,6 +47,6 @@ export class WsServer {
 
   start() {
     // gateways
-    this.gateways.notification.register(this.io);
+    this.notificationGateway.register(this.io);
   }
 }

@@ -5,11 +5,16 @@ import { Exception } from "../../../shared/exception/exception";
 import { ArticleKeys, Sort } from "../../../types/query";
 import { ArticleEntity, PersistArticleEntity } from "../../entity/article.entity";
 import { UserLikesArticleEntity } from "../../entity/like/user-likes-article.entity";
-import { BaseService } from "../base.service";
+import { IArticleRepo } from "../../port/repo/article/article.repo.interface";
+import { IUserLikesArticleRepo } from "../../port/repo/like/user-likes-article.repo.interface";
 
-export class ArticleService extends BaseService implements IArticleService {
+export class ArticleService implements IArticleService {
+  constructor(
+    private readonly _articleRepo: IArticleRepo,
+    private readonly _userLikesArticleRepo: IUserLikesArticleRepo
+  ) { }
   async getArticle(dto: GetArticleDto): Promise<PersistArticleEntity> {
-    const foundArticle = await this._repos.article.findArticleById(dto.articleId);
+    const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
     }
@@ -39,12 +44,12 @@ export class ArticleService extends BaseService implements IArticleService {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const articleTotalCount = await this._repos.article.count();
+    const articleTotalCount = await this._articleRepo.count();
     if (articleTotalCount < limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: articleTotalCount });
     }
 
-    const foundArticleList = await this._repos.article.findArticleList(
+    const foundArticleList = await this._articleRepo.findArticleList(
       offset,
       limit,
       orderBy,
@@ -54,39 +59,39 @@ export class ArticleService extends BaseService implements IArticleService {
   };
 
   async likeArticle(dto: GetLikedArticlesDto): Promise<void> {
-    const foundArticle = await this._repos.article.findArticleById(dto.articleId);
+    const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
     }
 
     const likeArticleEntity = UserLikesArticleEntity.createNew({ userId: dto.userId, articleId: dto.articleId });
 
-    await this._repos.userLikesArticle.create(likeArticleEntity);
+    await this._userLikesArticleRepo.create(likeArticleEntity);
   };
 
   async unlikeArticle(dto: GetLikedArticlesDto): Promise<void> {
-    const foundArticle = await this._repos.article.findArticleById(dto.articleId);
+    const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
     }
 
-    await this._repos.userLikesArticle.delete(dto.userId, dto.articleId);
+    await this._userLikesArticleRepo.delete(dto.userId, dto.articleId);
   };
 
   async createArticle(dto: CreateArticleDto): Promise<PersistArticleEntity> {
-    const foundArticle = await this._repos.article.findArticleByTitle(dto.title);
+    const foundArticle = await this._articleRepo.findArticleByTitle(dto.title);
     if (foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_ALREADY_EXIST });
     }
     const article = ArticleEntity.createNew(dto);
 
-    const createdArticle = await this._repos.article.create(article);
+    const createdArticle = await this._articleRepo.create(article);
 
     return createdArticle;
   };
 
   async updateArticle(dto: UpdateArticleDto): Promise<PersistArticleEntity> {
-    const foundArticle = await this._repos.article.findArticleById(dto.articleId);
+    const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
     }
@@ -100,19 +105,19 @@ export class ArticleService extends BaseService implements IArticleService {
       image: dto.image
     });
 
-    const updatedArticle = await this._repos.article.update(foundArticle);
+    const updatedArticle = await this._articleRepo.update(foundArticle);
 
     return updatedArticle;
   };
 
   async deleteArticle(dto: DeleteArticleDto): Promise<void> {
-    const foundArticle = await this._repos.article.findArticleById(dto.articleId);
+    const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
       throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
     }
     if (dto.userId !== foundArticle.userId) {
       throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_ARTICLE_OWNER });
     }
-    await this._repos.article.delete(dto.articleId);
+    await this._articleRepo.delete(dto.articleId);
   };
 }

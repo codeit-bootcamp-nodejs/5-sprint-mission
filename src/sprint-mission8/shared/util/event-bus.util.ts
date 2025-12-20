@@ -1,4 +1,4 @@
-export interface IEventBus {
+export interface IEventBusUtil {
   subscribe<T>(
     event: new (...args: any[]) => T,
     handler: (event: T) => void,
@@ -6,7 +6,7 @@ export interface IEventBus {
   publish<T extends object>(event: T): void;
 }
 
-export class EventBus {
+export class EventBusUtil {
   private handlers = new Map<string, Function[]>();
 
   subscribe<T>(

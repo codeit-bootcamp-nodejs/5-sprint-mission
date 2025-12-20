@@ -1,7 +1,7 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "rootDir": "./src/sprint-mission8",
+    "rootDir": "src/sprint-mission8",
     "outDir": "./dist/sprint-mission8",
     "module": "commonjs",
     "target": "es6",
@@ -17,6 +17,6 @@
     "moduleDetection": "force",
     "typeRoots": ["src/sprint-mission8/types", "node_modules/@types"],
   },
-  "include": ["./src/sprint-mission8"],
+  "include": ["src/sprint-mission8"],
   "exclude": ["node_modules"]
 }

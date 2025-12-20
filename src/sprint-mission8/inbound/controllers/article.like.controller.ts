@@ -3,11 +3,14 @@ import { articleLikeReqSchema } from "../requests/article/article.req.schemas";
 import { IServices } from "../port/services.interface";
 import { LikeArticleResDto } from "../responses/article/like.article.res.dto";
 import { UnlikeArticleResDto } from "../responses/article/unlike.article.res.dto";
+import { ArticleService } from "../../domain/service/article/article.service";
 
 export class ArticleLikeController extends BaseController {
 
-  constructor(services: IServices) {
-    super(services);
+  constructor(
+    private readonly _articleService: ArticleService
+  ) {
+    super();
   }
 
   addArticleLikeController: ControllerHandler = async (req, res, next) => {
@@ -15,7 +18,7 @@ export class ArticleLikeController extends BaseController {
       userId: req.userId,
       ...req.params,
     }));
-    await this._services.article.likeArticle(reqDto);
+    await this._articleService.likeArticle(reqDto);
     const resDto = new LikeArticleResDto();
 
     return res.json(resDto);
@@ -27,7 +30,7 @@ export class ArticleLikeController extends BaseController {
       ...req.params,
     }));
 
-    await this._services.article.unlikeArticle(reqDto);
+    await this._articleService.unlikeArticle(reqDto);
     const resDto = new UnlikeArticleResDto();
 
     return res.json(resDto);

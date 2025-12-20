@@ -6,10 +6,18 @@ import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstArticleCommentEntity, ArticleCommentEntity } from "../../entity/comment/article-comment.entity";
 import { NotificationEntity } from "../../entity/notification.entity";
-import { BaseService } from "../base.service";
-import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event copy";
+import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event";
+import { IArticleCommentRepo } from "../../port/repo/article/article-comment.repo.interface";
+import { INotificationRepo } from "../../port/repo/notification.repo.interface";
+import { IEventBusUtil } from "../../../shared/util/event-bus.util";
 
-export class ArticleCommentService extends BaseService implements IArticleCommentService {
+export class ArticleCommentService implements IArticleCommentService {
+  constructor(
+    private readonly _articleCommentRepo: IArticleCommentRepo,
+    private readonly _notificationRepo: INotificationRepo,
+    private readonly _eventBusUtil: IEventBusUtil
+  ) { }
+
   async getCommentList(dto: GetArticleCommentDto): Promise<PersitstArticleCommentEntity[]> {
     const { articleId, cursor, limit, sort } = dto;
 
@@ -36,13 +44,13 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
       throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
     }
 
-    const commentTotalCount = await this._repos.articleComment.count(articleId);
+    const commentTotalCount = await this._articleCommentRepo.count(articleId);
 
     if (commentTotalCount < limit) {
       throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: commentTotalCount });
     }
 
-    const comments = await this._repos.articleComment.findCommentList(
+    const comments = await this._articleCommentRepo.findCommentList(
       articleId,
       cursor,
       limit,
@@ -58,7 +66,7 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
 
     const createCommentEntity = ArticleCommentEntity.createNew(dto);
 
-    const createdComment = await this._repos.articleComment.create(createCommentEntity);
+    const createdComment = await this._articleCommentRepo.create(createCommentEntity);
     if (!createdComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
     }
@@ -69,8 +77,8 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
       message: "작성한 게시글에 댓글이 달렸습니다.",
     })
 
-    const notification = await this._repos.notification.save(createNotification);
-    
+    const notification = await this._notificationRepo.save(createNotification);
+
     const notificationEventPayload = {
       id: notification.id,
       userId: notification.userId,
@@ -79,7 +87,7 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
       productId: createdComment.articleId
     }
 
-    this._utils.even.publish(
+    this._eventBusUtil.publish(
       new NotificationCommentCreatedEvent(notificationEventPayload),
     );
 
@@ -88,7 +96,7 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
 
   async updateComment(dto: UpdateArticleCommentDto): Promise<PersitstArticleCommentEntity> {
 
-    const foundComment = await this._repos.articleComment.findCommentById(
+    const foundComment = await this._articleCommentRepo.findCommentById(
       dto.commentId
     );
     if (!foundComment) {
@@ -100,7 +108,7 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
 
     foundComment.updateContent(dto.content);
 
-    const updatedComment = await this._repos.articleComment.update(foundComment);
+    const updatedComment = await this._articleCommentRepo.update(foundComment);
 
     if (!updatedComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
@@ -110,7 +118,7 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
   };
 
   async deleteComment(dto: DeleteArticleCommentDto): Promise<void> {
-    const foundComment = await this._repos.articleComment.findCommentById(dto.commentId);
+    const foundComment = await this._articleCommentRepo.findCommentById(dto.commentId);
 
     if (!foundComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
@@ -119,6 +127,6 @@ export class ArticleCommentService extends BaseService implements IArticleCommen
       throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
     }
 
-    await this._repos.articleComment.delete(dto.commentId);
+    await this._articleCommentRepo.delete(dto.commentId);
   };
 }

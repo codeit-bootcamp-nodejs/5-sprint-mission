@@ -4,16 +4,19 @@ import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Exception } from "../../shared/exception/exception";
 import { NotificationKeys, Sort } from "../../types/query";
 import { PersistNotificationEntity } from "../entity/notification.entity";
-import { BaseService } from "./base.service";
+import { INotificationRepo } from "../port/repo/notification.repo.interface";
 
-export class NotificationService extends BaseService implements INotificationService {
+export class NotificationService implements INotificationService {
+  constructor(
+    private readonly _notificationRepo: INotificationRepo
+  ){}
   async getMyNotifications(dto: GetMyNotificationsDto): Promise<PersistNotificationEntity[]> {
     const orderBy :{ field: NotificationKeys, sort: Sort } = {
       field: "createdAt",
       sort: "asc"
     }
 
-    const foundNotifications = await this._repos.notification.getNotifications(
+    const foundNotifications = await this._notificationRepo.getNotifications(
       dto.userId,
       dto.offset,
       dto.limit,
@@ -24,11 +27,11 @@ export class NotificationService extends BaseService implements INotificationSer
   }
 
   async getUnreadCount(dto: GetUnreadCountDto): Promise<number> {
-    return await this._repos.notification.countUnread(dto.userId);
+    return await this._notificationRepo.countUnread(dto.userId);
   }
 
   async markAsRead(dto: MarkAsReadDto): Promise<void> {
-    const foundNotification = await this._repos.notification.findNotificationByIds(dto.notificationId, dto.userId);
+    const foundNotification = await this._notificationRepo.findNotificationByIds(dto.notificationId, dto.userId);
 
     if(!foundNotification){
       throw new Exception({
@@ -38,7 +41,7 @@ export class NotificationService extends BaseService implements INotificationSer
 
     foundNotification.markAsRead();
 
-    await this._repos.notification.markAsRead(foundNotification);
+    await this._notificationRepo.markAsRead(foundNotification);
     
   }
   

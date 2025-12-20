@@ -6,21 +6,17 @@ import { UserRouter } from "./inbound/routers/user.router";
 import { ConfigUtil } from "./shared/util/config.util";
 import { FileUtil } from "./shared/util/file.util";
 import { TokenUtil } from "./shared/util/token.util";
-import { Utils } from "./shared/util";
 import { UserRepo } from "./outbound/repos/user.repo";
 import { ProductRepo } from "./outbound/repos/product/product.repo";
 import { ArticleRepo } from "./outbound/repos/article/article.repo";
 import { ProductCommentRepo } from "./outbound/repos/product/product-comment.repo";
-import { Repos } from "./outbound/repos";
 import { UserService } from "./domain/service/user.service";
 import { ArticleService } from "./domain/service/article/article.service";
 import { AuthService } from "./domain/service/auth.service";
 import { ProductService } from "./domain/service/product/product.service";
-import { Services } from "./domain/services";
 import { ArticleCommentService } from "./domain/service/article/article-comment.service";
 import { ProductCommentService } from "./domain/service/product/product-comment.service";
 import { BcryptHashManager } from "./outbound/managers/bcrypt-hash.manager";
-import { Managers } from "./outbound/managers";
 import { UserLikesProductRepo } from "./outbound/repos/like/user-likes-product.repo";
 import { UserLikesArticleRepo } from "./outbound/repos/like/user-likes-article.repo";
 import { TagRepo } from "./outbound/repos/tag.repo";
@@ -33,18 +29,14 @@ import { ArticleController } from "./inbound/controllers/article.controller";
 import { ArticleCommentController } from "./inbound/controllers/article.comment.controller";
 import { ArticleLikeController } from "./inbound/controllers/article.like.controller";
 import { ImageController } from "./inbound/controllers/image.controller";
-import { Controllers } from "./inbound/controllers";
-import { Routers } from "./inbound/routers";
 import { HttpServer } from "./inbound/servers/http-server";
 import { WsServer } from "./inbound/servers/ws-server";
-import { Gateways } from "./inbound/gateways";
 import { NotificationGateway } from "./inbound/gataways/notification.gateway";
 import { NotificationRepo } from "./outbound/repos/notification.repo";
-import { EventBus } from "./shared/util/event-bus.util";
+import { EventBusUtil } from "./shared/util/event-bus.util";
 import { NotificationService } from "./domain/service/notification.service";
 import { NotificationController } from "./inbound/controllers/notification.controller";
 import { NotificationRouter } from "./inbound/routers/notification.router";
-import { Middlewares } from "./inbound/middlewares";
 import { AuthMiddleware } from "./inbound/middlewares/auth.middleware";
 
 export class Injector {
@@ -62,21 +54,11 @@ export class Injector {
     const configUtil = new ConfigUtil();
     const fileUtil = new FileUtil();
     const tokenUtil = new TokenUtil(configUtil);
-    const eventBus = new EventBus();
-    const utils = new Utils(
-      configUtil,
-      fileUtil,
-      tokenUtil,
-      eventBus
-    );
+    const eventBusUtil = new EventBusUtil();
 
-    const authMiddleware = new AuthMiddleware(utils);
-    const middlewares = new Middlewares(
-      authMiddleware
-    );
+    const authMiddleware = new AuthMiddleware(tokenUtil);
 
     const hashManager = new BcryptHashManager(configUtil);
-    const managers = new Managers(hashManager);
 
     const userRepo = new UserRepo(prisma);
     const productRepo = new ProductRepo(prisma);
@@ -87,76 +69,42 @@ export class Injector {
     const userLikesProductRepo = new UserLikesProductRepo(prisma);
     const userLikesArticleRepo = new UserLikesArticleRepo(prisma);
     const notificationRepo = new NotificationRepo(prisma);
-    const repos = new Repos(
-      userRepo,
-      articleRepo,
-      articleCommentRepo,
-      productRepo,
-      productCommentRepo,
-      tagRepo,
-      userLikesProductRepo,
-      userLikesArticleRepo,
-      notificationRepo,
-    );
 
-    const userService = new UserService(repos, managers, utils);
-    const authService = new AuthService(repos, managers, utils);
-    const articleService = new ArticleService(repos, managers, utils);
-    const articleCommentService = new ArticleCommentService(repos, managers, utils);
-    const productService = new ProductService(repos, managers, utils);
-    const productCommentService = new ProductCommentService(repos, managers, utils);
-    const notificationService = new NotificationService(repos, managers, utils)
-    const services = new Services(
-      userService,
-      authService,
-      articleService,
-      articleCommentService,
-      productService,
-      productCommentService,
-      notificationService,
-    );
+    const userService = new UserService(userRepo, productRepo, articleRepo, hashManager);
+    const authService = new AuthService(userRepo, hashManager, tokenUtil);
+    const articleService = new ArticleService(articleRepo, userLikesArticleRepo);
+    const articleCommentService = new ArticleCommentService(articleCommentRepo, notificationRepo, eventBusUtil);
+    const productService = new ProductService(productRepo, userLikesProductRepo, tagRepo, notificationRepo, eventBusUtil);
+    const productCommentService = new ProductCommentService(productCommentRepo, notificationRepo, eventBusUtil);
+    const notificationService = new NotificationService(notificationRepo)
 
-    const userController = new UserController(services);
-    const productController = new ProductController(services);
-    const productCommentController = new ProductCommentController(services);
-    const productLikeController = new ProductLikeController(services);
-    const articleController = new ArticleController(services);
-    const articleCommentController = new ArticleCommentController(services);
-    const articleLikeController = new ArticleLikeController(services);
+    const userController = new UserController(authService, userService);
+    const productController = new ProductController(productService);
+    const productCommentController = new ProductCommentController(productCommentService);
+    const productLikeController = new ProductLikeController(productService);
+    const articleController = new ArticleController(articleService);
+    const articleCommentController = new ArticleCommentController(articleCommentService);
+    const articleLikeController = new ArticleLikeController(articleService);
     const imageController = new ImageController();
-    const notificationController = new NotificationController(services);
-    const controllers = new Controllers(
-      userController,
-      productController,
-      productCommentController,
-      productLikeController,
-      articleController,
-      articleCommentController,
-      articleLikeController,
-      imageController,
-      notificationController,
-    );
+    const notificationController = new NotificationController(notificationService);
 
-    const userRouter = new UserRouter(controllers, utils);
-    const productRouter = new ProductRouter(controllers, utils);
-    const articleRouter = new ArticleRouter(controllers, utils);
-    const imageRouter = new ImageRouter(controllers, utils);
-    const notification = new NotificationRouter(controllers, utils)
-    const routers = new Routers(
+    const userRouter = new UserRouter(authMiddleware, userController);
+    const productRouter = new ProductRouter(authMiddleware, productController, productCommentController, productLikeController);
+    const articleRouter = new ArticleRouter(authMiddleware, articleController, articleCommentController, articleLikeController);
+    const imageRouter = new ImageRouter(authMiddleware, imageController, fileUtil);
+    const notificationRouter = new NotificationRouter(authMiddleware, notificationController)
+
+    const notificationGateway = new NotificationGateway(authMiddleware, eventBusUtil, configUtil);
+
+    const httpServer = new HttpServer(
       userRouter,
       productRouter,
       articleRouter,
       imageRouter,
-      notification,
+      notificationRouter,
+      configUtil,
     );
-
-    const notificationGateway = new NotificationGateway(services, utils, middlewares);
-    const gateways = new Gateways(
-      notificationGateway
-    );
-
-    const httpServer = new HttpServer(routers, utils);
-    const wsServer = new WsServer(httpServer.defaultHttpServer, gateways, utils);
+    const wsServer = new WsServer(httpServer.defaultHttpServer, notificationGateway, configUtil);
 
     return {
       httpServer,

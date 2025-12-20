@@ -6,11 +6,14 @@ import { GetArticleListResDto } from "../responses/article/get.article.list.res.
 import { GetArticleResDto } from "../responses/article/get.article.res.dto";
 import { UpdateArticleResDto } from "../responses/article/update.article.res.dto";
 import { IServices } from "../port/services.interface";
+import { ArticleService } from "../../domain/service/article/article.service";
 
 export class ArticleController extends BaseController {
 
-  constructor(services: IServices) {
-    super(services);
+  constructor(
+    private readonly _articleService: ArticleService
+  ) {
+    super();
   }
 
   createArticleController: ControllerHandler = async (req, res, next) => {
@@ -19,7 +22,7 @@ export class ArticleController extends BaseController {
       ...req.body
     }));
     const createdArticle =
-      await this._services.article.createArticle(reqDto);
+      await this._articleService.createArticle(reqDto);
     const createdArticleResDto = new CreateArticleResDto(createdArticle);
     return res.json(createdArticleResDto);
   };
@@ -29,7 +32,7 @@ export class ArticleController extends BaseController {
       req.params
     ));
     const getArticle =
-      await this._services.article.getArticle(reqDto);
+      await this._articleService.getArticle(reqDto);
     const getArticleResDto = new GetArticleResDto(getArticle);
     return res.json(getArticleResDto);
   };
@@ -39,7 +42,7 @@ export class ArticleController extends BaseController {
       req.query
     ));
     const getArticleList =
-      await this._services.article.getArticleList(reqDto);
+      await this._articleService.getArticleList(reqDto);
     const getArticleListResDto = new GetArticleListResDto(getArticleList);
     return res.json(getArticleListResDto);
   };
@@ -51,7 +54,7 @@ export class ArticleController extends BaseController {
       ...req.body
     }));
     const updatedArticle =
-      await this._services.article.updateArticle(reqDto);
+      await this._articleService.updateArticle(reqDto);
     const updatedArticleResDto = new UpdateArticleResDto(updatedArticle);
     return res.json(updatedArticleResDto);
   };
@@ -61,7 +64,7 @@ export class ArticleController extends BaseController {
       userId: req.userId,
       ...req.params
     }));
-    await this._services.article.deleteArticle(reqDto);
+    await this._articleService.deleteArticle(reqDto);
     const deletedArticleResDto = new DeleteArticleResDto();
     return res.json(deletedArticleResDto);
   };

@@ -1,16 +1,24 @@
 import { Server as SocketIoServer, Socket, Namespace } from "socket.io";
 import { BaseGateway } from "./base.gateway";
 import { Exception } from "../../shared/exception/exception";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { NotificationCommentCreatedEvent } from "../../domain/event/notification-comment-created.event copy";
+import { NotificationCommentCreatedEvent } from "../../domain/event/notification-comment-created.event";
 import { NotificationPriceChangeEvent } from "../../domain/event/notification-price-change.event";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { IEventBusUtil } from "../../shared/util/event-bus.util";
+import { IConfigUtil } from "../../shared/util/config.util";
 
 export class NotificationGateway extends BaseGateway {
-
+  constructor(
+    private readonly _authMiddleware: AuthMiddleware,
+    private readonly _evenBusUtil: IEventBusUtil,
+    configUtil: IConfigUtil
+  ){
+    super(configUtil)
+  }
   register = (io: SocketIoServer): void => {
     const notificationIo = io.of("/notifications");
 
-    this.utils.even.subscribe(
+    this._evenBusUtil.subscribe(
       NotificationCommentCreatedEvent,
       (event) => {
         const { userId, type, productId, articleId } = event.notification;
@@ -28,7 +36,7 @@ export class NotificationGateway extends BaseGateway {
       },
     );
 
-    this.utils.even.subscribe(
+    this._evenBusUtil.subscribe(
       NotificationPriceChangeEvent,
       (event) => {
         const { userIds, type, message } = event.notification;
@@ -56,7 +64,7 @@ export class NotificationGateway extends BaseGateway {
     //   }
     // })
 
-    notificationIo.use(this.middlewares.auth.checkAuthWs);
+    notificationIo.use(this._authMiddleware.checkAuthWs);
 
     notificationIo.on("connection", async (socket) => {
       if (!socket.data.userId) {

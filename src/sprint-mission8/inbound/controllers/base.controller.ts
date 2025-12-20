@@ -11,7 +11,7 @@ export type ControllerHandler = (
 ) => Promise<Response<any>>;
 
 export class BaseController {
-  constructor(protected readonly _services: IServices) {
+  constructor() {
   }
 
   validateOrThrow = <T>(result: ZodSafeParseResult<T>): T => {

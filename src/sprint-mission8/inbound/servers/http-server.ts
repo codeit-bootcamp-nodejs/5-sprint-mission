@@ -2,26 +2,34 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import http, { Server as DefaultHttpServer } from "http";
 import cors from "cors";
 import morgan from "morgan";
-import { Routers } from "../routers";
-import { IUtils } from "../../shared/util";
 import { Exception } from "../../shared/exception/exception";
+import { UserRouter } from "../routers/user.router";
+import { IConfigUtil } from "../../shared/util/config.util";
+import { ArticleRouter } from "../routers/article.router";
+import { ImageRouter } from "../routers/image.router";
+import { NotificationRouter } from "../routers/notification.router";
+import { ProductRouter } from "../routers/product.router";
 
 export class HttpServer {
   public readonly app: Application;
   public readonly defaultHttpServer: DefaultHttpServer;
 
   constructor(
-    public readonly routers: Routers,
-    public readonly utils: IUtils
+    public readonly userRouter: UserRouter,
+    public readonly productRouter: ProductRouter,
+    public readonly articleRouter: ArticleRouter,
+    public readonly imageRouter: ImageRouter,
+    public readonly notificationRouter: NotificationRouter,
+    public readonly configUtil: IConfigUtil,
   ) {
     this.app = express();
     this.defaultHttpServer = http.createServer(this.app);
   }
 
   listen = () => {
-    this.defaultHttpServer.listen(this.utils.config.getParsed().PORT, () => {
+    this.defaultHttpServer.listen(this.configUtil.getParsed().PORT, () => {
       console.log(
-        `app server listening on port ${this.utils.config.getParsed().PORT}`,
+        `app server listening on port ${this.configUtil.getParsed().PORT}`,
       );
     });
   };
@@ -64,14 +72,11 @@ export class HttpServer {
     this.registerBaseMiddlewares();
 
     // router
-    this.app.use(
-      this.routers.article.basePath,
-      this.routers.article.router,
-    );
-    this.app.use(this.routers.product.basePath, this.routers.product.router);
-    this.app.use(this.routers.user.basePath, this.routers.user.router);
-    this.app.use(this.routers.image.basePath, this.routers.image.router);
-    this.app.use(this.routers.notification.basePath, this.routers.notification.router);
+    this.app.use(this.userRouter.basePath, this.userRouter.router);
+    this.app.use(this.productRouter.basePath, this.productRouter.router);
+    this.app.use(this.articleRouter.basePath, this.articleRouter.router,);
+    this.app.use(this.imageRouter.basePath, this.imageRouter.router);
+    this.app.use(this.notificationRouter.basePath, this.notificationRouter.router);
     this.registerExceptionMiddleware();
     this.app.use((req, res, next) => {
       if (req.headers.upgrade?.toLowerCase() === "websocket") return next();

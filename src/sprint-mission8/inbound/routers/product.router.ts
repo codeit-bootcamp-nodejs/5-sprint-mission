@@ -1,80 +1,87 @@
-import { IUtils } from "../../shared/util";
-import { Controllers } from "../controllers";
+import { ProductCommentController } from "../controllers/product.comment.controller";
+import { ProductController } from "../controllers/product.controller";
+import { ProductLikeController } from "../controllers/product.like.controller";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 import { BaseRouter } from "./base.router";
 
 export class ProductRouter extends BaseRouter {
-  constructor(controllers: Controllers, utils: IUtils) {
-    super("/api/products", controllers, utils);
+  constructor(
+    private readonly _authMiddleware: AuthMiddleware,
+    private readonly _productController: ProductController,
+    private readonly _productCommentController: ProductCommentController,
+    private readonly _productLikeController: ProductLikeController
+  ) {
+    super("/api/products");
     this.registerProductRouter();
   }
 
   registerProductRouter = () => {
     this.router.post(
       "/",
-      this.isAuthenticate,
-      this.catchException(this.controllers.product.createProductController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._productController.createProductController),
     );
     this.router.get(
       "/:productId",
-      this.catchException(this.controllers.product.getProductController),
+      this.catchException(this._productController.getProductController),
     );
     this.router.get(
       "/",
-      this.catchException(this.controllers.product.getProductListController),
+      this.catchException(this._productController.getProductListController),
     );
     this.router.patch(
       "/:productId",
-      this.isAuthenticate,
-      this.catchException(this.controllers.product.updateProductController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._productController.updateProductController),
     );
     this.router.delete(
       "/:productId",
-      this.isAuthenticate,
-      this.catchException(this.controllers.product.deleteProductController),
+      this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._productController.deleteProductController),
     );
 
     // 댓글 기능
     this.router.post(
       "/:productId/comments",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.productComment.createProductCommentController,
+        this._productCommentController.createProductCommentController,
       ),
     );
     this.router.get(
       "/:productId/comments",
       this.catchException(
-        this.controllers.productComment.getProductCommentListController,
+        this._productCommentController.getProductCommentListController,
       ),
     );
     this.router.patch(
       "/:productId/comment/:commentId",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.productComment.updateProductCommentController,
+        this._productCommentController.updateProductCommentController,
       ),
     );
     this.router.delete(
       "/:productId/comment/:commentId",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.productComment.deleteProductCommentController,
+        this._productCommentController.deleteProductCommentController,
       ),
     );
 
     // 좋아요 기능
     this.router.post(
       "/:productId/like",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.productLike.addProductLikeController,
+        this._productLikeController.addProductLikeController,
       ),
     );
     this.router.delete(
       "/:productId/like",
-      this.isAuthenticate,
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
-        this.controllers.productLike.cancelProductLikeController,
+        this._productLikeController.cancelProductLikeController,
       ),
     );
   };
