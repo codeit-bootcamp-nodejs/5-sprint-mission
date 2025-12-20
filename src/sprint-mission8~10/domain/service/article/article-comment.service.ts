@@ -82,6 +82,7 @@ export class ArticleCommentService implements IArticleCommentService {
     const notificationEventPayload = {
       id: notification.id,
       userId: notification.userId,
+      articleUserId: createdComment.articleUserId,
       type: notification.type,
       message: notification.message,
       productId: createdComment.articleId

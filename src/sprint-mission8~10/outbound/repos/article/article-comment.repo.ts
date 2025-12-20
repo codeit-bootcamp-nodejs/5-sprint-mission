@@ -35,9 +35,19 @@ export class ArticleCommentRepo extends BaseRepo implements IArticleCommentRepo 
       data: {
         ...ArticleCommentMapper.toCreateData(entity),
       },
+      include: {
+        Article: {
+          select:{
+            userId: true
+          }
+        }
+      }
     });
 
-    return ArticleCommentMapper.toPersistEntity(comment);
+    return ArticleCommentMapper.toPersistEntity({
+      ...comment,
+      userId: comment.userId
+    }, comment.Article.userId);
   };
 
   async update(entity: PersitstArticleCommentEntity): Promise<PersitstArticleCommentEntity> {

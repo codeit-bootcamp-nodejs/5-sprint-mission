@@ -12,7 +12,7 @@ export class NotificationGateway extends BaseGateway {
     private readonly _authMiddleware: AuthMiddleware,
     private readonly _evenBusUtil: IEventBusUtil,
     configUtil: IConfigUtil
-  ){
+  ) {
     super(configUtil)
   }
   register = (io: SocketIoServer): void => {
@@ -21,18 +21,15 @@ export class NotificationGateway extends BaseGateway {
     this._evenBusUtil.subscribe(
       NotificationCommentCreatedEvent,
       (event) => {
-        const { userId, type, productId, articleId } = event.notification;
-
-        if (productId) {
-          notificationIo
-            .to(`user:${productId}`)
-            .emit(`${type} notification!!! (commentWriter: ${userId})`);
-        }
-        if (articleId) {
-          notificationIo
-            .to(`user:${articleId}`)
-            .emit(`${type} notification!!! (commentWriter: ${userId})`);
-        }
+        const { type, message, articleUserId } = event.notification;
+        
+        if (!articleUserId) return;
+        notificationIo
+          .to(`user:${articleUserId}`)
+          .emit("notification", {
+            type,
+            message,
+          });
       },
     );
 
@@ -43,26 +40,13 @@ export class NotificationGateway extends BaseGateway {
         for (const targetUserId of userIds) {
           notificationIo
             .to(`user:${targetUserId}`)
-            .emit(`${type}, ${message}`);
+            .emit("notification", {
+              type,
+              message,
+            });
         }
       },
     );
-
-    // notificationIo.use((socket, next) => {
-    //   try {
-    //     const token = socket.handshake.auth?.token;
-    //     if (!token) {
-    //       throw new Exception({ info: EXCEPTIONS.INVALID_AUTH });
-    //     }
-
-    //     const payload = this.utils.token.verifyToken(token);
-    //     socket.data.userId = payload.userId;
-
-    //     next();
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // })
 
     notificationIo.use(this._authMiddleware.checkAuthWs);
 
@@ -76,13 +60,6 @@ export class NotificationGateway extends BaseGateway {
       const userId = socket.data.userId;
 
       socket.join(`user:${userId}`);
-
-      socket.on(
-        "getNotifications",
-        this.catch(socket, async () => {
-          //처리
-        })
-      ).on("disconnect", () => { });
 
     })
   }

@@ -70,27 +70,6 @@ export class ProductCommentService implements IProductCommentService {
     if (!createdComment) {
       throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
     }
-
-    const createNotification = NotificationEntity.createNew({
-      userId: dto.userId,
-      type: NotificationType.ARTICLE_COMMENT_CREATED,
-      message: "작성한 게시글에 댓글이 달렸습니다.",
-    });
-
-    const notification = await this._notificationRepo.save(createNotification);
-
-    const notificationEventPayload = {
-      id: notification.id,
-      userId: notification.userId,
-      type: notification.type,
-      message: notification.message,
-      productId: createdComment.productId
-    }
-
-    this._evenBusUtil.publish(
-      new NotificationCommentCreatedEvent(notificationEventPayload),
-    );
-
     return createdComment;
   };
 

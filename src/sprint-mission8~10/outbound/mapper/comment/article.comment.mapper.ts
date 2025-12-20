@@ -25,10 +25,11 @@ export class ArticleCommentMapper {
     }
   }
 
-  static toPersistEntity(entity: ArticleComment) {
+  static toPersistEntity(entity: ArticleComment, articleUserId?: string) {
     return ArticleCommentEntity.createPersist({
       id: entity.id,
       articleId: entity.articleId,
+      articleUserId: articleUserId,
       userId: entity.userId,
       content: entity.content,
       createdAt: entity.createdAt,

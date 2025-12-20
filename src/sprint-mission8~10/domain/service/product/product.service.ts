@@ -24,7 +24,7 @@ export class ProductService implements IProductService {
     private readonly _tagRepo: ITagRepo,
     private readonly _notificationRepo: INotificationRepo,
     private readonly _evenBusUtil: IEventBusUtil
-  ){
+  ) {
   }
   async getProduct(dto: GetProductDto): Promise<PersistProductEntity> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
@@ -121,6 +121,9 @@ export class ProductService implements IProductService {
   async updateProduct(dto: UpdateProductDto): Promise<PersistProductEntity> {
     const { userId, productId, name, description, price, tags, images } = dto;
     const foundProduct = await this._productRepo.findProductById(productId);
+
+    const prePrice = foundProduct?.price;
+
     if (!foundProduct) {
       throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
     }
@@ -144,12 +147,12 @@ export class ProductService implements IProductService {
 
     const updatedProduct = await this._productRepo.update(foundProduct);
 
-    if (dto.price && dto.price !== foundProduct.price) {
+    if (dto.price && dto.price !== prePrice) {
       const likeUserIds = await this._userLikesproductRepo.findLikeUserIdsByProduct(updatedProduct.id);
 
 
       if (likeUserIds.length > 0) {
-        const notifications = await Promise.all(
+        await Promise.all(
           likeUserIds.map(userId => {
             const notification = NotificationEntity.createNew({
               userId,

@@ -15,12 +15,14 @@ export interface PersitstArticleCommentEntity extends ArticleCommentEntity {
 
 export class ArticleCommentEntity extends BaseEntity<number> {
   private readonly _userId: string; // 댓글 작성자
+  private readonly _articleUserId?: string; // 게시글 작성자
   private readonly _articleId: string;
   private _content: string;
 
   constructor(attributes: {
     id?: number,
     userId: string,
+    articleUserId?: string,
     articleId: string,
     content: string,
     createdAt?: Date,
@@ -28,6 +30,7 @@ export class ArticleCommentEntity extends BaseEntity<number> {
   }) {
     super(attributes.id, attributes.createdAt, attributes.updatedAt);
     this._userId = attributes.userId;
+    this._articleUserId = attributes.articleUserId;
     this._content = attributes.content;
     this._articleId = attributes.articleId;
   }
@@ -46,6 +49,7 @@ export class ArticleCommentEntity extends BaseEntity<number> {
   static createPersist (parmas: {
     id: number;
     userId: string;
+    articleUserId?: string;
     articleId: string;
     content: string;
     createdAt: Date;
@@ -67,6 +71,9 @@ export class ArticleCommentEntity extends BaseEntity<number> {
 
   get userId() {
     return this._userId;
+  }
+  get articleUserId() {
+    return this._articleUserId;
   }
   get content() {
     return this._content;

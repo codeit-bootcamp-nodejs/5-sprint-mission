@@ -1,11 +1,11 @@
 import { NotificationType } from "@prisma/client";
-import { NotificationEntity } from "../entity/notification.entity";
 
 type NotificationEventPayload = {
   id: number;
-  articleId?: string; // 게시글 작성자
-  productId?: string; // 상품 작성자
+  articleId?: string;
+  productId?: string;
   userId: string; // 댓글 작성자
+  articleUserId?: string;
   type: NotificationType;
   message: string;
 };

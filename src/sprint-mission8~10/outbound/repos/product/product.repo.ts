@@ -114,8 +114,14 @@ export class ProductRepo extends BaseRepo implements IProductRepo {
       data: {
         ...productData,
         updatedAt: new Date(),
-        images: { create: productImagesData },
-        tags: { create: productTagsData }
+        images: { 
+          deleteMany: {},
+          create: productImagesData
+        },
+        tags: {
+          deleteMany: {},
+          create: productTagsData
+        }
       },
       include: productInclude
     });

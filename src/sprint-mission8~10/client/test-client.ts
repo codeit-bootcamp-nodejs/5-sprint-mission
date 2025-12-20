@@ -8,15 +8,15 @@ type TestUser = {
 const USERS: TestUser[] = [
   {
     name: "USER-1",
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NGM5M2FjMy1jODdlLTRiOTYtYTI0NC1mOWYxZjI4OTFhZmYiLCJpYXQiOjE3NjU3ODg2MjYsImV4cCI6MTc2NTc5MjIyNn0.vmUoVLTdvljL0QiCTxQWvoVn03xDQK3j4ihBbNkAawA",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5NmI5NGUwMi0zYmZmLTRiMjYtYTFmMy0zZGFiMjFmOWYwM2IiLCJpYXQiOjE3NjYyMjE0NzEsImV4cCI6MTc2NjI0MzA3MX0.uPqxH-nurMTXR2nxECiQq7zBpWivgCeomCu6YrxsUyQ",
   },
   {
     name: "USER-2",
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzRiNWU2OC1jZTkzLTQ3ZTEtODkyOS05OTY4MmE5YzNhZWQiLCJpYXQiOjE3NjU3ODg2NzEsImV4cCI6MTc2NTc5MjI3MX0.F9qKLCPbCRMHLm0T85OgH9-IIC9oyCR2uLmfeeJR9KY",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzRiNWU2OC1jZTkzLTQ3ZTEtODkyOS05OTY4MmE5YzNhZWQiLCJpYXQiOjE3NjYyMjE1MzQsImV4cCI6MTc2NjI0MzEzNH0.5i9kJU1SNFVM5SdIWyQPkLjSM68x_y0cyQE51oOr3rA",
   },
   {
     name: "USER-3",
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5NmI5NGUwMi0zYmZmLTRiMjYtYTFmMy0zZGFiMjFmOWYwM2IiLCJpYXQiOjE3NjU3ODg2OTMsImV4cCI6MTc2NTc5MjI5M30.5naJOvvFGHNcr3D-UhzMvi5pQlbGBcAuvfA5gGyEpxw",
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NGM5M2FjMy1jODdlLTRiOTYtYTI0NC1mOWYxZjI4OTFhZmYiLCJpYXQiOjE3NjYyMjE1NTAsImV4cCI6MTc2NjI0MzE1MH0.O43a-6zPeOivfnwZurB2PYbkPlcsa1WXwpSW55BK3Iw",
   },
 ];
 
@@ -33,9 +33,28 @@ function connectUser(user: TestUser): Socket {
     socket.emit("getNotifications");
   });
 
-  socket.onAny((event, ...args) => {
-    console.log(`📩 [${user.name}] event=${event}`, args);
+  socket.on("notification", (payload) => {
+    console.log(`🔔 [${user.name}] notification`, payload);
+
+    const { type, message } = payload;
+
+    switch (type) {
+      case "PRODUCT_PRICE_CHANGED":
+        console.log("💰 가격 변경:", message);
+        break;
+
+      case "ARTICLE_COMMENT_CREATED":
+        console.log("💬 댓글 알림:", message);
+        break;
+
+      default:
+        console.log("📢 기타 알림:", message);
+    }
   });
+
+  // socket.onAny((event, ...args) => {
+  //   console.log(`📩 [${user.name}] event=${event}`, args);
+  // });
 
   socket.on("disconnect", () => {
     console.log(`⚠️ ${user.name} disconnected`);
