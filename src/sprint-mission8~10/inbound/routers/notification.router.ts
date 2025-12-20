@@ -24,6 +24,7 @@ export class NotificationRouter extends BaseRouter{
     );
     this.router.get(
       "/",
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(this._notificationController.getMyNotificationsController),
     );
   };

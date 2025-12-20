@@ -41,7 +41,8 @@ export class NotificationRepo extends BaseRepo implements INotificationRepo {
   async countUnread(userId: string): Promise<number> {
     return await this._prisma.notification.count({
       where: {
-        userId
+        userId,
+        isRead: false
       }
     });
   }
