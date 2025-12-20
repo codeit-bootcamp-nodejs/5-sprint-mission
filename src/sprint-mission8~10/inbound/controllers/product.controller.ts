@@ -1,7 +1,6 @@
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createProductReqSchema, deleteProductReqSchema, getProductListReqSchema, getProductReqSchema, updateProductReqSchema } from "../requests/product/product.req.schemas";
 import { CreateProductResDto } from "../responses/product/create.product.res.dto";
-import { DeleteProductResDto } from "../responses/product/delete.product.res.dto";
 import { GetProductListResDto } from "../responses/product/get.product.list.res.dto";
 import { GetProductResDto } from "../responses/product/get.product.res.dto";
 import { UpdateProductResDto } from "../responses/product/update.product.res.dto";
@@ -61,7 +60,6 @@ export class ProductController extends BaseController {
     }));
     const deletedwProduct =
       await this._productService.deleteProduct(reqDto);
-    const deletedProductResDto = new DeleteProductResDto();
-    return res.json(deletedProductResDto);
+    return res.sendStatus(200);
   };
 }

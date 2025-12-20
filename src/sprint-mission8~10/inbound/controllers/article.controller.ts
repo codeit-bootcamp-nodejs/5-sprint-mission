@@ -1,11 +1,9 @@
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createArticleReqSchema, deleteArticleReqSchema, getArticleListReqSchema, getArticleReqSchema, updateArticleReqSchema } from "../requests/article/article.req.schemas";
 import { CreateArticleResDto } from "../responses/article/create.article.res.dto";
-import { DeleteArticleResDto } from "../responses/article/delete.article.res.dto";
 import { GetArticleListResDto } from "../responses/article/get.article.list.res.dto";
 import { GetArticleResDto } from "../responses/article/get.article.res.dto";
 import { UpdateArticleResDto } from "../responses/article/update.article.res.dto";
-import { IServices } from "../port/services.interface";
 import { ArticleService } from "../../domain/service/article/article.service";
 
 export class ArticleController extends BaseController {
@@ -65,7 +63,6 @@ export class ArticleController extends BaseController {
       ...req.params
     }));
     await this._articleService.deleteArticle(reqDto);
-    const deletedArticleResDto = new DeleteArticleResDto();
-    return res.json(deletedArticleResDto);
+    return res.sendStatus(200);
   };
 }

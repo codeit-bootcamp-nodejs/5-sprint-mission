@@ -1,7 +1,6 @@
 import { ProductCommentService } from "../../domain/service/product/product-comment.service";
 import { createProductCommentReqSchema, deleteProductCommentReqSchema, getProductCommentReqSchema, updateProductCommentReqSchema } from "../requests/product/product.req.schemas";
 import { CreateProductCommentResDto } from "../responses/comment/product/create.product.comment.res.dto";
-import { DeleteProductCommentResDto } from "../responses/comment/product/delete.product.comment.res.dto";
 import { GetProductCommentListResDto } from "../responses/comment/product/get.product.comment.list.res.dto";
 import { UpdateProductCommentResDto } from "../responses/comment/product/update.product.comment.res.dto";
 import { BaseController, ControllerHandler } from "./base.controller";
@@ -56,7 +55,6 @@ export class ProductCommentController extends BaseController {
       ...req.params
     }));
     await this._productCommentService.deleteComment(resDto);
-    const deletedCommentResDto = new DeleteProductCommentResDto();
-    return res.json(deletedCommentResDto);
+    return res.sendStatus(200);
   };
 }

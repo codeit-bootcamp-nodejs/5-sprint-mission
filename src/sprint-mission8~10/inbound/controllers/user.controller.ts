@@ -3,11 +3,9 @@ import { BaseController } from "./base.controller";
 import { refreshTokensReqSchema, signInReqSchema, signUpReqSchema, updatePasswordReqSchema, updateReqSchema, userIdReqSchema, userLikeListReqSchema, userProductsReqSchema } from "../requests/user/user.req.schemas";
 import { SignInResDto } from "../responses/user/signIn.res.dto";
 import { UserResDto } from "../responses/user/user.Res.Dto";
-import { SignOutResDto } from "../responses/user/signout.res.dto";
 import { UserProductsResDto } from "../responses/user/user.products.res.dto";
 import { UserLikeProductsResDto } from "../responses/user/user.like.products.dto";
 import { UserLikeArticlesResDto } from "../responses/user/user.like.articles.dto";
-import { DeleteUserResDto } from "../responses/user/delete.user.res.dto";
 import { RefreshTokensResDto } from "../responses/user/refresh.tokens.res.dto";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
@@ -47,8 +45,7 @@ export class UserController extends BaseController{
     const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
     await this._authService.signOutUser(userId);
-    const resDto = new SignOutResDto();
-    return res.json(resDto);
+    return res.sendStatus(200);
   };
 
   getUserController = async (req: Request, res: Response, next: NextFunction) => {
@@ -124,8 +121,7 @@ export class UserController extends BaseController{
     const { userId } = this.validateOrThrow(userIdReqSchema.safeParse({ userId: req.userId }));
 
     await this._userService.deleteUser(userId);
-    const resDto = new DeleteUserResDto();
-    return res.json(resDto);
+    return res.sendStatus(200);
   };
 
   refreshTokensController = async (req: Request, res: Response, next: NextFunction) => {

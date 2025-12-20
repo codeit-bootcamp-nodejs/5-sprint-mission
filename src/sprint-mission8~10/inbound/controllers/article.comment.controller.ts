@@ -1,10 +1,8 @@
 import { BaseController, ControllerHandler } from "./base.controller";
 import { createArticleCommentReqSchema, deleteArticleCommentReqSchema, getArticleCommentReqSchema, updateArticleCommentReqSchema } from "../requests/article/article.req.schemas";
-import { IServices } from "../port/services.interface";
 import { CreateArticleCommentResDto } from "../responses/comment/article/create.article.comment.res.dto";
 import { GetArticleCommentListResDto } from "../responses/comment/article/get.article.comment.list.res.dto";
 import { UpdateArticleCommentResDto } from "../responses/comment/article/update.article.comment.res.dto";
-import { DeleteArticleCommentResDto } from "../responses/comment/article/delete.article.comment.res.dto";
 import { ArticleCommentService } from "../../domain/service/article/article-comment.service";
 
 export class ArticleCommentController extends BaseController {
@@ -56,7 +54,6 @@ export class ArticleCommentController extends BaseController {
       ...req.params,
     }));
     await this._articleCommentService.deleteComment(reqDto);
-    const deletedCommentResDto = new DeleteArticleCommentResDto();
-    return res.json(deletedCommentResDto);
+    return res.sendStatus(200);
   };
 }

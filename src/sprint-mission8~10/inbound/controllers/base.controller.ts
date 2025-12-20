@@ -1,6 +1,5 @@
 import { ZodSafeParseResult } from "zod";
 import { NextFunction, Request, Response } from "express";
-import { IServices } from "../port/services.interface";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 

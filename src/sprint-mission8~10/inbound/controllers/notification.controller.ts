@@ -2,7 +2,6 @@ import { NotificationService } from "../../domain/service/notification.service";
 import { getMyNotificationsReqSchema, getUnreadCountReqSchema, markAsReadReqSchema } from "../requests/notification/notification.schemas";
 import { GetNotificationsResDto } from "../responses/notification/get-notifications.res.dto";
 import { GetUnreadCountResDto } from "../responses/notification/get-unread-count.res.dto";
-import { MarkAsReadResDto } from "../responses/notification/mark-as-read.res.dto";
 import { BaseController, ControllerHandler } from "./base.controller";
 
 export class NotificationController extends BaseController {
@@ -19,9 +18,7 @@ export class NotificationController extends BaseController {
     }));
 
     await this._notificationService.markAsRead(reqDto);
-
-    const resDto = new MarkAsReadResDto();
-    return res.json(resDto);
+    return res.sendStatus(200);
   };
 
   getMyNotificationsController: ControllerHandler = async (req, res, next) => {
