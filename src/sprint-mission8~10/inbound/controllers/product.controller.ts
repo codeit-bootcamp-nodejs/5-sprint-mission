@@ -26,7 +26,7 @@ export class ProductController extends BaseController {
   };
 
   getProductController: ControllerHandler = async (req, res, next) => {
-    const reqDto = this.validateOrThrow(getProductReqSchema.safeParse(req.body));
+    const reqDto = this.validateOrThrow(getProductReqSchema.safeParse(req.params));
     const getProduct =
       await this._productService.getProduct(reqDto);
     const getProductResDto = new GetProductResDto(getProduct);
@@ -34,7 +34,7 @@ export class ProductController extends BaseController {
   };
 
   getProductListController: ControllerHandler = async (req, res, next) => {
-    const reqDto = this.validateOrThrow(getProductListReqSchema.safeParse(req.query));
+    const reqDto = this.validateOrThrow(getProductListReqSchema.safeParse(req.query ?? {}));
     const getProductList =
       await this._productService.getProductList(reqDto);
     const getProductListResDto = new GetProductListResDto(getProductList);

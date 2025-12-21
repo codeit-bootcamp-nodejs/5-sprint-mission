@@ -58,11 +58,6 @@ export class ProductService implements IProductService {
       throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
     }
 
-    const productTotalCount = await this._productRepo.count();
-    if (productTotalCount < limit) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: productTotalCount });
-    }
-
     const foundProductList = await this._productRepo.findProductList(
       offset,
       limit,

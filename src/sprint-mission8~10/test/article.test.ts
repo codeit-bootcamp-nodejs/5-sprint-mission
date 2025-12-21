@@ -27,8 +27,10 @@ describe("article 통합 테스트", () => {
         nickname: "테스트유저"
       },
     });
+
     userId = user.id;
     token = tokenUtil.generateAccessToken({ userId })
+    
     // 초기 게시글 생성
     const article = await mockPrismaClient.article.create({
       data: { title: "테스트 게시글", content: "초기 내용", userId },

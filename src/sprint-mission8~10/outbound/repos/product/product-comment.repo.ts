@@ -46,7 +46,7 @@ export class ProductCommentRepo extends BaseRepo implements IProductCommentRepo 
         id: entity.id,
       },
       data: {
-        ...ProductCommentMapper.toPersistEntity(entity),
+        ...ProductCommentMapper.toUpdateData(entity),
         updatedAt: new Date(),
       },
     });

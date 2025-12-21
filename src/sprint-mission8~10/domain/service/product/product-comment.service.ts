@@ -5,8 +5,6 @@ import { EXCEPTIONS } from "../../../shared/const/exception.info";
 import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstProductCommentEntity, ProductCommentEntity } from "../../entity/comment/product-comment.entity";
-import { NotificationEntity } from "../../entity/notification.entity";
-import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event";
 import { IProductCommentRepo } from "../../port/repo/product/product-comment.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
 import { IEventBusUtil } from "../../../shared/util/event-bus.util";
@@ -41,12 +39,6 @@ export class ProductCommentService implements IProductCommentService {
 
     if (!productId) {
       throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
-    }
-
-    const commentTotalCount = await this._productCommentRepo.count(productId);
-
-    if (commentTotalCount < limit) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: commentTotalCount });
     }
 
     const comments = await this._productCommentRepo.findCommentList(
