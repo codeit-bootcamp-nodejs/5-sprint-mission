@@ -10,5 +10,5 @@ export interface IProductRepo {
   create(entity: NewProductEntity): Promise<PersistProductEntity>;
   update(entity: PersistProductEntity): Promise<PersistProductEntity>;
   delete(productId: string): Promise<void>;
-  count(): Promise<number>
+  count(): Promise<number>;
 }
