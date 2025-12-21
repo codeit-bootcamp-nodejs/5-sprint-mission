@@ -7,17 +7,21 @@ export class NotificationGateway {
     this.io = io;
     
     this.io.on("connection", (socket: Socket) => {
-
-      socket.on("join", (data: { userId: number }) => {
-        const roomName = `userNumber ${data.userId}`;
-        socket.join(roomName);
-      });
+      const userId = socket.data.userId;
+      
+      if (!userId) {
+        socket.disconnect();
+        return;
+      }
+      const roomName = `userNumber ${userId}`;
+      socket.join(roomName);
+      console.log(`User ID ${userId} connected and joined room: ${roomName}`);
     });
   }
 
   sendNotification(userId: number, message: string) {
     if (!this.io) {
-      return
+      return;
     }
     this.io.to(`userNumber ${userId}`).emit("Notification", message);
   }

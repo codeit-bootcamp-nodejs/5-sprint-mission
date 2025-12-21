@@ -38,6 +38,6 @@ wsServer.start();
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`서버가 ${PORT}번 포트로 실행되었습니다.`);
 });
