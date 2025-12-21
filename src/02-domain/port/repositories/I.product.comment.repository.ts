@@ -1,0 +1,23 @@
+import {
+  NewProductComment,
+  PersistedProductComment,
+} from "../../entity/product.comment.entity";
+
+export interface IProductCommentRepository {
+  save(
+    entity: NewProductComment,
+  ): Promise<PersistedProductComment>;
+
+  findAll(
+    productId: string,
+  ): Promise<PersistedProductComment[]>;
+
+  findById(commentId: string): Promise<PersistedProductComment>;
+
+  remove(commentId: string): void;
+
+  update(
+    foundEntity: PersistedProductComment,
+    newEntity: NewProductComment,
+  ): Promise<PersistedProductComment>;
+}

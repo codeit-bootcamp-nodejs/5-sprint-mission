@@ -1,0 +1,26 @@
+GET http://localhost:3000/product/e1f54d84-d23f-47fc-88f2-e765bb9d527b/comments
+
+### 
+
+POST http://localhost:3000/product/e1f54d84-d23f-47fc-88f2-e765bb9d527b/comments
+Content-Type: application/json
+
+{
+    "content" : "testing comment"
+
+}
+
+### 
+
+PATCH http://localhost:3000/product/e1f54d84-d23f-47fc-88f2-e765bb9d527b/comments/49fcc702-99db-4138-a9ac-426f5f5987ab
+Content-Type: application/json
+
+{
+    "content" : "comment 2025"
+}
+
+
+###
+
+DELETE http://localhost:3000/product/e1f54d84-d23f-47fc-88f2-e765bb9d527b/comments/c3cda696-4d87-468d-84ec-484c8fa42642
+

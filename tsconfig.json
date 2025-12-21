@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "declarationMap": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleDetection": "force",
+    "typeRoots": ["src/types", "node_modules/@types"]
+  },
+  "include": ["./src", "jest.config.js", "babel.config.cjs"],
+  "exclude": ["node_modules"]
+}

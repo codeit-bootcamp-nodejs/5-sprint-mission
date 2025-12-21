@@ -1,0 +1,31 @@
+GET http://localhost:3000/articles?&limit=3&sort=asc
+
+###
+
+GET http://localhost:3000/articles/5a004e33-07e4-447b-a50e-753df9879177
+
+###
+
+
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+    "title": "title 2020",
+    "content": "content 2020"
+}
+
+### 
+
+
+PATCH http://localhost:3000/articles/5a004e33-07e4-447b-a50e-753df9879177
+Content-Type: application/json
+
+{
+    "title": "title 2025",
+    "content": "content 2025"
+}
+
+### 
+
+DELETE http://localhost:3000/articles/5a004e33-07e4-447b-a50e-753df9879177
