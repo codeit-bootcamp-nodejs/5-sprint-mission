@@ -18,7 +18,7 @@ export const signUpReqSchema = z.object({
   email: z.email(),
   password: z.string().min(8, "비밀번호는 최소 8자 입니다."),
   nickname: z.string(),
-  image: z.string(),
+  image: z.string().optional(),
 });
 
 export const updatePasswordReqSchema = z.object({

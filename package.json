@@ -7,8 +7,8 @@
     "dev.ts": "cross-env NODE_ENV=development nodemon --exec ts-node ./src/sprint-mission8~10/index.ts",
     "start": "node src/index.js",
     "format": "prettier --write src/**/*.js",
-    "test": "jest",
-    "test:user": "cross-env NODE_ENV=test && jest src/sprint-mission8~10/article.test.ts --runInBand",
+    "test": "cross-env NODE_ENV=test jest --coverage --runInBand",
+    "test:user": "cross-env NODE_ENV=test && jest src/sprint-mission8~10/test/user.test.ts --runInBand",
     "test:product": "cross-env NODE_ENV=test && jest src/sprint-mission8~10/test/product.test.ts --runInBand",
     "test:article": "cross-env NODE_ENV=test && jest src/sprint-mission8~10/test/article.test.ts --runInBand"
   },
