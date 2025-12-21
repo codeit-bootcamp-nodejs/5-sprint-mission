@@ -1,6 +1,14 @@
 import app from "../app";
 import request from "supertest";
 
+beforeEach(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe("인증 API", () => {
   test("로그인 - 잘못된 정보면 401", async () => {
     const res = await request(app).post("/auth/login").send({
