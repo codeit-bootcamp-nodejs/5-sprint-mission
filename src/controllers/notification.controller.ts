@@ -2,16 +2,22 @@ import { RequestHandler } from "express";
 import { AuthedRequest } from "../types/http";
 import { notificationRepository } from "../repositories/notification.repository";
 
-export const list: RequestHandler = async (req, res) => {
-  const { user } = req as AuthedRequest;
-  res.json(await notificationRepository.findByUser(user.id));
-};
+export const list: RequestHandler = async (req, res, next) => {
+  try {
+    const { user } = req as AuthedRequest;
 
-export const unreadCount: RequestHandler = async (req, res) => {
-  const { user } = req as AuthedRequest;
-  res.json({
-    count: await notificationRepository.countUnread(user.id),
-  });
+    const [items, unreadCount] = await Promise.all([
+      notificationRepository.findByUser(user.id),
+      notificationRepository.countUnread(user.id),
+    ]);
+
+    res.json({
+      unreadCount,
+      items,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const read: RequestHandler = async (req, res) => {
