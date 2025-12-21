@@ -2,7 +2,7 @@ import z from "zod";
 
 // User
 export const signUpBodySchema = z.object({
-  email: z.string(),
+  email: z.email(),
   nickname: z.string(),
   password: z.string(),
 });

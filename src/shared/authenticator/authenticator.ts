@@ -4,8 +4,8 @@ import { expressjwt } from "express-jwt";
 import { NextFunction, Request, Response } from "express";
 import { ExtendedError } from "socket.io/dist/namespace";
 import { Socket } from "socket.io/dist/socket";
-import { IUserRepository } from "../../02-domain/port/repositories/I.user.repository";
 import { BusinessException, BusinessExceptionType } from "../exception/exception";
+import { IUserCommandRepository } from "../../02-application/port/repositories/command/I.user.repository";
 
 
 export class HttpError extends Error {
@@ -15,7 +15,7 @@ export class HttpError extends Error {
   }
 }
 
-export const Authenticator = (userRepository: IUserRepository) => {
+export const Authenticator = (userRepository: IUserCommandRepository) => {
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
     throw BusinessException({

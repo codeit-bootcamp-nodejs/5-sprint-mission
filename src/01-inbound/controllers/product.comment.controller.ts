@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
 import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { BaseController } from "./base.controller"; //
-import { ProductCommentServiceType } from "../../02-domain/service/product.comment.service";
 import {
   productCommentBodySchema,
   productCommentParamSchema,
 } from "../request/product.comment.request";
+import { ProductCommentQueryServiceType } from "../../02-application/query/service/product.comment.query.service";
+import { ProductCommentCommandServiceType } from "../../02-application/command/service/product.comment.command.service";
+
 
 export const createProductCommentController = (
-  service: ProductCommentServiceType,
+  productCommentCommandService: ProductCommentCommandServiceType,
+  productCommentQueryService: ProductCommentQueryServiceType,
   auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } =
@@ -44,7 +47,7 @@ export const createProductCommentController = (
     const body = validate(productCommentBodySchema, req.body);
     const params = validate(productCommentParamSchema, req.params);
 
-    const productCommentResDto = await service.createProductComment({
+    const productCommentResDto = await productCommentCommandService.createProductComment({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -55,7 +58,7 @@ export const createProductCommentController = (
 
   const getProductComments = async (req: Request, res: Response) => {
     const productId = req.params.productId;
-    const comments = await service.getProductComments(productId);
+    const comments = await productCommentQueryService.getProductComments(productId);
     return res.json(comments);
   };
 
@@ -63,7 +66,7 @@ export const createProductCommentController = (
     const body = validate(productCommentBodySchema, req.body);
     const params = validate(productCommentParamSchema, req.params);
 
-    const productCommentResDto = await service.updateProductComment({
+    const productCommentResDto = await productCommentCommandService.updateProductComment({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -74,7 +77,7 @@ export const createProductCommentController = (
 
   const deleteProductComment = async (req: Request, res: Response) => {
     const commentId = req.params.commentId;
-    await service.deleteProductComments(commentId);
+    await productCommentCommandService.deleteProductComments(commentId);
     return res.status(200).json();
   };
 

@@ -1,5 +1,6 @@
-import { UserEntity } from "../../02-domain/entity/user.entity";
-import { PersistUser } from "../repository/user.repository";
+
+import { UserEntity } from "../../02-application/command/entity/user.entity";
+import { PersistUser } from "../repository/command/user.command.repository";
 
 export const UserMapper = {
   toPersist(record: PersistUser) {

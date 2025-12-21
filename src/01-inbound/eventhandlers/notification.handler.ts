@@ -1,4 +1,4 @@
-import { PersistedNotification } from "../../02-domain/entity/notification";
+import { PersistedNotification } from "../../02-application/command/entity/notification";
 import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
 
 

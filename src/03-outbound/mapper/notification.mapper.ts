@@ -1,5 +1,5 @@
-import { Notification } from "../../02-domain/entity/notification";
-import { PersistNotification } from "../repository/notification.repository";
+import { Notification } from "../../02-application/command/entity/notification";
+import { PersistNotification } from "../repository/command/notification.command.repository";
 
 export const NotificationMapper = {
   toPersist: (record: PersistNotification) => {
