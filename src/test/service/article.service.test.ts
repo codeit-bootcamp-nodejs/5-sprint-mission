@@ -1,13 +1,18 @@
-import { IArticleRepository } from "../../02-domain/port/repositories/I.article.repository";
-import { ArticleServiceType, createArticleService } from "../../02-domain/service/article.service";
+
 import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
-import { PersistedArticle } from "../../02-domain/entity/article";
 import { BusinessExceptionType } from "../../shared/exception/exception";
+import { IArticleCommandRepository } from "../../02-application/port/repositories/command/I.article.repository";
+import { PersistedArticle } from "../../02-application/command/entity/article";
+import { ArticleCommandServiceType, createArticleCommandService } from "../../02-application/command/service/article.command.service";
+import { ArticleQueryServiceType, createArticleQueryService } from "../../02-application/query/service/article.query.service";
+import { IArticleQueryRepository } from "../../02-application/port/repositories/query/I.article.query.repository";
 
 describe("Article Service 단위 테스트", () => {
-    let mockArticleRepo: IArticleRepository;
+    let mockArticleRepo: IArticleCommandRepository;
+    let mockArticleQueryRepo: IArticleQueryRepository
     let mockNotificationEventBus: INotificationEventBus;
-    let articleService: ArticleServiceType;
+    let articleCommandService: ArticleCommandServiceType;
+    let articleQueryService: ArticleQueryServiceType;
 
     beforeEach(() => {
         // Mock Repository
@@ -19,6 +24,11 @@ describe("Article Service 단위 테스트", () => {
             remove: jest.fn()
         };
 
+        mockArticleQueryRepo = {
+            findAll: jest.fn(),
+            findById: jest.fn()
+        }
+
         // Mock EventBus
         mockNotificationEventBus = {
             subscribe: jest.fn(),
@@ -28,10 +38,15 @@ describe("Article Service 단위 테스트", () => {
         };
 
         // Create Service
-        articleService = createArticleService(
+        articleCommandService = createArticleCommandService(
             mockArticleRepo,
             mockNotificationEventBus,
         );
+
+        articleQueryService = createArticleQueryService(
+            mockArticleQueryRepo,
+            mockNotificationEventBus
+        )
     });
 
     afterEach(() => {
@@ -58,7 +73,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.save as jest.Mock).mockResolvedValue(mockSavedArticle);
 
             // When
-            const result = await articleService.createArticle(createDto);
+            const result = await articleCommandService.createArticle(createDto);
 
             // Then
             expect(mockArticleRepo.save).toHaveBeenCalledWith({
@@ -82,7 +97,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.save as jest.Mock).mockRejectedValue(error);
 
             // When & Then
-            await expect(articleService.createArticle(createDto)).rejects.toThrow(error);
+            await expect(articleCommandService.createArticle(createDto)).rejects.toThrow(error);
         });
     });
 
@@ -108,13 +123,13 @@ describe("Article Service 단위 테스트", () => {
                     updatedAt: new Date(),
                 },
             ];
-            (mockArticleRepo.findAll as jest.Mock).mockResolvedValue(mockArticles);
+            (mockArticleQueryRepo.findAll as jest.Mock).mockResolvedValue(mockArticles);
 
             // When
-            const result = await articleService.getAllArticles(query);
+            const result = await articleQueryService.getAllArticles(query);
 
             // Then
-            expect(mockArticleRepo.findAll).toHaveBeenCalledWith(query);
+            expect(mockArticleQueryRepo.findAll).toHaveBeenCalledWith(query);
             expect(result).toHaveLength(2);
             expect(result[0].id).toBe("article-1");
             expect(result[1].id).toBe("article-2");
@@ -123,10 +138,10 @@ describe("Article Service 단위 테스트", () => {
         test("빈 배열을 반환할 수 있어야 합니다", async () => {
             // Given
             const query = { offset: 0, limit: 10, search: "", sort: "desc" as const };
-            (mockArticleRepo.findAll as jest.Mock).mockResolvedValue([]);
+            (mockArticleQueryRepo.findAll as jest.Mock).mockResolvedValue([]);
 
             // When
-            const result = await articleService.getAllArticles(query);
+            const result = await articleQueryService.getAllArticles(query);
 
             // Then
             expect(result).toHaveLength(0);
@@ -145,13 +160,13 @@ describe("Article Service 단위 테스트", () => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             };
-            (mockArticleRepo.findById as jest.Mock).mockResolvedValue(mockArticle);
+            (mockArticleQueryRepo.findById as jest.Mock).mockResolvedValue(mockArticle);
 
             // When
-            const result = await articleService.getArticle(articleId);
+            const result = await articleQueryService.getArticle(articleId);
 
             // Then
-            expect(mockArticleRepo.findById).toHaveBeenCalledWith(articleId);
+            expect(mockArticleQueryRepo.findById).toHaveBeenCalledWith(articleId);
             expect(result).toEqual({
                 id: mockArticle.id,
                 title: mockArticle.title,
@@ -166,10 +181,10 @@ describe("Article Service 단위 테스트", () => {
             // Given
             const articleId = "non-existent";
             const error = new Error("Article not found");
-            (mockArticleRepo.findById as jest.Mock).mockRejectedValue(error);
+            (mockArticleQueryRepo.findById as jest.Mock).mockRejectedValue(error);
 
             // When & Then
-            await expect(articleService.getArticle(articleId)).rejects.toThrow(error);
+            await expect(articleQueryService.getArticle(articleId)).rejects.toThrow(error);
         });
     });
 
@@ -202,7 +217,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.update as jest.Mock).mockResolvedValue(updatedArticle);
 
             // When
-            const result = await articleService.updateArticle(updateDto);
+            const result = await articleCommandService.updateArticle(updateDto);
 
             // Then
             expect(mockArticleRepo.findById).toHaveBeenCalledWith(updateDto.id);
@@ -227,7 +242,7 @@ describe("Article Service 단위 테스트", () => {
             };
 
             // When & Then
-            await expect(articleService.updateArticle(invalidDto as any)).rejects.toMatchObject({
+            await expect(articleCommandService.updateArticle(invalidDto as any)).rejects.toMatchObject({
                 type: BusinessExceptionType.WRONG_URL,
             });
         });
@@ -245,7 +260,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
 
             // When & Then
-            await expect(articleService.updateArticle(updateDto)).rejects.toMatchObject({
+            await expect(articleCommandService.updateArticle(updateDto)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
             expect(mockArticleRepo.update).not.toHaveBeenCalled();
@@ -270,7 +285,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.remove as jest.Mock).mockResolvedValue(undefined);
 
             // When
-            await articleService.deleteArticle(articleId, userId);
+            await articleCommandService.deleteArticle(articleId, userId);
 
             // Then
             expect(mockArticleRepo.findById).toHaveBeenCalledWith(articleId);
@@ -282,7 +297,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(null);
 
             // When & Then
-            await expect(articleService.deleteArticle(articleId, userId)).rejects.toMatchObject({
+            await expect(articleCommandService.deleteArticle(articleId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.DATA_NOT_FOUND,
             });
             expect(mockArticleRepo.remove).not.toHaveBeenCalled();
@@ -301,7 +316,7 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
 
             // When & Then
-            await expect(articleService.deleteArticle(articleId, userId)).rejects.toMatchObject({
+            await expect(articleCommandService.deleteArticle(articleId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
             expect(mockArticleRepo.remove).not.toHaveBeenCalled();

@@ -1,20 +1,26 @@
-import { IProductRepository } from "../../02-domain/port/repositories/I.product.repository";
-import { IProductLikeRepository } from "../../02-domain/port/repositories/I.product.like.repository";
-import { INotificationRepository } from "../../02-domain/port/repositories/I.notification.repository";
+
 import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
-import { ProductServiceType, createProductService } from "../../02-domain/service/product.service";
-import { PersistedProduct } from "../../02-domain/entity/product";
-import { PersistedProductLike } from "../../02-domain/entity/product.like";
-import { PersistedNotification } from "../../02-domain/entity/notification";
+
 import { BusinessExceptionType } from "../../shared/exception/exception";
 import { NotificationType } from "@prisma/client";
+import { INotificationCommandRepository } from "../../02-application/port/repositories/command/I.notification.repository";
+import { IProductLikeCommandRepository } from "../../02-application/port/repositories/command/I.product.like.repository";
+import { IProductCommandRepository } from "../../02-application/port/repositories/command/I.product.repository";
+import { PersistedNotification } from "../../02-application/command/entity/notification";
+import { PersistedProduct } from "../../02-application/command/entity/product";
+import { PersistedProductLike } from "../../02-application/command/entity/product.like";
+import { createProductCommandService, ProductCommandServiceType } from "../../02-application/command/service/product.command.service";
+import { createProductQueryService, ProductQueryServiceType } from "../../02-application/query/service/product.query.service";
+import { IProductQueryRepository } from "../../02-application/port/repositories/query/I.product.query.repository";
 
 describe("Product Service 단위 테스트", () => {
-    let mockProductRepo: IProductRepository;
-    let mockProductLikeRepo: IProductLikeRepository;
-    let mockNotificationRepo: INotificationRepository;
+    let mockProductRepo: IProductCommandRepository;
+    let mockProductLikeRepo: IProductLikeCommandRepository;
+    let mockNotificationRepo: INotificationCommandRepository;
+    let mockProductQueryRepo: IProductQueryRepository;
     let mockNotificationEventBus: INotificationEventBus;
-    let productService: ProductServiceType;
+    let productCommandService: ProductCommandServiceType;
+    let productQueryService: ProductQueryServiceType;
 
     beforeEach(() => {
         // Mock Repositories
@@ -41,6 +47,13 @@ describe("Product Service 단위 테스트", () => {
             remove: jest.fn()
         };
 
+        mockProductQueryRepo = {
+            findAll: jest.fn(),
+            findById: jest.fn()
+
+        }
+
+
         // Mock EventBus
         mockNotificationEventBus = {
             subscribe: jest.fn(),
@@ -50,11 +63,15 @@ describe("Product Service 단위 테스트", () => {
         };
 
         // Create Service
-        productService = createProductService(
+        productCommandService = createProductCommandService(
             mockProductRepo,
             mockProductLikeRepo,
             mockNotificationRepo,
             mockNotificationEventBus,
+        );
+
+        productQueryService = createProductQueryService(
+            mockProductQueryRepo,
         );
     });
 
@@ -101,7 +118,7 @@ describe("Product Service 단위 테스트", () => {
             (mockNotificationRepo.create as jest.Mock).mockResolvedValue(mockNotification);
 
             // When
-            const result = await productService.createProduct(createDto);
+            const result = await productCommandService.createProduct(createDto);
 
             // Then
             expect(mockProductRepo.save).toHaveBeenCalledWith({
@@ -133,7 +150,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.save as jest.Mock).mockRejectedValue(error);
 
             // When & Then
-            await expect(productService.createProduct(createDto)).rejects.toThrow(error);
+            await expect(productCommandService.createProduct(createDto)).rejects.toThrow(error);
         });
     });
 
@@ -167,13 +184,13 @@ describe("Product Service 단위 테스트", () => {
                     updatedAt: new Date(),
                 },
             ];
-            (mockProductRepo.findAll as jest.Mock).mockResolvedValue(mockProducts);
+            (mockProductQueryRepo.findAll as jest.Mock).mockResolvedValue(mockProducts);
 
             // When
-            const result = await productService.getAllProducts(query);
+            const result = await productQueryService.getAllProducts(query);
 
             // Then
-            expect(mockProductRepo.findAll).toHaveBeenCalledWith(query);
+            expect(mockProductQueryRepo.findAll).toHaveBeenCalledWith(query);
             expect(result).toHaveLength(2);
             expect(result[0].id).toBe("product-1");
             expect(result[1].id).toBe("product-2");
@@ -182,10 +199,10 @@ describe("Product Service 단위 테스트", () => {
         test("빈 배열을 반환할 수 있어야 합니다", async () => {
             // Given
             const query = { offset: 0, limit: 10, search: "", sort: "desc" as const };
-            (mockProductRepo.findAll as jest.Mock).mockResolvedValue([]);
+            (mockProductQueryRepo.findAll as jest.Mock).mockResolvedValue([]);
 
             // When
-            const result = await productService.getAllProducts(query);
+            const result = await productQueryService.getAllProducts(query);
 
             // Then
             expect(result).toHaveLength(0);
@@ -208,13 +225,13 @@ describe("Product Service 단위 테스트", () => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             };
-            (mockProductRepo.findById as jest.Mock).mockResolvedValue(mockProduct);
+            (mockProductQueryRepo.findById as jest.Mock).mockResolvedValue(mockProduct);
 
             // When
-            const result = await productService.getProduct(productId);
+            const result = await productQueryService.getProduct(productId);
 
             // Then
-            expect(mockProductRepo.findById).toHaveBeenCalledWith(productId);
+            expect(mockProductQueryRepo.findById).toHaveBeenCalledWith(productId);
             expect(result).toEqual(expect.objectContaining({
                 id: mockProduct.id,
                 name: mockProduct.name,
@@ -226,10 +243,10 @@ describe("Product Service 단위 테스트", () => {
             // Given
             const productId = "non-existent";
             const error = new Error("Product not found");
-            (mockProductRepo.findById as jest.Mock).mockRejectedValue(error);
+            (mockProductQueryRepo.findById as jest.Mock).mockRejectedValue(error);
 
             // When & Then
-            await expect(productService.getProduct(productId)).rejects.toThrow(error);
+            await expect(productQueryService.getProduct(productId)).rejects.toThrow(error);
         });
     });
 
@@ -271,7 +288,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductLikeRepo.findAll as jest.Mock).mockResolvedValue([]);
 
             // When
-            const result = await productService.updateProduct(updateDto);
+            const result = await productCommandService.updateProduct(updateDto);
 
             // Then
             expect(mockProductRepo.findById).toHaveBeenCalledWith(updateDto.id);
@@ -326,7 +343,7 @@ describe("Product Service 단위 테스트", () => {
             (mockNotificationRepo.create as jest.Mock).mockResolvedValue(mockNotification);
 
             // When
-            const result = await productService.updateProduct(updateDto);
+            const result = await productCommandService.updateProduct(updateDto);
 
             // Then
             expect(mockProductLikeRepo.findAll).toHaveBeenCalledWith(updateDto.id);
@@ -346,7 +363,7 @@ describe("Product Service 단위 테스트", () => {
             };
 
             // When & Then
-            await expect(productService.updateProduct(invalidDto as any)).rejects.toMatchObject({
+            await expect(productCommandService.updateProduct(invalidDto as any)).rejects.toMatchObject({
                 type: BusinessExceptionType.WRONG_URL,
             });
         });
@@ -356,7 +373,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.findById as jest.Mock).mockResolvedValue(null);
 
             // When & Then
-            await expect(productService.updateProduct(updateDto)).rejects.toMatchObject({
+            await expect(productCommandService.updateProduct(updateDto)).rejects.toMatchObject({
                 type: BusinessExceptionType.DATA_NOT_FOUND,
             });
         });
@@ -378,7 +395,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.findById as jest.Mock).mockResolvedValue(existingProduct);
 
             // When & Then
-            await expect(productService.updateProduct(updateDto)).rejects.toMatchObject({
+            await expect(productCommandService.updateProduct(updateDto)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
             expect(mockProductRepo.update).not.toHaveBeenCalled();
@@ -407,7 +424,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.removeById as jest.Mock).mockResolvedValue(undefined);
 
             // When
-            await productService.deleteProduct(productId, userId);
+            await productCommandService.deleteProduct(productId, userId);
 
             // Then
             expect(mockProductRepo.findById).toHaveBeenCalledWith(productId);
@@ -419,7 +436,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.findById as jest.Mock).mockResolvedValue(null);
 
             // When & Then
-            await expect(productService.deleteProduct(productId, userId)).rejects.toMatchObject({
+            await expect(productCommandService.deleteProduct(productId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.DATA_NOT_FOUND,
             });
             expect(mockProductRepo.removeById).not.toHaveBeenCalled();
@@ -442,7 +459,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.findById as jest.Mock).mockResolvedValue(existingProduct);
 
             // When & Then
-            await expect(productService.deleteProduct(productId, userId)).rejects.toMatchObject({
+            await expect(productCommandService.deleteProduct(productId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
             expect(mockProductRepo.removeById).not.toHaveBeenCalled();
@@ -489,7 +506,7 @@ describe("Product Service 단위 테스트", () => {
             (mockNotificationRepo.create as jest.Mock).mockResolvedValue(mockNotification);
 
             // When
-            const result = await productService.likeProduct(userId, productId);
+            const result = await productCommandService.likeProduct(userId, productId);
 
             // Then
             expect(mockProductRepo.findById).toHaveBeenCalledWith(productId);
@@ -529,7 +546,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductLikeRepo.toggle as jest.Mock).mockResolvedValue(mockProductLike);
 
             // When
-            const result = await productService.likeProduct(userId, productId);
+            const result = await productCommandService.likeProduct(userId, productId);
 
             // Then
             expect(mockProductRepo.findById).toHaveBeenCalledWith(productId);
@@ -558,7 +575,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductLikeRepo.toggle as jest.Mock).mockResolvedValue(null); // 좋아요 취소
 
             // When
-            const result = await productService.likeProduct(userId, productId);
+            const result = await productCommandService.likeProduct(userId, productId);
 
             // Then
             expect(mockProductLikeRepo.toggle).toHaveBeenCalledWith(userId, productId);
@@ -572,7 +589,7 @@ describe("Product Service 단위 테스트", () => {
             (mockProductRepo.findById as jest.Mock).mockResolvedValue(null);
 
             // When & Then
-            await expect(productService.likeProduct(userId, productId)).rejects.toMatchObject({
+            await expect(productCommandService.likeProduct(userId, productId)).rejects.toMatchObject({
                 type: BusinessExceptionType.DATA_NOT_FOUND,
             });
             expect(mockProductLikeRepo.toggle).not.toHaveBeenCalled();
