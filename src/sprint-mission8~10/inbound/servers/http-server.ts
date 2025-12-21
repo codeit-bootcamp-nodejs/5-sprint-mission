@@ -24,6 +24,20 @@ export class HttpServer {
   ) {
     this.app = express();
     this.defaultHttpServer = http.createServer(this.app);
+
+    this.registerBaseMiddlewares();
+
+    // router
+    this.app.use(this.userRouter.basePath, this.userRouter.router);
+    this.app.use(this.productRouter.basePath, this.productRouter.router);
+    this.app.use(this.articleRouter.basePath, this.articleRouter.router,);
+    this.app.use(this.imageRouter.basePath, this.imageRouter.router);
+    this.app.use(this.notificationRouter.basePath, this.notificationRouter.router);
+    this.registerExceptionMiddleware();
+    this.app.use((req, res, next) => {
+      if (req.headers.upgrade?.toLowerCase() === "websocket") return next();
+      next(new Error("경로가 없습니다."));
+    });
   }
 
   listen = () => {
@@ -69,19 +83,6 @@ export class HttpServer {
   };
 
   start = () => {
-    this.registerBaseMiddlewares();
-
-    // router
-    this.app.use(this.userRouter.basePath, this.userRouter.router);
-    this.app.use(this.productRouter.basePath, this.productRouter.router);
-    this.app.use(this.articleRouter.basePath, this.articleRouter.router,);
-    this.app.use(this.imageRouter.basePath, this.imageRouter.router);
-    this.app.use(this.notificationRouter.basePath, this.notificationRouter.router);
-    this.registerExceptionMiddleware();
-    this.app.use((req, res, next) => {
-      if (req.headers.upgrade?.toLowerCase() === "websocket") return next();
-      next(new Error("경로가 없습니다."));
-    });
     this.listen();
   };
 }

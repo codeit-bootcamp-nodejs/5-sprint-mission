@@ -56,7 +56,7 @@ export class ArticleCommentRepo extends BaseRepo implements IArticleCommentRepo 
         id: entity.id,
       },
       data: {
-        ...ArticleCommentMapper.toPersistEntity(entity),
+        ...ArticleCommentMapper.toUpdateData(entity),
         updatedAt: new Date(),
       },
     });

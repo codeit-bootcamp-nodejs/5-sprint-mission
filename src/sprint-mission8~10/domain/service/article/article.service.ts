@@ -40,15 +40,6 @@ export class ArticleService implements IArticleService {
             sort: "desc"
           };
 
-    if (limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
-    }
-
-    const articleTotalCount = await this._articleRepo.count();
-    if (articleTotalCount < limit) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: articleTotalCount });
-    }
-
     const foundArticleList = await this._articleRepo.findArticleList(
       offset,
       limit,

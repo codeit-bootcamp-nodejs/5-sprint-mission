@@ -43,7 +43,7 @@ export class ArticleRouter extends BaseRouter {
     // 댓글 기능
     this.router.post(
       "/:articleId/comments",
-      this.catchException(this._authMiddleware.isUser),this.catchException(this._authMiddleware.isUser),
+      this.catchException(this._authMiddleware.isUser),
       this.catchException(
         this._articleCommentController.createArticleCommentController,
       ),

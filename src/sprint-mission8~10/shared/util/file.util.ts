@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import fs from "fs";
 import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
 
 export interface IFileUtil {
   createDiskStorage(key: string): RequestHandler;
@@ -36,7 +35,7 @@ export class FileUtil implements IFileUtil {
   }
 
   getFilename(originalname: string) {
-    return uuidv4() + "-" + originalname;
+    return originalname;
   }
 
   uploadFileMiddleware = (key: string) => {

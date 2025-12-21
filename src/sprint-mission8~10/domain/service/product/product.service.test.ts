@@ -103,20 +103,6 @@ describe("product service 유닛 테스트", () => {
       await expect(productService.getProductList(dto)).rejects.toThrow(EXCEPTIONS.LIMIT_MAX_20.message);
     });
 
-    test("limit이 전체 상품 수보다 크면 예외를 던진다", async () => {
-      const dto: GetProductListDto = {
-        offset: 0,
-        limit: 10,
-        sort: "recent",
-      };
-
-      (mockProductRepo.count as jest.Mock).mockResolvedValue(5);
-
-      await expect(
-        productService.getProductList(dto)
-      ).rejects.toThrow(EXCEPTIONS.LIMIT_OVERFLOW.message);
-    });
-
     test("sort가 recent면 updatedAt desc로 조회한다", async () => {
       const dto: GetProductListDto = {
         offset: 0,

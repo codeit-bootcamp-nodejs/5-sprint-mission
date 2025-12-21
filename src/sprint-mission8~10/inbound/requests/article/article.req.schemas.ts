@@ -24,9 +24,18 @@ export const getArticleReqSchema = z.object({
 });
 
 export const getArticleListReqSchema = z.object({
-  offset: z.number().default(0),
-  limit: z.number().default(5),
-  sort: z.enum(["recent", "title-asc", "title-desc"]).default("recent")
+  offset: z.preprocess(
+    (v) => v === "" ? undefined : v,
+    z.coerce.number().default(0)
+  ),
+  limit: z.preprocess(
+    (v) => v === "" ? undefined : v,
+    z.coerce.number().default(5)
+  ),
+  sort: z.preprocess(
+    (v) => v === "" ? undefined : v,
+    z.enum(["recent", "title-asc", "title-desc"]).default("recent")
+  ),
 });
 
 export const getLikedArticlesReqSchema = z.object({
@@ -60,8 +69,8 @@ export const createArticleCommentReqSchema = z.object({
 
 export const getArticleCommentReqSchema = z.object({
   articleId: z.string(),
-  cursor: z.number().default(0),
-  limit: z.number().default(5),
+  cursor: z.coerce.number().default(0),
+  limit: z.coerce.number().default(5),
   sort: z.enum(["recent", "id-asc", "id-desc"]).default("recent"),
 });
 

@@ -5,7 +5,7 @@ import { ProductRouter } from "./inbound/routers/product.router";
 import { UserRouter } from "./inbound/routers/user.router";
 import { ConfigUtil } from "./shared/util/config.util";
 import { FileUtil } from "./shared/util/file.util";
-import { TokenUtil } from "./shared/util/token.util";
+import { ITokenUtil, TokenUtil } from "./shared/util/token.util";
 import { UserRepo } from "./outbound/repos/user.repo";
 import { ProductRepo } from "./outbound/repos/product/product.repo";
 import { ArticleRepo } from "./outbound/repos/article/article.repo";
@@ -40,20 +40,26 @@ import { NotificationRouter } from "./inbound/routers/notification.router";
 import { AuthMiddleware } from "./inbound/middlewares/auth.middleware";
 
 export class Injector {
-  public readonly httpSever: HttpServer;
+  public readonly httpServer: HttpServer;
   public readonly wsServer: WsServer;
-  constructor() {
-    const { httpServer, wsServer } = this.inject();
-    this.httpSever = httpServer;
+  constructor(
+    mockPrismaClient?: PrismaClient,
+    testTokenUtil?: ITokenUtil
+  ) {
+    const { httpServer, wsServer } = this.inject(mockPrismaClient, testTokenUtil);
+    this.httpServer = httpServer;
     this.wsServer = wsServer;
   }
 
-  inject() {
-    const prisma = new PrismaClient();
+  inject(
+    testPrismaClient?: PrismaClient,
+    testTokenUtil?: ITokenUtil
+  ) {
+    const prisma = testPrismaClient ?? new PrismaClient();
 
     const configUtil = new ConfigUtil();
     const fileUtil = new FileUtil();
-    const tokenUtil = new TokenUtil(configUtil);
+    const tokenUtil = testTokenUtil ?? new TokenUtil(configUtil);
     const eventBusUtil = new EventBusUtil();
 
     const authMiddleware = new AuthMiddleware(tokenUtil);

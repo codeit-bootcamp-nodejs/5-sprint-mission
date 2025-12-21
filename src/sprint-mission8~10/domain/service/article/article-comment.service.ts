@@ -44,12 +44,6 @@ export class ArticleCommentService implements IArticleCommentService {
       throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
     }
 
-    const commentTotalCount = await this._articleCommentRepo.count(articleId);
-
-    if (commentTotalCount < limit) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: commentTotalCount });
-    }
-
     const comments = await this._articleCommentRepo.findCommentList(
       articleId,
       cursor,

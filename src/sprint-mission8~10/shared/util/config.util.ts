@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import z from "zod";
 
 const configSchema = z.object({
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z.enum(["development", "production", "test", "prod"]).default("development"),
   PORT: z.coerce.number(),
   DISK_STORAGE_PATH: z.string().default("public"),
   DATABASE_URL: z.url(),
@@ -24,7 +24,12 @@ export class ConfigUtil implements IConfigUtil {
 
   constructor() {
     dotenv.config({
-      path: process.env.NODE_ENV === "development" ? ".env.dev" : ".env",
+      path:
+        process.env.NODE_ENV === "development"
+          ? ".env.dev"
+          : process.env.NODE_ENV === "test"
+            ? ".env.test"
+            : ".env.prod",
     });
     const result = configSchema.safeParse(process.env);
     if (result.success) {
