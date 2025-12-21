@@ -10,3 +10,8 @@ export interface NotificationResponseDto {
   articleId: number | null;
   createdAt: Date;
 }
+
+export interface NotificationListResponseDto {
+  unreadCount: number;
+  list: NotificationResponseDto[];
+}

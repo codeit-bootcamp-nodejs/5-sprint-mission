@@ -2,7 +2,7 @@ import { NotificationRepository } from "../repo/notification.repository";
 import { NotificationGateway } from "../gateway/notification.gateway";
 import { HttpError } from "../middlewares/error.handler";
 import { NotificationType } from "@prisma/client";
-import { NotificationResponseDto } from "../dto/notification.dto";
+import { NotificationResponseDto, NotificationListResponseDto } from "../dto/notification.dto";
 
 export class NotificationService {
   private _notificationRepository;
@@ -36,11 +36,14 @@ export class NotificationService {
     return newNotification;
   }
 
-  async getNotifications(userId: number): Promise<NotificationResponseDto[]> {
-    const notifications = await this._notificationRepository.getNotifications(userId);
+async getNotifications(userId: number): Promise<NotificationListResponseDto> {
+    const [notifications, unreadCount] = await Promise.all([
+      this._notificationRepository.getNotifications(userId),
+      this._notificationRepository.countUnreadNotifications(userId)
+    ]);
 
-    return notifications.map((notification) => {
-      const notifications: NotificationResponseDto = {
+    const list = notifications.map((notification) => {
+      const dto: NotificationResponseDto = {
         id: notification.id,
         userId: notification.userId,
         message: notification.message,
@@ -49,10 +52,14 @@ export class NotificationService {
         productId: notification.productId,
         articleId: notification.articleId,
         createdAt: notification.createdAt,
-      }
+      };
+      return dto;
+    });
 
-      return notifications
-	  });
+    return {
+      unreadCount,
+      list
+    };
   }
 
   async getUnreadCount(userId: number) {
