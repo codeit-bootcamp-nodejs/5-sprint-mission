@@ -1,11 +1,11 @@
 
-import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
-import { BusinessExceptionType } from "../../shared/exception/exception";
-import { IArticleCommandRepository } from "../../02-application/port/repositories/command/I.article.repository";
-import { PersistedArticle } from "../../02-application/command/entity/article";
-import { ArticleCommandServiceType, createArticleCommandService } from "../../02-application/command/service/article.command.service";
-import { ArticleQueryServiceType, createArticleQueryService } from "../../02-application/query/service/article.query.service";
-import { IArticleQueryRepository } from "../../02-application/port/repositories/query/I.article.query.repository";
+import { INotificationEventBus } from "../../../shared/eventbus/ports/I.notification.eventbus";
+import { BusinessExceptionType } from "../../../shared/exception/exception";
+import { IArticleCommandRepository } from "../../../02-application/port/repositories/command/I.article.repository";
+import { PersistedArticle } from "../../../02-application/command/entity/article";
+import { ArticleCommandServiceType, createArticleCommandService } from "../../../02-application/command/service/article.command.service";
+import { ArticleQueryServiceType, createArticleQueryService } from "../../../02-application/query/service/article.query.service";
+import { IArticleQueryRepository } from "../../../02-application/port/repositories/query/I.article.query.repository";
 
 describe("Article Service 단위 테스트", () => {
     let mockArticleRepo: IArticleCommandRepository;

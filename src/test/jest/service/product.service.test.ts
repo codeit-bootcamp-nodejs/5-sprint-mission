@@ -1,17 +1,17 @@
 
-import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
+import { INotificationEventBus } from "../../../shared/eventbus/ports/I.notification.eventbus";
 
-import { BusinessExceptionType } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../../shared/exception/exception";
 import { NotificationType } from "@prisma/client";
-import { INotificationCommandRepository } from "../../02-application/port/repositories/command/I.notification.repository";
-import { IProductLikeCommandRepository } from "../../02-application/port/repositories/command/I.product.like.repository";
-import { IProductCommandRepository } from "../../02-application/port/repositories/command/I.product.repository";
-import { PersistedNotification } from "../../02-application/command/entity/notification";
-import { PersistedProduct } from "../../02-application/command/entity/product";
-import { PersistedProductLike } from "../../02-application/command/entity/product.like";
-import { createProductCommandService, ProductCommandServiceType } from "../../02-application/command/service/product.command.service";
-import { createProductQueryService, ProductQueryServiceType } from "../../02-application/query/service/product.query.service";
-import { IProductQueryRepository } from "../../02-application/port/repositories/query/I.product.query.repository";
+import { INotificationCommandRepository } from "../../../02-application/port/repositories/command/I.notification.repository";
+import { IProductLikeCommandRepository } from "../../../02-application/port/repositories/command/I.product.like.repository";
+import { IProductCommandRepository } from "../../../02-application/port/repositories/command/I.product.repository";
+import { PersistedNotification } from "../../../02-application/command/entity/notification";
+import { PersistedProduct } from "../../../02-application/command/entity/product";
+import { PersistedProductLike } from "../../../02-application/command/entity/product.like";
+import { createProductCommandService, ProductCommandServiceType } from "../../../02-application/command/service/product.command.service";
+import { createProductQueryService, ProductQueryServiceType } from "../../../02-application/query/service/product.query.service";
+import { IProductQueryRepository } from "../../../02-application/port/repositories/query/I.product.query.repository";
 
 describe("Product Service 단위 테스트", () => {
     let mockProductRepo: IProductCommandRepository;

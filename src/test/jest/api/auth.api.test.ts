@@ -1,6 +1,6 @@
 import request from "supertest";
 import { PrismaClient } from "@prisma/client";
-import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
+import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
 import { resolve } from "node:dns";
 
 /**
