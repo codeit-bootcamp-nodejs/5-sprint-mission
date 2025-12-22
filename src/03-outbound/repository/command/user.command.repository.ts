@@ -65,10 +65,24 @@ export const createUserCommandRepository = (prisma: PrismaClient): IUserCommandR
     return UserMapper.toPersist(updatedUser);
   };
 
+  const updateRefreshToken = async (
+    email: string,
+    refreshToken: string
+  ): Promise<void> => {
+    await prisma.user.update({
+      where: { email },
+      data: {
+        refreshToken
+      }
+    })
+  };
+
+
   return {
     save,
     findById,
     findByEmail,
     update,
+    updateRefreshToken
   };
 };

@@ -80,11 +80,19 @@ export const createUserCommandService = (
     return { accessToken, refreshToken };
   };
 
+  const updateRefreshToken = async (params: {
+    email: string,
+    refreshToken: string
+  }) => {
+    console.log(params.email, params.refreshToken);
+    await userCommandRepository.updateRefreshToken(params.email, params.refreshToken);
+  }
 
   return {
     createUser,
     updateUser,
-    getTokens
+    getTokens,
+    updateRefreshToken
   };
 };
 

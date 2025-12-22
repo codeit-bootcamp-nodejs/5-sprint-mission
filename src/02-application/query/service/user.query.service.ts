@@ -18,6 +18,7 @@ export const createUserQueryService = (
   const getInfo = async (userId: string) => {
     const savedUser = await userQueryRepository.findById(userId);
     return auth.filterSensitiveUserData(savedUser);
+
   };
 
 

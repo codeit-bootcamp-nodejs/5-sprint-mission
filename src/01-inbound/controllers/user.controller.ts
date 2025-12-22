@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { BaseController } from "./base.controller";
-import { signUpBodySchema } from "../request/user.request";
+import { signInBodySchema, signUpBodySchema } from "../request/user.request";
 import { UserCommandServiceType } from "../../02-application/command/service/user.command.service";
 import { UserQueryServiceType } from "../../02-application/query/service/user.query.service";
 
@@ -75,7 +75,12 @@ export const createUserController = (
   };
 
   const signIn = async (req: Request, res: Response) => {
-    const { accessToken, refreshToken } = await userCommandService.getTokens(req.body);
+    const body = validate(signInBodySchema, req.body);
+    const { accessToken, refreshToken } = await userCommandService.getTokens(body);
+    await userCommandService.updateRefreshToken({
+      email: body.email,
+      refreshToken: refreshToken
+    })
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",

@@ -14,4 +14,9 @@ export interface IUserCommandRepository {
     foundEntity: PersistedUserEntity,
     newEntity: NewUserEntity,
   ): Promise<PersistedUserEntity>;
+
+  updateRefreshToken(
+    email: string,
+    refreshToken: string
+  ): Promise<void>
 }

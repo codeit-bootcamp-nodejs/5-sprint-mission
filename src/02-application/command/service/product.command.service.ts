@@ -136,6 +136,8 @@ export const createProductCommandService = (
         receiverId: product.userId,
       });
 
+
+
       const notification =
         await notificationCommandRepository.create(notifcationEntity);
 

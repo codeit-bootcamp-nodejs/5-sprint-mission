@@ -13,6 +13,7 @@ export const createNotificationQueryRepository = (prisma: PrismaClient): INotifi
                 receiver: true
             }
         });
+
         return notifications.map((notification) => {
             return {
                 id: notification.id,

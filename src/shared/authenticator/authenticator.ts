@@ -92,7 +92,7 @@ export const Authenticator = (userRepository: IUserCommandRepository) => {
   };
 
   const createToken = (user: any, type?: "access" | "refresh") => {
-    const payload = { userId: user.id };
+    const payload = { userId: user.id, iat: Math.floor(Date.now() / 1000) };
     const options: SignOptions = {
       expiresIn: type === "refresh" ? "2w" : "1h",
     };

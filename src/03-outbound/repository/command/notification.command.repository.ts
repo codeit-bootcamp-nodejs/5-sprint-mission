@@ -12,6 +12,8 @@ export const createNotificationCommandRepository = (
   const create = async (
     entity: NewNotification,
   ): Promise<PersistedNotification> => {
+
+
     const notification = await prisma.notification.create({
       data: {
         type: entity.type,
