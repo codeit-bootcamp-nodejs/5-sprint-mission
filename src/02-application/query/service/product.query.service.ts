@@ -68,6 +68,7 @@ export const createProductQueryService = (
         key,
         JSON.stringify(foundProduct)
       );
+      product = foundProduct;
     }
     return product;
   };
