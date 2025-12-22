@@ -1,8 +1,8 @@
-import { DependencyInjector } from "../dependency-injector";
 import { Application } from "express";
 import { Server } from "http";
 import request from "supertest";
 import { PrismaClient } from "@prisma/client";
+import { DependencyInjector } from "../../dependency-injector";
 
 declare global {
     var testApp: Application;

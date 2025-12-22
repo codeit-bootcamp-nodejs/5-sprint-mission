@@ -6,15 +6,25 @@ import { PersistedArticle } from "../../../02-application/command/entity/article
 import { ArticleCommandServiceType, createArticleCommandService } from "../../../02-application/command/service/article.command.service";
 import { ArticleQueryServiceType, createArticleQueryService } from "../../../02-application/query/service/article.query.service";
 import { IArticleQueryRepository } from "../../../02-application/port/repositories/query/I.article.query.repository";
+import { IRedisExternal } from "../../../02-application/port/externals/I.redis.external";
 
 describe("Article Service 단위 테스트", () => {
     let mockArticleRepo: IArticleCommandRepository;
+    let mockRedisExternal: IRedisExternal;
     let mockArticleQueryRepo: IArticleQueryRepository
     let mockNotificationEventBus: INotificationEventBus;
     let articleCommandService: ArticleCommandServiceType;
     let articleQueryService: ArticleQueryServiceType;
 
     beforeEach(() => {
+        mockRedisExternal = {
+            set: jest.fn(),
+            setIfNotExist: jest.fn(),
+            get: jest.fn(),
+            remove: jest.fn()
+        }
+
+
         // Mock Repository
         mockArticleRepo = {
             save: jest.fn(),
@@ -44,6 +54,7 @@ describe("Article Service 단위 테스트", () => {
         );
 
         articleQueryService = createArticleQueryService(
+            mockRedisExternal,
             mockArticleQueryRepo,
             mockNotificationEventBus
         )

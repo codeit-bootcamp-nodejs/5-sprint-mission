@@ -12,8 +12,10 @@ import { PersistedProductLike } from "../../../02-application/command/entity/pro
 import { createProductCommandService, ProductCommandServiceType } from "../../../02-application/command/service/product.command.service";
 import { createProductQueryService, ProductQueryServiceType } from "../../../02-application/query/service/product.query.service";
 import { IProductQueryRepository } from "../../../02-application/port/repositories/query/I.product.query.repository";
+import { IRedisExternal } from "../../../02-application/port/externals/I.redis.external";
 
 describe("Product Service 단위 테스트", () => {
+    let mockRedisExternal: IRedisExternal;
     let mockProductRepo: IProductCommandRepository;
     let mockProductLikeRepo: IProductLikeCommandRepository;
     let mockNotificationRepo: INotificationCommandRepository;
@@ -22,7 +24,16 @@ describe("Product Service 단위 테스트", () => {
     let productCommandService: ProductCommandServiceType;
     let productQueryService: ProductQueryServiceType;
 
+
     beforeEach(() => {
+        mockRedisExternal = {
+            set: jest.fn(),
+            setIfNotExist: jest.fn(),
+            get: jest.fn(),
+            remove: jest.fn()
+        }
+
+
         // Mock Repositories
         mockProductRepo = {
             save: jest.fn(),
@@ -71,7 +82,8 @@ describe("Product Service 단위 테스트", () => {
         );
 
         productQueryService = createProductQueryService(
-            mockProductQueryRepo,
+            mockRedisExternal,
+            mockProductQueryRepo
         );
     });
 
