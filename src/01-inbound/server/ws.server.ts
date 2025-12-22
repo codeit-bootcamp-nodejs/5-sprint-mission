@@ -19,7 +19,6 @@ export const createWsServer = (server: HttpServer, eventHandlers: any) => {
     wss.on("connection", setUpConnection);
   };
 
-
   // 이벤트 핸들러 등록
   const registerRoutes = () => {
     for (const eventHandler of eventHandlers) {

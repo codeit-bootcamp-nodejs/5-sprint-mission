@@ -27,7 +27,6 @@ export const createHttpServer = (controllers: any) => {
     server.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         if (isBusinessException(err)) {
-
           const { statusCode = 400, message } = err;
           return res.status(statusCode).json({ message });
         } else if (
