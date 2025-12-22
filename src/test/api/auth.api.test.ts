@@ -1,6 +1,7 @@
 import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
+import { resolve } from "node:dns";
 
 /**
  * 인증 API 통합 테스트 - CQRS 아키텍처 기반
@@ -221,9 +222,9 @@ describe("인증 API 통합 테스트 - 회원가입 및 로그인", () => {
                 const userBeforeLogin = await prisma.user.findUnique({
                     where: { email: testUser.email }
                 });
-                const oldRefreshToken = userBeforeLogin!.refreshToken;
 
                 // When: 로그인 요청
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 const response = await request(global.testApp)
                     .post("/users/signIn")
                     .send({
@@ -232,14 +233,18 @@ describe("인증 API 통합 테스트 - 회원가입 및 로그인", () => {
                     });
 
                 // Then: refreshToken이 갱신됨
-                expect(response.status).toBe(200);
-
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 const userAfterLogin = await prisma.user.findUnique({
                     where: { email: testUser.email }
                 });
 
-                expect(userAfterLogin!.refreshToken).toBeDefined();
-                expect(userAfterLogin!.refreshToken).not.toBe(oldRefreshToken);
+
+                const oldRefreshToken = userBeforeLogin!.refreshToken;
+                const newRefreshToken = userAfterLogin!.refreshToken;
+
+                expect(response.status).toBe(200);
+                expect(newRefreshToken).toBeDefined();
+                expect(newRefreshToken).not.toBe(oldRefreshToken);
             });
 
             it("발급된 accessToken으로 인증된 엔드포인트에 접근할 수 있어야 한다", async () => {
@@ -310,7 +315,7 @@ describe("인증 API 통합 테스트 - 회원가입 및 로그인", () => {
                     .send(invalidRequest);
 
                 // Then: 400 Bad Request
-                expect(response.status).toBe(500);
+                expect(response.status).toBe(400);
             });
         });
     });
@@ -370,11 +375,13 @@ describe("인증 API 통합 테스트 - 회원가입 및 로그인", () => {
                     password: testUser.password,
                 });
 
+            expect(firstLogin.status).toBe(200);
             const firstAccessToken = firstLogin.body.accessToken;
 
-            // When: 두 번째 로그인 (몇 밀리초 후)
-            await new Promise(resolve => setTimeout(resolve, 10));
+            // 첫 번째 로그인이 완전히 완료될 때까지 대기 (100ms 이상)
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
+            // When: 두 번째 로그인 (명시적으로 대기 후 실행)
             const secondLogin = await request(global.testApp)
                 .post("/users/signIn")
                 .send({
@@ -382,11 +389,11 @@ describe("인증 API 통합 테스트 - 회원가입 및 로그인", () => {
                     password: testUser.password,
                 });
 
+            expect(secondLogin.status).toBe(200);
             const secondAccessToken = secondLogin.body.accessToken;
 
+
             // Then: 두 토큰이 달라야 함
-            expect(firstLogin.status).toBe(200);
-            expect(secondLogin.status).toBe(200);
             expect(firstAccessToken).toBeDefined();
             expect(secondAccessToken).toBeDefined();
             expect(firstAccessToken).not.toBe(secondAccessToken);

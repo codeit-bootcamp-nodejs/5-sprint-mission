@@ -100,7 +100,7 @@ describe("알림 API 통합 테스트", () => {
                     .set("Authorization", `Bearer ${global.testAccessToken}`);
 
                 expect(res.status).toBe(200);
-                expect(res.body.total).toBe(0);
+                expect(res.body.length).toBe(0);
             });
 
             afterAll(async () => {
