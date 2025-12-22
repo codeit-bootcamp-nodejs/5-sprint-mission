@@ -39,6 +39,7 @@ import { createProductCommentQueryRepository } from "./03-outbound/repository/qu
 import { createUserQueryRepository } from "./03-outbound/repository/query/user.query.repository";
 import { createNotificationQueryRepository } from "./03-outbound/repository/query/notification.query.repository";
 import { createUserQueryService } from "./02-application/query/service/user.query.service";
+import { RedisExternal } from "./03-outbound/external/redis.external";
 
 
 
@@ -47,7 +48,11 @@ import { createUserQueryService } from "./02-application/query/service/user.quer
 export const DependencyInjector = () => {
   const inject = () => {
     const prisma = new PrismaClient();
+
     // ===== OutBound =====
+    // Externals
+    const redisExternal = RedisExternal();
+
     // Repositories
     const articleCommandRepository = createArticleCommandRepository(prisma);
     const articleCommentCommandRepository = createArticleCommentCommandRepository(prisma);
@@ -111,24 +116,30 @@ export const DependencyInjector = () => {
 
 
     const notificationQueryService = createNotificationQueryService(
+      redisExternal,
       notificationQueryRepository,
       notificationEventBus
     );
     const productQueryService = createProductQueryService(
+      redisExternal,
       productQueryRepository
     );
     const articleQueryService = createArticleQueryService(
+      redisExternal,
       articleQueryRepository,
       notificationEventBus
     );
     const articleCommentQueryService = createArticleCommentQueryService(
+      redisExternal,
       articleCommentQueryRepository
     );
     const productCommentQueryService = createProductCommentQueryService(
+      redisExternal,
       productCommentQueryRepository,
       notificationEventBus
     );
     const userQueryService = createUserQueryService(
+      redisExternal,
       userQueryRepository,
       authenticator
     );

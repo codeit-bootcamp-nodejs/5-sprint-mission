@@ -4,12 +4,14 @@ import { AuthenticatorType } from "../../../shared/authenticator/authenticator";
 import { INotificationEventBus } from "../../../shared/eventbus/ports/I.notification.eventbus";
 import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
 import { UserEntity } from "../../command/entity/user.entity";
+import { IRedisExternal } from "../../port/externals/I.redis.external";
 import { IProductCommandRepository } from "../../port/repositories/command/I.product.repository";
 import { IUserCommandRepository } from "../../port/repositories/command/I.user.repository";
 import { IUserQueryRepository } from "../../port/repositories/query/I.user.query.repository";
 
 
 export const createUserQueryService = (
+  redisExternal: IRedisExternal,
   userQueryRepository: IUserQueryRepository,
   auth: AuthenticatorType
 ) => {

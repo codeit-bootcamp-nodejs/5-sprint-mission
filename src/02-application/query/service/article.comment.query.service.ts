@@ -1,9 +1,11 @@
 
+import { IRedisExternal } from "../../port/externals/I.redis.external";
 import { IArticleCommentCommandRepository } from "../../port/repositories/command/I.article.comment.repository";
 import { IArticleCommentQueryRepository } from "../../port/repositories/query/I.article.comment.query.repository";
 
 
 export const createArticleCommentQueryService = (
+  redisExternal : IRedisExternal,
   articleCommentQueryRepository: IArticleCommentQueryRepository,
 
 ) => {
