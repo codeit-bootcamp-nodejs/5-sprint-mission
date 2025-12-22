@@ -10,7 +10,9 @@ const configSchema = z.object({
   SALT_LEVEL: z.coerce.number().min(8, "솔트 레벨은 최소 8이상으로 권장합니다.").max(12, "솔트 레벨은 최대 12이하로 권장합니다."),
   ACCESS_TOKEN_EXPIRES_IN: z.enum(["15m", "1h", "6h"]).default("15m"),
   REFRESH_TOKEN_EXPIRES_IN: z.enum(["7d"]).default("7d"),
-  CLIENT_DOMAIN: z.string()
+  CLIENT_DOMAIN: z.string(),
+  JSON_LIMIT: z.coerce.number(),
+  PUBLIC_PATH: z.string(),
 });
 
 export type ConfigType = z.infer<typeof configSchema>;

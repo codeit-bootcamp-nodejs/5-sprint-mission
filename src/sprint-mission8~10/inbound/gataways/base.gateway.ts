@@ -2,7 +2,7 @@ import { Server as DefaultWsServer, Socket } from "socket.io";
 import z from "zod";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { IConfigUtil } from "../../shared/util/config.util";
+import { IConfigUtil } from "../../shared/utils/config.util";
 
 export abstract class BaseGateway {
   constructor(

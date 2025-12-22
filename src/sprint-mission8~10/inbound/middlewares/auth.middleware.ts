@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ExtendedError, Socket } from "socket.io";
-import { ITokenUtil } from "../../shared/util/token.util";
+import { ITokenUtil } from "../../shared/utils/token.util";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 

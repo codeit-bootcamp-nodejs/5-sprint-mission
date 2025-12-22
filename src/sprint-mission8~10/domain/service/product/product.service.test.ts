@@ -1,6 +1,6 @@
 import { CreateProductDto, DeleteProductDto, GetLikedProductsDto, GetProductDto, GetProductListDto, UpdateProductDto } from "../../../inbound/requests/product/product.req.schemas";
 import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
 import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
 import { NewProductEntity, PersistProductEntity, ProductEntity } from "../../entity/product/product.entity";
 import { NewTagEntity, PersistTagEntity, TagEntity } from "../../entity/tag.entity";

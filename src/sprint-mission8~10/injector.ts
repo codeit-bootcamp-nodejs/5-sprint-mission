@@ -3,9 +3,8 @@ import { ArticleRouter } from "./inbound/routers/article.router";
 import { ImageRouter } from "./inbound/routers/image.router";
 import { ProductRouter } from "./inbound/routers/product.router";
 import { UserRouter } from "./inbound/routers/user.router";
-import { ConfigUtil } from "./shared/util/config.util";
-import { FileUtil } from "./shared/util/file.util";
-import { ITokenUtil, TokenUtil } from "./shared/util/token.util";
+import { ConfigUtil } from "./shared/utils/config.util";
+import { ITokenUtil, TokenUtil } from "./shared/utils/token.util";
 import { UserRepo } from "./outbound/repos/user.repo";
 import { ProductRepo } from "./outbound/repos/product/product.repo";
 import { ArticleRepo } from "./outbound/repos/article/article.repo";
@@ -33,11 +32,17 @@ import { HttpServer } from "./inbound/servers/http-server";
 import { WsServer } from "./inbound/servers/ws-server";
 import { NotificationGateway } from "./inbound/gataways/notification.gateway";
 import { NotificationRepo } from "./outbound/repos/notification.repo";
-import { EventBusUtil } from "./shared/util/event-bus.util";
+import { EventBusUtil } from "./shared/utils/event-bus.util";
 import { NotificationService } from "./domain/service/notification.service";
 import { NotificationController } from "./inbound/controllers/notification.controller";
 import { NotificationRouter } from "./inbound/routers/notification.router";
 import { AuthMiddleware } from "./inbound/middlewares/auth.middleware";
+import { CorsMiddleware } from "./inbound/middlewares/cors.middleware";
+import { JsonMiddleware } from "./inbound/middlewares/json.middleware";
+import { LoggerMiddleware } from "./inbound/middlewares/logger.middleware";
+import { MulterMiddleware } from "./inbound/middlewares/multer.middleware";
+import { NotFoundErrorMiddleware } from "./inbound/middlewares/not-found-error.middleware";
+import { GlobalErrorMiddleware } from "./inbound/middlewares/global-error.middleware";
 
 export class Injector {
   public readonly httpServer: HttpServer;
@@ -58,11 +63,16 @@ export class Injector {
     const prisma = testPrismaClient ?? new PrismaClient();
 
     const configUtil = new ConfigUtil();
-    const fileUtil = new FileUtil();
     const tokenUtil = testTokenUtil ?? new TokenUtil(configUtil);
     const eventBusUtil = new EventBusUtil();
 
     const authMiddleware = new AuthMiddleware(tokenUtil);
+    const corsMiddleware = new CorsMiddleware(configUtil);
+    const jsonMiddleware = new JsonMiddleware(configUtil);
+    const loggerMiddleware = new LoggerMiddleware(configUtil);
+    const multerMiddleware = new MulterMiddleware(configUtil);
+    const notFoundErrorMiddleware = new NotFoundErrorMiddleware();
+    const globalErrorMiddleware = new GlobalErrorMiddleware(configUtil);
 
     const hashManager = new BcryptHashManager(configUtil);
 
@@ -97,7 +107,7 @@ export class Injector {
     const userRouter = new UserRouter(authMiddleware, userController);
     const productRouter = new ProductRouter(authMiddleware, productController, productCommentController, productLikeController);
     const articleRouter = new ArticleRouter(authMiddleware, articleController, articleCommentController, articleLikeController);
-    const imageRouter = new ImageRouter(authMiddleware, imageController, fileUtil);
+    const imageRouter = new ImageRouter(authMiddleware, imageController, multerMiddleware);
     const notificationRouter = new NotificationRouter(authMiddleware, notificationController)
 
     const notificationGateway = new NotificationGateway(authMiddleware, eventBusUtil, configUtil);
@@ -109,6 +119,11 @@ export class Injector {
       imageRouter,
       notificationRouter,
       configUtil,
+      globalErrorMiddleware,
+      corsMiddleware,
+      jsonMiddleware,
+      loggerMiddleware,
+      notFoundErrorMiddleware,
     );
     const wsServer = new WsServer(httpServer.defaultHttpServer, notificationGateway, configUtil);
 

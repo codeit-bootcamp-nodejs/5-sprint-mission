@@ -2,7 +2,7 @@ import { IAuthService } from "../../inbound/port/services/auth.service.interface
 import { SignInDto } from "../../inbound/requests/user/user.req.schemas";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { Exception } from "../../shared/exception/exception";
-import { ITokenUtil } from "../../shared/util/token.util";
+import { ITokenUtil } from "../../shared/utils/token.util";
 import { PersistUserEntity } from "../entity/user.entity";
 import { IHashManager } from "../port/managers/hash.manager.interface";
 import { IUserRepo } from "../port/repo/user.repo.interface";

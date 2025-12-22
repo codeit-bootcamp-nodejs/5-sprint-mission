@@ -9,7 +9,7 @@ import { NotificationEntity } from "../../entity/notification.entity";
 import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event";
 import { IArticleCommentRepo } from "../../port/repo/article/article-comment.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
 
 export class ArticleCommentService implements IArticleCommentService {
   constructor(

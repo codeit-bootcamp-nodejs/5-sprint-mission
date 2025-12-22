@@ -1,6 +1,6 @@
-import { IFileUtil } from "../../shared/util/file.util";
 import { ImageController } from "../controllers/image.controller";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { MulterMiddleware } from "../middlewares/multer.middleware";
 import { BaseRouter } from "./base.router";
 
 export class ImageRouter extends BaseRouter {
@@ -8,7 +8,7 @@ export class ImageRouter extends BaseRouter {
   constructor(
     private readonly _authMiddleware: AuthMiddleware,
     private readonly _imageController: ImageController,
-    private readonly _fileUtil: IFileUtil,
+    private readonly _multerMiddleware: MulterMiddleware,
   ) {
     super("/api/images");
     this.registerImageRouter();
@@ -18,7 +18,7 @@ export class ImageRouter extends BaseRouter {
     this.router.post(
       "/",
       this.catchException(this._authMiddleware.isUser),
-      this._fileUtil.uploadFileMiddleware("image"),
+      this._multerMiddleware.handlerImage(),
       this.catchException(this._imageController.uploadImageController),
     );
   };

@@ -2,8 +2,8 @@ import request from "supertest";
 import { Application } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Injector } from "../injector";
-import { TokenUtil } from "../shared/util/token.util";
-import { ConfigUtil } from "../shared/util/config.util";
+import { TokenUtil } from "../shared/utils/token.util";
+import { ConfigUtil } from "../shared/utils/config.util";
 
 describe("user 통합 테스트", () => {
   let app: Application;

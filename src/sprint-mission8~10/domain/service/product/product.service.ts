@@ -15,7 +15,7 @@ import { IProductRepo } from "../../port/repo/product/product.repo.interface";
 import { ITagRepo } from "../../port/repo/tag.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
 import { IUserLikesProductRepo } from "../../port/repo/like/user-likes-product.repo.interface";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
 
 export class ProductService implements IProductService {
   constructor(

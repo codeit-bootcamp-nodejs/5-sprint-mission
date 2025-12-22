@@ -7,7 +7,7 @@ import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstProductCommentEntity, ProductCommentEntity } from "../../entity/comment/product-comment.entity";
 import { IProductCommentRepo } from "../../port/repo/product/product-comment.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
 
 export class ProductCommentService implements IProductCommentService {
   constructor(

@@ -4,8 +4,8 @@ import { Exception } from "../../shared/exception/exception";
 import { NotificationCommentCreatedEvent } from "../../domain/event/notification-comment-created.event";
 import { NotificationPriceChangeEvent } from "../../domain/event/notification-price-change.event";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
-import { IEventBusUtil } from "../../shared/util/event-bus.util";
-import { IConfigUtil } from "../../shared/util/config.util";
+import { IEventBusUtil } from "../../shared/utils/event-bus.util";
+import { IConfigUtil } from "../../shared/utils/config.util";
 
 export class NotificationGateway extends BaseGateway {
   constructor(

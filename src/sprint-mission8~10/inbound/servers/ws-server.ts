@@ -3,7 +3,7 @@ import { Server as DefaultWsServer } from "socket.io";
 import { Exception } from "../../shared/exception/exception";
 import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { NotificationGateway } from "../gataways/notification.gateway";
-import { IConfigUtil } from "../../shared/util/config.util";
+import { IConfigUtil } from "../../shared/utils/config.util";
 
 export class WsServer {
   public readonly io: DefaultWsServer;
