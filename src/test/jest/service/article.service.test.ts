@@ -83,15 +83,19 @@ describe("Article Service 단위 테스트", () => {
             };
             (mockArticleRepo.save as jest.Mock).mockResolvedValue(mockSavedArticle);
 
+            // Spy on save
+            const spySave = jest.spyOn(mockArticleRepo, 'save');
+
             // When
             const result = await articleCommandService.createArticle(createDto);
 
             // Then
-            expect(mockArticleRepo.save).toHaveBeenCalledWith({
+            expect(spySave).toHaveBeenCalledWith({
                 title: createDto.title,
                 content: createDto.content,
                 userId: createDto.userId,
             });
+            expect(spySave).toHaveBeenCalledTimes(1);
             expect(result).toEqual({
                 id: mockSavedArticle.id,
                 title: mockSavedArticle.title,
@@ -107,8 +111,12 @@ describe("Article Service 단위 테스트", () => {
             const error = new Error("Database error");
             (mockArticleRepo.save as jest.Mock).mockRejectedValue(error);
 
+            // Spy on save
+            const spySave = jest.spyOn(mockArticleRepo, 'save');
+
             // When & Then
             await expect(articleCommandService.createArticle(createDto)).rejects.toThrow(error);
+            expect(spySave).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -136,11 +144,15 @@ describe("Article Service 단위 테스트", () => {
             ];
             (mockArticleQueryRepo.findAll as jest.Mock).mockResolvedValue(mockArticles);
 
+            // Spy on findAll
+            const spyFindAll = jest.spyOn(mockArticleQueryRepo, 'findAll');
+
             // When
             const result = await articleQueryService.getAllArticles(query);
 
             // Then
-            expect(mockArticleQueryRepo.findAll).toHaveBeenCalledWith(query);
+            expect(spyFindAll).toHaveBeenCalledWith(query);
+            expect(spyFindAll).toHaveBeenCalledTimes(1);
             expect(result).toHaveLength(2);
             expect(result[0].id).toBe("article-1");
             expect(result[1].id).toBe("article-2");
@@ -151,10 +163,14 @@ describe("Article Service 단위 테스트", () => {
             const query = { offset: 0, limit: 10, search: "", sort: "desc" as const };
             (mockArticleQueryRepo.findAll as jest.Mock).mockResolvedValue([]);
 
+            // Spy on findAll
+            const spyFindAll = jest.spyOn(mockArticleQueryRepo, 'findAll');
+
             // When
             const result = await articleQueryService.getAllArticles(query);
 
             // Then
+            expect(spyFindAll).toHaveBeenCalledWith(query);
             expect(result).toHaveLength(0);
         });
     });
@@ -173,11 +189,15 @@ describe("Article Service 단위 테스트", () => {
             };
             (mockArticleQueryRepo.findById as jest.Mock).mockResolvedValue(mockArticle);
 
+            // Spy on findById
+            const spyFindById = jest.spyOn(mockArticleQueryRepo, 'findById');
+
             // When
             const result = await articleQueryService.getArticle(articleId);
 
             // Then
-            expect(mockArticleQueryRepo.findById).toHaveBeenCalledWith(articleId);
+            expect(spyFindById).toHaveBeenCalledWith(articleId);
+            expect(spyFindById).toHaveBeenCalledTimes(1);
             expect(result).toEqual({
                 id: mockArticle.id,
                 title: mockArticle.title,
@@ -194,8 +214,12 @@ describe("Article Service 단위 테스트", () => {
             const error = new Error("Article not found");
             (mockArticleQueryRepo.findById as jest.Mock).mockRejectedValue(error);
 
+            // Spy on findById
+            const spyFindById = jest.spyOn(mockArticleQueryRepo, 'findById');
+
             // When & Then
             await expect(articleQueryService.getArticle(articleId)).rejects.toThrow(error);
+            expect(spyFindById).toHaveBeenCalledWith(articleId);
         });
     });
 
@@ -227,12 +251,17 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
             (mockArticleRepo.update as jest.Mock).mockResolvedValue(updatedArticle);
 
+            // Spy on findById and update
+            const spyFindById = jest.spyOn(mockArticleRepo, 'findById');
+            const spyUpdate = jest.spyOn(mockArticleRepo, 'update');
+
             // When
             const result = await articleCommandService.updateArticle(updateDto);
 
             // Then
-            expect(mockArticleRepo.findById).toHaveBeenCalledWith(updateDto.id);
-            expect(mockArticleRepo.update).toHaveBeenCalledWith(
+            expect(spyFindById).toHaveBeenCalledWith(updateDto.id);
+            expect(spyFindById).toHaveBeenCalledTimes(1);
+            expect(spyUpdate).toHaveBeenCalledWith(
                 existingArticle,
                 {
                     title: updateDto.title,
@@ -240,6 +269,7 @@ describe("Article Service 단위 테스트", () => {
                     userId: updateDto.userId,
                 }
             );
+            expect(spyUpdate).toHaveBeenCalledTimes(1);
             expect(result.title).toBe(updateDto.title);
             expect(result.content).toBe(updateDto.content);
         });
@@ -270,11 +300,16 @@ describe("Article Service 단위 테스트", () => {
             };
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
 
+            // Spy on findById and update
+            const spyFindById = jest.spyOn(mockArticleRepo, 'findById');
+            const spyUpdate = jest.spyOn(mockArticleRepo, 'update');
+
             // When & Then
             await expect(articleCommandService.updateArticle(updateDto)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
-            expect(mockArticleRepo.update).not.toHaveBeenCalled();
+            expect(spyFindById).toHaveBeenCalledWith(updateDto.id);
+            expect(spyUpdate).not.toHaveBeenCalled();
         });
     });
 
@@ -295,23 +330,34 @@ describe("Article Service 단위 테스트", () => {
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
             (mockArticleRepo.remove as jest.Mock).mockResolvedValue(undefined);
 
+            // Spy on findById and remove
+            const spyFindById = jest.spyOn(mockArticleRepo, 'findById');
+            const spyRemove = jest.spyOn(mockArticleRepo, 'remove');
+
             // When
             await articleCommandService.deleteArticle(articleId, userId);
 
             // Then
-            expect(mockArticleRepo.findById).toHaveBeenCalledWith(articleId);
-            expect(mockArticleRepo.remove).toHaveBeenCalledWith(articleId);
+            expect(spyFindById).toHaveBeenCalledWith(articleId);
+            expect(spyFindById).toHaveBeenCalledTimes(1);
+            expect(spyRemove).toHaveBeenCalledWith(articleId);
+            expect(spyRemove).toHaveBeenCalledTimes(1);
         });
 
         test("게시글이 존재하지 않으면 DATA_NOT_FOUND 예외를 던져야 합니다", async () => {
             // Given
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(null);
 
+            // Spy on findById and remove
+            const spyFindById = jest.spyOn(mockArticleRepo, 'findById');
+            const spyRemove = jest.spyOn(mockArticleRepo, 'remove');
+
             // When & Then
             await expect(articleCommandService.deleteArticle(articleId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.DATA_NOT_FOUND,
             });
-            expect(mockArticleRepo.remove).not.toHaveBeenCalled();
+            expect(spyFindById).toHaveBeenCalledWith(articleId);
+            expect(spyRemove).not.toHaveBeenCalled();
         });
 
         test("작성자가 아니면 UNAUTORIZED_REQUEST 예외를 던져야 합니다", async () => {
@@ -326,11 +372,16 @@ describe("Article Service 단위 테스트", () => {
             };
             (mockArticleRepo.findById as jest.Mock).mockResolvedValue(existingArticle);
 
+            // Spy on findById and remove
+            const spyFindById = jest.spyOn(mockArticleRepo, 'findById');
+            const spyRemove = jest.spyOn(mockArticleRepo, 'remove');
+
             // When & Then
             await expect(articleCommandService.deleteArticle(articleId, userId)).rejects.toMatchObject({
                 type: BusinessExceptionType.UNAUTORIZED_REQUEST,
             });
-            expect(mockArticleRepo.remove).not.toHaveBeenCalled();
+            expect(spyFindById).toHaveBeenCalledWith(articleId);
+            expect(spyRemove).not.toHaveBeenCalled();
         });
     });
 });
