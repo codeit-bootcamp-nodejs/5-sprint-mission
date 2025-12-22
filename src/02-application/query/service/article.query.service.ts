@@ -34,12 +34,13 @@ export const createArticleQueryService = (
       article = JSON.parse(cachedArticle);
     } else {
       for (let i = 0; i < 10; i++) {
-        if (!lock) {
-          lock = await redisExternal.setIfNotExist(
-            `lock:article:${id}`,
-            ".",
-            10
-          );
+        lock = await redisExternal.setIfNotExist(
+          `lock:article:${id}`,
+          ".",
+          3
+        );
+
+        if (lock) { // 1명 통과
           const foundArticle = await articleQueryRepository.findById(id);
           await redisExternal.setIfNotExist(
             key,
@@ -47,7 +48,7 @@ export const createArticleQueryService = (
           );
           article = foundArticle;
           await redisExternal.remove(`lock:article:${id}`);
-        } else {
+        } else { // 999명 실패
           const cachedArticle = await redisExternal.get(key);
           if (cachedArticle) {
             article = JSON.parse(cachedArticle);
@@ -58,9 +59,17 @@ export const createArticleQueryService = (
         }
       }
 
-      if (!article) {
-        throw new Error("게시글 조회 실패!");
-      }
+
+    }
+
+    // 분산 락 시도 끝까지 없다면 DB 조회
+    if (!article) {
+      const foundArticle = await articleQueryRepository.findById(id);
+      await redisExternal.setIfNotExist(
+        key,
+        JSON.stringify(foundArticle)
+      );
+      article = foundArticle;
     }
 
     return article;

@@ -36,13 +36,12 @@ export const createProductQueryService = (
       product = JSON.parse(cachedProduct);
     } else {
       for (let i = 0; i < 5; i++) {
-        if (lock) {
-          lock = await redisExternal.setIfNotExist(
-            `lock:product:${id}`,
-            ".",
-            10
-          );
-
+        lock = await redisExternal.setIfNotExist(
+          `lock:product:${id}`,
+          ".",
+          3
+        );
+        if (lock) { // 1명 통과
           const foundProduct = await productQueryRepository.findById(id);
           await redisExternal.set(
             key,
@@ -59,15 +58,17 @@ export const createProductQueryService = (
           console.log(`상품 조회 재시도 ${i}`);
           await new Promise<void>((resolve) => setTimeout(() => resolve(), 100));
         }
-
-        await redisExternal.remove(`lock:product:${id}`);
-      }
-
-      if (!product) {
-        throw new Error("상품 조회 실패");
       }
     }
 
+
+    if (!product) {
+      const foundProduct = await productQueryRepository.findById(id);
+      await redisExternal.set(
+        key,
+        JSON.stringify(foundProduct)
+      );
+    }
     return product;
   };
 
