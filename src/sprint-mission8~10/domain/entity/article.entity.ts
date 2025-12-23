@@ -1,5 +1,5 @@
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 import { BaseEntity } from "./base.entity";
 
 export type NewArticleEntity = Omit<
@@ -80,14 +80,14 @@ export class ArticleEntity extends BaseEntity<string> {
 
   static validateTitleRule(title: string): void {
     if (title.length > 20) {
-      throw new Exception({
-        info: EXCEPTIONS.TITLE_TOO_LONG
+      throw new BusinessException({
+        type: BusinessExceptionType.TITLE_TOO_LONG
       });
     }
   };
   static validateContentRule(content: string): void {
     if (content.length < 5) {
-      throw new Exception({ info: EXCEPTIONS.CONTENT_TOO_SHORT });
+      throw new BusinessException({ type: BusinessExceptionType.CONTENT_TOO_SHORT });
     }
   };
 

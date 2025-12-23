@@ -47,19 +47,16 @@ import { GlobalErrorMiddleware } from "./inbound/middlewares/global-error.middle
 export class Injector {
   public readonly httpServer: HttpServer;
   public readonly wsServer: WsServer;
-  constructor(
-    mockPrismaClient?: PrismaClient,
-    testTokenUtil?: ITokenUtil
-  ) {
-    const { httpServer, wsServer } = this.inject(mockPrismaClient, testTokenUtil);
+  constructor(mockPrismaClient?: PrismaClient, testTokenUtil?: ITokenUtil) {
+    const { httpServer, wsServer } = this.inject(
+      mockPrismaClient,
+      testTokenUtil,
+    );
     this.httpServer = httpServer;
     this.wsServer = wsServer;
   }
 
-  inject(
-    testPrismaClient?: PrismaClient,
-    testTokenUtil?: ITokenUtil
-  ) {
+  inject(testPrismaClient?: PrismaClient, testTokenUtil?: ITokenUtil) {
     const prisma = testPrismaClient ?? new PrismaClient();
 
     const configUtil = new ConfigUtil();
@@ -86,31 +83,80 @@ export class Injector {
     const userLikesArticleRepo = new UserLikesArticleRepo(prisma);
     const notificationRepo = new NotificationRepo(prisma);
 
-    const userService = new UserService(userRepo, productRepo, articleRepo, hashManager);
+    const userService = new UserService(
+      userRepo,
+      productRepo,
+      articleRepo,
+      hashManager,
+    );
     const authService = new AuthService(userRepo, hashManager, tokenUtil);
-    const articleService = new ArticleService(articleRepo, userLikesArticleRepo);
-    const articleCommentService = new ArticleCommentService(articleCommentRepo, notificationRepo, eventBusUtil);
-    const productService = new ProductService(productRepo, userLikesProductRepo, tagRepo, notificationRepo, eventBusUtil);
-    const productCommentService = new ProductCommentService(productCommentRepo, notificationRepo, eventBusUtil);
-    const notificationService = new NotificationService(notificationRepo)
+    const articleService = new ArticleService(
+      articleRepo,
+      userLikesArticleRepo,
+    );
+    const articleCommentService = new ArticleCommentService(
+      articleCommentRepo,
+      notificationRepo,
+      eventBusUtil,
+    );
+    const productService = new ProductService(
+      productRepo,
+      userLikesProductRepo,
+      tagRepo,
+      notificationRepo,
+      eventBusUtil,
+    );
+    const productCommentService = new ProductCommentService(
+      productCommentRepo,
+      notificationRepo,
+      eventBusUtil,
+    );
+    const notificationService = new NotificationService(notificationRepo);
 
     const userController = new UserController(authService, userService);
     const productController = new ProductController(productService);
-    const productCommentController = new ProductCommentController(productCommentService);
+    const productCommentController = new ProductCommentController(
+      productCommentService,
+    );
     const productLikeController = new ProductLikeController(productService);
     const articleController = new ArticleController(articleService);
-    const articleCommentController = new ArticleCommentController(articleCommentService);
+    const articleCommentController = new ArticleCommentController(
+      articleCommentService,
+    );
     const articleLikeController = new ArticleLikeController(articleService);
     const imageController = new ImageController();
-    const notificationController = new NotificationController(notificationService);
+    const notificationController = new NotificationController(
+      notificationService,
+    );
 
     const userRouter = new UserRouter(authMiddleware, userController);
-    const productRouter = new ProductRouter(authMiddleware, productController, productCommentController, productLikeController);
-    const articleRouter = new ArticleRouter(authMiddleware, articleController, articleCommentController, articleLikeController);
-    const imageRouter = new ImageRouter(authMiddleware, imageController, multerMiddleware);
-    const notificationRouter = new NotificationRouter(authMiddleware, notificationController)
+    const productRouter = new ProductRouter(
+      authMiddleware,
+      productController,
+      productCommentController,
+      productLikeController,
+    );
+    const articleRouter = new ArticleRouter(
+      authMiddleware,
+      articleController,
+      articleCommentController,
+      articleLikeController,
+    );
+    const imageRouter = new ImageRouter(
+      authMiddleware,
+      imageController,
+      multerMiddleware,
+    );
+    const notificationRouter = new NotificationRouter(
+      authMiddleware,
+      notificationController,
+    );
 
-    const notificationGateway = new NotificationGateway(authMiddleware, eventBusUtil, configUtil);
+    const notificationGateway = new NotificationGateway(
+      authMiddleware,
+      eventBusUtil,
+      configUtil,
+    );
 
     const httpServer = new HttpServer(
       userRouter,
@@ -125,7 +171,11 @@ export class Injector {
       loggerMiddleware,
       notFoundErrorMiddleware,
     );
-    const wsServer = new WsServer(httpServer.defaultHttpServer, notificationGateway, configUtil);
+    const wsServer = new WsServer(
+      httpServer.defaultHttpServer,
+      notificationGateway,
+      configUtil,
+    );
 
     return {
       httpServer,

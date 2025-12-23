@@ -1,13 +1,12 @@
-import { NotificationType } from "@prisma/client";
 import { IProductCommentService } from "../../../inbound/port/services/product/product-comment.service.interface";
 import { CreateProductCommentDto, DeleteProductCommentDto, GetProductCommentDto, UpdateProductCommentDto } from "../../../inbound/requests/product/product.req.schemas";
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstProductCommentEntity, ProductCommentEntity } from "../../entity/comment/product-comment.entity";
 import { IProductCommentRepo } from "../../port/repo/product/product-comment.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
 import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
 
 export class ProductCommentService implements IProductCommentService {
   constructor(
@@ -34,11 +33,11 @@ export class ProductCommentService implements IProductCommentService {
           };
 
     if (limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     if (!productId) {
-      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.TARGETTYPE_NOT_EXIST });
     }
 
     const comments = await this._productCommentRepo.findCommentList(
@@ -48,7 +47,7 @@ export class ProductCommentService implements IProductCommentService {
       orderBy,
     )
     if (!comments) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     return comments;
   };
@@ -60,7 +59,7 @@ export class ProductCommentService implements IProductCommentService {
     const createdComment = await this._productCommentRepo.create(createCommentEntity);
 
     if (!createdComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     return createdComment;
   };
@@ -71,10 +70,10 @@ export class ProductCommentService implements IProductCommentService {
       dto.commentId
     );
     if (!foundComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     if (dto.userId !== foundComment.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_COMMENT_OWNER });
     }
 
     foundComment.updateContent(dto.content);
@@ -82,7 +81,7 @@ export class ProductCommentService implements IProductCommentService {
     const updatedComment = await this._productCommentRepo.update(foundComment);
 
     if (!updatedComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
 
     return updatedComment;
@@ -92,10 +91,10 @@ export class ProductCommentService implements IProductCommentService {
     const foundComment = await this._productCommentRepo.findCommentById(dto.commentId);
 
     if (!foundComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     if (dto.userId !== foundComment.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_COMMENT_OWNER });
     }
 
     await this._productCommentRepo.delete(dto.commentId);

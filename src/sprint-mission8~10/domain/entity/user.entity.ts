@@ -1,5 +1,5 @@
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 import { IHashManager } from "../port/managers/hash.manager.interface";
 import { BaseEntity } from "./base.entity";
 
@@ -98,7 +98,7 @@ export class UserEntity extends BaseEntity<string> {
 
   async isRefreshTokenMatch(refreshToken: string, hashManager: IHashManager): Promise<boolean> {
     if(!this._refreshToken) {
-      throw new Exception({info: EXCEPTIONS.REFRESHTOKEN_NOT_EXIST});
+      throw new BusinessException({type: BusinessExceptionType.REFRESHTOKEN_NOT_EXIST});
     }
 
     return await hashManager.compare(refreshToken, this._refreshToken);
@@ -129,13 +129,13 @@ export class UserEntity extends BaseEntity<string> {
   
   static validateEmailRule(email: string) {
     if (email.length > 30) {
-      throw new Exception({ info: EXCEPTIONS.EMAIL_TOO_LONG });
+      throw new BusinessException({ type: BusinessExceptionType.EMAIL_TOO_LONG });
     }
   }
 
   static validateNicknameRule(nickname: string) {
     if (nickname.length > 10) {
-      throw new Exception({ info: EXCEPTIONS.NICKNAME_TOO_LONG });
+      throw new BusinessException({ type: BusinessExceptionType.NICKNAME_TOO_LONG });
     }
   }
 

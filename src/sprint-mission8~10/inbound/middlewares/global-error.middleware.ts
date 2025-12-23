@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { IConfigUtil } from "../../shared/utils/config.util";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class GlobalErrorMiddleware {
   constructor(public readonly configUtil: IConfigUtil) { }
 
   handler = () => {
     return (err: any, req: Request, res: Response, next: NextFunction) => {
-      if (err instanceof Exception) {
+      if (err instanceof BusinessException) {
         res.status(err.statusCode).json({ message: err.message });
 
         if (

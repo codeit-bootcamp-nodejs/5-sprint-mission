@@ -1,5 +1,5 @@
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
 import { BaseEntity } from "../base.entity";
 
 export type NewProductCommentEntity = Omit<
@@ -61,7 +61,7 @@ export class ProductCommentEntity extends BaseEntity<number> {
 
   static validateContentRule = (content: string) => {
     if (content.length < 5) {
-      throw new Exception({info: EXCEPTIONS.CONTENT_TOO_SHORT});
+      throw new BusinessException({ type: BusinessExceptionType.CONTENT_TOO_SHORT});
     }
   };
 

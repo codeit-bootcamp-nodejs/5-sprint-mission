@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class NotFoundErrorMiddleware {
   handler = () => {
     return (req: Request, res: Response, next: NextFunction) => {
       next(
-        new Exception({
-          message: "경로가 없습니다."
+        new BusinessException({ type: BusinessExceptionType.NOT_PATH
         })
       )
     }

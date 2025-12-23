@@ -1,11 +1,12 @@
-import { Server as SocketIoServer, Socket, Namespace } from "socket.io";
+import { Server as SocketIoServer} from "socket.io";
 import { BaseGateway } from "./base.gateway";
-import { Exception } from "../../shared/exception/exception";
 import { NotificationCommentCreatedEvent } from "../../domain/event/notification-comment-created.event";
 import { NotificationPriceChangeEvent } from "../../domain/event/notification-price-change.event";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 import { IEventBusUtil } from "../../shared/utils/event-bus.util";
 import { IConfigUtil } from "../../shared/utils/config.util";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class NotificationGateway extends BaseGateway {
   constructor(
@@ -52,8 +53,7 @@ export class NotificationGateway extends BaseGateway {
 
     notificationIo.on("connection", async (socket) => {
       if (!socket.data.userId) {
-        throw new Exception({
-          message: "인증이 안 됐습니다."
+        throw new BusinessException({ type: BusinessExceptionType.INVALID_AUTH
         })
       }
 

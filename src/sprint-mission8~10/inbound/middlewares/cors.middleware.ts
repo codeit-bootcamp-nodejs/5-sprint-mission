@@ -1,6 +1,7 @@
 import cors from "cors";
 import { IConfigUtil } from "../../shared/utils/config.util";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class CorsMiddleware {
   private _options: cors.CorsOptions;
@@ -22,8 +23,7 @@ export class CorsMiddleware {
           callback(null, true);
         } else {
           callback(
-            new Exception({
-              message: "허용되지 않은 도메인 요청입니다."
+            new BusinessException({ type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED
             }),
           );
         }

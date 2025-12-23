@@ -1,7 +1,7 @@
 import { ZodSafeParseResult } from "zod";
 import { NextFunction, Request, Response } from "express";
-import { Exception } from "../../shared/exception/exception";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export type ControllerHandler = (
   req: Request,
@@ -15,8 +15,7 @@ export class BaseController {
 
   validateOrThrow = <T>(result: ZodSafeParseResult<T>): T => {
     if (!result.success) {
-      throw new Exception({
-        info: EXCEPTIONS.ZOD_FORM,
+      throw new BusinessException({ type: BusinessExceptionType.ZOD_FORM,
         message: result.error.issues[0].message,
       });
     }
