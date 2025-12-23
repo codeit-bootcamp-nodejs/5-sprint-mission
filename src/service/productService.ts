@@ -1,45 +1,69 @@
-import type { PrismaClient } from "@prisma/client";
-import { CreateProductDTO } from "../common/dto";
+import { PrismaClient } from "@prisma/client";
+import { NotificationService } from "./notificationService";
 
 export class ProductService {
-  #prisma: PrismaClient;
-  constructor(prisma: PrismaClient) { this.#prisma = prisma; }
+  private prisma: PrismaClient;
+  private notificationService: NotificationService;
 
-  async createProduct(userId: string, data: CreateProductDTO) {
-    const images = (data.images ?? []).map(url => ({ url }));
-    return this.#prisma.product.create({
-      data: { ...data, userId, images: { create: images } },
-      include: { images: true, likes: true }
-    });
+  constructor(prisma: PrismaClient, notificationService: NotificationService) {
+    this.prisma = prisma;
+    this.notificationService = notificationService;
   }
 
-  async getProducts(userId: string | null) {
-    const items = await this.#prisma.product.findMany({
-      include: { images: true, likes: true },
-      orderBy: { createdAt: "desc" }
+  // 상품 생성
+  createProduct = async ({
+    name,
+    price,
+    description,
+    userId,
+  }: {
+    name: string;
+    price: number;
+    description?: string;
+    userId: string;
+  }) => {
+    return this.prisma.product.create({
+      data: {
+        name,
+        price,
+        description: description ?? "",
+        user: { connect: { id: userId } },
+      },
+    });
+  };
+
+  // 상품 목록 조회
+  getProducts = async () => {
+    return this.prisma.product.findMany();
+  };
+
+  // 좋아요 토글
+  toggleLike = async (productId: string, userId: string) => {
+    const existingLike = await this.prisma.productLike.findUnique({
+      where: { userId_productId: { userId, productId } }, // 복합 키 맞춤
     });
 
-    return items.map(p => ({
-      ...p,
-      thumbnail: p.images[0]?.url ?? null,
-      isLiked: !!(userId && p.likes.some(l => l.userId === userId && l.isLiked))
-    }));
-  }
-
-  async toggleLike(userId: string, productId: string) {
-    const like = await this.#prisma.productLike.findUnique({
-      where: { userId_productId: { userId, productId } }
-    });
-
-    if (like) {
-      return this.#prisma.productLike.update({
+    if (existingLike) {
+      await this.prisma.productLike.delete({
         where: { userId_productId: { userId, productId } },
-        data: { isLiked: !like.isLiked }
       });
-    }
+      return { liked: false };
+    } else {
+      await this.prisma.productLike.create({
+        data: {
+          product: { connect: { id: productId } },
+          user: { connect: { id: userId } },
+        },
+      });
 
-    return this.#prisma.productLike.create({
-      data: { userId, productId }
-    });
-  }
+      // 알림 전송
+      await this.notificationService.createNotification(
+        userId,
+        "PRODUCT_PRICE_CHANGED",
+        "좋아요한 상품이 있습니다.",
+      );
+
+      return { liked: true };
+    }
+  };
 }

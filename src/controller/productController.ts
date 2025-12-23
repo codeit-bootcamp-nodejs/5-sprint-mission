@@ -1,34 +1,53 @@
-import type { Request, Response, NextFunction } from "express";
-import { CreateProductDTO } from "../common/dto";
-import type { ProductService } from "../service/productService";
+import { Request, Response, NextFunction } from "express";
+import { ProductService } from "../service/productService";
 
 export class ProductController {
-  #productService: ProductService;
-  constructor(productService: ProductService) { this.#productService = productService; }
+  private productService: ProductService;
 
+  constructor(productService: ProductService) {
+    this.productService = productService;
+  }
+
+  // 상품 생성
   createProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user!.id;
-      const payload = req.body as CreateProductDTO;
-      const product = await this.#productService.createProduct(userId, payload);
+      const { name, price, description } = req.body;
+      const userId = req.user?.id;
+      if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+      const product = await this.productService.createProduct({
+        name,
+        price,
+        description,
+        userId,
+      });
       res.status(201).json(product);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   };
 
-  getProducts = async (req: Request, res: Response, next: NextFunction) => {
+  // 상품 목록 조회
+  getProducts = async (_req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user?.id ?? null;
-      const products = await this.#productService.getProducts(userId);
+      const products = await this.productService.getProducts();
       res.status(200).json(products);
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   };
 
+  // 좋아요 토글
   toggleLike = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user!.id;
-      const { productId } = req.params;
-      const like = await this.#productService.toggleLike(userId, productId);
-      res.status(200).json(like);
-    } catch (err) { next(err); }
+      const productId = req.params.productId;
+      const userId = req.user?.id;
+      if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+      const result = await this.productService.toggleLike(productId, userId);
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
   };
 }
