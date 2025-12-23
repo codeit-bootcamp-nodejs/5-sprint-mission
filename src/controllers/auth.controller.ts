@@ -1,22 +1,29 @@
 import { RequestHandler } from "express";
-import { Validated } from "../types/http";
-import { SignupDTO, LoginDTO } from "../types/dto";
 import { authService } from "../services/auth.service";
 
-export const signup: RequestHandler = async (req, res) => {
-  const { validated } = req as Validated<SignupDTO>;
-  const user = await authService.signup(validated);
-  res.status(201).json(user);
+export const login: RequestHandler = async (req, res, next) => {
+  try {
+    const result = await authService.login(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const login: RequestHandler = async (req, res) => {
-  const { validated } = req as Validated<LoginDTO>;
-  const tokens = await authService.login(validated);
-  res.json(tokens);
+export const signup: RequestHandler = async (req, res, next) => {
+  try {
+    const result = await authService.signup(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
 };
-
-export const refresh: RequestHandler = async (req, res) => {
-  const { refreshToken } = req.body ?? {};
-  const access = await authService.refresh(refreshToken);
-  res.json({ accessToken: access });
+export const refresh: RequestHandler = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body ?? {};
+    const access = await authService.refresh(refreshToken);
+    res.json({ accessToken: access });
+  } catch (err) {
+    next(err);
+  }
 };

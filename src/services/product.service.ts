@@ -116,3 +116,9 @@ export const productService = {
     await productRepository.likeDelete(userId, id);
   },
 };
+
+export class ProductService {
+  create(name: string) {
+    return { id: 1, name };
+  }
+}

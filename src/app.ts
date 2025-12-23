@@ -9,7 +9,7 @@ import productCommentsRouter from "./routes/productComments.route";
 import articleCommentsRouter from "./routes/articleComments.route";
 import usersRouter from "./routes/users.route";
 
-import { errorHandler } from "./middlewares/error";
+import { errorHandler, notFoundHandler } from "./middlewares/error";
 import notificationRoute from "./routes/notification.route";
 
 const app = express();
@@ -28,6 +28,7 @@ app.use("/articles/:articleId/comments", articleCommentsRouter);
 app.use("/users", usersRouter);
 app.use("/notifications", notificationRoute);
 
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 export default app;
