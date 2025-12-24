@@ -1,20 +1,23 @@
 import { Request, Response } from "express";
 import { BaseController } from "./base.controller";
-import { AuthenticatorType } from "../../external/authenticator";
-import { ArticleServiceType } from "../../02-domain/service/article.service";
 import {
   articleBodySchema,
   articleParamSchema,
 } from "../request/article.request";
 import { querySchema } from "../request/query.request";
+import { AuthenticatorType } from "../../shared/authenticator/authenticator";
+import { ArticleCommandServiceType } from "../../02-application/command/service/article.command.service";
+import { ArticleQueryServiceType } from "../../02-application/query/service/article.query.service";
 
 export const createArticleController = (
-  _service: ArticleServiceType,
+  _articleCommandService: ArticleCommandServiceType,
+  _articleQueryService: ArticleQueryServiceType,
   _auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } =
     BaseController("/articles");
-  const service = _service;
+    const articleQueryService = _articleQueryService;
+  const articleCommandService = _articleCommandService;
   const auth = _auth;
 
   const registerRoutes = () => {
@@ -50,7 +53,7 @@ export const createArticleController = (
     const body = validate(articleBodySchema, req.body);
     const params = validate(articleParamSchema, req.params);
 
-    const articleResDto = await service.createArticle({
+    const articleResDto = await articleCommandService.createArticle({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -61,13 +64,13 @@ export const createArticleController = (
 
   const getArticle = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const articleResDto = await service.getArticle(id);
+    const articleResDto = await articleQueryService.getArticle(id);
     return res.json(articleResDto);
   };
 
   const getArticles = async (req: Request, res: Response) => {
     const articleReqDto = validate(querySchema, req.query);
-    const articlesResDtos = await service.getAllArticles(articleReqDto);
+    const articlesResDtos = await articleQueryService.getAllArticles(articleReqDto);
     return res.json(articlesResDtos);
   };
 
@@ -75,7 +78,7 @@ export const createArticleController = (
     const body = validate(articleBodySchema, req.body);
     const params = validate(articleParamSchema, req.params);
 
-    const articleResDto = await service.updateArticle({
+    const articleResDto = await articleCommandService.updateArticle({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -86,10 +89,10 @@ export const createArticleController = (
   const deleteArticle = async (req: Request, res: Response) => {
     const id = req.params.id;
     const userId = req.user.userId;
-    await service.deleteArticle(id, userId);
+    await articleCommandService.deleteArticle(id, userId);
     res.status(200).json();
   };
-
+  
   registerRoutes();
 
   return {

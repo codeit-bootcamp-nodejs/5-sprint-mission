@@ -1,5 +1,6 @@
-import { Article } from "../../02-domain/entity/article";
-import { PersistArticle } from "../repository/article.repository";
+
+import { Article } from "../../02-application/command/entity/article";
+import { PersistArticle } from "../repository/command/article.command.repository";
 
 export const ArticleMapper = {
   toPersist: (entity: PersistArticle) => {

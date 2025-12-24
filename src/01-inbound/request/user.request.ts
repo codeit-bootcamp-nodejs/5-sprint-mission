@@ -1,15 +1,22 @@
 import z from "zod";
 
 // User
-export const userBodySchema = z.object({
-  email: z.string(),
+export const signUpBodySchema = z.object({
+  email: z.email(),
   nickname: z.string(),
   password: z.string(),
 });
 
-export type UserSignUpDto = z.infer<typeof userBodySchema>;
 
-export type UserSignInDto = z.infer<typeof userBodySchema> & {
-  nickname?: string;
-  userId: string;
-};
+export const signInBodySchema = z.object({
+  email: z.string(),
+  password: z.string(),
+});
+
+
+
+export type UserSignUpDto = z.infer<typeof signUpBodySchema>;
+export type UserSignInDto = z.infer<typeof signInBodySchema>;
+export type UserEditDto = z.infer<typeof signUpBodySchema> & {
+  userId: string
+}

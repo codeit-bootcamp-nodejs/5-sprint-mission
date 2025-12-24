@@ -1,11 +1,10 @@
 import { WebSocketServer } from "ws";
 import { createServer, Server as HttpServer, IncomingMessage } from "node:http";
 import jwt from "jsonwebtoken";
-import { PersistedNotification } from "../../02-domain/entity/notification";
 import { Request } from "express";
 import { Socket } from "net";
 import { WebSocket } from "ws";
-import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
 
 require("dotenv").config();
 
@@ -20,7 +19,6 @@ export const createWsServer = (server: HttpServer, eventHandlers: any) => {
     wss.on("connection", setUpConnection);
   };
 
-  
   // 이벤트 핸들러 등록
   const registerRoutes = () => {
     for (const eventHandler of eventHandlers) {

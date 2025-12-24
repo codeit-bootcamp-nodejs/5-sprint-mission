@@ -1,4 +1,5 @@
-import { PersistedNotification } from "../../02-domain/entity/notification";
+import { PersistedNotification } from "../../02-application/command/entity/notification";
+
 
 export const NotificationResDto = (entity: PersistedNotification) => {
   const { id, type, message, read, senderId, receiverId, createdAt } = entity;

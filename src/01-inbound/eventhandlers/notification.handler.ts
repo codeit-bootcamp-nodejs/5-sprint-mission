@@ -1,19 +1,20 @@
-import { PersistedNotification } from "../../02-domain/entity/notification";
-import { IEventBus } from "../port/I.eventbus";
+import { PersistedNotification } from "../../02-application/command/entity/notification";
+import { INotificationEventBus } from "../../shared/eventbus/ports/I.notification.eventbus";
+
 
 
 export const NotificationHandler = (
-    eventBuses: IEventBus,
+    notifcationEventBus: INotificationEventBus,
 ) => {
-    let _clients: Map<string, WebSocket>
+    let _clients: Map<string, WebSocket> = new Map()
 
     const registerClients = (clients: Map<string, WebSocket>) => {
         _clients = clients
     }
 
     const registerRoutes = () => {
-        eventBuses.notification.subscribe(notifyUser)
-        eventBuses.notification.subscribeAll(notifyAllUsers);
+        notifcationEventBus.subscribe(notifyUser)
+        notifcationEventBus.subscribeAll(notifyAllUsers);
     }
 
     const notifyUser = (notification: PersistedNotification) => {

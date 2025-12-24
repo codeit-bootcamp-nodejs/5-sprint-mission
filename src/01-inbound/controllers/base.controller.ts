@@ -5,7 +5,7 @@ import express, {
   Response,
 } from "express";
 import z from "zod";
-import { BusinessException, BusinessExceptionType } from "../../common/exception/exception";
+import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
 
 export const BaseController = (_basePath: string) => {
   const basePath = _basePath;
@@ -14,7 +14,7 @@ export const BaseController = (_basePath: string) => {
   const validate = <T extends z.ZodType>(schema: T, data: unknown) => {
     const result = schema.safeParse(data);
     if (!result.success) {
-        result.error.issues.pop()?.message ??
+      result.error.issues.pop()?.message ??
         "요청 데이터가 유효하지 않습니다.";
       throw BusinessException({
         type: BusinessExceptionType.PARSE_BODY_ERROR,
@@ -28,7 +28,6 @@ export const BaseController = (_basePath: string) => {
       try {
         await handler(req, res, next);
       } catch (err) {
-        console.log(err);
         next(err);
       }
     };

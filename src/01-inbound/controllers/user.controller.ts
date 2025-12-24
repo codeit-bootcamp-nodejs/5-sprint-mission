@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-import { AuthenticatorType } from "../../external/authenticator";
+import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { BaseController } from "./base.controller";
-import { UserServiceType } from "../../02-domain/service/user.service";
-import { userBodySchema } from "../request/user.request";
+import { signInBodySchema, signUpBodySchema } from "../request/user.request";
+import { UserCommandServiceType } from "../../02-application/command/service/user.command.service";
+import { UserQueryServiceType } from "../../02-application/query/service/user.query.service";
 
 export const createUserController = (
-  service: UserServiceType,
+  userCommandService: UserCommandServiceType,
+  userQueryService: UserQueryServiceType,
   auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } = BaseController("/users");
@@ -24,13 +26,6 @@ export const createUserController = (
       errorHandler(getNewToken),
     );
 
-    // 내 정보 조회
-    router.get(
-      "/me",
-      errorHandler(auth.verifyAccessToken),
-      errorHandler(userInfo),
-    );
-
     // 내 정보 수정
     router.patch(
       "/me",
@@ -39,24 +34,53 @@ export const createUserController = (
       errorHandler(editUserInfo),
     );
 
+
+    // 내 정보 조회
+    router.get(
+      "/me",
+      errorHandler(auth.verifyAccessToken),
+      errorHandler(userInfo),
+    );
+
+
     // 내 상품 조회
     router.get(
       "/me/products",
       errorHandler(auth.verifyAccessToken),
       errorHandler(userProducts),
     );
+
+    // 내 게시글 조회
+    router.get(
+      "/me/articles",
+      errorHandler(auth.verifyAccessToken),
+      errorHandler(userArticles),
+    );
+
+
+    // 내 댓글 조회
+    router.get(
+      "/me/comments",
+      errorHandler(auth.verifyAccessToken),
+      errorHandler(userComments),
+    );
   };
 
   const signUp = async (req: Request, res: Response) => {
-    const body = validate(userBodySchema, req.body);
-    const userResDto = await service.createUser({
+    const body = validate(signUpBodySchema, req.body);
+    const userResDto = await userCommandService.createUser({
       ...body,
     });
-    return res.json(userResDto);
+    return res.status(201).json(userResDto);
   };
 
   const signIn = async (req: Request, res: Response) => {
-    const { accessToken, refreshToken } = await service.getTokens(req.body);
+    const body = validate(signInBodySchema, req.body);
+    const { accessToken, refreshToken } = await userCommandService.getTokens(body);
+    await userCommandService.updateRefreshToken({
+      email: body.email,
+      refreshToken: refreshToken
+    })
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
@@ -73,13 +97,13 @@ export const createUserController = (
   };
 
   const userInfo = async (req: Request, res: Response) => {
-    const user = await service.getInfo(req.user.userId);
+    const user = await userQueryService.getInfo(req.user.userId);
     return res.json(user);
   };
 
   const editUserInfo = async (req: Request, res: Response) => {
-    const body = validate(userBodySchema, req.body);
-    const updatedUser = await service.updateUser({
+    const body = validate(signUpBodySchema, req.body);
+    const updatedUser = await userCommandService.updateUser({
       ...body,
       userId: req.user.userId,
     });
@@ -87,9 +111,21 @@ export const createUserController = (
   };
 
   const userProducts = async (req: Request, res: Response) => {
-    const products = await service.getUserProducts(req.user.userId);
+    const products = await userQueryService.getUserProducts(req.user.userId);
     return res.json(products);
   };
+
+  const userArticles = async (req: Request, res: Response) => {
+    const articles = await userQueryService.getUserArticles(req.user.userId);
+    return res.json(articles);
+  };
+
+
+  const userComments = async (req: Request, res: Response) => {
+    const comments = await userQueryService.getUserComments(req.user.userId);
+    return res.json(comments);
+  };
+
 
   registerRoutes();
 

@@ -11,72 +11,157 @@ import { createProductCommentController } from "./01-inbound/controllers/product
 import { createUserController } from "./01-inbound/controllers/user.controller";
 
 import { NotificationHandler } from "./01-inbound/eventhandlers/notification.handler";
+import { createArticleCommentCommandService } from "./02-application/command/service/article.comment.command.service";
+import { createProductCommandService } from "./02-application/command/service/product.command.service";
+import { createUserCommandService } from "./02-application/command/service/user.command.service";
 
-import { createArticleService } from "./02-domain/service/article.service";
-import { createArticleCommentService } from "./02-domain/service/article.comment.service";
-import { createNotificationService } from "./02-domain/service/notification.service";
-import { createProductService } from "./02-domain/service/product.service";
-import { createProductCommentService } from "./02-domain/service/product.comment.service";
-import { createUserService } from "./02-domain/service/user.service";
-import { IBaseRepository } from "./02-domain/port/I.base.repository";
+import { Authenticator } from "./shared/authenticator/authenticator";
+import { NotificationEventBus } from "./shared/eventbus/eventbuses/notification.event.bus";
+import { createArticleCommentCommandRepository } from "./03-outbound/repository/command/article.comment.command.repository";
+import { createNotificationCommandRepository } from "./03-outbound/repository/command/notification.command.repository";
+import { createProductCommentCommandRepository } from "./03-outbound/repository/command/product.comment.command.repository";
+import { createArticleCommandRepository } from "./03-outbound/repository/command/article.command.repository";
+import { createProductCommandRepository } from "./03-outbound/repository/command/product.command.repository";
+import { createProductLikeCommandRepository } from "./03-outbound/repository/command/product.like.command.repository";
+import { createUserCommandRepository } from "./03-outbound/repository/command/user.command.repository";
+import { createNotificationCommandService } from "./02-application/command/service/notification.command.service";
+import { createArticleCommandService } from "./02-application/command/service/article.command.service";
+import { createProductCommentCommandService } from "./02-application/command/service/product.comment.command.service";
+import { createArticleCommentQueryService } from "./02-application/query/service/article.comment.query.service";
+import { createArticleQueryService } from "./02-application/query/service/article.query.service";
+import { createNotificationQueryService } from "./02-application/query/service/notification.query.service";
+import { createProductCommentQueryService } from "./02-application/query/service/product.comment.query.service";
+import { createProductQueryService } from "./02-application/query/service/product.query.service";
+import { createArticleQueryRepository } from "./03-outbound/repository/query/article.query.repository";
+import { createProductQueryRepository } from "./03-outbound/repository/query/product.query.repository";
+import { createArticleCommentQueryRepository } from "./03-outbound/repository/query/article.comment.query.repository";
+import { createProductCommentQueryRepository } from "./03-outbound/repository/query/product.comment.query.repository";
+import { createUserQueryRepository } from "./03-outbound/repository/query/user.query.repository";
+import { createNotificationQueryRepository } from "./03-outbound/repository/query/notification.query.repository";
+import { createUserQueryService } from "./02-application/query/service/user.query.service";
+import { RedisExternal } from "./03-outbound/external/redis.external";
 
-import { createArticleRepository } from "./03-outbound/repository/article.repository";
-import { createArticleCommentRepository } from "./03-outbound/repository/article.comment.repository";
-import { createNotificationRepository } from "./03-outbound/repository/notification.repository";
-import { createProductRepository } from "./03-outbound/repository/product.repository";
-import { createProductCommentRepository } from "./03-outbound/repository/product.comment.repository";
-import { createProductLikeRepository } from "./03-outbound/repository/product.like.repository";
-import { createUserRepository } from "./03-outbound/repository/user.repository";
 
-import { Authenticator } from "./external/authenticator";
-import { NotificationEventBus } from "./external/eventbus/notification.event.bus";
-import { IEventBus } from "./01-inbound/port/I.eventbus";
+
+
 
 export const DependencyInjector = () => {
   const inject = () => {
     const prisma = new PrismaClient();
 
+    // ===== OutBound =====
+    // Externals
+    const redisExternal = RedisExternal();
+
     // Repositories
-    const repos: IBaseRepository = {
-      article: createArticleRepository(prisma),
-      articleComment: createArticleCommentRepository(prisma),
-      product: createProductRepository(prisma),
-      productComment: createProductCommentRepository(prisma),
-      productLike: createProductLikeRepository(prisma),
-      user: createUserRepository(prisma),
-      notification: createNotificationRepository(prisma),
-    };
+    const articleCommandRepository = createArticleCommandRepository(prisma);
+    const articleCommentCommandRepository = createArticleCommentCommandRepository(prisma);
+    const productCommandRepository = createProductCommandRepository(prisma);
+    const productCommentCommandRepository = createProductCommentCommandRepository(prisma);
+    const productLikeCommandRepository = createProductLikeCommandRepository(prisma);
+    const userCommandRepository = createUserCommandRepository(prisma);
+    const notificationCommandRepository = createNotificationCommandRepository(prisma);
 
+    const articleQueryRepository = createArticleQueryRepository(prisma);
+    const articleCommentQueryRepository = createArticleCommentQueryRepository(prisma);
+    const productQueryRepository = createProductQueryRepository(prisma);
+    const productCommentQueryRepository = createProductCommentQueryRepository(prisma);
+    const userQueryRepository = createUserQueryRepository(prisma);
+    const notificationQueryRepository = createNotificationQueryRepository(prisma);
+
+
+
+    // ===== Shared =====
     // Authenticator
-    const authenticator = Authenticator(repos);
+    const authenticator = Authenticator(userCommandRepository);
 
-    // Event Bus
+    // Event Buses
     const notificationEventBus = NotificationEventBus();
-    const eventBuses: IEventBus = {
-      notification: notificationEventBus,
-    };
 
+
+    // ===== Domain =====
     // Services
-    const notificationService = createNotificationService(repos, eventBuses);
-    const productService = createProductService(repos, eventBuses);
-    const articleService = createArticleService(repos, eventBuses);
-    const articleCommentService = createArticleCommentService(repos, eventBuses);
-    const productCommentService = createProductCommentService(repos, eventBuses);
-    const userService = createUserService(repos, authenticator, eventBuses);
+    const notificationCommandService = createNotificationCommandService(
+      notificationCommandRepository,
+      notificationEventBus
+    );
+    const productCommandService = createProductCommandService(
+      productCommandRepository,
+      productLikeCommandRepository,
+      notificationCommandRepository,
+      notificationEventBus
+    );
+    const articleCommandService = createArticleCommandService(
+      articleCommandRepository,
+      notificationEventBus
+    );
+    const articleCommentCommandService = createArticleCommentCommandService(
+      articleCommandRepository,
+      articleCommentCommandRepository,
+      notificationCommandRepository,
+      notificationEventBus
+    );
+    const productCommentCommandService = createProductCommentCommandService(
+      productCommentCommandRepository,
+      notificationEventBus
+    );
+    const userCommandService = createUserCommandService(
+      userCommandRepository,
+      productCommandRepository,
+      authenticator,
+      notificationEventBus
+    );
 
+
+
+
+    const notificationQueryService = createNotificationQueryService(
+      redisExternal,
+      notificationQueryRepository,
+      notificationEventBus
+    );
+    const productQueryService = createProductQueryService(
+      redisExternal,
+      productQueryRepository
+    );
+    const articleQueryService = createArticleQueryService(
+      redisExternal,
+      articleQueryRepository,
+      notificationEventBus
+    );
+    const articleCommentQueryService = createArticleCommentQueryService(
+      redisExternal,
+      articleCommentQueryRepository
+    );
+    const productCommentQueryService = createProductCommentQueryService(
+      redisExternal,
+      productCommentQueryRepository,
+      notificationEventBus
+    );
+    const userQueryService = createUserQueryService(
+      redisExternal,
+      userQueryRepository,
+      authenticator
+    );
+
+
+
+
+
+    // ===== Inbound =====
     // Controllers
     const controllers = [
-      createProductController(productService, authenticator),
-      createArticleController(articleService, authenticator),
-      createUserController(userService, authenticator),
-      createProductCommentController(productCommentService, authenticator),
-      createArticleCommentController(articleCommentService, authenticator),
-      createNotificationController(notificationService, authenticator),
+      createProductController(productCommandService, productQueryService, authenticator),
+      createArticleController(articleCommandService, articleQueryService, authenticator),
+      createUserController(userCommandService, userQueryService, authenticator),
+      createProductCommentController(productCommentCommandService, productCommentQueryService, authenticator),
+      createArticleCommentController(articleCommentCommandService, articleCommentQueryService, authenticator),
+      createNotificationController(notificationCommandService, notificationQueryService, authenticator),
     ];
 
     // Event Handlers
     const eventHandlers = [
-      NotificationHandler(eventBuses),
+      NotificationHandler(notificationEventBus),
     ];
 
     // Servers

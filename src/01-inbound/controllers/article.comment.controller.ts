@@ -1,19 +1,23 @@
 import { Request, Response } from "express";
-import { AuthenticatorType } from "../../external/authenticator";
 import { BaseController } from "./base.controller"; //
-import { ArticleCommentServiceType } from "../../02-domain/service/article.comment.service";
 import {
   articleCommentBodySchema,
   articleCommentParamSchema,
 } from "../request/article.comment.request";
+import { AuthenticatorType } from "../../shared/authenticator/authenticator";
+import { ArticleCommentCommandServiceType } from "../../02-application/command/service/article.comment.command.service";
+import { ArticleCommentQueryServiceType } from "../../02-application/query/service/article.comment.query.service";
+
 
 export const createArticleCommentController = (
-  _service: ArticleCommentServiceType,
+  _articleCommentCommandService: ArticleCommentCommandServiceType,
+  _articleCommentQueryService: ArticleCommentQueryServiceType,
   _auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } =
     BaseController("/article");
-  const service = _service;
+  const articleCommentCommandService = _articleCommentCommandService;
+  const articleCommentQueryService = _articleCommentQueryService;
   const auth = _auth;
 
   const registerRoutes = () => {
@@ -45,17 +49,17 @@ export const createArticleCommentController = (
     const body = validate(articleCommentBodySchema, req.body);
     const params = validate(articleCommentParamSchema, req.params);
 
-    const articleCommentResDto = await service.createArticleComment({
+    const articleCommentResDto = await articleCommentCommandService.createArticleComment({
       ...body,
       ...params,
       userId: req.user.userId,
     });
-    return res.json(articleCommentResDto);
+    return res.status(201).json(articleCommentResDto);
   };
 
   const getArticleComments = async (req: Request, res: Response) => {
     const articleId = req.params.articleId;
-    const comments = await service.getArticleComments(articleId);
+    const comments = await articleCommentQueryService.getArticleComments(articleId);
     return res.json(comments);
   };
 
@@ -63,7 +67,7 @@ export const createArticleCommentController = (
     const body = validate(articleCommentBodySchema, req.body);
     const params = validate(articleCommentParamSchema, req.params);
 
-    const articleCommentResDto = await service.updateArticleComment({
+    const articleCommentResDto = await articleCommentCommandService.updateArticleComment({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -75,7 +79,7 @@ export const createArticleCommentController = (
     const commentId = req.params.commentId;
     const articleId = req.params.articleId;
     const userId = req.user.userId;
-    await service.deleteArticleComments(articleId, commentId, userId);
+    await articleCommentCommandService.deleteArticleComments(articleId, commentId, userId);
     return res.status(200).json();
   };
 

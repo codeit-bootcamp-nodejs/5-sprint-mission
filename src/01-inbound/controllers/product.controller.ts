@@ -1,19 +1,17 @@
 import { Request, Response } from "express";
 import {
-  Authenticator,
-  AuthenticatorType,
-  HttpError,
-} from "../../external/authenticator";
-import { BaseController } from "./base.controller"; //
-import { ProductServiceType } from "../../02-domain/service/product.service";
-import {
   productBodySchema,
   productParamSchema,
 } from "../request/product.request";
 import { querySchema } from "../request/query.request";
+import { AuthenticatorType } from "../../shared/authenticator/authenticator";
+import { BaseController } from "./base.controller";
+import { ProductCommandServiceType } from "../../02-application/command/service/product.command.service";
+import { ProductQueryServiceType } from "../../02-application/query/service/product.query.service";
 
 export const createProductController = (
-  service: ProductServiceType,
+  productCommandService: ProductCommandServiceType,
+  productCommentQueryService: ProductQueryServiceType,
   auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } =
@@ -58,7 +56,7 @@ export const createProductController = (
   const createProduct = async (req: Request, res: Response) => {
     const body = validate(productBodySchema, req.body);
     const params = validate(productParamSchema, req.params);
-    const newProductResDto = await service.createProduct({
+    const newProductResDto = await productCommandService.createProduct({
       ...body,
       ...params,
       userId: req.user.userId,
@@ -69,13 +67,13 @@ export const createProductController = (
 
   const getProducts = async (req: Request, res: Response) => {
     const query = validate(querySchema, req.query);
-    const productsResDto = await service.getAllProducts(query);
+    const productsResDto = await productCommentQueryService.getAllProducts(query);
     return res.json(productsResDto);
   };
 
   const getProduct = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const productResDto = await service.getProduct(id);
+    const productResDto = await productCommentQueryService.getProduct(id);
     return res.json(productResDto);
   };
 
@@ -84,7 +82,7 @@ export const createProductController = (
     const params = validate(productParamSchema, req.params);
     const query = validate(querySchema, req.query);
 
-    const updatedProductResDto = await service.updateProduct({
+    const updatedProductResDto = await productCommandService.updateProduct({
       ...body,
       ...params,
       ...query,
@@ -96,14 +94,14 @@ export const createProductController = (
   const deleteProduct = async (req: Request, res: Response) => {
     const id = req.params.id;
     const userId = req.user.userId;
-    await service.deleteProduct(id, userId);
+    await productCommandService.deleteProduct(id, userId);
     res.status(200).json();
   };
 
   const likeProduct = async (req: Request, res: Response) => {
     const userId = req.user.userId;
     const productId = req.params.id;
-    const product = await service.likeProduct(userId, productId);
+    const product = await productCommandService.likeProduct(userId, productId);
     return res.json(product);
   };
 

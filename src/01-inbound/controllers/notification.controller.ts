@@ -1,15 +1,19 @@
 import { Request, Response } from "express";
-import { AuthenticatorType } from "../../external/authenticator";
 import { BaseController } from "./base.controller";
-import { NotificationServiceType } from "../../02-domain/service/notification.service";
+import { AuthenticatorType } from "../../shared/authenticator/authenticator";
+import { NotificationCommandServiceType } from "../../02-application/command/service/notification.command.service";
+import { NotificationQueryServiceType } from "../../02-application/query/service/notification.query.service";
+
 
 export const createNotificationController = (
-  _service: NotificationServiceType,
+  _notificationCommandService: NotificationCommandServiceType,
+  _notificationQueryService: NotificationQueryServiceType,
   _auth: AuthenticatorType,
 ) => {
   const { basePath, router, validate, errorHandler } =
     BaseController("/notifications");
-  const service = _service;
+  const notificationCommandService = _notificationCommandService;
+  const notificationQueryService = _notificationQueryService;
   const auth = _auth;
 
   const registerRoutes = () => {
@@ -44,27 +48,27 @@ export const createNotificationController = (
 
   const getNotifications = async (req: Request, res: Response) => {
     const userId = req.user.userId;
-    const notifications = await service.getNotifications(userId);
+    const notifications = await notificationQueryService.getNotifications(userId);
     return res.json(notifications);
   };
 
   const readNotification = async (req: Request, res: Response) => {
     const userId = req.user.userId;
     const id = req.params.id;
-    const notifications = await service.readNotification(userId, id);
+    const notifications = await notificationCommandService.readNotification(userId, id);
     return res.json(notifications);
   };
 
   const deleteNotification = async (req: Request, res: Response) => {
     const userId = req.user.userId;
     const id = req.params.id;
-    await service.deleteNotification(userId, id);
+    await notificationCommandService.deleteNotification(userId, id);
     return res.status(200).json();
   };
 
   const deleteAllNotifications = async (req: Request, res: Response) => {
     const userId = req.user.userId;
-    await service.deleteAllNotifications(userId);
+    await notificationCommandService.deleteAllNotifications(userId);
     return res.status(200).json();
   };
 

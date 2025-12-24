@@ -7,7 +7,6 @@ export const productBodySchema = z.object({
   price: z.coerce.number(),
   tags: z.array(z.string()),
   imageUrl: z.string().optional(),
-  isLiked: z.boolean().default(false),
 });
 
 export const productParamSchema = z.object({

@@ -9,8 +9,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 import { Prisma } from "@prisma/client";
-import { HttpError } from "../../external/authenticator";
-import { isBusinessException } from "../../common/exception/exception";
+import { isBusinessException } from "../../shared/exception/exception";
+import { HttpError } from "../../shared/authenticator/authenticator";
 
 export const createHttpServer = (controllers: any) => {
   const server = express();
@@ -27,8 +27,6 @@ export const createHttpServer = (controllers: any) => {
     server.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         if (isBusinessException(err)) {
-          console.log("business exception");
-          console.log(err);
           const { statusCode = 400, message } = err;
           return res.status(statusCode).json({ message });
         } else if (
@@ -42,7 +40,6 @@ export const createHttpServer = (controllers: any) => {
         ) {
           res.sendStatus(404);
         } else if (err instanceof HttpError) {
-          console.log(err.message);
           res.status(400).json({ message: err.message });
         } else {
           console.log(err);
@@ -61,6 +58,17 @@ export const createHttpServer = (controllers: any) => {
   };
 
   const listen = () => {
+    const isTestEnv = process.env.NODE_ENV === "test" ||
+      typeof process.env.JEST_WORKER_ID !== "undefined";
+
+    if (isTestEnv) {
+      return; // Skip listening in tests
+    }
+
+    if (defaultHttpServer.listening) {
+      return; // Already listening
+    }
+
     defaultHttpServer.listen(3000, () => {
       console.log("listening at port 3000");
     });
@@ -76,6 +84,7 @@ export const createHttpServer = (controllers: any) => {
   return {
     run,
     defaultHttpServer,
+    server
   };
 };
 
