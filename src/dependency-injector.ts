@@ -40,6 +40,7 @@ import { createUserQueryRepository } from "./03-outbound/repository/query/user.q
 import { createNotificationQueryRepository } from "./03-outbound/repository/query/notification.query.repository";
 import { createUserQueryService } from "./02-application/query/service/user.query.service";
 import { RedisExternal } from "./03-outbound/external/redis.external";
+import { MulterMiddleware } from "./01-inbound/middlewares/multer.middlewares";
 
 
 
@@ -146,13 +147,15 @@ export const DependencyInjector = () => {
 
 
 
+    const multerMiddleware = new MulterMiddleware();
+
 
 
     // ===== Inbound =====
     // Controllers
     const controllers = [
       createProductController(productCommandService, productQueryService, authenticator),
-      createArticleController(articleCommandService, articleQueryService, authenticator),
+      createArticleController(articleCommandService, articleQueryService, authenticator, multerMiddleware),
       createUserController(userCommandService, userQueryService, authenticator),
       createProductCommentController(productCommentCommandService, productCommentQueryService, authenticator),
       createArticleCommentController(articleCommentCommandService, articleCommentQueryService, authenticator),
