@@ -1,4 +1,4 @@
-import { PersistedNotification } from "../../../02-domain/entity/notification";
+import { PersistedNotification } from "../../../02-application/command/entity/notification";
 
 export interface INotificationEventBus {
     subscribe(_callback: (event: PersistedNotification) => void): void
