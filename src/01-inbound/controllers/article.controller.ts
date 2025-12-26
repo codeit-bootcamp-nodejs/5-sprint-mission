@@ -59,7 +59,22 @@ export const createArticleController = (
   };
 
   const uploadtoS3 = async (req: Request, res: Response) => {
-    return res.status(200).json("image has been uploaded");
+    const files = (req.files as any[]) || [];
+
+    if (!files.length) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    // multer-s3 adds `location` with the public URL when acl: 'public-read'
+    const images = files.map((f) => ({
+      url: (f && (f.location || f.url)) || null,
+      key: f && f.key,
+      bucket: f && f.bucket,
+      size: f && f.size,
+      mimeType: f && (f.mimetype || f.contentType)
+    })).filter((x) => x.url);
+
+    return res.status(200).json({ images });
   }
 
   const createArticle = async (req: Request, res: Response) => {
