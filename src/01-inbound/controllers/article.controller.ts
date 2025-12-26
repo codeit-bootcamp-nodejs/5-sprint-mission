@@ -25,7 +25,7 @@ export const createArticleController = (
   const registerRoutes = () => {
     // 이미지 업로드
     router.post(
-      "/testing",
+      "/images",
       errorHandler(_multerMiddleware.handlerImages("images")),
       errorHandler(uploadtoS3)
     );
