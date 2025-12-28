@@ -13,6 +13,9 @@ const configSchema = z.object({
   CLIENT_DOMAIN: z.string(),
   JSON_LIMIT: z.coerce.number(),
   PUBLIC_PATH: z.string(),
+  AWS_REGION: z.string(),
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
 });
 
 export type ConfigType = z.infer<typeof configSchema>;

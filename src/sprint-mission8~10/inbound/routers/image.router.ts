@@ -18,7 +18,7 @@ export class ImageRouter extends BaseRouter {
     this.router.post(
       "/",
       this.catchException(this._authMiddleware.isUser),
-      this._multerMiddleware.handlerImage(),
+      this._multerMiddleware.handlerImage("image"),
       this.catchException(this._imageController.uploadImageController),
     );
   };
