@@ -52,7 +52,7 @@ export function getS3Client(): S3Client | null {
 export async function uploadToS3(
   buffer: Buffer,
   fileName: string,
-  mimeType: string
+  mimeType: string,
 ): Promise<string> {
   const client = getS3Client();
 
