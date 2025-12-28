@@ -1,5 +1,5 @@
 import { CreateProductDto, DeleteProductDto, GetLikedProductsDto, GetProductDto, GetProductListDto, UpdateProductDto } from "../../../inbound/requests/product/product.req.schemas";
-import { EXCEPTIONS } from "../../../shared/const/business.exception.info";
+import { BusinessExceptionTable, BusinessExceptionType } from "../../../shared/const/business.exception.info";
 import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
 import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
 import { NewProductEntity, PersistProductEntity, ProductEntity } from "../../entity/product/product.entity";
@@ -78,7 +78,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.getProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.PRODUCT_NOT_EXIST.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_NOT_EXIST].message);
     });
 
     test("상품이 있으면 그대로 반환한다", async () => {
@@ -100,7 +100,7 @@ describe("product service 유닛 테스트", () => {
         sort: "recent",
       };
 
-      await expect(productService.getProductList(dto)).rejects.toThrow(EXCEPTIONS.LIMIT_MAX_20.message);
+      await expect(productService.getProductList(dto)).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.LIMIT_MAX_20].message);
     });
 
     test("sort가 recent면 updatedAt desc로 조회한다", async () => {
@@ -137,7 +137,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.likeProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.PRODUCT_NOT_EXIST.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_NOT_EXIST].message);
 
       expect(mockUserLikesProductRepo.create).not.toHaveBeenCalled();
     });
@@ -165,7 +165,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.unlikeProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.PRODUCT_NOT_EXIST.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_NOT_EXIST].message);
 
       expect(mockUserLikesProductRepo.delete).not.toHaveBeenCalled();
     });
@@ -194,7 +194,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.createProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.PRODUCT_ALREADY_EXIST.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_ALREADY_EXIST].message);
 
       expect(mockTagRepo.findOrCreateTags).not.toHaveBeenCalled();
       expect(mockProductRepo.create).not.toHaveBeenCalled();
@@ -249,7 +249,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.updateProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.PRODUCT_NOT_EXIST.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_NOT_EXIST].message);
     });
 
     test("상품 작성자가 아니면 예외를 던진다", async () => {
@@ -260,7 +260,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(
         productService.updateProduct(dto)
-      ).rejects.toThrow(EXCEPTIONS.UNAUTHORIZED_PRODUCT_OWNER.message);
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER].message);
     });
 
     test("정상적으로 상품을 수정한다 (가격 변경 없음)", async () => {
@@ -337,7 +337,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(productService.deleteProduct(dto))
         .rejects
-        .toThrow(EXCEPTIONS.PRODUCT_NOT_EXIST.message);
+        .toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_NOT_EXIST].message);
 
       expect(mockProductRepo.delete).not.toHaveBeenCalled();
     });
@@ -350,7 +350,7 @@ describe("product service 유닛 테스트", () => {
 
       await expect(productService.deleteProduct(dto))
         .rejects
-        .toThrow(EXCEPTIONS.UNAUTHORIZED_PRODUCT_OWNER.message);
+        .toThrow(BusinessExceptionTable[BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER].message);
 
       expect(mockProductRepo.delete).not.toHaveBeenCalled();
     });
