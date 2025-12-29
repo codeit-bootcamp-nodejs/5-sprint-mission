@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
-    "format": "npx pretter --write .",
+    "format": "prettier --write .",
     "build": "tsc -p .",
     "type-check": "tsc --noEmit",
     "start": "npm run build && pm2 start infra/ec2/ecosystem.config.js",
