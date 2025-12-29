@@ -81,4 +81,4 @@ jobs:
             docker-compose -f docker-compose.yml up -d
             docker image prune -f
             docker logout ${{ secrets.AWS_ECR_URI }}
-            rm -f .env.prod
+            pm2 restart pandamarket
