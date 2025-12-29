@@ -8,7 +8,8 @@
     "type-check": "tsc --noEmit",
     "start": "npm run build && pm2 start infra/ec2/ecosystem.config.js",
     "dev": "nodemon --watch src --exec ts-node ./src/app.ts",
-    "test": "jest"
+    "test": "jest ",
+    "test:services": "jest ./src/test/jest/service"
   },
   "keywords": [],
   "author": "",
