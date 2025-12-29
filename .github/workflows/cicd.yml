@@ -60,16 +60,16 @@ jobs:
           script: |
             echo "${{secrets.ENV}}" > .env.prod
 
-      - name: copy docker-compose.yml to ec2
+      - name: copy docker-compose.yaml to ec2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yaml"
           target: "/home/${{ secrets.EC2_USERNAME }}"
 
-      - name: run docker-compose.yml on ec2
+      - name: run docker-compose.yaml on ec2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -78,8 +78,8 @@ jobs:
           script: |
             export AWS_ECR_URI=${{ secrets.AWS_ECR_URI }}
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username ASW --password-stdin ${{ secrets.AWS_ECR_URI }}
-            docker-compose -f docker-compose.yml pull
-            docker-compose -f docker-compose.yml up -d
+            docker-compose -f docker-compose.yaml pull
+            docker-compose -f docker-compose.yaml up -d
             docker image prune -f
             docker logout ${{ secrets.AWS_ECR_URI }}
             pm2 restart pandamarket
