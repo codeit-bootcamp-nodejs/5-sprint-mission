@@ -1,6 +1,6 @@
-name : ci/cd
+name: ci/cd
 
-on: 
+on:
   pull_request:
     branches: ["sprint-mission-11"]
   push:
@@ -8,27 +8,37 @@ on:
 
 jobs:
   ci:
-    runs-on : ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
-       - name: Checkout branch
-         uses: actions/checkout@v3
-       
-       - name: install node.js
-         uses: actions/setup-node@v3
-         with:
-            node-version: 'lts/*'
-            cache: 'npm'
-        
-       - name: install dependencies
-         run: npm ci
+      - name: Checkout branch
+        uses: actions/checkout@v3
 
-       - name: check types
-         run: npm run type-check
+      - name: install node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "npm"
 
-       - name: check format
-         run: npm run format 
+      - name: install dependencies
+        run: npm ci
+
+      - name: check types
+        run: npm run type-check
+
+      - name: check format
+        run: npm run format
 
       # todo:  check lint
 
-       - name: unit tests
-         run: npm test
+      - name: unit tests
+        run: npm run test:services
+
+  cd: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
