@@ -1,0 +1,15 @@
+networks:
+  codeit-network:
+    driver: bridge
+
+services:
+  server:
+    image: ${AWS_ECR_URI}:latest
+    restart: always
+    networks:
+      - codeit-network
+    ports:
+      - 3000:3000
+    env_file: .env.prod
+    volumes:
+      - ./src/uploads:/server/src/uploads
