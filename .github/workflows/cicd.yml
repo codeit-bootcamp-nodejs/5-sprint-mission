@@ -30,7 +30,7 @@ jobs:
 
   cd:
     needs: ci
-    if: github.event_name == "push"
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: configure aws credentials
