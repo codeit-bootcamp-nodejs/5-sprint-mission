@@ -77,9 +77,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             export AWS_ECR_URI=${{ secrets.AWS_ECR_URI }}
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username ASW --password-stdin ${{ secrets.AWS_ECR_URI }}
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }}
             docker-compose -f docker-compose.yml pull
             docker-compose -f docker-compose.yml up -d
             docker image prune -f
             docker logout ${{ secrets.AWS_ECR_URI }}
-            pm2 restart pandamarket
