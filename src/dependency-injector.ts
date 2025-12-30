@@ -42,10 +42,6 @@ import { createUserQueryService } from "./02-application/query/service/user.quer
 import { RedisExternal } from "./03-outbound/external/redis.external";
 import { MulterMiddleware } from "./01-inbound/middlewares/multer.middlewares";
 
-
-
-
-
 export const DependencyInjector = () => {
   const inject = () => {
     const prisma = new PrismaClient();
@@ -56,21 +52,26 @@ export const DependencyInjector = () => {
 
     // Repositories
     const articleCommandRepository = createArticleCommandRepository(prisma);
-    const articleCommentCommandRepository = createArticleCommentCommandRepository(prisma);
+    const articleCommentCommandRepository =
+      createArticleCommentCommandRepository(prisma);
     const productCommandRepository = createProductCommandRepository(prisma);
-    const productCommentCommandRepository = createProductCommentCommandRepository(prisma);
-    const productLikeCommandRepository = createProductLikeCommandRepository(prisma);
+    const productCommentCommandRepository =
+      createProductCommentCommandRepository(prisma);
+    const productLikeCommandRepository =
+      createProductLikeCommandRepository(prisma);
     const userCommandRepository = createUserCommandRepository(prisma);
-    const notificationCommandRepository = createNotificationCommandRepository(prisma);
+    const notificationCommandRepository =
+      createNotificationCommandRepository(prisma);
 
     const articleQueryRepository = createArticleQueryRepository(prisma);
-    const articleCommentQueryRepository = createArticleCommentQueryRepository(prisma);
+    const articleCommentQueryRepository =
+      createArticleCommentQueryRepository(prisma);
     const productQueryRepository = createProductQueryRepository(prisma);
-    const productCommentQueryRepository = createProductCommentQueryRepository(prisma);
+    const productCommentQueryRepository =
+      createProductCommentQueryRepository(prisma);
     const userQueryRepository = createUserQueryRepository(prisma);
-    const notificationQueryRepository = createNotificationQueryRepository(prisma);
-
-
+    const notificationQueryRepository =
+      createNotificationQueryRepository(prisma);
 
     // ===== Shared =====
     // Authenticator
@@ -79,93 +80,104 @@ export const DependencyInjector = () => {
     // Event Buses
     const notificationEventBus = NotificationEventBus();
 
-
     // ===== Domain =====
     // Services
     const notificationCommandService = createNotificationCommandService(
       notificationCommandRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const productCommandService = createProductCommandService(
       productCommandRepository,
       productLikeCommandRepository,
       notificationCommandRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const articleCommandService = createArticleCommandService(
       articleCommandRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const articleCommentCommandService = createArticleCommentCommandService(
       articleCommandRepository,
       articleCommentCommandRepository,
       notificationCommandRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const productCommentCommandService = createProductCommentCommandService(
       productCommentCommandRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const userCommandService = createUserCommandService(
       userCommandRepository,
       productCommandRepository,
       authenticator,
-      notificationEventBus
+      notificationEventBus,
     );
-
-
-
 
     const notificationQueryService = createNotificationQueryService(
       redisExternal,
       notificationQueryRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const productQueryService = createProductQueryService(
       redisExternal,
-      productQueryRepository
+      productQueryRepository,
     );
     const articleQueryService = createArticleQueryService(
       redisExternal,
       articleQueryRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const articleCommentQueryService = createArticleCommentQueryService(
       redisExternal,
-      articleCommentQueryRepository
+      articleCommentQueryRepository,
     );
     const productCommentQueryService = createProductCommentQueryService(
       redisExternal,
       productCommentQueryRepository,
-      notificationEventBus
+      notificationEventBus,
     );
     const userQueryService = createUserQueryService(
       redisExternal,
       userQueryRepository,
-      authenticator
+      authenticator,
     );
 
-
-
     const multerMiddleware = new MulterMiddleware();
-
-
 
     // ===== Inbound =====
     // Controllers
     const controllers = [
-      createProductController(productCommandService, productQueryService, authenticator),
-      createArticleController(articleCommandService, articleQueryService, authenticator, multerMiddleware),
+      createProductController(
+        productCommandService,
+        productQueryService,
+        authenticator,
+      ),
+      createArticleController(
+        articleCommandService,
+        articleQueryService,
+        authenticator,
+        multerMiddleware,
+      ),
       createUserController(userCommandService, userQueryService, authenticator),
-      createProductCommentController(productCommentCommandService, productCommentQueryService, authenticator),
-      createArticleCommentController(articleCommentCommandService, articleCommentQueryService, authenticator),
-      createNotificationController(notificationCommandService, notificationQueryService, authenticator),
+      createProductCommentController(
+        productCommentCommandService,
+        productCommentQueryService,
+        authenticator,
+      ),
+      createArticleCommentController(
+        articleCommentCommandService,
+        articleCommentQueryService,
+        authenticator,
+      ),
+      createNotificationController(
+        notificationCommandService,
+        notificationQueryService,
+        authenticator,
+      ),
     ];
 
     // Event Handlers
-    const eventHandlers = [
-      NotificationHandler(notificationEventBus),
-    ];
+    const eventHandlers = [NotificationHandler(notificationEventBus)];
 
     // Servers
     const httpServer = createHttpServer(controllers);

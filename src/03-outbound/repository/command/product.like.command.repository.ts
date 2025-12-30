@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { PersistedProductLike, ProductLike } from "../../../02-application/command/entity/product.like";
+import {
+  PersistedProductLike,
+  ProductLike,
+} from "../../../02-application/command/entity/product.like";
 import { IProductLikeCommandRepository } from "../../../02-application/port/repositories/command/I.product.like.repository";
-
 
 export const createProductLikeCommandRepository = (
   prisma: PrismaClient,

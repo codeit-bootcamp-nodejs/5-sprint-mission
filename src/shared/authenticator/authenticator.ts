@@ -4,9 +4,11 @@ import { expressjwt } from "express-jwt";
 import { NextFunction, Request, Response } from "express";
 import { ExtendedError } from "socket.io/dist/namespace";
 import { Socket } from "socket.io/dist/socket";
-import { BusinessException, BusinessExceptionType } from "../exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../exception/exception";
 import { IUserCommandRepository } from "../../02-application/port/repositories/command/I.user.repository";
-
 
 export class HttpError extends Error {
   constructor(message: string, code: number) {
@@ -23,7 +25,11 @@ export const Authenticator = (userRepository: IUserCommandRepository) => {
     });
   }
 
-  const verifyAccessToken = (req: Request, res: Response, next: NextFunction) => {
+  const verifyAccessToken = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     expressjwt({
       secret: jwtSecret,
       algorithms: ["HS256"],
@@ -31,9 +37,11 @@ export const Authenticator = (userRepository: IUserCommandRepository) => {
     })(req, res, (err) => {
       if (err) {
         if (err.name === "UnauthorizedError") {
-          return next(BusinessException({
-            type: BusinessExceptionType.UNAUTORIZED_REQUEST,
-          }));
+          return next(
+            BusinessException({
+              type: BusinessExceptionType.UNAUTORIZED_REQUEST,
+            }),
+          );
         }
         return next(err);
       }
@@ -65,7 +73,7 @@ export const Authenticator = (userRepository: IUserCommandRepository) => {
         userId: string;
       };
       socket.data.userId = payload.userId;
-    } catch (err) { }
+    } catch (err) {}
     return next();
   };
 

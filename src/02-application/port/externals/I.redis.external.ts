@@ -5,8 +5,8 @@
 // but will be deprecated in the next major version.
 
 export interface IRedisExternal {
-    set(key: string, value: string, ttl?: number): Promise<void>;
-    setIfNotExist(key: string, data: string, ttl?: number): Promise<boolean>;
-    get(key: string): Promise<string | null>;
-    remove(key: string): Promise<undefined>;
+  set(key: string, value: string, ttl?: number): Promise<void>;
+  setIfNotExist(key: string, data: string, ttl?: number): Promise<boolean>;
+  get(key: string): Promise<string | null>;
+  remove(key: string): Promise<undefined>;
 }

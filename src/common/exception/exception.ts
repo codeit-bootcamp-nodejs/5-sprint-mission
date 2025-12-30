@@ -29,7 +29,7 @@ const BusinessExceptionTable: Record<
   },
   [BusinessExceptionType.WRONG_URL]: {
     statusCode: 404,
-    message: "잘못된 경로를 입력했습니다"
+    message: "잘못된 경로를 입력했습니다",
   },
   [BusinessExceptionType.INVALID_PASSWORD]: {
     statusCode: 401,
@@ -106,9 +106,9 @@ export type BusinessExceptionObject = {
 };
 
 export const BusinessException = (options: {
-  statusCode?: number,
-  type: BusinessExceptionType,
-  error?: Error
+  statusCode?: number;
+  type: BusinessExceptionType;
+  error?: Error;
 }): BusinessExceptionObject => {
   const statusCode = options.statusCode;
   const type = options.type;
@@ -117,15 +117,15 @@ export const BusinessException = (options: {
 
   return {
     statusCode,
-    type, 
+    type,
     error,
     message,
-    isBusinessException: true
+    isBusinessException: true,
   };
 };
 
-export const isBusinessException = (error: any): error is BusinessExceptionObject => {
+export const isBusinessException = (
+  error: any,
+): error is BusinessExceptionObject => {
   return error && error.isBusinessException === true;
 };
-
-

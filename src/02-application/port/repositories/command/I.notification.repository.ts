@@ -1,6 +1,7 @@
-import { NewNotification, PersistedNotification } from "../../../command/entity/notification";
-
-
+import {
+  NewNotification,
+  PersistedNotification,
+} from "../../../command/entity/notification";
 
 export interface INotificationCommandRepository {
   create(entity: NewNotification): Promise<PersistedNotification>;

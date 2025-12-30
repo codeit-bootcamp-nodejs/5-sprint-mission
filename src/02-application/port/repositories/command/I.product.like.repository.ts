@@ -1,7 +1,5 @@
 import { PersistedProductLike } from "../../../command/entity/product.like";
 
-
-
 export interface IProductLikeCommandRepository {
   toggle(
     userId: string,

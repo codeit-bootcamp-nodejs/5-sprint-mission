@@ -1,5 +1,7 @@
-
-import { PersistedProductComment, ProductComment } from "../../02-application/command/entity/product.comment.entity";
+import {
+  PersistedProductComment,
+  ProductComment,
+} from "../../02-application/command/entity/product.comment.entity";
 import { PersistProductComment } from "../repository/command/product.comment.command.repository";
 
 export const ProductCommentMapper = {

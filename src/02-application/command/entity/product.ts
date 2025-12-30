@@ -1,5 +1,7 @@
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
-
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 
 export type PersistedProduct = Product & {
   id: string;
@@ -79,7 +81,7 @@ export const Product = {
       throw BusinessException({
         type: BusinessExceptionType.PARSE_BODY_ERROR,
       });
-    };
+    }
   },
 
   validatePrice: (price: number) => {

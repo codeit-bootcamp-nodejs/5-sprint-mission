@@ -1,4 +1,7 @@
-import { NewArticleComment, PersistedArticleComment } from "../../../command/entity/article.comment";
+import {
+  NewArticleComment,
+  PersistedArticleComment,
+} from "../../../command/entity/article.comment";
 
 export interface IArticleCommentCommandRepository {
   save(entity: NewArticleComment): Promise<PersistedArticleComment>;

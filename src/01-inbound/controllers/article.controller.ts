@@ -14,7 +14,7 @@ export const createArticleController = (
   _articleCommandService: ArticleCommandServiceType,
   _articleQueryService: ArticleQueryServiceType,
   _auth: AuthenticatorType,
-  _multerMiddleware: MulterMiddleware
+  _multerMiddleware: MulterMiddleware,
 ) => {
   const { basePath, router, validate, errorHandler } =
     BaseController("/articles");
@@ -27,7 +27,7 @@ export const createArticleController = (
     router.post(
       "/images",
       errorHandler(_multerMiddleware.handlerImages("images")),
-      errorHandler(uploadtoS3)
+      errorHandler(uploadtoS3),
     );
 
     // 글 작성
@@ -66,16 +66,18 @@ export const createArticleController = (
     }
 
     // multer-s3 adds `location` with the public URL when acl: 'public-read'
-    const images = files.map((f) => ({
-      url: (f && (f.location || f.url)) || null,
-      key: f && f.key,
-      bucket: f && f.bucket,
-      size: f && f.size,
-      mimeType: f && (f.mimetype || f.contentType)
-    })).filter((x) => x.url);
+    const images = files
+      .map((f) => ({
+        url: (f && (f.location || f.url)) || null,
+        key: f && f.key,
+        bucket: f && f.bucket,
+        size: f && f.size,
+        mimeType: f && (f.mimetype || f.contentType),
+      }))
+      .filter((x) => x.url);
 
     return res.status(200).json({ images });
-  }
+  };
 
   const createArticle = async (req: Request, res: Response) => {
     const body = validate(articleBodySchema, req.body);
@@ -98,7 +100,8 @@ export const createArticleController = (
 
   const getArticles = async (req: Request, res: Response) => {
     const articleReqDto = validate(querySchema, req.query);
-    const articlesResDtos = await articleQueryService.getAllArticles(articleReqDto);
+    const articlesResDtos =
+      await articleQueryService.getAllArticles(articleReqDto);
     return res.json(articlesResDtos);
   };
 

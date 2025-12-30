@@ -1,9 +1,6 @@
 import { QueryType } from "../../../../01-inbound/request/query.request";
 import { NewArticle, PersistedArticle } from "../../../command/entity/article";
 
-
-
-
 export interface IArticleCommandRepository {
   save(entity: NewArticle): Promise<PersistedArticle>;
 

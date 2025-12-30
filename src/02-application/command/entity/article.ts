@@ -1,5 +1,7 @@
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
-
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 
 export type PersistedArticle = Article & {
   id: string;
@@ -48,16 +50,16 @@ export const Article = {
   validateTitle(title: string) {
     if (!title) {
       throw BusinessException({
-        type: BusinessExceptionType.PARSE_BODY_ERROR
-      })
+        type: BusinessExceptionType.PARSE_BODY_ERROR,
+      });
     }
   },
 
   validateContent(content: string) {
     if (!content) {
       throw BusinessException({
-        type: BusinessExceptionType.PARSE_BODY_ERROR
-      })
+        type: BusinessExceptionType.PARSE_BODY_ERROR,
+      });
     }
   },
 };

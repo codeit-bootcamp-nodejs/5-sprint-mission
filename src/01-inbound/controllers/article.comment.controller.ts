@@ -8,7 +8,6 @@ import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { ArticleCommentCommandServiceType } from "../../02-application/command/service/article.comment.command.service";
 import { ArticleCommentQueryServiceType } from "../../02-application/query/service/article.comment.query.service";
 
-
 export const createArticleCommentController = (
   _articleCommentCommandService: ArticleCommentCommandServiceType,
   _articleCommentQueryService: ArticleCommentQueryServiceType,
@@ -49,17 +48,19 @@ export const createArticleCommentController = (
     const body = validate(articleCommentBodySchema, req.body);
     const params = validate(articleCommentParamSchema, req.params);
 
-    const articleCommentResDto = await articleCommentCommandService.createArticleComment({
-      ...body,
-      ...params,
-      userId: req.user.userId,
-    });
+    const articleCommentResDto =
+      await articleCommentCommandService.createArticleComment({
+        ...body,
+        ...params,
+        userId: req.user.userId,
+      });
     return res.status(201).json(articleCommentResDto);
   };
 
   const getArticleComments = async (req: Request, res: Response) => {
     const articleId = req.params.articleId;
-    const comments = await articleCommentQueryService.getArticleComments(articleId);
+    const comments =
+      await articleCommentQueryService.getArticleComments(articleId);
     return res.json(comments);
   };
 
@@ -67,11 +68,12 @@ export const createArticleCommentController = (
     const body = validate(articleCommentBodySchema, req.body);
     const params = validate(articleCommentParamSchema, req.params);
 
-    const articleCommentResDto = await articleCommentCommandService.updateArticleComment({
-      ...body,
-      ...params,
-      userId: req.user.userId,
-    });
+    const articleCommentResDto =
+      await articleCommentCommandService.updateArticleComment({
+        ...body,
+        ...params,
+        userId: req.user.userId,
+      });
     return res.json(articleCommentResDto);
   };
 
@@ -79,7 +81,11 @@ export const createArticleCommentController = (
     const commentId = req.params.commentId;
     const articleId = req.params.articleId;
     const userId = req.user.userId;
-    await articleCommentCommandService.deleteArticleComments(articleId, commentId, userId);
+    await articleCommentCommandService.deleteArticleComments(
+      articleId,
+      commentId,
+      userId,
+    );
     return res.status(200).json();
   };
 
