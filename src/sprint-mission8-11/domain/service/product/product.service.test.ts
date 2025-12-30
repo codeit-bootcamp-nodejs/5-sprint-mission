@@ -17,8 +17,19 @@ describe("product service 유닛 테스트", () => {
   let mockNotificationRepo: INotificationRepo;
   let mockEventBusUtil: IEventBusUtil;
   let productService: ProductService;
+  let mockProduct: PersistProductEntity;
 
-  beforeAll(() => { });
+  beforeAll(() => {
+    mockProduct = {
+      id: "productId",
+      userId: "userId",
+      name: 'Test Product',
+      description: 'desc',
+      price: 1000,
+      tags: [],
+      images: [],
+    } as unknown as PersistProductEntity;
+  });
 
   beforeEach(() => {
     mockProductRepo = {
@@ -65,12 +76,54 @@ describe("product service 유닛 테스트", () => {
   afterEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
-    jest.restoreAllMocks();
+  });
+
+  describe("상품 생성 테스트", () => {
+    const dto: CreateProductDto = {
+      userId: mockProduct.userId!,
+      name: mockProduct.name,
+      description: mockProduct.description,
+      price: mockProduct.price,
+      tags: [],
+      images: [],
+    };
+
+    test("이미 존재하는 상품명이면 예외를 던진다", async () => {
+      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue(mockProduct);
+
+      await expect(
+        productService.createProduct(dto)
+      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_ALREADY_EXIST].message);
+
+      expect(mockTagRepo.findOrCreateTags).not.toHaveBeenCalled();
+      expect(mockProductRepo.create).not.toHaveBeenCalled();
+    });
+
+    test("상품이 정상적으로 생성된다", async () => {
+      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue(null);
+
+      jest.spyOn(TagEntity, "createNew").mockReturnValue({} as NewTagEntity);
+
+      (mockTagRepo.findOrCreateTags as jest.Mock).mockResolvedValue([] as PersistTagEntity[]);
+
+      jest.spyOn(ProductEntity, "createNew").mockReturnValue({} as NewProductEntity);
+
+      (mockProductRepo.create as jest.Mock).mockResolvedValue({} as PersistProductEntity);
+
+      const result = await productService.createProduct(dto);
+
+      expect(mockProductRepo.findProductByName).toHaveBeenCalledWith(dto.name);
+      expect(TagEntity.createNew).toHaveBeenCalled();
+      expect(mockTagRepo.findOrCreateTags).toHaveBeenCalled();
+      expect(ProductEntity.createNew).toHaveBeenCalled();
+      expect(mockProductRepo.create).toHaveBeenCalledWith({} as NewProductEntity);
+      expect(result).toStrictEqual({} as PersistProductEntity);
+    });
   });
 
   describe("한 상품 정보 가져오기 테스트", () => {
     const dto: GetProductDto = {
-      productId: "101cd1a2-dcc7-4c84-aaaf-bcbfc9ad322d"
+      productId: mockProduct.id
     };
 
     test("상품이 존재하지 않으면 비즈니스 예외를 던져야 합니다.", async () => {
@@ -82,13 +135,11 @@ describe("product service 유닛 테스트", () => {
     });
 
     test("상품이 있으면 그대로 반환한다", async () => {
-      const fakeProduct = { id: 'productId' } as PersistProductEntity;
-
-      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(fakeProduct);
+      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(mockProduct);
 
       const result = await productService.getProduct(dto);
 
-      expect(result).toBe(fakeProduct);
+      expect(result).toBe(mockProduct);
     });
   });
 
@@ -176,49 +227,6 @@ describe("product service 유닛 테스트", () => {
       await productService.unlikeProduct(dto);
 
       expect(mockUserLikesProductRepo.delete).toHaveBeenCalled();
-    });
-  });
-
-  describe("상품 생성 테스트", () => {
-    const dto: CreateProductDto = {
-      userId: "user-id",
-      name: "맥북",
-      description: "애플 노트북",
-      price: 3000000,
-      tags: ["전자기기", "노트북"],
-      images: ["img1.png", "img2.png"]
-    };
-
-    test("이미 존재하는 상품명이면 예외를 던진다", async () => {
-      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue({} as PersistProductEntity);
-
-      await expect(
-        productService.createProduct(dto)
-      ).rejects.toThrow(BusinessExceptionTable[BusinessExceptionType.PRODUCT_ALREADY_EXIST].message);
-
-      expect(mockTagRepo.findOrCreateTags).not.toHaveBeenCalled();
-      expect(mockProductRepo.create).not.toHaveBeenCalled();
-    });
-
-    test("상품이 정상적으로 생성된다", async () => {
-      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue(null);
-
-      jest.spyOn(TagEntity, "createNew").mockReturnValue({} as NewTagEntity);
-
-      (mockTagRepo.findOrCreateTags as jest.Mock).mockResolvedValue([] as PersistTagEntity[]);
-
-      jest.spyOn(ProductEntity, "createNew").mockReturnValue({} as NewProductEntity);
-
-      (mockProductRepo.create as jest.Mock).mockResolvedValue({} as PersistProductEntity);
-
-      const result = await productService.createProduct(dto);
-
-      expect(mockProductRepo.findProductByName).toHaveBeenCalledWith(dto.name);
-      expect(TagEntity.createNew).toHaveBeenCalled();
-      expect(mockTagRepo.findOrCreateTags).toHaveBeenCalled();
-      expect(ProductEntity.createNew).toHaveBeenCalled();
-      expect(mockProductRepo.create).toHaveBeenCalledWith({} as NewProductEntity);
-      expect(result).toStrictEqual({} as PersistProductEntity);
     });
   });
 
