@@ -2,6 +2,13 @@ networks:
   codeit-network:
     driver: bridge
 
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
+  public:
+
 services:
   server:
     image: ${AWS_ECR_URI}:latest
