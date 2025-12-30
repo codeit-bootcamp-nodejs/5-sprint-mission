@@ -38,7 +38,6 @@ describe("Article Service 단위 테스트", () => {
       remove: jest.fn(),
     };
 
-
     mockArticleQueryRepo = {
       findAll: jest.fn(),
       findById: jest.fn(),
@@ -358,7 +357,7 @@ describe("Article Service 단위 테스트", () => {
       await articleCommandService.deleteArticle(articleId, userId);
 
       // Then
-      expect(spyFindById).toHaveBeenCalledWith(articleId);  
+      expect(spyFindById).toHaveBeenCalledWith(articleId);
       expect(spyFindById).toHaveBeenCalledTimes(1);
       expect(spyRemove).toHaveBeenCalledWith(articleId);
       expect(spyRemove).toHaveBeenCalledTimes(1);

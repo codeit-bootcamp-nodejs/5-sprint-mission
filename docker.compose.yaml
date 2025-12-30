@@ -65,7 +65,7 @@ services:
       - "3000"
     env_file: .env.prod
     environment:
-      - VIRTUAL_HOST=54.180.81.80 
+      - VIRTUAL_HOST=54.180.81.80
       # - VIRTUAL_HOST=api.example.com
       - VIRTUAL_PORT=3000
       # - LETSENCRYPT_HOST=api.example.com
