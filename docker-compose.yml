@@ -10,16 +10,31 @@ volumes:
   public:
 
 services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
+  # nginx.conf 설정 없이 자동으로 할 때
+  # nginx-proxy:
+  #   image: nginxproxy/nginx-proxy
+  #   restart: always
+  #   networks:
+  #     - codeit-network
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  # nginx.conf를 설정하고 수동으로 할 때
+  nginx:
+    image: nginx:latest
     restart: always
-    networks:
-      - codeit-network
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    networks:
+      - codeit-network
+    depends_on:
+      - server
 
   server:
     image: ${AWS_ECR_URI}:latest
