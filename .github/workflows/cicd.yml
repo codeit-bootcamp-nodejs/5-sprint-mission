@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: ["정인성-sprint11"]
   push:
-    branches: ["main"]
+    branches: ["main", "정인성-sprint11"]
 
 jobs:
   ci:
