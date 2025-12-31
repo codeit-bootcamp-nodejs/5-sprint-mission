@@ -1,5 +1,5 @@
 networks:
-  codeit-network:
+  panda-market-network:
     driver: bridge
 
 volumes:
@@ -14,7 +14,7 @@ services:
     image: nginxproxy/nginx-proxy
     restart: always
     networks:
-      - codeit-network
+      - panda-market-network
     ports:
       - "80:80"
       - "443:443"
@@ -26,16 +26,14 @@ services:
       - redis
     image: ${SERVER_IMAGE_NAME}
     restart: always
-    deploy:
-      replicas: 2
     networks:
-      - codeit-network
+      - panda-market-network
     expose:
-      - "4000"
+      - "3000"
     env_file: .env.prod
     environment:
-      - VIRTUAL_HOST=3.39.193.200
-      - VIRTUAL_PORT=4000
+      - VIRTUAL_HOST=54.180.92.17
+      - VIRTUAL_PORT=3000
     volumes:
       - public:/server/public
 
@@ -43,6 +41,6 @@ services:
     image: redis:alpine
     restart: "always"
     networks:
-      - codeit-network
+      - panda-market-network
     expose:
       - "6379"

@@ -1,6 +1,7 @@
 # Github Secrets
-# AWS_ACCESS_KEY_ID(duplicated in .env.prod)
-# AWS_SECRET_ACCESS_KEY(duplicated in .env.prod)
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+# AWS_REGION
 # ECR_SERVER_URI
 # EC2_HOST
 # EC2_USERNAME
@@ -13,7 +14,7 @@ on:
   pull_request:
     branches: ["정인성-sprint11"]
   push:
-    branches: ["main", "정인성-sprint11"]
+    branches: ["main"]
 
 jobs:
   ci:
