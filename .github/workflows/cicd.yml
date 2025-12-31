@@ -31,6 +31,10 @@ jobs:
 
       - name: install dependencies
         run: npm ci
+      
+      - name: create .env.test
+        run: |
+          echo "${{ secrets.ENV_TEST }}" > .env.test
 
       - name: check types
         run: npm run type:check
