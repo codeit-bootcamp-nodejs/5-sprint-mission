@@ -1,15 +1,15 @@
 import { NotificationType } from "@prisma/client";
 import { IArticleCommentService } from "../../../inbound/port/services/article/article-comment.service.interface";
 import { CreateArticleCommentDto, DeleteArticleCommentDto, GetArticleCommentDto, UpdateArticleCommentDto } from "../../../inbound/requests/article/article.req.schemas";
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
 import { CommentKeys, Sort } from "../../../types/query";
 import { PersitstArticleCommentEntity, ArticleCommentEntity } from "../../entity/comment/article-comment.entity";
 import { NotificationEntity } from "../../entity/notification.entity";
 import { NotificationCommentCreatedEvent } from "../../event/notification-comment-created.event";
 import { IArticleCommentRepo } from "../../port/repo/article/article-comment.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
 
 export class ArticleCommentService implements IArticleCommentService {
   constructor(
@@ -37,11 +37,11 @@ export class ArticleCommentService implements IArticleCommentService {
           };
 
     if (limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     if (!articleId) {
-      throw new Exception({ info: EXCEPTIONS.TARGETTYPE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.TARGETTYPE_NOT_EXIST });
     }
 
     const comments = await this._articleCommentRepo.findCommentList(
@@ -51,7 +51,7 @@ export class ArticleCommentService implements IArticleCommentService {
       orderBy,
     )
     if (!comments) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     return comments;
   };
@@ -62,7 +62,7 @@ export class ArticleCommentService implements IArticleCommentService {
 
     const createdComment = await this._articleCommentRepo.create(createCommentEntity);
     if (!createdComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
 
     const createNotification = NotificationEntity.createNew({
@@ -95,10 +95,10 @@ export class ArticleCommentService implements IArticleCommentService {
       dto.commentId
     );
     if (!foundComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     if (dto.userId !== foundComment.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_COMMENT_OWNER });
     }
 
     foundComment.updateContent(dto.content);
@@ -106,7 +106,7 @@ export class ArticleCommentService implements IArticleCommentService {
     const updatedComment = await this._articleCommentRepo.update(foundComment);
 
     if (!updatedComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
 
     return updatedComment;
@@ -116,10 +116,10 @@ export class ArticleCommentService implements IArticleCommentService {
     const foundComment = await this._articleCommentRepo.findCommentById(dto.commentId);
 
     if (!foundComment) {
-      throw new Exception({ info: EXCEPTIONS.COMMENT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.COMMENT_NOT_EXIST });
     }
     if (dto.userId !== foundComment.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_COMMENT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_COMMENT_OWNER });
     }
 
     await this._articleCommentRepo.delete(dto.commentId);

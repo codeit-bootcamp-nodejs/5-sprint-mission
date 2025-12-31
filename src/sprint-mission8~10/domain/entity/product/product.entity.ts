@@ -1,5 +1,5 @@
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
 import { BaseEntity} from "../base.entity";
 import { ProductImageVo } from "./product-image.vo";
 import { ProductTagVo } from "./product-tag.vo";
@@ -103,17 +103,17 @@ export class ProductEntity extends BaseEntity<string> {
 
   static validateNameRule(name: string): void {
     if (name.length > 20) {
-      throw new Exception({ info: EXCEPTIONS.NAME_TOO_LONG });
+      throw new BusinessException({ type: BusinessExceptionType.NAME_TOO_LONG });
     }
   };
   static validateDescriptionRule(description: string) : void{
     if (description.length < 5) {
-      throw new Exception({ info: EXCEPTIONS.DESCRIPTION_TOO_SHORT });
+      throw new BusinessException({ type: BusinessExceptionType.DESCRIPTION_TOO_SHORT });
     }
   };
   static validatePriceIdRule(price: number): void {
     if (price < 0) {
-      throw new Exception({ info: EXCEPTIONS.PRICE_NOT_NEGATIVE_NUMBER });
+      throw new BusinessException({ type: BusinessExceptionType.PRICE_NOT_NEGATIVE_NUMBER });
     }
   };
 

@@ -1,8 +1,6 @@
 import { NotificationType } from "@prisma/client";
 import { IProductService } from "../../../inbound/port/services/product/product.service.interface";
 import { CreateProductDto, DeleteProductDto, GetLikedProductsDto, GetProductDto, GetProductListDto, UpdateProductDto } from "../../../inbound/requests/product/product.req.schemas";
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
 import { ProductKeys, Sort } from "../../../types/query";
 import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
 import { NotificationEntity } from "../../entity/notification.entity";
@@ -15,7 +13,9 @@ import { IProductRepo } from "../../port/repo/product/product.repo.interface";
 import { ITagRepo } from "../../port/repo/tag.repo.interface";
 import { INotificationRepo } from "../../port/repo/notification.repo.interface";
 import { IUserLikesProductRepo } from "../../port/repo/like/user-likes-product.repo.interface";
-import { IEventBusUtil } from "../../../shared/util/event-bus.util";
+import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
 
 export class ProductService implements IProductService {
   constructor(
@@ -29,7 +29,7 @@ export class ProductService implements IProductService {
   async getProduct(dto: GetProductDto): Promise<PersistProductEntity> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
     }
 
     return foundProduct;
@@ -55,7 +55,7 @@ export class ProductService implements IProductService {
           };
 
     if (limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     const foundProductList = await this._productRepo.findProductList(
@@ -70,7 +70,7 @@ export class ProductService implements IProductService {
   async likeProduct(dto: GetLikedProductsDto): Promise<void> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
     }
 
     const newUserLikesProduct = UserLikesProductEntity.createNew(dto);
@@ -81,7 +81,7 @@ export class ProductService implements IProductService {
   async unlikeProduct(dto: GetLikedProductsDto): Promise<void> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
     }
     await this._userLikesproductRepo.delete(dto.userId, dto.productId);
   };
@@ -91,7 +91,7 @@ export class ProductService implements IProductService {
     const foundProduct = await this._productRepo.findProductByName(name);
 
     if (foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_ALREADY_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_ALREADY_EXIST });
     }
 
     const createdTags = await this._tagRepo.findOrCreateTags(tags.map((v) => TagEntity.createNew({ name: v })));
@@ -120,11 +120,11 @@ export class ProductService implements IProductService {
     const prePrice = foundProduct?.price;
 
     if (!foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
     }
 
     if (userId !== foundProduct.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_PRODUCT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER });
     }
 
     const createdTags = await this._tagRepo.findOrCreateTags(tags.map((v) => TagEntity.createNew({ name: v })));
@@ -176,10 +176,10 @@ export class ProductService implements IProductService {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
 
     if (!foundProduct) {
-      throw new Exception({ info: EXCEPTIONS.PRODUCT_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
     }
     if (dto.userId !== foundProduct.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_PRODUCT_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER });
     }
 
     await this._productRepo.delete(dto.productId);

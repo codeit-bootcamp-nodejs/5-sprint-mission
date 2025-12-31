@@ -1,7 +1,7 @@
 import { IUserService } from "../../inbound/port/services/user.service.interface";
 import { SignUpDto, UpdateDto, UpdatePasswordDto, UserLikeListDto, UserProductsDto } from "../../inbound/requests/user/user.req.schemas";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 import { Sort, UserKeys } from "../../types/query";
 import { PersistArticleEntity } from "../entity/article.entity";
 import { PersistProductEntity } from "../entity/product/product.entity";
@@ -23,7 +23,7 @@ export class UserService implements IUserService {
     const foundUser = await this._userRepo.findUserByEmail(dto.email);
 
     if (foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_EXIST });
     }
 
     const newUser = await UserEntity.createNew({
@@ -38,7 +38,7 @@ export class UserService implements IUserService {
   async getUser(id: string): Promise<PersistUserEntity> {
     const foundUser = await this._userRepo.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
     return foundUser;
   };
@@ -61,18 +61,13 @@ export class UserService implements IUserService {
           };
 
     if (dto.limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
-    }
-
-    const productTotalCount = await this._productRepo.count();
-    if (productTotalCount < dto.limit) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_OVERFLOW, value: productTotalCount });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     const foundUser = await this._userRepo.findUserById(dto.id);
 
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     const foundUserProducts = await this._userRepo.findUserProducts(
@@ -82,7 +77,7 @@ export class UserService implements IUserService {
       orderBy,
     );
     if (!foundUserProducts) {
-      throw new Exception({ info: EXCEPTIONS.USER_PRODUCTS_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_PRODUCTS_NOT_EXIST });
     }
 
     return foundUserProducts;
@@ -90,12 +85,12 @@ export class UserService implements IUserService {
 
   async getUserLikeProducts(dto: UserLikeListDto): Promise<PersistProductEntity[]> {
     if (dto.limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     const foundUser = await this._userRepo.findUserById(dto.userId);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     const foundUserLikeProducts = await this._productRepo.findUserLikeProducts(
@@ -104,7 +99,7 @@ export class UserService implements IUserService {
       dto.limit,
     );
     if (!foundUserLikeProducts) {
-      throw new Exception({ info: EXCEPTIONS.USER_LIKEPRODUCTS_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_LIKEPRODUCTS_NOT_EXIST });
     }
 
     return foundUserLikeProducts;
@@ -112,12 +107,12 @@ export class UserService implements IUserService {
 
   async getUserLikeArticles(dto: UserLikeListDto): Promise<PersistArticleEntity[]> {
     if (dto.limit > 20) {
-      throw new Exception({ info: EXCEPTIONS.LIMIT_MAX_20 });
+      throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
     }
 
     const foundUser = await this._userRepo.findUserById(dto.userId);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     const foundUserLikeArticles = await this._articleRepo.findUserLikeArticles(
@@ -126,7 +121,7 @@ export class UserService implements IUserService {
       dto.limit,
     );
     if (!foundUserLikeArticles) {
-      throw new Exception({ info: EXCEPTIONS.USER_LIKEARTICLES_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_LIKEARTICLES_NOT_EXIST });
     }
 
     return foundUserLikeArticles;
@@ -135,7 +130,7 @@ export class UserService implements IUserService {
   async updateUser(dto: UpdateDto): Promise<PersistUserEntity> {
     const foundUser = await this._userRepo.findUserById(dto.id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     foundUser.update(dto);
@@ -148,11 +143,11 @@ export class UserService implements IUserService {
   async updatePasswordUser(dto: UpdatePasswordDto): Promise<PersistUserEntity> {
     const foundUser = await this._userRepo.findUserById(dto.id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     if (!(await foundUser.isPasswordMatch(dto.password, this._hashManager))) {
-      throw new Exception({ info: EXCEPTIONS.PASSWORD_MISMATCH });
+      throw new BusinessException({ type: BusinessExceptionType.PASSWORD_MISMATCH });
     }
 
     await foundUser.updatePassword(dto.updatePassword, this._hashManager);
@@ -163,7 +158,7 @@ export class UserService implements IUserService {
   async deleteUser(id: string): Promise<void> {
     const foundUser = await this._userRepo.findUserById(id);
     if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
     }
 
     await this._userRepo.delete(id);

@@ -1,5 +1,5 @@
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { Exception } from "../../shared/exception/exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 import { BaseEntity } from "./base.entity";
 
 export type NewTagEntity = Omit<TagEntity, 'id' | 'createdAt' | 'updatedAt'>
@@ -44,7 +44,7 @@ export class TagEntity extends BaseEntity<number> {
 
   static validateNameRule(name: string): void {
     if (name.length > 20) {
-      throw new Exception({ info: EXCEPTIONS.NAME_TOO_LONG });
+      throw new BusinessException({ type: BusinessExceptionType.NAME_TOO_LONG });
     }
   };
 }

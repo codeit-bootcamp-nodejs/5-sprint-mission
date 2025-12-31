@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { IConfigUtil } from "./config.util";
-import { Exception } from "../exception/exception";
-import { EXCEPTIONS } from "../const/exception.info";
+import { BusinessExceptionType } from "../const/business.exception.info";
+import { BusinessException } from "../exceptions/business.exception";
 
 interface TokenPayload {
   userId: string;
@@ -38,13 +38,16 @@ export class TokenUtil implements ITokenUtil {
       if (err instanceof Error) {
         if (err.name === "TokenExpiredError") {
           // 토큰 만료 시
-          throw new Exception({ info: EXCEPTIONS.TOKEN_EXPIRED });
+          throw new BusinessException({ type: BusinessExceptionType.TOKEN_EXPIRED });
         } else {
           console.log(err);
-          throw new Exception({ message: "토큰 관련 에러 발생!!!" });
+          throw new BusinessException({ type: BusinessExceptionType.INVALID_TOKEN });
         }
       }
-      throw new Exception({ message: "알 수 없는 토큰 에러" });
+      throw new BusinessException({
+        type: BusinessExceptionType.INVALID_TOKEN,
+        message: "알 수 없는 토큰 에러"
+      });
     }
   };
 }

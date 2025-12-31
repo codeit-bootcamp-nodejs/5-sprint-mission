@@ -7,8 +7,6 @@ import { UserProductsResDto } from "../responses/user/user.products.res.dto";
 import { UserLikeProductsResDto } from "../responses/user/user.like.products.dto";
 import { UserLikeArticlesResDto } from "../responses/user/user.like.articles.dto";
 import { RefreshTokensResDto } from "../responses/user/refresh.tokens.res.dto";
-import { Exception } from "../../shared/exception/exception";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { AuthService } from "../../domain/service/auth.service";
 import { UserService } from "../../domain/service/user.service";
 
@@ -25,10 +23,6 @@ export class UserController extends BaseController{
 
     const { accessToken, foundUser } =
       await this._authService.signInUser(reqDto);
-    if (!foundUser) {
-      throw new Exception({ info: EXCEPTIONS.USER_NOT_EXIST });
-    }
-
     const resDto = new SignInResDto(accessToken, foundUser);
     return res.json(resDto);
   };

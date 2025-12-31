@@ -1,8 +1,8 @@
 import { Server as DefaultWsServer, Socket } from "socket.io";
 import z from "zod";
-import { Exception } from "../../shared/exception/exception";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
-import { IConfigUtil } from "../../shared/util/config.util";
+import { IConfigUtil } from "../../shared/utils/config.util";
+import { BusinessException } from "../../shared/exceptions/business.exception";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
 
 export abstract class BaseGateway {
   constructor(
@@ -14,8 +14,8 @@ export abstract class BaseGateway {
   validate<T extends z.ZodType>(schema: T, data: unknown) {
     const parsedData = schema.safeParse(data);
     if (!parsedData.success) {
-      throw new Exception({
-        info: EXCEPTIONS.ZOD_FORM,
+      throw new BusinessException({
+        type: BusinessExceptionType.ZOD_FORM,
         message: parsedData.error.issues[0].message,
       });
     }
@@ -28,7 +28,7 @@ export abstract class BaseGateway {
       try {
         await handler(data);
       } catch (err) {
-        if (err instanceof Exception) {
+        if (err instanceof BusinessException) {
           const { statusCode, message } = err;
 
           socket.emit("err", { statusCode, message });

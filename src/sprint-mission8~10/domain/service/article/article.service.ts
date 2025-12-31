@@ -1,7 +1,7 @@
 import { IArticleService } from "../../../inbound/port/services/article/article.service.interface";
 import { CreateArticleDto, DeleteArticleDto, GetArticleDto, GetArticleListDto, GetLikedArticlesDto, UpdateArticleDto } from "../../../inbound/requests/article/article.req.schemas";
-import { EXCEPTIONS } from "../../../shared/const/exception.info";
-import { Exception } from "../../../shared/exception/exception";
+import { BusinessExceptionType } from "../../../shared/const/business.exception.info";
+import { BusinessException } from "../../../shared/exceptions/business.exception";
 import { ArticleKeys, Sort } from "../../../types/query";
 import { ArticleEntity, PersistArticleEntity } from "../../entity/article.entity";
 import { UserLikesArticleEntity } from "../../entity/like/user-likes-article.entity";
@@ -16,7 +16,7 @@ export class ArticleService implements IArticleService {
   async getArticle(dto: GetArticleDto): Promise<PersistArticleEntity> {
     const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_NOT_EXIST });
     }
 
     return foundArticle;
@@ -52,7 +52,7 @@ export class ArticleService implements IArticleService {
   async likeArticle(dto: GetLikedArticlesDto): Promise<void> {
     const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_NOT_EXIST });
     }
 
     const likeArticleEntity = UserLikesArticleEntity.createNew({ userId: dto.userId, articleId: dto.articleId });
@@ -63,7 +63,7 @@ export class ArticleService implements IArticleService {
   async unlikeArticle(dto: GetLikedArticlesDto): Promise<void> {
     const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_NOT_EXIST });
     }
 
     await this._userLikesArticleRepo.delete(dto.userId, dto.articleId);
@@ -72,7 +72,7 @@ export class ArticleService implements IArticleService {
   async createArticle(dto: CreateArticleDto): Promise<PersistArticleEntity> {
     const foundArticle = await this._articleRepo.findArticleByTitle(dto.title);
     if (foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_ALREADY_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_ALREADY_EXIST });
     }
     const article = ArticleEntity.createNew(dto);
 
@@ -84,11 +84,11 @@ export class ArticleService implements IArticleService {
   async updateArticle(dto: UpdateArticleDto): Promise<PersistArticleEntity> {
     const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_NOT_EXIST });
     }
 
     if (dto.userId !== foundArticle.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_ARTICLE_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_ARTICLE_OWNER });
     }
     foundArticle.update({
       title: dto.title,
@@ -104,10 +104,10 @@ export class ArticleService implements IArticleService {
   async deleteArticle(dto: DeleteArticleDto): Promise<void> {
     const foundArticle = await this._articleRepo.findArticleById(dto.articleId);
     if (!foundArticle) {
-      throw new Exception({ info: EXCEPTIONS.ARTICLE_NOT_EXIST });
+      throw new BusinessException({ type: BusinessExceptionType.ARTICLE_NOT_EXIST });
     }
     if (dto.userId !== foundArticle.userId) {
-      throw new Exception({ info: EXCEPTIONS.UNAUTHORIZED_ARTICLE_OWNER });
+      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_ARTICLE_OWNER });
     }
     await this._articleRepo.delete(dto.articleId);
   };

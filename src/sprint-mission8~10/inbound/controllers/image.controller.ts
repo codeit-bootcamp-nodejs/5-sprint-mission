@@ -5,6 +5,14 @@ export class ImageController {
   ) {
   }
   uploadImageController: ControllerHandler = async (req, res, next) => {
-    return res.json(`http://localhost:3000/${req.file?.filename}`);
+    if (!req.file) {
+      return res.status(400).json({ message: "파일이 업로드되지 않았습니다." });
+    }
+
+    const file = req.file as Express.MulterS3.File;
+
+    return res.json({
+      imageUrl: file.location
+    });
   };
 }

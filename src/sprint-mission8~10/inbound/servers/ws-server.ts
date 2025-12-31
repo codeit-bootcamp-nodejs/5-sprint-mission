@@ -1,9 +1,9 @@
 import { Server as DefaultHttpServer } from "http";
 import { Server as DefaultWsServer } from "socket.io";
-import { Exception } from "../../shared/exception/exception";
-import { EXCEPTIONS } from "../../shared/const/exception.info";
 import { NotificationGateway } from "../gataways/notification.gateway";
-import { IConfigUtil } from "../../shared/util/config.util";
+import { IConfigUtil } from "../../shared/utils/config.util";
+import { BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class WsServer {
   public readonly io: DefaultWsServer;
@@ -34,8 +34,7 @@ export class WsServer {
             callback(null, true);
           } else {
             callback(
-              new Exception({
-                info: EXCEPTIONS.CORS_ORIGIN_NOT_ALLOWED,
+              new BusinessException({ type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED,
               }),
             );
           }
