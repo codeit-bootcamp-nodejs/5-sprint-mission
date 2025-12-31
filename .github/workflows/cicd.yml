@@ -1,13 +1,3 @@
-# Github Secrets
-# AWS_ACCESS_KEY_ID
-# AWS_SECRET_ACCESS_KEY
-# AWS_REGION
-# ECR_SERVER_URI
-# EC2_HOST
-# EC2_USERNAME
-# EC2_SSH_PRIVATE_KEY
-# ENV
-
 name: ci/cd
 
 on:
@@ -42,14 +32,20 @@ jobs:
 
       - name: install dependencies
         run: npm ci
-      
+
+      # dotenv-cli 설치
+      - name: install dotenv-cli
+        run: npm install -g dotenv-cli
+
+      # .env.test 생성
       - name: create .env.test
-        run: |
-          echo "${{ secrets.ENV_TEST }}" > .env.test
-      
+        run: echo "${{ secrets.ENV_TEST }}" > .env.test
+
+      # prisma generate
       - name: prisma generate
         run: npx prisma generate
-      
+
+      # postgres ready 대기
       - name: wait for postgres
         run: |
           until pg_isready -h localhost -p 5432; do
@@ -57,16 +53,17 @@ jobs:
             sleep 1
           done
 
+      # 테스트용 DB 스키마 적용
       - name: apply prisma schema
-        run: npx dotenv -e .env.test prisma db push
-        
+        run: dotenv -e .env.test -- npx prisma db push
+
+      # 타입/포맷 체크
       - name: check types
         run: npm run type:check
 
       - name: check format
         run: npm run format:check
-      
+
+      # 테스트 실행
       - name: run unit test
         run: npm run test:all
-
-  
