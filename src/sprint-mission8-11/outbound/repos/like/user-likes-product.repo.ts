@@ -3,7 +3,10 @@ import { PersistProductEntity } from "../../../domain/entity/product/product.ent
 import { IUserLikesProductRepo } from "../../../domain/port/repo/like/user-likes-product.repo.interface";
 import { BaseRepo } from "../base.repo";
 
-export class UserLikesProductRepo extends BaseRepo implements IUserLikesProductRepo{
+export class UserLikesProductRepo
+  extends BaseRepo
+  implements IUserLikesProductRepo
+{
   async findLikeUserIdsByProduct(productId: string): Promise<string[]> {
     const likes = await this._prisma.productLike.findMany({
       where: {
@@ -13,16 +16,16 @@ export class UserLikesProductRepo extends BaseRepo implements IUserLikesProductR
         userId: true,
       },
     });
-    return likes.map(like => like.userId);
+    return likes.map((like) => like.userId);
   }
 
   async create(entity: UserLikesProductEntity): Promise<void> {
     await this._prisma.productLike.create({
       data: {
         userId: entity.userId,
-        productId: entity.productId
-      }
-    })
+        productId: entity.productId,
+      },
+    });
   }
 
   async delete(userId: string, productId: string): Promise<void> {
@@ -30,9 +33,9 @@ export class UserLikesProductRepo extends BaseRepo implements IUserLikesProductR
       where: {
         userId_productId: {
           userId,
-          productId
-        }
-      }
-    })
+          productId,
+        },
+      },
+    });
   }
 }

@@ -1,5 +1,9 @@
 import { User } from "@prisma/client";
-import { NewUserEntity, PersistUserEntity, UserEntity } from "../../domain/entity/user.entity";
+import {
+  NewUserEntity,
+  PersistUserEntity,
+  UserEntity,
+} from "../../domain/entity/user.entity";
 
 export type CreateUserData = {
   email: string;
@@ -16,7 +20,7 @@ export type UpdateUserData = {
 };
 
 export class UserMapper {
-  static toCreateData(entity: NewUserEntity) : CreateUserData {
+  static toCreateData(entity: NewUserEntity): CreateUserData {
     return {
       email: entity.email,
       nickname: entity.nickname,
@@ -25,12 +29,12 @@ export class UserMapper {
     };
   }
 
-  static toUpdateData(entity: PersistUserEntity) : UpdateUserData {
+  static toUpdateData(entity: PersistUserEntity): UpdateUserData {
     return {
       nickname: entity.nickname,
       image: entity.image ?? undefined,
       password: entity.password,
-      refreshToken: entity.refreshToken
+      refreshToken: entity.refreshToken,
     };
   }
 

@@ -1,5 +1,9 @@
 import { Notification, NotificationType } from "@prisma/client";
-import { NewNotificationEntity, NotificationEntity, PersistNotificationEntity } from "../../domain/entity/notification.entity";
+import {
+  NewNotificationEntity,
+  NotificationEntity,
+  PersistNotificationEntity,
+} from "../../domain/entity/notification.entity";
 
 export type CreateNotificationData = {
   userId: string;
@@ -18,13 +22,15 @@ export class NotificationMapper {
       userId: entity.userId,
       type: entity.type,
       message: entity.message,
-      isRead: entity.isRead
+      isRead: entity.isRead,
     };
   }
 
-  static toUpdateData(entity: PersistNotificationEntity): UpdateNotificationData {
+  static toUpdateData(
+    entity: PersistNotificationEntity,
+  ): UpdateNotificationData {
     return {
-      isRead: entity.isRead
+      isRead: entity.isRead,
     };
   }
 
@@ -35,7 +41,7 @@ export class NotificationMapper {
       type: entity.type,
       message: entity.message,
       isRead: entity.isRead,
-      createdAt: entity.createdAt
+      createdAt: entity.createdAt,
     });
   }
 }

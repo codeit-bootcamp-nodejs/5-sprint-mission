@@ -5,9 +5,7 @@ import { BusinessException } from "../../shared/exceptions/business.exception";
 import { BusinessExceptionType } from "../../shared/const/business.exception.info";
 
 export abstract class BaseGateway {
-  constructor(
-    private readonly _configUtil: IConfigUtil
-  ) {}
+  constructor(private readonly _configUtil: IConfigUtil) {}
 
   abstract register(io: DefaultWsServer): void;
 

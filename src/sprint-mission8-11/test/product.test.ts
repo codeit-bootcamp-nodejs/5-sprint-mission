@@ -24,7 +24,7 @@ describe("product 통합 테스트", () => {
       data: {
         email: "test@test.com1",
         password: "test123!A",
-        nickname: "테스트유저"
+        nickname: "테스트유저",
       },
     });
 
@@ -132,9 +132,7 @@ describe("product 통합 테스트", () => {
     });
 
     test("댓글 목록 조회", async () => {
-      const res = await request(app).get(
-        `/api/products/${productId}/comments`,
-      );
+      const res = await request(app).get(`/api/products/${productId}/comments`);
 
       expect(res.status).toBe(200);
     });

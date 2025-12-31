@@ -9,7 +9,7 @@ export class ProductRouter extends BaseRouter {
     private readonly _authMiddleware: AuthMiddleware,
     private readonly _productController: ProductController,
     private readonly _productCommentController: ProductCommentController,
-    private readonly _productLikeController: ProductLikeController
+    private readonly _productLikeController: ProductLikeController,
   ) {
     super("/api/products");
     this.registerProductRouter();
@@ -73,9 +73,7 @@ export class ProductRouter extends BaseRouter {
     this.router.post(
       "/:productId/like",
       this.catchException(this._authMiddleware.isUser),
-      this.catchException(
-        this._productLikeController.addProductLikeController,
-      ),
+      this.catchException(this._productLikeController.addProductLikeController),
     );
     this.router.delete(
       "/:productId/like",

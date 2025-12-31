@@ -9,13 +9,12 @@ interface TokenPayload {
 
 export interface ITokenUtil {
   generateAccessToken(payload: TokenPayload): string;
-  generateRefreshToken(payload: TokenPayload): string
-  verifyToken: (token: string) => TokenPayload
+  generateRefreshToken(payload: TokenPayload): string;
+  verifyToken: (token: string) => TokenPayload;
 }
 
 export class TokenUtil implements ITokenUtil {
-  constructor(private _config: IConfigUtil) {
-  }
+  constructor(private _config: IConfigUtil) {}
 
   generateAccessToken(payload: TokenPayload): string {
     return jwt.sign(payload, this._config.getParsed().TOKEN_SECRET, {
@@ -28,7 +27,8 @@ export class TokenUtil implements ITokenUtil {
     });
   }
 
-  verifyToken(token: string) { // payload에 들어있는 변수들 타입 체크
+  verifyToken(token: string) {
+    // payload에 들어있는 변수들 타입 체크
     try {
       return jwt.verify(
         token,
@@ -38,16 +38,20 @@ export class TokenUtil implements ITokenUtil {
       if (err instanceof Error) {
         if (err.name === "TokenExpiredError") {
           // 토큰 만료 시
-          throw new BusinessException({ type: BusinessExceptionType.TOKEN_EXPIRED });
+          throw new BusinessException({
+            type: BusinessExceptionType.TOKEN_EXPIRED,
+          });
         } else {
           console.log(err);
-          throw new BusinessException({ type: BusinessExceptionType.INVALID_TOKEN });
+          throw new BusinessException({
+            type: BusinessExceptionType.INVALID_TOKEN,
+          });
         }
       }
       throw new BusinessException({
         type: BusinessExceptionType.INVALID_TOKEN,
-        message: "알 수 없는 토큰 에러"
+        message: "알 수 없는 토큰 에러",
       });
     }
-  };
+  }
 }

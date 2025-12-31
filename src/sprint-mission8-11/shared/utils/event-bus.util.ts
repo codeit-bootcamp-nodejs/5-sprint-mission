@@ -21,7 +21,6 @@ export class EventBusUtil {
 
   publish<T extends object>(event: T): void {
     const key = event.constructor.name;
-    this.handlers.get(key)?.forEach(h => h(event));
+    this.handlers.get(key)?.forEach((h) => h(event));
   }
-
 }

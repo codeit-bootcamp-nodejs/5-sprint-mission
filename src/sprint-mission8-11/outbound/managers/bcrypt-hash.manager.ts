@@ -11,9 +11,9 @@ export class BcryptHashManager implements IHashManager {
 
   async hash(plainString: string): Promise<string> {
     return await bcrypt.hash(plainString, this._saltLevel);
-  };
+  }
 
-   async compare(plainString: string, hashedString: string): Promise<boolean>{
+  async compare(plainString: string, hashedString: string): Promise<boolean> {
     return await bcrypt.compare(plainString, hashedString);
-  };
+  }
 }

@@ -1,4 +1,8 @@
-import { NewProductEntity, PersistProductEntity, ProductEntity, } from "../../domain/entity/product/product.entity";
+import {
+  NewProductEntity,
+  PersistProductEntity,
+  ProductEntity,
+} from "../../domain/entity/product/product.entity";
 import { ProductTagVo } from "../../domain/entity/product/product-tag.vo";
 import { ProductImageVo } from "../../domain/entity/product/product-image.vo";
 import { PersistProduct } from "../repos/product/product.repo";
@@ -40,7 +44,7 @@ export class ProductMapper {
     return {
       productData: createProductData,
       productImagesData: ProductMapper._mapProductImagesData(entity.images),
-      productTagsData: ProductMapper._mapProductTagsData(entity.tags)
+      productTagsData: ProductMapper._mapProductTagsData(entity.tags),
     };
   }
 
@@ -58,7 +62,7 @@ export class ProductMapper {
     return {
       productData: updateProductData,
       productImagesData: ProductMapper._mapProductImagesData(entity.images),
-      productTagsData: ProductMapper._mapProductTagsData(entity.tags)
+      productTagsData: ProductMapper._mapProductTagsData(entity.tags),
     };
   }
 
@@ -69,15 +73,19 @@ export class ProductMapper {
       name: entity.name,
       description: entity.description,
       price: entity.price,
-      tags: entity.tags.map((v) => ProductTagVo.create({
-        tagId: v.tagId,
-        name: v.tag.name
-      })),
-      images: entity.images.map((v) => ProductImageVo.create({
-        url: v.url
-      })),
+      tags: entity.tags.map((v) =>
+        ProductTagVo.create({
+          tagId: v.tagId,
+          name: v.tag.name,
+        }),
+      ),
+      images: entity.images.map((v) =>
+        ProductImageVo.create({
+          url: v.url,
+        }),
+      ),
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt
+      updatedAt: entity.updatedAt,
     });
   }
 

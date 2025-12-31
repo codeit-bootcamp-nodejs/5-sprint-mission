@@ -1,16 +1,22 @@
 import z from "zod";
 
-export type CreateArticleDto= z.infer<typeof createArticleReqSchema>;
-export type GetArticleDto= z.infer<typeof getArticleReqSchema>;
-export type GetArticleListDto= z.infer<typeof getArticleListReqSchema>;
-export type GetLikedArticlesDto= z.infer<typeof getLikedArticlesReqSchema>;
-export type UpdateArticleDto= z.infer<typeof updateArticleReqSchema>;
-export type DeleteArticleDto= z.infer<typeof deleteArticleReqSchema>;
-export type ArticleLikeDto= z.infer<typeof articleLikeReqSchema>;
-export type CreateArticleCommentDto= z.infer<typeof createArticleCommentReqSchema>;
-export type GetArticleCommentDto= z.infer<typeof getArticleCommentReqSchema>;
-export type UpdateArticleCommentDto= z.infer<typeof updateArticleCommentReqSchema>;
-export type DeleteArticleCommentDto= z.infer<typeof deleteArticleCommentReqSchema>;
+export type CreateArticleDto = z.infer<typeof createArticleReqSchema>;
+export type GetArticleDto = z.infer<typeof getArticleReqSchema>;
+export type GetArticleListDto = z.infer<typeof getArticleListReqSchema>;
+export type GetLikedArticlesDto = z.infer<typeof getLikedArticlesReqSchema>;
+export type UpdateArticleDto = z.infer<typeof updateArticleReqSchema>;
+export type DeleteArticleDto = z.infer<typeof deleteArticleReqSchema>;
+export type ArticleLikeDto = z.infer<typeof articleLikeReqSchema>;
+export type CreateArticleCommentDto = z.infer<
+  typeof createArticleCommentReqSchema
+>;
+export type GetArticleCommentDto = z.infer<typeof getArticleCommentReqSchema>;
+export type UpdateArticleCommentDto = z.infer<
+  typeof updateArticleCommentReqSchema
+>;
+export type DeleteArticleCommentDto = z.infer<
+  typeof deleteArticleCommentReqSchema
+>;
 
 export const createArticleReqSchema = z.object({
   userId: z.string(),
@@ -25,16 +31,16 @@ export const getArticleReqSchema = z.object({
 
 export const getArticleListReqSchema = z.object({
   offset: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.coerce.number().default(0)
+    (v) => (v === "" ? undefined : v),
+    z.coerce.number().default(0),
   ),
   limit: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.coerce.number().default(5)
+    (v) => (v === "" ? undefined : v),
+    z.coerce.number().default(5),
   ),
   sort: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.enum(["recent", "title-asc", "title-desc"]).default("recent")
+    (v) => (v === "" ? undefined : v),
+    z.enum(["recent", "title-asc", "title-desc"]).default("recent"),
   ),
 });
 
@@ -64,7 +70,7 @@ export const articleLikeReqSchema = z.object({
 export const createArticleCommentReqSchema = z.object({
   userId: z.string(),
   articleId: z.string(),
-  content: z.string()
+  content: z.string(),
 });
 
 export const getArticleCommentReqSchema = z.object({
@@ -78,7 +84,7 @@ export const updateArticleCommentReqSchema = z.object({
   userId: z.string(),
   articleId: z.string(),
   commentId: z.coerce.number(),
-  content: z.string()
+  content: z.string(),
 });
 
 export const deleteArticleCommentReqSchema = z.object({

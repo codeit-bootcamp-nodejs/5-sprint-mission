@@ -3,11 +3,7 @@ import { BusinessException } from "../../shared/exceptions/business.exception";
 import { IHashManager } from "../port/managers/hash.manager.interface";
 import { BaseEntity } from "./base.entity";
 
-
-export type NewUserEntity = Omit<
-  UserEntity,
-  "id" | "createdAt" | "updatedAt"
->
+export type NewUserEntity = Omit<UserEntity, "id" | "createdAt" | "updatedAt">;
 
 export interface PersistUserEntity extends UserEntity {
   id: string;
@@ -45,13 +41,13 @@ export class UserEntity extends BaseEntity<string> {
     nickname: string;
     image?: string;
     password: string;
-    hashManager: IHashManager
+    hashManager: IHashManager;
   }): Promise<NewUserEntity> {
     const hashedPassword = await params.hashManager.hash(params.password);
 
     return new UserEntity({
       ...params,
-      password: hashedPassword
+      password: hashedPassword,
     }) as NewUserEntity;
   }
 
@@ -74,11 +70,7 @@ export class UserEntity extends BaseEntity<string> {
     return new UserEntity(params) as PersistUserEntity;
   }
 
-  update(params: {
-    nickname?: string;
-    image?: string;
-
-  }): void {
+  update(params: { nickname?: string; image?: string }): void {
     if (params.nickname) {
       UserEntity.validateNicknameRule(params.nickname);
       this._nickname = params.nickname;
@@ -88,17 +80,28 @@ export class UserEntity extends BaseEntity<string> {
     }
   }
 
-  async isPasswordMatch(password: string, hashManager: IHashManager): Promise<boolean> {
+  async isPasswordMatch(
+    password: string,
+    hashManager: IHashManager,
+  ): Promise<boolean> {
     return await hashManager.compare(password, this._password);
   }
 
-  async updatePassword(newPassword: string, hashManager: IHashManager): Promise<void> {
+  async updatePassword(
+    newPassword: string,
+    hashManager: IHashManager,
+  ): Promise<void> {
     this._password = await hashManager.hash(newPassword);
   }
 
-  async isRefreshTokenMatch(refreshToken: string, hashManager: IHashManager): Promise<boolean> {
-    if(!this._refreshToken) {
-      throw new BusinessException({type: BusinessExceptionType.REFRESHTOKEN_NOT_EXIST});
+  async isRefreshTokenMatch(
+    refreshToken: string,
+    hashManager: IHashManager,
+  ): Promise<boolean> {
+    if (!this._refreshToken) {
+      throw new BusinessException({
+        type: BusinessExceptionType.REFRESHTOKEN_NOT_EXIST,
+      });
     }
 
     return await hashManager.compare(refreshToken, this._refreshToken);
@@ -113,9 +116,7 @@ export class UserEntity extends BaseEntity<string> {
       return;
     }
 
-    if (
-      await hashManager.compare(refreshToken, this._refreshToken)
-    ) {
+    if (await hashManager.compare(refreshToken, this._refreshToken)) {
       return;
     }
 
@@ -126,16 +127,20 @@ export class UserEntity extends BaseEntity<string> {
   deleteRefreshToken(): void {
     this._refreshToken = undefined;
   }
-  
+
   static validateEmailRule(email: string) {
     if (email.length > 30) {
-      throw new BusinessException({ type: BusinessExceptionType.EMAIL_TOO_LONG });
+      throw new BusinessException({
+        type: BusinessExceptionType.EMAIL_TOO_LONG,
+      });
     }
   }
 
   static validateNicknameRule(nickname: string) {
     if (nickname.length > 10) {
-      throw new BusinessException({ type: BusinessExceptionType.NICKNAME_TOO_LONG });
+      throw new BusinessException({
+        type: BusinessExceptionType.NICKNAME_TOO_LONG,
+      });
     }
   }
 

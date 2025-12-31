@@ -9,57 +9,70 @@ import { IUserRepo } from "../port/repo/user.repo.interface";
 
 export type AuthenticatedUserData = {
   accessToken: string;
-  foundUser: PersistUserEntity
-}
+  foundUser: PersistUserEntity;
+};
 
 export class AuthService implements IAuthService {
   constructor(
     private readonly _userRepo: IUserRepo,
     private readonly _hashManager: IHashManager,
-    private readonly _tokenUtil: ITokenUtil
-  ){}
+    private readonly _tokenUtil: ITokenUtil,
+  ) {}
   async signInUser(dto: SignInDto): Promise<AuthenticatedUserData> {
     const foundUser = await this._userRepo.findUserByEmail(dto.email);
     if (!foundUser) {
-      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.USER_NOT_EXIST,
+      });
     }
 
     if (!(await foundUser.isPasswordMatch(dto.password, this._hashManager))) {
-      throw new BusinessException({ type: BusinessExceptionType.PASSWORD_MISMATCH });
+      throw new BusinessException({
+        type: BusinessExceptionType.PASSWORD_MISMATCH,
+      });
     }
 
-    const refreshToken = this._tokenUtil.generateRefreshToken({ userId: foundUser.id });
+    const refreshToken = this._tokenUtil.generateRefreshToken({
+      userId: foundUser.id,
+    });
 
     foundUser.updateRefreshToken(refreshToken, this._hashManager);
     await this._userRepo.update(foundUser);
 
-    const accessToken = this._tokenUtil.generateAccessToken({ userId: foundUser.id });
+    const accessToken = this._tokenUtil.generateAccessToken({
+      userId: foundUser.id,
+    });
 
     return { accessToken, foundUser };
-  };
+  }
 
   async signOutUser(id: string): Promise<void> {
     const foundUser = await this._userRepo.findUserById(id);
 
     if (!foundUser) {
-      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.USER_NOT_EXIST,
+      });
     }
 
     foundUser.deleteRefreshToken();
     await this._userRepo.update(foundUser);
-  };
+  }
 
   async refreshTokens(refreshToken: string): Promise<AuthenticatedUserData> {
     const { userId } = this._tokenUtil.verifyToken(refreshToken);
 
-    const foundUser =
-      await this._userRepo.findUserById(userId);
+    const foundUser = await this._userRepo.findUserById(userId);
 
     if (!foundUser) {
-      throw new BusinessException({ type: BusinessExceptionType.USER_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.USER_NOT_EXIST,
+      });
     }
 
-    if (!(await foundUser.isRefreshTokenMatch(refreshToken, this._hashManager))) {
+    if (
+      !(await foundUser.isRefreshTokenMatch(refreshToken, this._hashManager))
+    ) {
       throw new BusinessException({ type: BusinessExceptionType.INVALID_AUTH });
     }
 
@@ -70,5 +83,5 @@ export class AuthService implements IAuthService {
     const newAccessToken = this._tokenUtil.generateAccessToken({ userId });
 
     return { accessToken: newAccessToken, foundUser };
-  };
+  }
 }

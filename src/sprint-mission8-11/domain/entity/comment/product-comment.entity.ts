@@ -19,12 +19,12 @@ export class ProductCommentEntity extends BaseEntity<number> {
   private _content: string;
 
   constructor(attributes: {
-    id?: number,
-    userId: string,
-    productId: string,
-    content: string,
-    createdAt?: Date,
-    updatedAt?: Date,
+    id?: number;
+    userId: string;
+    productId: string;
+    content: string;
+    createdAt?: Date;
+    updatedAt?: Date;
   }) {
     super(attributes.id, attributes.createdAt, attributes.updatedAt);
     this._userId = attributes.userId;
@@ -32,18 +32,18 @@ export class ProductCommentEntity extends BaseEntity<number> {
     this._productId = attributes.productId;
   }
 
-  static createNew (parmas: {
+  static createNew(parmas: {
     userId: string;
     productId: string;
-    content: string
+    content: string;
   }): NewProductCommentEntity {
     if (parmas.content) {
       this.validateContentRule(parmas.content);
     }
     return new ProductCommentEntity(parmas) as NewProductCommentEntity;
-  };
+  }
 
-  static createPersist (parmas: {
+  static createPersist(parmas: {
     id: number;
     userId: string;
     productId: string;
@@ -52,16 +52,18 @@ export class ProductCommentEntity extends BaseEntity<number> {
     updatedAt: Date;
   }): PersitstProductCommentEntity {
     return new ProductCommentEntity(parmas) as PersitstProductCommentEntity;
-  };
-  
-  updateContent(content: string){
+  }
+
+  updateContent(content: string) {
     ProductCommentEntity.validateContentRule(content);
     this._content = content;
   }
 
   static validateContentRule = (content: string) => {
     if (content.length < 5) {
-      throw new BusinessException({ type: BusinessExceptionType.CONTENT_TOO_SHORT});
+      throw new BusinessException({
+        type: BusinessExceptionType.CONTENT_TOO_SHORT,
+      });
     }
   };
 

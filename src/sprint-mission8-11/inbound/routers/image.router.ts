@@ -4,7 +4,6 @@ import { MulterMiddleware } from "../middlewares/multer.middleware";
 import { BaseRouter } from "./base.router";
 
 export class ImageRouter extends BaseRouter {
-
   constructor(
     private readonly _authMiddleware: AuthMiddleware,
     private readonly _imageController: ImageController,

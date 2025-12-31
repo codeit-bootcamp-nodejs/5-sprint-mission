@@ -2,7 +2,7 @@ import { PersistArticleEntity } from "../../../domain/entity/article.entity";
 
 export class UserLikeArticlesResDto {
   public articles;
-  
+
   constructor(likeArticles: PersistArticleEntity[]) {
     this.articles = likeArticles.map((article) => ({
       ownerId: article.userId,

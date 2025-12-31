@@ -1,7 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { BaseRepo } from "../base.repo";
 import { ProductMapper } from "../../mapper/product.mapper";
-import { NewProductEntity, PersistProductEntity } from "../../../domain/entity/product/product.entity";
+import {
+  NewProductEntity,
+  PersistProductEntity,
+} from "../../../domain/entity/product/product.entity";
 import { IProductRepo } from "../../../domain/port/repo/product/product.repo.interface";
 import { ProductKeys, Sort } from "../../../types/query";
 
@@ -23,30 +26,35 @@ export class ProductRepo extends BaseRepo implements IProductRepo {
       where: {
         name,
       },
-      include: productInclude
+      include: productInclude,
     });
     return product ? ProductMapper.toPersistEntity(product) : null;
-  };
+  }
 
-  async findProductById(productId: string): Promise<PersistProductEntity | null> {
+  async findProductById(
+    productId: string,
+  ): Promise<PersistProductEntity | null> {
     const product = await this._prisma.product.findUnique({
       where: {
         id: productId,
       },
-      include: productInclude
+      include: productInclude,
     });
     return product ? ProductMapper.toPersistEntity(product) : null;
-  };
+  }
 
-  async findProductLike(userId: string, productId: string): Promise<PersistProductEntity | null> {
+  async findProductLike(
+    userId: string,
+    productId: string,
+  ): Promise<PersistProductEntity | null> {
     const likeProduct = await this._prisma.product.findUnique({
       where: {
         id: productId,
         ProductLike: {
           some: {
-            userId
-          }
-        }
+            userId,
+          },
+        },
       },
       include: productInclude,
     });
@@ -56,25 +64,33 @@ export class ProductRepo extends BaseRepo implements IProductRepo {
     }
 
     return ProductMapper.toPersistEntity(likeProduct);
-  };
+  }
 
-  async findProductList(offset: number, limit: number, orderBy: { field: ProductKeys, sort: Sort }): Promise<PersistProductEntity[]> {
+  async findProductList(
+    offset: number,
+    limit: number,
+    orderBy: { field: ProductKeys; sort: Sort },
+  ): Promise<PersistProductEntity[]> {
     const productList = await this._prisma.product.findMany({
       skip: offset,
       take: limit,
       orderBy: {
-        [orderBy.field]: orderBy.sort
+        [orderBy.field]: orderBy.sort,
       },
-      include: productInclude
+      include: productInclude,
     });
 
     return productList.map((product) => ProductMapper.toPersistEntity(product));
-  };
+  }
 
-  async findUserLikeProducts(userId: string, offset: number, limit: number): Promise<PersistProductEntity[] | null> {
+  async findUserLikeProducts(
+    userId: string,
+    offset: number,
+    limit: number,
+  ): Promise<PersistProductEntity[] | null> {
     const userLikeProducts = await this._prisma.productLike.findMany({
       where: {
-        userId
+        userId,
       },
       skip: offset,
       take: limit,
@@ -85,59 +101,62 @@ export class ProductRepo extends BaseRepo implements IProductRepo {
       },
     });
 
-
     if (!userLikeProducts || userLikeProducts.length === 0) return null;
 
-    return userLikeProducts.map(userLikeProduct => ProductMapper.toPersistEntity(userLikeProduct.product));
-  };
+    return userLikeProducts.map((userLikeProduct) =>
+      ProductMapper.toPersistEntity(userLikeProduct.product),
+    );
+  }
 
   async create(entity: NewProductEntity): Promise<PersistProductEntity> {
-    const { productData, productImagesData, productTagsData } = ProductMapper.toCreateData(entity);
+    const { productData, productImagesData, productTagsData } =
+      ProductMapper.toCreateData(entity);
 
     const product = await this._prisma.product.create({
       data: {
         ...productData,
         images: { create: productImagesData },
-        tags: { create: productTagsData }
+        tags: { create: productTagsData },
       },
-      include: productInclude
+      include: productInclude,
     });
 
     return ProductMapper.toPersistEntity(product);
-  };
+  }
 
   async update(entity: PersistProductEntity): Promise<PersistProductEntity> {
-    const { productData, productImagesData, productTagsData } = ProductMapper.toUpdateData(entity);
+    const { productData, productImagesData, productTagsData } =
+      ProductMapper.toUpdateData(entity);
 
     const updatedproduct = await this._prisma.product.update({
       where: { id: entity.id },
       data: {
         ...productData,
         updatedAt: new Date(),
-        images: { 
+        images: {
           deleteMany: {},
-          create: productImagesData
+          create: productImagesData,
         },
         tags: {
           deleteMany: {},
-          create: productTagsData
-        }
+          create: productTagsData,
+        },
       },
-      include: productInclude
+      include: productInclude,
     });
 
     return ProductMapper.toPersistEntity(updatedproduct);
-  };
+  }
 
   async delete(productId: string): Promise<void> {
     await this._prisma.product.delete({
       where: { id: productId },
     });
-  };
+  }
 
   async count(): Promise<number> {
     const totalCount = await this._prisma.product.count();
 
     return totalCount;
-  };
+  }
 }

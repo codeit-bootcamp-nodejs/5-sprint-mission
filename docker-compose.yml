@@ -1,0 +1,48 @@
+networks:
+  codeit-network:
+    driver: bridge
+
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
+  public:
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    restart: always
+    networks:
+      - codeit-network
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  server:
+    depends_on:
+      - redis
+    image: ${SERVER_IMAGE_NAME}
+    restart: always
+    deploy:
+      replicas: 2
+    networks:
+      - codeit-network
+    expose:
+      - "4000"
+    env_file: .env.prod
+    environment:
+      - VIRTUAL_HOST=3.39.193.200
+      - VIRTUAL_PORT=4000
+    volumes:
+      - public:/server/public
+
+  redis:
+    image: redis:alpine
+    restart: "always"
+    networks:
+      - codeit-network
+    expose:
+      - "6379"

@@ -2,10 +2,7 @@ export class UserLikesProductEntity {
   private readonly _userId: string;
   private readonly _productId: string;
 
-  constructor(attributes: {
-    userId: string;
-    productId: string;
-  }) {
+  constructor(attributes: { userId: string; productId: string }) {
     this._userId = attributes.userId;
     this._productId = attributes.productId;
   }

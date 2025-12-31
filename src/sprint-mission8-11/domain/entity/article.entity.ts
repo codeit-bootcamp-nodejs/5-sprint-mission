@@ -27,8 +27,8 @@ export class ArticleEntity extends BaseEntity<string> {
     title: string;
     content: string;
     image?: string;
-    createdAt?: Date,
-    updatedAt?: Date,
+    createdAt?: Date;
+    updatedAt?: Date;
   }) {
     super(attributes.id, attributes.createdAt, attributes.updatedAt);
     this._userId = attributes.userId;
@@ -46,7 +46,7 @@ export class ArticleEntity extends BaseEntity<string> {
     this.validateTitleRule(params.title);
     this.validateContentRule(params.content);
     return new ArticleEntity(params) as NewArticleEntity;
-  };
+  }
 
   static createPersist(params: {
     id: string;
@@ -58,13 +58,9 @@ export class ArticleEntity extends BaseEntity<string> {
     updatedAt: Date;
   }): PersistArticleEntity {
     return new ArticleEntity(params) as PersistArticleEntity;
-  };
+  }
 
-  update(params: {
-    title?: string,
-    content?: string,
-    image?: string,
-  }): void {
+  update(params: { title?: string; content?: string; image?: string }): void {
     if (params.title) {
       ArticleEntity.validateTitleRule(params.title);
       this._title = params.title;
@@ -76,20 +72,22 @@ export class ArticleEntity extends BaseEntity<string> {
     if (params.image) {
       this._image = params.image;
     }
-  };
+  }
 
   static validateTitleRule(title: string): void {
     if (title.length > 20) {
       throw new BusinessException({
-        type: BusinessExceptionType.TITLE_TOO_LONG
+        type: BusinessExceptionType.TITLE_TOO_LONG,
       });
     }
-  };
+  }
   static validateContentRule(content: string): void {
     if (content.length < 5) {
-      throw new BusinessException({ type: BusinessExceptionType.CONTENT_TOO_SHORT });
+      throw new BusinessException({
+        type: BusinessExceptionType.CONTENT_TOO_SHORT,
+      });
     }
-  };
+  }
 
   get userId() {
     return this._userId;

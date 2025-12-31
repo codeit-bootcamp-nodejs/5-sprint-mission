@@ -5,8 +5,8 @@ export class GetArticleCommentListResDto {
   public comments;
 
   constructor(comments: PersitstArticleCommentEntity[]) {
-    this.comments = comments.map((comment) => (
-      new BaseArticleCommentResDto(comment)
-    ));
+    this.comments = comments.map(
+      (comment) => new BaseArticleCommentResDto(comment),
+    );
   }
 }

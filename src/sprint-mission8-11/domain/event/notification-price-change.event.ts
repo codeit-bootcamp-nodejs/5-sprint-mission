@@ -8,7 +8,5 @@ type NotificationEventPayload = {
 };
 
 export class NotificationPriceChangeEvent {
-  constructor(
-    public readonly notification: NotificationEventPayload,
-  ) {}
+  constructor(public readonly notification: NotificationEventPayload) {}
 }

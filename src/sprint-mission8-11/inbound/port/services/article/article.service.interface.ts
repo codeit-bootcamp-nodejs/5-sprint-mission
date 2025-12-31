@@ -1,5 +1,12 @@
 import { PersistArticleEntity } from "../../../../domain/entity/article.entity";
-import { CreateArticleDto, DeleteArticleDto, GetArticleDto, GetArticleListDto, GetLikedArticlesDto, UpdateArticleDto } from "../../../requests/article/article.req.schemas";
+import {
+  CreateArticleDto,
+  DeleteArticleDto,
+  GetArticleDto,
+  GetArticleListDto,
+  GetLikedArticlesDto,
+  UpdateArticleDto,
+} from "../../../requests/article/article.req.schemas";
 
 export interface IArticleService {
   getArticle(dto: GetArticleDto): Promise<PersistArticleEntity>;
@@ -8,5 +15,5 @@ export interface IArticleService {
   unlikeArticle(dto: GetLikedArticlesDto): Promise<void>;
   createArticle(dto: CreateArticleDto): Promise<PersistArticleEntity>;
   updateArticle(dto: UpdateArticleDto): Promise<PersistArticleEntity>;
-  deleteArticle(dto: DeleteArticleDto): Promise<void>
+  deleteArticle(dto: DeleteArticleDto): Promise<void>;
 }

@@ -1,11 +1,14 @@
-import express, { NextFunction, Request, RequestHandler, Response } from "express";
+import express, {
+  NextFunction,
+  Request,
+  RequestHandler,
+  Response,
+} from "express";
 
 export class BaseRouter {
   public router;
 
-  constructor(
-    public readonly basePath: string,
-  ) {
+  constructor(public readonly basePath: string) {
     this.basePath = basePath;
     this.router = express.Router();
   }

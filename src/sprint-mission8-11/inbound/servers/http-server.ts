@@ -44,9 +44,12 @@ export class HttpServer {
     // router
     this.app.use(this.userRouter.basePath, this.userRouter.router);
     this.app.use(this.productRouter.basePath, this.productRouter.router);
-    this.app.use(this.articleRouter.basePath, this.articleRouter.router,);
+    this.app.use(this.articleRouter.basePath, this.articleRouter.router);
     this.app.use(this.imageRouter.basePath, this.imageRouter.router);
-    this.app.use(this.notificationRouter.basePath, this.notificationRouter.router);
+    this.app.use(
+      this.notificationRouter.basePath,
+      this.notificationRouter.router,
+    );
 
     // errors
     this.app.use(this.notFoundErrorMiddleware.handler());

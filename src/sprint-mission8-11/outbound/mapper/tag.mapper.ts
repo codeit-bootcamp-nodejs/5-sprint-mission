@@ -1,5 +1,9 @@
 import { Tag } from "@prisma/client";
-import { NewTagEntity, PersistTagEntity, TagEntity } from "../../domain/entity/tag.entity";
+import {
+  NewTagEntity,
+  PersistTagEntity,
+  TagEntity,
+} from "../../domain/entity/tag.entity";
 
 export type CreateTagData = {
   name: string;

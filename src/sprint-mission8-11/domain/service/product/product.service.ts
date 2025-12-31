@@ -1,12 +1,22 @@
 import { NotificationType } from "@prisma/client";
 import { IProductService } from "../../../inbound/port/services/product/product.service.interface";
-import { CreateProductDto, DeleteProductDto, GetLikedProductsDto, GetProductDto, GetProductListDto, UpdateProductDto } from "../../../inbound/requests/product/product.req.schemas";
+import {
+  CreateProductDto,
+  DeleteProductDto,
+  GetLikedProductsDto,
+  GetProductDto,
+  GetProductListDto,
+  UpdateProductDto,
+} from "../../../inbound/requests/product/product.req.schemas";
 import { ProductKeys, Sort } from "../../../types/query";
 import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
 import { NotificationEntity } from "../../entity/notification.entity";
 import { ProductImageVo } from "../../entity/product/product-image.vo";
 import { ProductTagVo } from "../../entity/product/product-tag.vo";
-import { PersistProductEntity, ProductEntity } from "../../entity/product/product.entity";
+import {
+  PersistProductEntity,
+  ProductEntity,
+} from "../../entity/product/product.entity";
 import { TagEntity } from "../../entity/tag.entity";
 import { NotificationPriceChangeEvent } from "../../event/notification-price-change.event";
 import { IProductRepo } from "../../port/repo/product/product.repo.interface";
@@ -23,36 +33,39 @@ export class ProductService implements IProductService {
     private readonly _userLikesproductRepo: IUserLikesProductRepo,
     private readonly _tagRepo: ITagRepo,
     private readonly _notificationRepo: INotificationRepo,
-    private readonly _evenBusUtil: IEventBusUtil
-  ) {
-  }
+    private readonly _evenBusUtil: IEventBusUtil,
+  ) {}
   async getProduct(dto: GetProductDto): Promise<PersistProductEntity> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_NOT_EXIST,
+      });
     }
 
     return foundProduct;
-  };
+  }
 
-  async getProductList(dto: GetProductListDto): Promise<PersistProductEntity[]> {
+  async getProductList(
+    dto: GetProductListDto,
+  ): Promise<PersistProductEntity[]> {
     const { offset, limit, sort } = dto;
 
-    const orderBy: { field: ProductKeys, sort: Sort } =
+    const orderBy: { field: ProductKeys; sort: Sort } =
       sort === "recent"
         ? {
-          field: "updatedAt",
-          sort: "desc"
-        }
+            field: "updatedAt",
+            sort: "desc",
+          }
         : sort === "price-lowest"
           ? {
-            field: "price",
-            sort: "asc"
-          }
+              field: "price",
+              sort: "asc",
+            }
           : {
-            field: "price",
-            sort: "desc"
-          };
+              field: "price",
+              sort: "desc",
+            };
 
     if (limit > 20) {
       throw new BusinessException({ type: BusinessExceptionType.LIMIT_MAX_20 });
@@ -65,53 +78,63 @@ export class ProductService implements IProductService {
     );
 
     return foundProductList;
-  };
+  }
 
   async likeProduct(dto: GetLikedProductsDto): Promise<void> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_NOT_EXIST,
+      });
     }
 
     const newUserLikesProduct = UserLikesProductEntity.createNew(dto);
 
     await this._userLikesproductRepo.create(newUserLikesProduct);
-  };
+  }
 
   async unlikeProduct(dto: GetLikedProductsDto): Promise<void> {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
     if (!foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_NOT_EXIST,
+      });
     }
     await this._userLikesproductRepo.delete(dto.userId, dto.productId);
-  };
+  }
 
   async createProduct(dto: CreateProductDto): Promise<PersistProductEntity> {
     const { userId, name, description, price, tags, images } = dto;
     const foundProduct = await this._productRepo.findProductByName(name);
 
     if (foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_ALREADY_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_ALREADY_EXIST,
+      });
     }
 
-    const createdTags = await this._tagRepo.findOrCreateTags(tags.map((v) => TagEntity.createNew({ name: v })));
+    const createdTags = await this._tagRepo.findOrCreateTags(
+      tags.map((v) => TagEntity.createNew({ name: v })),
+    );
 
     const newProductEntity = ProductEntity.createNew({
       userId,
       name,
       description,
       price,
-      tags: createdTags.map((v) => ProductTagVo.create({
-        tagId: v.id,
-        name: v.name
-      })),
-      images: images.map((v) => ProductImageVo.create({ url: v }))
+      tags: createdTags.map((v) =>
+        ProductTagVo.create({
+          tagId: v.id,
+          name: v.name,
+        }),
+      ),
+      images: images.map((v) => ProductImageVo.create({ url: v })),
     });
 
     const newProduct = await this._productRepo.create(newProductEntity);
 
     return newProduct;
-  };
+  }
 
   async updateProduct(dto: UpdateProductDto): Promise<PersistProductEntity> {
     const { userId, productId, name, description, price, tags, images } = dto;
@@ -120,35 +143,45 @@ export class ProductService implements IProductService {
     const prePrice = foundProduct?.price;
 
     if (!foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_NOT_EXIST,
+      });
     }
 
     if (userId !== foundProduct.userId) {
-      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER });
+      throw new BusinessException({
+        type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER,
+      });
     }
 
-    const createdTags = await this._tagRepo.findOrCreateTags(tags.map((v) => TagEntity.createNew({ name: v })));
+    const createdTags = await this._tagRepo.findOrCreateTags(
+      tags.map((v) => TagEntity.createNew({ name: v })),
+    );
 
     foundProduct.update({
       name,
       description,
       price,
-      tags: createdTags.map((v) => ProductTagVo.create({
-        tagId: v.id,
-        name: v.name
-      })),
-      images: images.map((v) => ProductImageVo.create({ url: v }))
+      tags: createdTags.map((v) =>
+        ProductTagVo.create({
+          tagId: v.id,
+          name: v.name,
+        }),
+      ),
+      images: images.map((v) => ProductImageVo.create({ url: v })),
     });
 
     const updatedProduct = await this._productRepo.update(foundProduct);
 
     if (dto.price && dto.price !== prePrice) {
-      const likeUserIds = await this._userLikesproductRepo.findLikeUserIdsByProduct(updatedProduct.id);
-
+      const likeUserIds =
+        await this._userLikesproductRepo.findLikeUserIdsByProduct(
+          updatedProduct.id,
+        );
 
       if (likeUserIds.length > 0) {
         await Promise.all(
-          likeUserIds.map(userId => {
+          likeUserIds.map((userId) => {
             const notification = NotificationEntity.createNew({
               userId,
               type: NotificationType.PRODUCT_PRICE_CHANGED,
@@ -156,7 +189,7 @@ export class ProductService implements IProductService {
             });
 
             return this._notificationRepo.save(notification);
-          })
+          }),
         );
 
         this._evenBusUtil.publish(
@@ -168,7 +201,7 @@ export class ProductService implements IProductService {
           }),
         );
       }
-    };
+    }
     return updatedProduct;
   }
 
@@ -176,12 +209,16 @@ export class ProductService implements IProductService {
     const foundProduct = await this._productRepo.findProductById(dto.productId);
 
     if (!foundProduct) {
-      throw new BusinessException({ type: BusinessExceptionType.PRODUCT_NOT_EXIST });
+      throw new BusinessException({
+        type: BusinessExceptionType.PRODUCT_NOT_EXIST,
+      });
     }
     if (dto.userId !== foundProduct.userId) {
-      throw new BusinessException({ type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER });
+      throw new BusinessException({
+        type: BusinessExceptionType.UNAUTHORIZED_PRODUCT_OWNER,
+      });
     }
 
     await this._productRepo.delete(dto.productId);
-  };
+  }
 }

@@ -8,7 +8,7 @@ export class BaseArticleCommentResDto {
 
   constructor(entity: PersitstArticleCommentEntity) {
     this.id = entity.id;
-    this.content =entity.content;
+    this.content = entity.content;
     this.createdAt = entity.createdAt;
     this.updatedAt = entity.updatedAt;
   }

@@ -11,8 +11,5 @@ type NotificationEventPayload = {
 };
 
 export class NotificationCommentCreatedEvent {
-  constructor(
-    public readonly notification: NotificationEventPayload,
-    
-  ) {}
+  constructor(public readonly notification: NotificationEventPayload) {}
 }

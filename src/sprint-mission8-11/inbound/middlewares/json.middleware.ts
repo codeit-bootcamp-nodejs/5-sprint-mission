@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import { IConfigUtil } from "../../shared/utils/config.util";
 
 export class JsonMiddleware {

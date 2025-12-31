@@ -14,8 +14,8 @@ export interface IRepos {
   articleComment: IArticleCommentRepo;
   product: IProductRepo;
   productComment: IProductCommentRepo;
-  tag: ITagRepo,
-  userLikesProduct: IUserLikesProductRepo,
-  userLikesArticle: IUserLikesArticleRepo,
-  notification: INotificationRepo,
+  tag: ITagRepo;
+  userLikesProduct: IUserLikesProductRepo;
+  userLikesArticle: IUserLikesArticleRepo;
+  notification: INotificationRepo;
 }

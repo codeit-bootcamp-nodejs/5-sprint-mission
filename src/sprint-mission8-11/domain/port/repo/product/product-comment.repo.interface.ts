@@ -1,5 +1,8 @@
 import { CommentKeys, Sort } from "../../../../types/query";
-import { NewProductCommentEntity, PersitstProductCommentEntity } from "../../../entity/comment/product-comment.entity";
+import {
+  NewProductCommentEntity,
+  PersitstProductCommentEntity,
+} from "../../../entity/comment/product-comment.entity";
 
 export interface IProductCommentRepo {
   findCommentById(id: number): Promise<PersitstProductCommentEntity | null>;
@@ -7,9 +10,14 @@ export interface IProductCommentRepo {
     productId: string,
     cursor: number,
     limit: number,
-    orderBy: { field: CommentKeys, sort: Sort }): Promise<PersitstProductCommentEntity[] | null>;
-  create(entity: NewProductCommentEntity): Promise<PersitstProductCommentEntity>;
-  update(entity: PersitstProductCommentEntity): Promise<PersitstProductCommentEntity>;
+    orderBy: { field: CommentKeys; sort: Sort },
+  ): Promise<PersitstProductCommentEntity[] | null>;
+  create(
+    entity: NewProductCommentEntity,
+  ): Promise<PersitstProductCommentEntity>;
+  update(
+    entity: PersitstProductCommentEntity,
+  ): Promise<PersitstProductCommentEntity>;
   delete(commentId: number): Promise<void>;
-  count(productId: string): Promise<number>
+  count(productId: string): Promise<number>;
 }

@@ -4,12 +4,11 @@ import { IConfigUtil } from "../../shared/utils/config.util";
 import { S3Client } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 
-
 export class MulterMiddleware {
   private _s3Uploader;
 
   constructor(public readonly configUtil: IConfigUtil) {
-    this._s3Uploader = multer({ storage: this._createS3Storage() })
+    this._s3Uploader = multer({ storage: this._createS3Storage() });
   }
 
   handlerImage = (key: string) => {
@@ -27,8 +26,8 @@ export class MulterMiddleware {
       region: this.configUtil.getParsed().AWS_REGION,
       credentials: {
         accessKeyId: this.configUtil.getParsed().AWS_ACCESS_KEY_ID,
-        secretAccessKey: this.configUtil.getParsed().AWS_SECRET_ACCESS_KEY
-      }
+        secretAccessKey: this.configUtil.getParsed().AWS_SECRET_ACCESS_KEY,
+      },
     });
     return multerS3({
       s3: s3Client,
@@ -37,10 +36,11 @@ export class MulterMiddleware {
       key: (req: any, file: any, callback: any) => {
         const originalname = file.originalname;
         const ext = path.extname(originalname);
-        const filename = path.basename(originalname, ext) + "." + Date.now() + ext
+        const filename =
+          path.basename(originalname, ext) + "." + Date.now() + ext;
         callback(null, `images/${filename}`);
       },
-      acl: "public-read"
+      acl: "public-read",
     });
   }
 }

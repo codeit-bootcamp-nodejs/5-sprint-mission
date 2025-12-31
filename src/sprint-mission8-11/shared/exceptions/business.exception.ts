@@ -1,4 +1,7 @@
-import { BusinessExceptionTable, BusinessExceptionType } from "../const/business.exception.info";
+import {
+  BusinessExceptionTable,
+  BusinessExceptionType,
+} from "../const/business.exception.info";
 
 export class BusinessException extends Error {
   public readonly statusCode: number;

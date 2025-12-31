@@ -6,7 +6,9 @@ export class LoggerMiddleware {
 
   constructor(public readonly configUtil: IConfigUtil) {
     this._format =
-      this.configUtil.getParsed().NODE_ENV === "development" ? "dev" : "combined";
+      this.configUtil.getParsed().NODE_ENV === "development"
+        ? "dev"
+        : "combined";
   }
 
   handler = () => {

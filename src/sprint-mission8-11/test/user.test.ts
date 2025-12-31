@@ -33,13 +33,11 @@ describe("user 통합 테스트", () => {
 
   describe("POST /api/user/sign-up - 회원가입", () => {
     test("회원가입 성공", async () => {
-      const res = await request(app)
-        .post("/api/user/sign-up")
-        .send({
-          email: testUser.email,
-          password: testUser.password,
-          nickname: testUser.nickname,
-        });
+      const res = await request(app).post("/api/user/sign-up").send({
+        email: testUser.email,
+        password: testUser.password,
+        nickname: testUser.nickname,
+      });
 
       expect(res.status).toBe(200);
 
@@ -52,13 +50,11 @@ describe("user 통합 테스트", () => {
     });
 
     test("중복 이메일 회원가입 실패", async () => {
-      const res = await request(app)
-        .post("/api/user/sign-up")
-        .send({
-          email: testUser.email,
-          password: testUser.password,
-          nickname: "중복유저",
-        });
+      const res = await request(app).post("/api/user/sign-up").send({
+        email: testUser.email,
+        password: testUser.password,
+        nickname: "중복유저",
+      });
 
       expect(res.status).toBe(409);
     });
@@ -66,12 +62,10 @@ describe("user 통합 테스트", () => {
 
   describe("POST /api/user/sign-in - 로그인", () => {
     test("로그인 성공", async () => {
-      const res = await request(app)
-        .post("/api/user/sign-in")
-        .send({
-          email: testUser.email,
-          password: testUser.password,
-        });
+      const res = await request(app).post("/api/user/sign-in").send({
+        email: testUser.email,
+        password: testUser.password,
+      });
 
       expect(res.status).toBe(200);
 
@@ -80,12 +74,10 @@ describe("user 통합 테스트", () => {
     });
 
     test("비밀번호 틀림 → 로그인 실패", async () => {
-      const res = await request(app)
-        .post("/api/user/sign-in")
-        .send({
-          email: testUser.email,
-          password: "WrongPassword123!",
-        });
+      const res = await request(app).post("/api/user/sign-in").send({
+        email: testUser.email,
+        password: "WrongPassword123!",
+      });
 
       expect(res.status).toBe(401);
     });

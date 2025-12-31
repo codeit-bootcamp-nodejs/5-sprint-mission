@@ -9,7 +9,7 @@ export class ArticleRouter extends BaseRouter {
     private readonly _authMiddleware: AuthMiddleware,
     private readonly _articleController: ArticleController,
     private readonly _articleCommentController: ArticleCommentController,
-    private readonly _articleLikeController: ArticleLikeController
+    private readonly _articleLikeController: ArticleLikeController,
   ) {
     super("/api/articles");
     this.registerArticleRouter();
@@ -73,9 +73,7 @@ export class ArticleRouter extends BaseRouter {
     this.router.post(
       "/:articleId/like",
       this.catchException(this._authMiddleware.isUser),
-      this.catchException(
-        this._articleLikeController.addArticleLikeController,
-      ),
+      this.catchException(this._articleLikeController.addArticleLikeController),
     );
     this.router.delete(
       "/:articleId/like",

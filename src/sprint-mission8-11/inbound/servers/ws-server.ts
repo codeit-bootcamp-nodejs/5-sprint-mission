@@ -11,7 +11,7 @@ export class WsServer {
   constructor(
     public readonly defaultHttpServer: DefaultHttpServer,
     public readonly notificationGateway: NotificationGateway,
-    public readonly configUtil: IConfigUtil
+    public readonly configUtil: IConfigUtil,
   ) {
     const path = "/socket.io";
 
@@ -34,7 +34,8 @@ export class WsServer {
             callback(null, true);
           } else {
             callback(
-              new BusinessException({ type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED,
+              new BusinessException({
+                type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED,
               }),
             );
           }

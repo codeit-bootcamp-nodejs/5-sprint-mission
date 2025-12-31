@@ -6,7 +6,7 @@ export class UserResDto {
   public image;
   public nickname;
   public refreshToken;
-  
+
   constructor(user: PersistUserEntity) {
     this.id = user.id;
     this.email = user.email;

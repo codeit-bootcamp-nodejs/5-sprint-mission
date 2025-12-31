@@ -23,7 +23,8 @@ export class CorsMiddleware {
           callback(null, true);
         } else {
           callback(
-            new BusinessException({ type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED
+            new BusinessException({
+              type: BusinessExceptionType.CORS_ORIGIN_NOT_ALLOWED,
             }),
           );
         }

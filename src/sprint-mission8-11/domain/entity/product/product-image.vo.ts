@@ -1,9 +1,7 @@
-export class ProductImageVo{
+export class ProductImageVo {
   private readonly _url: string;
 
-  constructor(attributes: {
-    url: string;
-  }) {
+  constructor(attributes: { url: string }) {
     this._url = attributes.url;
   }
 
@@ -11,9 +9,7 @@ export class ProductImageVo{
     return this._url;
   }
 
-  static create(params: {
-    url: string;
-  }): ProductImageVo {
-    return new ProductImageVo(params) as ProductImageVo
+  static create(params: { url: string }): ProductImageVo {
+    return new ProductImageVo(params) as ProductImageVo;
   }
 }

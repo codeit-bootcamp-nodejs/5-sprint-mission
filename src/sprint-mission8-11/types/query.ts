@@ -1,7 +1,7 @@
 import { Article } from "@prisma/client";
 
 export type Sort = "asc" | "desc";
-export type ArticleKeys = "updatedAt" | "title"
+export type ArticleKeys = "updatedAt" | "title";
 export type ProductKeys = "updatedAt" | "price";
 export type CommentKeys = "updatedAt" | "id";
 export type UserKeys = "updatedAt" | "email";
@@ -17,4 +17,4 @@ export type BaseQueryType<TSort extends string> = {
   cursor?: number;
   limit: number;
   sort?: TSort;
-}
+};

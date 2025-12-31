@@ -7,10 +7,16 @@ export type GetLikedProductsDto = z.infer<typeof getLikedProductsReqSchema>;
 export type UpdateProductDto = z.infer<typeof updateProductReqSchema>;
 export type DeleteProductDto = z.infer<typeof deleteProductReqSchema>;
 export type ProductLikeDto = z.infer<typeof productLikeReqSchema>;
-export type CreateProductCommentDto = z.infer<typeof createProductCommentReqSchema>;
+export type CreateProductCommentDto = z.infer<
+  typeof createProductCommentReqSchema
+>;
 export type GetProductCommentDto = z.infer<typeof getProductCommentReqSchema>;
-export type UpdateProductCommentDto = z.infer<typeof updateProductCommentReqSchema>;
-export type DeleteProductCommentDto = z.infer<typeof deleteProductCommentReqSchema>;
+export type UpdateProductCommentDto = z.infer<
+  typeof updateProductCommentReqSchema
+>;
+export type DeleteProductCommentDto = z.infer<
+  typeof deleteProductCommentReqSchema
+>;
 
 export const createProductReqSchema = z.object({
   userId: z.string(),
@@ -59,22 +65,22 @@ export const productLikeReqSchema = z.object({
 export const createProductCommentReqSchema = z.object({
   userId: z.string(),
   productId: z.string(),
-  content: z.string()
+  content: z.string(),
 });
 
 export const getProductCommentReqSchema = z.object({
   productId: z.string(),
   cursor: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.coerce.number().default(0)
+    (v) => (v === "" ? undefined : v),
+    z.coerce.number().default(0),
   ),
   limit: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.coerce.number().default(5)
+    (v) => (v === "" ? undefined : v),
+    z.coerce.number().default(5),
   ),
   sort: z.preprocess(
-    (v) => v === "" ? undefined : v,
-    z.enum(["recent", "id-asc", "id-desc"]).default("recent")
+    (v) => (v === "" ? undefined : v),
+    z.enum(["recent", "id-asc", "id-desc"]).default("recent"),
   ),
 });
 
@@ -82,7 +88,7 @@ export const updateProductCommentReqSchema = z.object({
   userId: z.string(),
   productId: z.string(),
   commentId: z.coerce.number(),
-  content: z.string()
+  content: z.string(),
 });
 
 export const deleteProductCommentReqSchema = z.object({

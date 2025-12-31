@@ -6,19 +6,19 @@ import { BusinessException } from "../../shared/exceptions/business.exception";
 export type ControllerHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<Response<any>>;
 
 export class BaseController {
-  constructor() {
-  }
+  constructor() {}
 
   validateOrThrow = <T>(result: ZodSafeParseResult<T>): T => {
     if (!result.success) {
-      throw new BusinessException({ type: BusinessExceptionType.ZOD_FORM,
+      throw new BusinessException({
+        type: BusinessExceptionType.ZOD_FORM,
         message: result.error.issues[0].message,
       });
     }
     return result.data;
-  }
+  };
 }

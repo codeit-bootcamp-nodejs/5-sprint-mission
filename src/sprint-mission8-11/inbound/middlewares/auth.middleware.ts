@@ -9,27 +9,26 @@ export class AuthMiddleware {
 
   isGuest = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-    if(authHeader) {
+    if (authHeader) {
       throw new BusinessException({
         type: BusinessExceptionType.INVALID_AUTH,
-        message: "인증 과정이 필요 없습니다."
-      })
+        message: "인증 과정이 필요 없습니다.",
+      });
     }
-  }
+  };
 
   isUser = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-    if(
+    if (
       !authHeader ||
       authHeader.split(" ").length !== 2 ||
       authHeader.split(" ")[0] !== "Bearer"
     ) {
-      throw new BusinessException({ type: BusinessExceptionType.INVALID_AUTH
-      });
+      throw new BusinessException({ type: BusinessExceptionType.INVALID_AUTH });
     }
 
     const accessToken = authHeader.split(" ")[1];
-    const payload = this._tokenUtil.verifyToken( accessToken);
+    const payload = this._tokenUtil.verifyToken(accessToken);
     req.userId = payload.userId;
     return next();
   };

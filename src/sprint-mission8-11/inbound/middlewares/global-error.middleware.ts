@@ -3,7 +3,7 @@ import { IConfigUtil } from "../../shared/utils/config.util";
 import { BusinessException } from "../../shared/exceptions/business.exception";
 
 export class GlobalErrorMiddleware {
-  constructor(public readonly configUtil: IConfigUtil) { }
+  constructor(public readonly configUtil: IConfigUtil) {}
 
   handler = () => {
     return (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -22,13 +22,12 @@ export class GlobalErrorMiddleware {
       }
 
       res.status(500).json({ message: "알 수 없는 에러 발생!!!" });
-      
-      
+
       if (this.configUtil.getParsed().NODE_ENV === "development") {
         console.error(err);
       } else {
         // TODO: Sentry 도입 후 에러(긴급) 전송
       }
-    }
-  }
+    };
+  };
 }

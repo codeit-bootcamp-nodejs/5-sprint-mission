@@ -1,4 +1,7 @@
-import { TechnicalExceptionTable, TechnicalExceptionType } from "../const/technical.exception.info";
+import {
+  TechnicalExceptionTable,
+  TechnicalExceptionType,
+} from "../const/technical.exception.info";
 
 export class TechnicalException extends Error {
   public readonly type: TechnicalExceptionType;

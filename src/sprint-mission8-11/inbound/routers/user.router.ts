@@ -5,7 +5,7 @@ import { BaseRouter } from "./base.router";
 export class UserRouter extends BaseRouter {
   constructor(
     private readonly _authMiddleware: AuthMiddleware,
-    private readonly _userController: UserController
+    private readonly _userController: UserController,
   ) {
     super("/api/user");
     this.registerUserRouter();

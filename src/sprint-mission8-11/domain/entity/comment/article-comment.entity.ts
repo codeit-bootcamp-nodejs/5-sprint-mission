@@ -20,13 +20,13 @@ export class ArticleCommentEntity extends BaseEntity<number> {
   private _content: string;
 
   constructor(attributes: {
-    id?: number,
-    userId: string,
-    articleUserId?: string,
-    articleId: string,
-    content: string,
-    createdAt?: Date,
-    updatedAt?: Date,
+    id?: number;
+    userId: string;
+    articleUserId?: string;
+    articleId: string;
+    content: string;
+    createdAt?: Date;
+    updatedAt?: Date;
   }) {
     super(attributes.id, attributes.createdAt, attributes.updatedAt);
     this._userId = attributes.userId;
@@ -35,18 +35,18 @@ export class ArticleCommentEntity extends BaseEntity<number> {
     this._articleId = attributes.articleId;
   }
 
-  static createNew (parmas: {
+  static createNew(parmas: {
     userId: string;
     articleId: string;
-    content: string
+    content: string;
   }): NewArticleCommentEntity {
     if (parmas.content) {
       this.validateContentRule(parmas.content);
     }
     return new ArticleCommentEntity(parmas) as NewArticleCommentEntity;
-  };
+  }
 
-  static createPersist (parmas: {
+  static createPersist(parmas: {
     id: number;
     userId: string;
     articleUserId?: string;
@@ -56,16 +56,18 @@ export class ArticleCommentEntity extends BaseEntity<number> {
     updatedAt: Date;
   }): PersitstArticleCommentEntity {
     return new ArticleCommentEntity(parmas) as PersitstArticleCommentEntity;
-  };
-  
-  updateContent(content: string){
+  }
+
+  updateContent(content: string) {
     ArticleCommentEntity.validateContentRule(content);
     this._content = content;
   }
-  
+
   static validateContentRule = (content: string) => {
     if (content.length < 5) {
-      throw new BusinessException({ type: BusinessExceptionType.CONTENT_TOO_SHORT});
+      throw new BusinessException({
+        type: BusinessExceptionType.CONTENT_TOO_SHORT,
+      });
     }
   };
 

@@ -1,5 +1,5 @@
 import request from "supertest";
-import { Application } from "express"
+import { Application } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Injector } from "../injector";
 import { TokenUtil } from "../shared/utils/token.util";
@@ -24,13 +24,13 @@ describe("article 통합 테스트", () => {
       data: {
         email: "test@test.com1",
         password: "test123!A",
-        nickname: "테스트유저"
+        nickname: "테스트유저",
       },
     });
 
     userId = user.id;
-    token = tokenUtil.generateAccessToken({ userId })
-    
+    token = tokenUtil.generateAccessToken({ userId });
+
     // 초기 게시글 생성
     const article = await mockPrismaClient.article.create({
       data: { title: "테스트 게시글", content: "초기 내용", userId },
@@ -56,7 +56,9 @@ describe("article 통합 테스트", () => {
 
       expect(res.status).toBe(200);
 
-      const created = await mockPrismaClient.article.findUnique({ where: { title: "새 게시글" } });
+      const created = await mockPrismaClient.article.findUnique({
+        where: { title: "새 게시글" },
+      });
       expect(created).not.toBeNull();
       expect(created!.title).toBe("새 게시글");
     });
@@ -64,8 +66,7 @@ describe("article 통합 테스트", () => {
 
   describe("GET /api/articles/:articleId - 게시글 조회", () => {
     test("게시글 조회", async () => {
-      const res = await request(app)
-        .get(`/api/articles/${articleId}`)
+      const res = await request(app).get(`/api/articles/${articleId}`);
 
       expect(res.status).toBe(200);
       expect(res.body.id).toBe(articleId);
@@ -89,7 +90,9 @@ describe("article 통합 테스트", () => {
 
       expect(res.status).toBe(200);
 
-      const updated = await mockPrismaClient.article.findUnique({ where: { id: articleId } });
+      const updated = await mockPrismaClient.article.findUnique({
+        where: { id: articleId },
+      });
       expect(updated?.title).toBe("수정된 게시글");
       expect(updated?.content).toBe("수정 내용");
     });
@@ -106,7 +109,9 @@ describe("article 통합 테스트", () => {
 
       expect(res.status).toBe(200);
 
-      const comment = await mockPrismaClient.articleComment.findFirst({ where: { articleId, userId } });
+      const comment = await mockPrismaClient.articleComment.findFirst({
+        where: { articleId, userId },
+      });
       expect(comment).not.toBeNull();
       commentId = comment!.id;
     });
@@ -121,7 +126,7 @@ describe("article 통합 테스트", () => {
 
     test("댓글 수정 및 삭제", async () => {
       const comment = await mockPrismaClient.articleComment.create({
-        data: { articleId, content: "댓글 수정 테스트", userId }
+        data: { articleId, content: "댓글 수정 테스트", userId },
       });
       commentId = comment.id;
 
@@ -132,7 +137,9 @@ describe("article 통합 테스트", () => {
         .send({ content: "댓글 수정 완료!!!!!" });
       expect(resUpdate.status).toBe(200);
 
-      const updated = await mockPrismaClient.articleComment.findUnique({ where: { id: commentId } });
+      const updated = await mockPrismaClient.articleComment.findUnique({
+        where: { id: commentId },
+      });
       expect(updated?.content).toBe("댓글 수정 완료!!!!!");
 
       // 삭제
@@ -141,7 +148,9 @@ describe("article 통합 테스트", () => {
         .set("Authorization", `Bearer ${token}`);
       expect(resDelete.status).toBe(200);
 
-      const deleted = await mockPrismaClient.articleComment.findUnique({ where: { id: commentId } });
+      const deleted = await mockPrismaClient.articleComment.findUnique({
+        where: { id: commentId },
+      });
       expect(deleted).toBeNull();
     });
   });
@@ -153,7 +162,9 @@ describe("article 통합 테스트", () => {
         .set("Authorization", `Bearer ${token}`);
       expect(resLike.status).toBe(200);
 
-      const liked = await mockPrismaClient.articleLike.findFirst({ where: { articleId, userId } });
+      const liked = await mockPrismaClient.articleLike.findFirst({
+        where: { articleId, userId },
+      });
       expect(liked).not.toBeNull();
 
       const resCancel = await request(app)
@@ -161,7 +172,9 @@ describe("article 통합 테스트", () => {
         .set("Authorization", `Bearer ${token}`);
       expect(resCancel.status).toBe(200);
 
-      const afterCancel = await mockPrismaClient.articleLike.findFirst({ where: { articleId, userId } });
+      const afterCancel = await mockPrismaClient.articleLike.findFirst({
+        where: { articleId, userId },
+      });
       expect(afterCancel).toBeNull();
     });
   });
@@ -174,7 +187,9 @@ describe("article 통합 테스트", () => {
 
       expect(res.status).toBe(200);
 
-      const deleted = await mockPrismaClient.article.findUnique({ where: { id: articleId } });
+      const deleted = await mockPrismaClient.article.findUnique({
+        where: { id: articleId },
+      });
       expect(deleted).toBeNull();
     });
   });

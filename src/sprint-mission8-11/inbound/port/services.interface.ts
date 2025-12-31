@@ -14,4 +14,4 @@ export interface IServices {
   product: IProductService;
   productComment: IProductCommentService;
   notification: INotificationService;
-};
+}

@@ -5,8 +5,8 @@ export class GetProductListResDto {
   public products: BaseProductResDto[];
 
   constructor(productList: PersistProductEntity[]) {
-    this.products = productList.map((product) => (
-      new BaseProductResDto(product)
-    ));
+    this.products = productList.map(
+      (product) => new BaseProductResDto(product),
+    );
   }
 }

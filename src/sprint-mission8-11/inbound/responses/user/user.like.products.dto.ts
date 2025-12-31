@@ -2,7 +2,7 @@ import { PersistProductEntity } from "../../../domain/entity/product/product.ent
 
 export class UserLikeProductsResDto {
   public products;
-  
+
   constructor(likeProducts: PersistProductEntity[]) {
     this.products = likeProducts.map((product) => ({
       ownerId: product.userId,

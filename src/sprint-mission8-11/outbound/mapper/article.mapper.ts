@@ -1,5 +1,9 @@
 import { Article } from "@prisma/client";
-import { ArticleEntity, NewArticleEntity, PersistArticleEntity } from "../../domain/entity/article.entity";
+import {
+  ArticleEntity,
+  NewArticleEntity,
+  PersistArticleEntity,
+} from "../../domain/entity/article.entity";
 
 export type CreateArticleData = {
   userId: string;
@@ -20,7 +24,7 @@ export class ArticleMapper {
       userId: entity.userId,
       title: entity.title,
       content: entity.content,
-      image: entity.image
+      image: entity.image,
     };
   }
 
@@ -28,7 +32,7 @@ export class ArticleMapper {
     return {
       title: entity.title,
       content: entity.content,
-      image: entity.image
+      image: entity.image,
     };
   }
 
@@ -39,8 +43,7 @@ export class ArticleMapper {
       title: entity.title,
       content: entity.content,
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt
+      updatedAt: entity.updatedAt,
     });
   }
-
 }
