@@ -60,13 +60,13 @@ jobs:
           script: |
             echo "${{secrets.ENV}}" > .env.prod
 
-      - name: copy docker-compose.yml to ec2
+      - name: copy files to ec2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yml,nginx/default.conf"
           target: "/home/${{ secrets.EC2_USERNAME }}"
 
       - name: run docker-compose.yml on ec2
