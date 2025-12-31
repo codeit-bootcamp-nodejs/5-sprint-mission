@@ -1,13 +1,31 @@
 import { UserLikesProductEntity } from "../../domain/entity/like/user-likes-product.entity";
-import { PersistProductEntity, ProductEntity, NewProductEntity } from "../../domain/entity/product/product.entity";
-import { TagEntity, NewTagEntity, PersistTagEntity } from "../../domain/entity/tag.entity";
+import {
+  PersistProductEntity,
+  ProductEntity,
+  NewProductEntity,
+} from "../../domain/entity/product/product.entity";
+import {
+  TagEntity,
+  NewTagEntity,
+  PersistTagEntity,
+} from "../../domain/entity/tag.entity";
 import { IUserLikesProductRepo } from "../../domain/port/repo/like/user-likes-product.repo.interface";
 import { INotificationRepo } from "../../domain/port/repo/notification.repo.interface";
 import { IProductRepo } from "../../domain/port/repo/product/product.repo.interface";
 import { ITagRepo } from "../../domain/port/repo/tag.repo.interface";
 import { ProductService } from "../../domain/service/product/product.service";
-import { CreateProductDto, GetProductDto, GetProductListDto, GetLikedProductsDto, UpdateProductDto, DeleteProductDto } from "../../inbound/requests/product/product.req.schemas";
-import { BusinessExceptionTable, BusinessExceptionType } from "../../shared/const/business.exception.info";
+import {
+  CreateProductDto,
+  GetProductDto,
+  GetProductListDto,
+  GetLikedProductsDto,
+  UpdateProductDto,
+  DeleteProductDto,
+} from "../../inbound/requests/product/product.req.schemas";
+import {
+  BusinessExceptionTable,
+  BusinessExceptionType,
+} from "../../shared/const/business.exception.info";
 import { IEventBusUtil } from "../../shared/utils/event-bus.util";
 
 describe("product service 유닛 테스트", () => {
@@ -18,7 +36,7 @@ describe("product service 유닛 테스트", () => {
   let mockEventBusUtil: IEventBusUtil;
   let productService: ProductService;
 
-  beforeAll(() => { });
+  beforeAll(() => {});
 
   beforeEach(() => {
     mockProductRepo = {
@@ -60,7 +78,7 @@ describe("product service 유닛 테스트", () => {
     );
   });
 
-  afterAll(() => { });
+  afterAll(() => {});
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -74,11 +92,13 @@ describe("product service 유닛 테스트", () => {
       description: "애플 노트북",
       price: 3000000,
       tags: ["전자기기", "노트북"],
-      images: ["img1.png", "img2.png"]
+      images: ["img1.png", "img2.png"],
     };
 
     test("이미 존재하는 상품명이면 예외를 던진다", async () => {
-      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue({} as PersistProductEntity);
+      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue(
+        {} as PersistProductEntity,
+      );
 
       await expect(productService.createProduct(dto)).rejects.toThrow(
         BusinessExceptionTable[BusinessExceptionType.PRODUCT_ALREADY_EXIST]
@@ -133,9 +153,11 @@ describe("product service 유닛 테스트", () => {
     });
 
     test("상품이 있으면 그대로 반환한다", async () => {
-      const fakeProduct = { id: 'productId' } as PersistProductEntity;
+      const fakeProduct = { id: "productId" } as PersistProductEntity;
 
-      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(fakeProduct);
+      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(
+        fakeProduct,
+      );
 
       const result = await productService.getProduct(dto);
 
