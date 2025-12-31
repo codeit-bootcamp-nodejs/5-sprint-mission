@@ -8,7 +8,7 @@
     "start": "node src/index.js",
     "format": "prettier --write \"src/sprint-mission8-11/**/*.ts\"",
     "format:check": "prettier --check \"src/sprint-mission8-11/**/*.ts\"",
-    "test:check": "tsc --noEmit",
+    "type:check": "tsc --noEmit",
     "test:user": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/user.test.ts --runInBand",
     "test:product": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/product.test.ts --runInBand",
     "test:article": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/article.test.ts --runInBand",
