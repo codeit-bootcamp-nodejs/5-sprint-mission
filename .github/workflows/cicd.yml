@@ -57,9 +57,9 @@ jobs:
             sleep 1
           done
 
-      - name: prisma db push
-        run: npx prisma db push
-
+      - name: apply prisma schema
+        run: npx dotenv -e .env.test prisma db push
+        
       - name: check types
         run: npm run type:check
 
