@@ -12,7 +12,7 @@
     "test:user": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/user.test.ts --runInBand",
     "test:product": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/product.test.ts --runInBand",
     "test:article": "cross-env NODE_ENV=test && jest src/sprint-mission8-11/test/article.test.ts --runInBand",
-    "test:all": "cross-env NODE_ENV=test && npm run test:user && npm run test:product && npm run test:article"
+    "test:all": "npm run test:user && npm run test:product && npm run test:article"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
