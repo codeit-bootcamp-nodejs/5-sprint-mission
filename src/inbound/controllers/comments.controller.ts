@@ -44,8 +44,6 @@ export const createComment: AuthenticatedHandler = async (
       articleId,
     },
   });
-
-  // 댓글 알림 전송
   await notifyCommentOnArticle(articleId, userId, content);
 
   res.status(201).json(comment);

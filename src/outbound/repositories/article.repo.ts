@@ -57,7 +57,7 @@ export class PrismaArticleRepository implements IArticleRepository {
     ]);
 
     return {
-      items: items.map((item) => this.toDomain(item)),
+      items: items.map((item: any) => this.toDomain(item)),
       total,
     };
   }

@@ -51,7 +51,7 @@ export class PrismaCommentRepository implements ICommentRepository {
     const nextCursor = nextItem ? nextItem.id : null;
 
     return {
-      items: comments.map((item) => this.toDomain(item)),
+      items: comments.map((item: any) => this.toDomain(item)),
       nextCursor,
     };
   }
@@ -75,7 +75,7 @@ export class PrismaCommentRepository implements ICommentRepository {
     const nextCursor = nextItem ? nextItem.id : null;
 
     return {
-      items: comments.map((item) => this.toDomain(item)),
+      items: comments.map((item: any) => this.toDomain(item)),
       nextCursor,
     };
   }

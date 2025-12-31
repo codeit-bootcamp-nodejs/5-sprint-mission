@@ -15,6 +15,9 @@ build/
 .env*
 !.env.example
 
+# Documentation files (contains sensitive info)
+*.txt
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -100,6 +103,7 @@ public/*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.test
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test

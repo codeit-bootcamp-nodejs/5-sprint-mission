@@ -61,7 +61,7 @@ export class PrismaProductRepository implements IProductRepository {
     ]);
 
     return {
-      items: items.map((item) => this.toDomain(item)),
+      items: items.map((item: any) => this.toDomain(item)),
       total,
     };
   }
@@ -120,7 +120,7 @@ export class PrismaProductRepository implements IProductRepository {
       select: { price: true, updatedAt: true },
     });
 
-    return products.map((p) => ({
+    return products.map((p: any) => ({
       price: p.price,
       updatedAt: p.updatedAt,
     }));

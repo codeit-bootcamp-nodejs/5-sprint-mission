@@ -50,7 +50,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
     ]);
 
     return {
-      items: items.map((item) => ({
+      items: items.map((item: any) => ({
         id: item.id,
         recipientId: item.recipientId,
         actorId: item.actorId,
