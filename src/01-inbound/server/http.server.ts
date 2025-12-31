@@ -9,6 +9,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 import { Prisma } from "@prisma/client";
+import { PrismaClientValidationError, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { isBusinessException } from "../../shared/exception/exception";
 import { HttpError } from "../../shared/authenticator/authenticator";
 
@@ -31,11 +32,11 @@ export const createHttpServer = (controllers: any) => {
           return res.status(statusCode).json({ message });
         } else if (
           err.name === "StructError" ||
-          err instanceof Prisma.PrismaClientValidationError
+          err instanceof PrismaClientValidationError
         ) {
           res.status(400).send({ message: err.message });
         } else if (
-          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err instanceof PrismaClientKnownRequestError &&
           err.code === "P2025"
         ) {
           res.sendStatus(404);
@@ -69,8 +70,8 @@ export const createHttpServer = (controllers: any) => {
       return; // Already listening
     }
 
-    defaultHttpServer.listen(3000, () => {
-      console.log("listening at port 3000");
+    defaultHttpServer.listen(process.env.PORT, () => {
+      console.log(`listening at port ${process.env.PORT}`);
     });
   };
 

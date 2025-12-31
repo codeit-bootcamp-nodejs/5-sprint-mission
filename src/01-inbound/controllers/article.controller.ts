@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { BaseController } from "./base.controller";
 import {
   articleBodySchema,
@@ -8,19 +8,28 @@ import { querySchema } from "../request/query.request";
 import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { ArticleCommandServiceType } from "../../02-application/command/service/article.command.service";
 import { ArticleQueryServiceType } from "../../02-application/query/service/article.query.service";
+import { MulterMiddleware } from "../middlewares/multer.middlewares";
 
 export const createArticleController = (
   _articleCommandService: ArticleCommandServiceType,
   _articleQueryService: ArticleQueryServiceType,
   _auth: AuthenticatorType,
+  _multerMiddleware: MulterMiddleware
 ) => {
   const { basePath, router, validate, errorHandler } =
     BaseController("/articles");
-    const articleQueryService = _articleQueryService;
+  const articleQueryService = _articleQueryService;
   const articleCommandService = _articleCommandService;
   const auth = _auth;
 
   const registerRoutes = () => {
+    // 이미지 업로드
+    router.post(
+      "/images",
+      errorHandler(_multerMiddleware.handlerImages("images")),
+      errorHandler(uploadtoS3)
+    );
+
     // 글 작성
     router.post(
       "/",
@@ -48,6 +57,25 @@ export const createArticleController = (
       errorHandler(deleteArticle),
     );
   };
+
+  const uploadtoS3 = async (req: Request, res: Response) => {
+    const files = (req.files as any[]) || [];
+
+    if (!files.length) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    // multer-s3 adds `location` with the public URL when acl: 'public-read'
+    const images = files.map((f) => ({
+      url: (f && (f.location || f.url)) || null,
+      key: f && f.key,
+      bucket: f && f.bucket,
+      size: f && f.size,
+      mimeType: f && (f.mimetype || f.contentType)
+    })).filter((x) => x.url);
+
+    return res.status(200).json({ images });
+  }
 
   const createArticle = async (req: Request, res: Response) => {
     const body = validate(articleBodySchema, req.body);
@@ -92,7 +120,7 @@ export const createArticleController = (
     await articleCommandService.deleteArticle(id, userId);
     res.status(200).json();
   };
-  
+
   registerRoutes();
 
   return {

@@ -5,15 +5,15 @@
   "scripts": {
     "format": "npx pretter --write .",
     "build": "tsc -p .",
-    "start": "npm run build && node dist/app.js",
+    "start": "npm run build && pm2 start infra/ec2/ecosystem.config.js",
     "dev": "nodemon --watch src --exec ts-node ./src/app.ts",
     "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.958.0",
     "@prisma/client": "^6.15.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -24,9 +24,11 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
+    "pm2": "^6.0.14",
     "prisma": "^6.15.0",
     "redis": "^5.10.0",
-    "socket.io": "^4.8.1",
+    "socket.io": "^4.8.3",
     "supertest": "^7.1.4",
     "uuid": "^13.0.0",
     "ws": "^8.18.3",
@@ -43,6 +45,8 @@
     "@types/express": "^5.0.4",
     "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/multer-s3": "^3.0.3",
     "@types/node": "^25.0.3",
     "@types/supertest": "^6.0.3",
     "@types/ws": "^8.18.1",
@@ -53,6 +57,16 @@
     "prettier": "^3.7.4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juho-creator/5-sprint-mission.git"
+  },
+  "bugs": {
+    "url": "https://github.com/juho-creator/5-sprint-mission/issues"
+  },
+  "homepage": "https://github.com/juho-creator/5-sprint-mission#readme",
+  "description": ""
 }

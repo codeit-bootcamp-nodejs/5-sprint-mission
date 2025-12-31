@@ -15,6 +15,7 @@ declare global {
       params?: {
         id?: string;
       };
+      files?: any[];
     }
   }
 }
