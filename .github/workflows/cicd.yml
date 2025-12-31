@@ -38,8 +38,8 @@ jobs:
       - name: check format
         run: npm run format:check
       
-      # - name: run unit test
-      #   run: npm run test:all
+      - name: run unit test
+        run: npm run test:unit
 
   cd:
     needs: ci

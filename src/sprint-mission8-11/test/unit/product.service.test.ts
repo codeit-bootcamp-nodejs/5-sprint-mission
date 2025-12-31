@@ -1,32 +1,14 @@
-import {
-  CreateProductDto,
-  DeleteProductDto,
-  GetLikedProductsDto,
-  GetProductDto,
-  GetProductListDto,
-  UpdateProductDto,
-} from "../../../inbound/requests/product/product.req.schemas";
-import {
-  BusinessExceptionTable,
-  BusinessExceptionType,
-} from "../../../shared/const/business.exception.info";
-import { IEventBusUtil } from "../../../shared/utils/event-bus.util";
-import { UserLikesProductEntity } from "../../entity/like/user-likes-product.entity";
-import {
-  NewProductEntity,
-  PersistProductEntity,
-  ProductEntity,
-} from "../../entity/product/product.entity";
-import {
-  NewTagEntity,
-  PersistTagEntity,
-  TagEntity,
-} from "../../entity/tag.entity";
-import { IUserLikesProductRepo } from "../../port/repo/like/user-likes-product.repo.interface";
-import { INotificationRepo } from "../../port/repo/notification.repo.interface";
-import { IProductRepo } from "../../port/repo/product/product.repo.interface";
-import { ITagRepo } from "../../port/repo/tag.repo.interface";
-import { ProductService } from "./product.service";
+import { UserLikesProductEntity } from "../../domain/entity/like/user-likes-product.entity";
+import { PersistProductEntity, ProductEntity, NewProductEntity } from "../../domain/entity/product/product.entity";
+import { TagEntity, NewTagEntity, PersistTagEntity } from "../../domain/entity/tag.entity";
+import { IUserLikesProductRepo } from "../../domain/port/repo/like/user-likes-product.repo.interface";
+import { INotificationRepo } from "../../domain/port/repo/notification.repo.interface";
+import { IProductRepo } from "../../domain/port/repo/product/product.repo.interface";
+import { ITagRepo } from "../../domain/port/repo/tag.repo.interface";
+import { ProductService } from "../../domain/service/product/product.service";
+import { CreateProductDto, GetProductDto, GetProductListDto, GetLikedProductsDto, UpdateProductDto, DeleteProductDto } from "../../inbound/requests/product/product.req.schemas";
+import { BusinessExceptionTable, BusinessExceptionType } from "../../shared/const/business.exception.info";
+import { IEventBusUtil } from "../../shared/utils/event-bus.util";
 
 describe("product service 유닛 테스트", () => {
   let mockProductRepo: IProductRepo;
@@ -35,19 +17,8 @@ describe("product service 유닛 테스트", () => {
   let mockNotificationRepo: INotificationRepo;
   let mockEventBusUtil: IEventBusUtil;
   let productService: ProductService;
-  let mockProduct: PersistProductEntity;
 
-  beforeAll(() => {
-    mockProduct = {
-      id: "productId",
-      userId: "userId",
-      name: "Test Product",
-      description: "desc",
-      price: 1000,
-      tags: [],
-      images: [],
-    } as unknown as PersistProductEntity;
-  });
+  beforeAll(() => { });
 
   beforeEach(() => {
     mockProductRepo = {
@@ -89,7 +60,7 @@ describe("product service 유닛 테스트", () => {
     );
   });
 
-  afterAll(() => {});
+  afterAll(() => { });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -98,18 +69,16 @@ describe("product service 유닛 테스트", () => {
 
   describe("상품 생성 테스트", () => {
     const dto: CreateProductDto = {
-      userId: mockProduct.userId!,
-      name: mockProduct.name,
-      description: mockProduct.description,
-      price: mockProduct.price,
-      tags: [],
-      images: [],
+      userId: "user-id",
+      name: "맥북",
+      description: "애플 노트북",
+      price: 3000000,
+      tags: ["전자기기", "노트북"],
+      images: ["img1.png", "img2.png"]
     };
 
     test("이미 존재하는 상품명이면 예외를 던진다", async () => {
-      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue(
-        mockProduct,
-      );
+      (mockProductRepo.findProductByName as jest.Mock).mockResolvedValue({} as PersistProductEntity);
 
       await expect(productService.createProduct(dto)).rejects.toThrow(
         BusinessExceptionTable[BusinessExceptionType.PRODUCT_ALREADY_EXIST]
@@ -152,7 +121,7 @@ describe("product service 유닛 테스트", () => {
 
   describe("한 상품 정보 가져오기 테스트", () => {
     const dto: GetProductDto = {
-      productId: mockProduct.id,
+      productId: "productId",
     };
 
     test("상품이 존재하지 않으면 비즈니스 예외를 던져야 합니다.", async () => {
@@ -164,13 +133,13 @@ describe("product service 유닛 테스트", () => {
     });
 
     test("상품이 있으면 그대로 반환한다", async () => {
-      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(
-        mockProduct,
-      );
+      const fakeProduct = { id: 'productId' } as PersistProductEntity;
+
+      (mockProductRepo.findProductById as jest.Mock).mockResolvedValue(fakeProduct);
 
       const result = await productService.getProduct(dto);
 
-      expect(result).toBe(mockProduct);
+      expect(result).toBe(fakeProduct);
     });
   });
 
