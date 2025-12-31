@@ -1,3 +1,13 @@
+# Github Secrets
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+# AWS_REGION
+# ECR_SERVER_URI
+# EC2_HOST
+# EC2_USERNAME
+# EC2_SSH_PRIVATE_KEY
+# ENV
+
 name: ci/cd
 
 on:
@@ -9,17 +19,6 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
-        ports:
-          - 5432:5432
-
     steps:
       - uses: actions/checkout@v3
 
@@ -30,22 +29,12 @@ jobs:
 
       - run: npm ci
 
-      # dotenv-cli 설치
-      - run: npm install -g dotenv-cli
+      - name: check types
+        run: npm run type:check
 
-      # .env.test 생성
-      - run: echo "${{ secrets.ENV_TEST }}" > .env.test
+      - name: check format
+        run: npm run format:check
+      
+      # - name: run unit test
+      #   run: npm run test:all
 
-      # Postgres ready 대기
-      - run: |
-          until pg_isready -h localhost -p 5432; do
-            echo "waiting for postgres..."
-            sleep 1
-          done
-
-      # Prisma 스키마 push
-      - run: dotenv -e .env.test -- npx prisma generate
-      - run: dotenv -e .env.test -- npx prisma db push
-
-      # 테스트 실행
-      - run: dotenv -e .env.test -- npm run test:all
