@@ -39,7 +39,7 @@ export class ConfigUtil implements IConfigUtil {
           ? ".env.dev"
           : process.env.NODE_ENV === "test"
             ? ".env.test"
-            : ".env.prod",
+            : ".env",
     });
     const result = configSchema.safeParse(process.env);
     if (result.success) {
