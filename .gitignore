@@ -7,6 +7,7 @@ prisma/migrations
 
 ### dotenv ###
 .env
+.env.test
 
 ### macOS ###
 # General

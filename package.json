@@ -11,7 +11,8 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "type:check": "tsc --noEmit",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "test:check": "cross-env NODE_ENV=test jest src/test --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.9.2",
     "@types/supertest": "^6.0.3",
+    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
