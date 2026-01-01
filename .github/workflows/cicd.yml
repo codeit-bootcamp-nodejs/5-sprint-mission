@@ -10,6 +10,21 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       PORT: 3000
       NODE_ENV: test
@@ -33,6 +48,9 @@ jobs:
 
       - name: install dependencies
         run: npm ci
+      
+      - name: prisma db push
+        run: npx prisma db push --accept-data-loss
 
       - name: check types
         run: npm run type:check
