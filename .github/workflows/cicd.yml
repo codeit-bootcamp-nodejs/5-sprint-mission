@@ -48,7 +48,7 @@ jobs:
 
       - name: install dependencies
         run: npm ci
-      
+
       - name: prisma db push
         run: npx prisma db push --accept-data-loss
 
