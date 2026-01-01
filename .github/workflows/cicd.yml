@@ -27,7 +27,7 @@ jobs:
 
       - name: check format
         run: npm run format:check
-      
+
       - name: check test
         run: npm run test:check
 
