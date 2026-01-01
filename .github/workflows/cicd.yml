@@ -17,6 +17,10 @@ jobs:
           POSTGRES_DB: test_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
+          JWT_ACCESS_TOKEN_SECRET: test_access_secret_key
+          JWT_REFRESH_TOKEN_SECRET: test_refresh_secret_key
         ports:
           - 5432:5432
         options: >-
@@ -58,8 +62,6 @@ jobs:
         env:
           NODE_ENV: test
           DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
-          JWT_ACCESS_TOKEN_SECRET: test_access_secret_key
-          JWT_REFRESH_TOKEN_SECRET: test_refresh_secret_key
 
   cd:
     needs: ci
