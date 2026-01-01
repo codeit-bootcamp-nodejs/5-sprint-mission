@@ -10,24 +10,16 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          NODE_ENV: test
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
-          JWT_ACCESS_TOKEN_SECRET: test_access_secret_key
-          JWT_REFRESH_TOKEN_SECRET: test_refresh_secret_key
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    env:
+      PORT: 3000
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://test:test@localhost:5432/testdb"
+      ACCESS_TOKEN_SECRET_KEY: testfortest
+      REFRESH_TOKEN_SECRET_KEY: testfortest
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
 
     steps:
       - name: checkout branch
@@ -42,15 +34,6 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - name: create .env.test
-        run: |
-          echo "${{ secrets.ENV_TEST }}" > .env.test
-
-      - name: prisma db push
-        run: npx prisma db push
-        env:
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
-
       - name: check types
         run: npm run type:check
 
@@ -59,9 +42,6 @@ jobs:
 
       - name: check test
         run: npm run test:check
-        env:
-          NODE_ENV: test
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
 
   cd:
     needs: ci
