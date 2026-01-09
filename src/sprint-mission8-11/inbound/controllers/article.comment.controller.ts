@@ -8,7 +8,7 @@ import {
 import { CreateArticleCommentResDto } from "../responses/comment/article/create.article.comment.res.dto";
 import { GetArticleCommentListResDto } from "../responses/comment/article/get.article.comment.list.res.dto";
 import { UpdateArticleCommentResDto } from "../responses/comment/article/update.article.comment.res.dto";
-import { ArticleCommentService } from "../../domain/service/article/article-comment.service";
+import { ArticleCommentService } from "../../application/command/service/article/article-comment.command.service";
 
 export class ArticleCommentController extends BaseController {
   constructor(private readonly _articleCommentService: ArticleCommentService) {

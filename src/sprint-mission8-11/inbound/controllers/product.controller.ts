@@ -10,10 +10,12 @@ import { CreateProductResDto } from "../responses/product/create.product.res.dto
 import { GetProductListResDto } from "../responses/product/get.product.list.res.dto";
 import { GetProductResDto } from "../responses/product/get.product.res.dto";
 import { UpdateProductResDto } from "../responses/product/update.product.res.dto";
-import { ProductService } from "../../domain/service/product/product.service";
+import { ProductCommandService } from "../../application/command/service/product/product.command.service";
 
 export class ProductController extends BaseController {
-  constructor(private readonly _productService: ProductService) {
+  constructor(
+    private readonly _productCommandService: ProductCommandService
+  ) {
     super();
   }
 
@@ -25,7 +27,7 @@ export class ProductController extends BaseController {
       }),
     );
 
-    const createdProduct = await this._productService.createProduct(reqDto);
+    const createdProduct = await this._productCommandService.createProduct(reqDto);
     const createdProductResDto = new CreateProductResDto(createdProduct);
     return res.json(createdProductResDto);
   };
@@ -34,7 +36,7 @@ export class ProductController extends BaseController {
     const reqDto = this.validateOrThrow(
       getProductReqSchema.safeParse(req.params),
     );
-    const getProduct = await this._productService.getProduct(reqDto);
+    const getProduct = await this._productCommandService.getProduct(reqDto);
     const getProductResDto = new GetProductResDto(getProduct);
     return res.json(getProductResDto);
   };
@@ -43,9 +45,10 @@ export class ProductController extends BaseController {
     const reqDto = this.validateOrThrow(
       getProductListReqSchema.safeParse(req.query ?? {}),
     );
-    const getProductList = await this._productService.getProductList(reqDto);
-    const getProductListResDto = new GetProductListResDto(getProductList);
-    return res.json(getProductListResDto);
+    // // // const getProductList = await this._productCommandService.getProductList(reqDto);
+    // // const getProductListResDto = new GetProductListResDto(getProductList);
+    // return res.json(getProductListResDto);
+    return res.sendStatus(200);
   };
 
   updateProductController: ControllerHandler = async (req, res, next) => {
@@ -56,7 +59,7 @@ export class ProductController extends BaseController {
         ...req.params,
       }),
     );
-    const updatedProduct = await this._productService.updateProduct(reqDto);
+    const updatedProduct = await this._productCommandService.updateProduct(reqDto);
     const updatedProductResDto = new UpdateProductResDto(updatedProduct);
     return res.json(updatedProductResDto);
   };
@@ -68,7 +71,7 @@ export class ProductController extends BaseController {
         ...req.params,
       }),
     );
-    const deletedwProduct = await this._productService.deleteProduct(reqDto);
+    const deletedwProduct = await this._productCommandService.deleteProduct(reqDto);
     return res.sendStatus(200);
   };
 }

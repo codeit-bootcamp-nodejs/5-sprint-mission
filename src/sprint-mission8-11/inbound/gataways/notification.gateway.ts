@@ -1,7 +1,7 @@
 import { Server as SocketIoServer } from "socket.io";
 import { BaseGateway } from "./base.gateway";
-import { NotificationCommentCreatedEvent } from "../../domain/event/notification-comment-created.event";
-import { NotificationPriceChangeEvent } from "../../domain/event/notification-price-change.event";
+import { NotificationCommentCreatedEvent } from "../../application/event/notification-comment-created.event";
+import { NotificationPriceChangeEvent } from "../../application/event/notification-price-change.event";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 import { IEventBusUtil } from "../../shared/utils/event-bus.util";
 import { IConfigUtil } from "../../shared/utils/config.util";

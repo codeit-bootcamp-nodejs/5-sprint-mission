@@ -1,11 +1,7 @@
-import {
-  NewProductEntity,
-  PersistProductEntity,
-  ProductEntity,
-} from "../../domain/entity/product/product.entity";
-import { ProductTagVo } from "../../domain/entity/product/product-tag.vo";
-import { ProductImageVo } from "../../domain/entity/product/product-image.vo";
-import { PersistProduct } from "../repos/product/product.repo";
+import { ProductImageVo } from "../../application/command/entity/product/product-image.vo";
+import { ProductTagVo } from "../../application/command/entity/product/product-tag.vo";
+import { NewProductEntity, PersistProductEntity, ProductEntity } from "../../application/command/entity/product/product.entity";
+import { PersistProduct } from "../repos/command/product/product.command.repo";
 
 export type CreateProductData = {
   userId: string;

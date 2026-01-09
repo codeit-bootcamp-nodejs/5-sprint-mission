@@ -1,4 +1,4 @@
-import { ProductCommentService } from "../../domain/service/product/product-comment.service";
+import { ProductCommentCommandService } from "../../application/command/service/product/product-comment.command.service";
 import {
   createProductCommentReqSchema,
   deleteProductCommentReqSchema,
@@ -11,7 +11,7 @@ import { UpdateProductCommentResDto } from "../responses/comment/product/update.
 import { BaseController, ControllerHandler } from "./base.controller";
 
 export class ProductCommentController extends BaseController {
-  constructor(private readonly _productCommentService: ProductCommentService) {
+  constructor(private readonly _productCommentService: ProductCommentCommandService) {
     super();
   }
 

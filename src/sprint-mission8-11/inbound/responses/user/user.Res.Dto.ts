@@ -1,4 +1,4 @@
-import { PersistUserEntity } from "../../../domain/entity/user.entity";
+import { PersistUserEntity } from "../../../application/command/entity/user.entity";
 
 export class UserResDto {
   public id;

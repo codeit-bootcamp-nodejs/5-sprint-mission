@@ -1,9 +1,5 @@
 import { Article } from "@prisma/client";
-import {
-  ArticleEntity,
-  NewArticleEntity,
-  PersistArticleEntity,
-} from "../../domain/entity/article.entity";
+import { NewArticleEntity, PersistArticleEntity, ArticleEntity } from "../../application/command/entity/article.entity";
 
 export type CreateArticleData = {
   userId: string;

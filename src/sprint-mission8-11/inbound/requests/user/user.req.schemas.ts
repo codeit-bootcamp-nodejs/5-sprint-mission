@@ -60,7 +60,7 @@ export const userProductsReqSchema = z
     userId: z.string(),
     offset: z.number().default(0),
     limit: z.number().default(5),
-    sort: z.enum(["recent", "email-asc", "email-desc"]).default("recent"),
+    sort: z.enum(["recent", "price-lowest", "price-highest"]).default("recent"),
   })
   .transform((data) => ({
     ...data,

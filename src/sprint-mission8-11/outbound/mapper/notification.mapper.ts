@@ -1,9 +1,5 @@
 import { Notification, NotificationType } from "@prisma/client";
-import {
-  NewNotificationEntity,
-  NotificationEntity,
-  PersistNotificationEntity,
-} from "../../domain/entity/notification.entity";
+import { NewNotificationEntity, PersistNotificationEntity, NotificationEntity } from "../../application/command/entity/notification.entity";
 
 export type CreateNotificationData = {
   userId: string;

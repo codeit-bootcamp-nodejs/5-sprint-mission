@@ -1,4 +1,4 @@
-import { PersistArticleEntity } from "../../../domain/entity/article.entity";
+import { PersistArticleEntity } from "../../../application/command/entity/article.entity";
 
 export class UserLikeArticlesResDto {
   public articles;

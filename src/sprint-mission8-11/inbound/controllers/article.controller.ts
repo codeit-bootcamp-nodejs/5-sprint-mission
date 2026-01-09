@@ -10,10 +10,10 @@ import { CreateArticleResDto } from "../responses/article/create.article.res.dto
 import { GetArticleListResDto } from "../responses/article/get.article.list.res.dto";
 import { GetArticleResDto } from "../responses/article/get.article.res.dto";
 import { UpdateArticleResDto } from "../responses/article/update.article.res.dto";
-import { ArticleService } from "../../domain/service/article/article.service";
+import { ArticleCommandService } from "../../application/command/service/article/article.command.service";
 
 export class ArticleController extends BaseController {
-  constructor(private readonly _articleService: ArticleService) {
+  constructor(private readonly _articleService: ArticleCommandService) {
     super();
   }
 

@@ -1,6 +1,6 @@
-import { ProductImageVo } from "../../../domain/entity/product/product-image.vo";
-import { ProductTagVo } from "../../../domain/entity/product/product-tag.vo";
-import { PersistProductEntity } from "../../../domain/entity/product/product.entity";
+import { ProductImageVo } from "../../../application/command/entity/product/product-image.vo";
+import { ProductTagVo } from "../../../application/command/entity/product/product-tag.vo";
+import { PersistProductEntity } from "../../../application/command/entity/product/product.entity";
 
 export class BaseProductResDto {
   public id: string;

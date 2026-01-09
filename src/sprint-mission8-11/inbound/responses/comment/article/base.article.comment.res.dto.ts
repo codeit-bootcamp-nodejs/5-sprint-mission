@@ -1,4 +1,4 @@
-import { PersitstArticleCommentEntity } from "../../../../domain/entity/comment/article-comment.entity";
+import { PersitstArticleCommentEntity } from "../../../../application/command/entity/comment/article-comment.entity";
 
 export class BaseArticleCommentResDto {
   public id: number;

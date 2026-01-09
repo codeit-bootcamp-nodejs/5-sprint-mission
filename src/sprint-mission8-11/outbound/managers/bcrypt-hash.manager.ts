@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { IConfigUtil } from "../../shared/utils/config.util";
-import { IHashManager } from "../../domain/port/managers/hash.manager.interface";
+import { IHashManager } from "../../application/port/managers/hash.manager.interface";
 
 export class BcryptHashManager implements IHashManager {
   private readonly _saltLevel;

@@ -1,9 +1,9 @@
 import { BaseController, ControllerHandler } from "./base.controller";
 import { articleLikeReqSchema } from "../requests/article/article.req.schemas";
-import { ArticleService } from "../../domain/service/article/article.service";
+import { ArticleCommandService } from "../../application/command/service/article/article.command.service";
 
 export class ArticleLikeController extends BaseController {
-  constructor(private readonly _articleService: ArticleService) {
+  constructor(private readonly _articleService: ArticleCommandService) {
     super();
   }
 

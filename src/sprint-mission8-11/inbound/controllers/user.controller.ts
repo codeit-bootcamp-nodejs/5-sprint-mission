@@ -11,18 +11,20 @@ import {
   userProductsReqSchema,
 } from "../requests/user/user.req.schemas";
 import { SignInResDto } from "../responses/user/signIn.res.dto";
-import { UserResDto } from "../responses/user/user.Res.Dto";
+import { UserResDto } from "../responses/user/user.res.Dto";
 import { UserProductsResDto } from "../responses/user/user.products.res.dto";
 import { UserLikeProductsResDto } from "../responses/user/user.like.products.dto";
 import { UserLikeArticlesResDto } from "../responses/user/user.like.articles.dto";
 import { RefreshTokensResDto } from "../responses/user/refresh.tokens.res.dto";
-import { AuthService } from "../../domain/service/auth.service";
-import { UserService } from "../../domain/service/user.service";
+import { AuthCommandService } from "../../application/command/service/auth.command.service";
+import { UserCommandService } from "../../application/command/service/user.command.service";
+import { UserQueryService } from "../../application/query/services/user.query.service";
 
 export class UserController extends BaseController {
   constructor(
-    private readonly _authService: AuthService,
-    private readonly _userService: UserService,
+    private readonly _authService: AuthCommandService,
+    private readonly _userCommandService: UserCommandService,
+    private readonly _userQueryService: UserQueryService,
   ) {
     super();
   }
@@ -47,9 +49,8 @@ export class UserController extends BaseController {
   ) => {
     const reqDto = this.validateOrThrow(signUpReqSchema.safeParse(req.body));
 
-    const user = await this._userService.signUpUser(reqDto);
-    const resDto = new UserResDto(user);
-    return res.json(resDto);
+    await this._userCommandService.signUpUser(reqDto);
+    return res.sendStatus(200);
   };
 
   signOutUserController = async (
@@ -74,9 +75,8 @@ export class UserController extends BaseController {
       userIdReqSchema.safeParse({ userId: req.userId }),
     );
 
-    const user = await this._userService.getUser(userId);
-    const resDto = new UserResDto(user);
-    return res.json(resDto);
+    const user = await this._userQueryService.getUser(userId);
+    return res.json(user);
   };
 
   getUserProductsController = async (
@@ -91,9 +91,8 @@ export class UserController extends BaseController {
       }),
     );
     const id = reqDto.userId;
-    const products = await this._userService.getUserProducts(reqDto);
-    const resDto = new UserProductsResDto(products);
-    return res.json(resDto);
+    const products = await this._userQueryService.getProductsBySeller(reqDto);
+    return res.json(products);
   };
 
   getUserLikeProductsController = async (
@@ -108,10 +107,9 @@ export class UserController extends BaseController {
       }),
     );
 
-    const likeProducts = await this._userService.getUserLikeProducts(reqDto);
-    const resDto = new UserLikeProductsResDto(likeProducts);
+    const likeProducts = await this._userQueryService.getUserLikeProducts(reqDto);
 
-    return res.json(resDto);
+    return res.json(likeProducts);
   };
 
   getUserLikeArticlesController = async (
@@ -126,10 +124,10 @@ export class UserController extends BaseController {
       }),
     );
 
-    const likeArticles = await this._userService.getUserLikeArticles(reqDto);
-    const resDto = new UserLikeArticlesResDto(likeArticles);
+    // const likeArticles = await this._userCommandService.getUserLikeArticles(reqDto);
+    // const resDto = new UserLikeArticlesResDto(likeArticles);
 
-    return res.json(resDto);
+    return res.sendStatus(200);
   };
 
   updateUserController = async (
@@ -144,7 +142,7 @@ export class UserController extends BaseController {
       }),
     );
 
-    const user = await this._userService.updateUser(reqDto);
+    const user = await this._userCommandService.updateUser(reqDto);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -161,7 +159,7 @@ export class UserController extends BaseController {
       }),
     );
 
-    const user = await this._userService.updatePasswordUser(reqDto);
+    const user = await this._userCommandService.updatePasswordUser(reqDto);
     const resDto = new UserResDto(user);
     return res.json(resDto);
   };
@@ -175,7 +173,7 @@ export class UserController extends BaseController {
       userIdReqSchema.safeParse({ userId: req.userId }),
     );
 
-    await this._userService.deleteUser(userId);
+    await this._userCommandService.deleteUser(userId);
     return res.sendStatus(200);
   };
 

@@ -1,9 +1,5 @@
 import { User } from "@prisma/client";
-import {
-  NewUserEntity,
-  PersistUserEntity,
-  UserEntity,
-} from "../../domain/entity/user.entity";
+import { NewUserEntity, PersistUserEntity, UserEntity } from "../../application/command/entity/user.entity";
 
 export type CreateUserData = {
   email: string;

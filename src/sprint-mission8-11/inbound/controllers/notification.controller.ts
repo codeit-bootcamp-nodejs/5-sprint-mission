@@ -1,4 +1,4 @@
-import { NotificationService } from "../../domain/service/notification.service";
+import { NotificationCommandService } from "../../application/command/service/notification.command.service";
 import {
   getMyNotificationsReqSchema,
   getUnreadCountReqSchema,
@@ -9,7 +9,7 @@ import { GetUnreadCountResDto } from "../responses/notification/get-unread-count
 import { BaseController, ControllerHandler } from "./base.controller";
 
 export class NotificationController extends BaseController {
-  constructor(private readonly _notificationService: NotificationService) {
+  constructor(private readonly _notificationService: NotificationCommandService) {
     super();
   }
 

@@ -5,21 +5,13 @@ import { ProductRouter } from "./inbound/routers/product.router";
 import { UserRouter } from "./inbound/routers/user.router";
 import { ConfigUtil } from "./shared/utils/config.util";
 import { ITokenUtil, TokenUtil } from "./shared/utils/token.util";
-import { UserRepo } from "./outbound/repos/user.repo";
-import { ProductRepo } from "./outbound/repos/product/product.repo";
-import { ArticleRepo } from "./outbound/repos/article/article.repo";
-import { ProductCommentRepo } from "./outbound/repos/product/product-comment.repo";
-import { UserService } from "./domain/service/user.service";
-import { ArticleService } from "./domain/service/article/article.service";
-import { AuthService } from "./domain/service/auth.service";
-import { ProductService } from "./domain/service/product/product.service";
-import { ArticleCommentService } from "./domain/service/article/article-comment.service";
-import { ProductCommentService } from "./domain/service/product/product-comment.service";
+import { UserCommandService } from "./application/command/service/user.command.service";
+import { ArticleCommandService } from "./application/command/service/article/article.command.service";
+import { AuthCommandService } from "./application/command/service/auth.command.service";
+import { ProductCommandService } from "./application/command/service/product/product.command.service";
+import { ArticleCommentService } from "./application/command/service/article/article-comment.command.service";
+import { ProductCommentCommandService } from "./application/command/service/product/product-comment.command.service";
 import { BcryptHashManager } from "./outbound/managers/bcrypt-hash.manager";
-import { UserLikesProductRepo } from "./outbound/repos/like/user-likes-product.repo";
-import { UserLikesArticleRepo } from "./outbound/repos/like/user-likes-article.repo";
-import { TagRepo } from "./outbound/repos/tag.repo";
-import { ArticleCommentRepo } from "./outbound/repos/article/article-comment.repo";
 import { UserController } from "./inbound/controllers/user.controller";
 import { ProductController } from "./inbound/controllers/product.controller";
 import { ProductCommentController } from "./inbound/controllers/product.comment.controller";
@@ -31,9 +23,8 @@ import { ImageController } from "./inbound/controllers/image.controller";
 import { HttpServer } from "./inbound/servers/http-server";
 import { WsServer } from "./inbound/servers/ws-server";
 import { NotificationGateway } from "./inbound/gataways/notification.gateway";
-import { NotificationRepo } from "./outbound/repos/notification.repo";
 import { EventBusUtil } from "./shared/utils/event-bus.util";
-import { NotificationService } from "./domain/service/notification.service";
+import { NotificationCommandService } from "./application/command/service/notification.command.service";
 import { NotificationController } from "./inbound/controllers/notification.controller";
 import { NotificationRouter } from "./inbound/routers/notification.router";
 import { AuthMiddleware } from "./inbound/middlewares/auth.middleware";
@@ -43,6 +34,19 @@ import { LoggerMiddleware } from "./inbound/middlewares/logger.middleware";
 import { MulterMiddleware } from "./inbound/middlewares/multer.middleware";
 import { NotFoundErrorMiddleware } from "./inbound/middlewares/not-found-error.middleware";
 import { GlobalErrorMiddleware } from "./inbound/middlewares/global-error.middleware";
+import { ArticleCommentCommandRepo } from "./outbound/repos/command/article/article-comment.command.repo";
+import { ArticleCommandRepo } from "./outbound/repos/command/article/article.command.repo";
+import { UserLikesArticleCommandRepo } from "./outbound/repos/command/like/user-likes-article.command.repo";
+import { UserLikesProductCommandRepo } from "./outbound/repos/command/like/user-likes-product.command.repo";
+import { NotificationCommandRepo } from "./outbound/repos/command/notification.command.repo";
+import { ProductCommentCommandRepo } from "./outbound/repos/command/product/product-comment.command.repo";
+import { ProductCommandRepo } from "./outbound/repos/command/product/product.command.repo";
+import { TagCommandRepo } from "./outbound/repos/command/tag.command.repo";
+import { UserCommandRepo } from "./outbound/repos/command/user.command.repo";
+import { UserQueryService } from "./application/query/services/user.query.service";
+import { UserQueryRepo } from "./outbound/repos/query/user.query.repo";
+import { ProductQueryRepo } from "./outbound/repos/query/product.query.repo";
+import { ArticleQueryRepo } from "./outbound/repos/query/article.query.repo";
 
 export class Injector {
   public readonly httpServer: HttpServer;
@@ -73,25 +77,31 @@ export class Injector {
 
     const hashManager = new BcryptHashManager(configUtil);
 
-    const userRepo = new UserRepo(prisma);
-    const productRepo = new ProductRepo(prisma);
-    const productCommentRepo = new ProductCommentRepo(prisma);
-    const articleRepo = new ArticleRepo(prisma);
-    const articleCommentRepo = new ArticleCommentRepo(prisma);
-    const tagRepo = new TagRepo(prisma);
-    const userLikesProductRepo = new UserLikesProductRepo(prisma);
-    const userLikesArticleRepo = new UserLikesArticleRepo(prisma);
-    const notificationRepo = new NotificationRepo(prisma);
+    const userCommandRepo = new UserCommandRepo(prisma);
+    const userQueryRepo = new UserQueryRepo(prisma);
+    const productCommandRepo = new ProductCommandRepo(prisma);
+    const productQueryRepo = new ProductQueryRepo(prisma);
+    const productCommentRepo = new ProductCommentCommandRepo(prisma);
+    const articleCommandRepo = new ArticleCommandRepo(prisma);
+    const articleQueryRepo = new ArticleQueryRepo(prisma);
+    const articleCommentRepo = new ArticleCommentCommandRepo(prisma);
+    const tagRepo = new TagCommandRepo(prisma);
+    const userLikesProductRepo = new UserLikesProductCommandRepo(prisma);
+    const userLikesArticleRepo = new UserLikesArticleCommandRepo(prisma);
+    const notificationRepo = new NotificationCommandRepo(prisma);
 
-    const userService = new UserService(
-      userRepo,
-      productRepo,
-      articleRepo,
+    const userCommandService = new UserCommandService(
+      userCommandRepo,
       hashManager,
     );
-    const authService = new AuthService(userRepo, hashManager, tokenUtil);
-    const articleService = new ArticleService(
-      articleRepo,
+    const userQueryService = new UserQueryService(
+      userQueryRepo,
+      articleQueryRepo,
+      productQueryRepo
+    );
+    const authService = new AuthCommandService(userCommandRepo, hashManager, tokenUtil);
+    const articleService = new ArticleCommandService(
+      articleCommandRepo,
       userLikesArticleRepo,
     );
     const articleCommentService = new ArticleCommentService(
@@ -99,21 +109,21 @@ export class Injector {
       notificationRepo,
       eventBusUtil,
     );
-    const productService = new ProductService(
-      productRepo,
+    const productService = new ProductCommandService(
+      productCommandRepo,
       userLikesProductRepo,
       tagRepo,
       notificationRepo,
       eventBusUtil,
     );
-    const productCommentService = new ProductCommentService(
+    const productCommentService = new ProductCommentCommandService(
       productCommentRepo,
       notificationRepo,
       eventBusUtil,
     );
-    const notificationService = new NotificationService(notificationRepo);
+    const notificationService = new NotificationCommandService(notificationRepo);
 
-    const userController = new UserController(authService, userService);
+    const userController = new UserController(authService, userCommandService, userQueryService);
     const productController = new ProductController(productService);
     const productCommentController = new ProductCommentController(
       productCommentService,

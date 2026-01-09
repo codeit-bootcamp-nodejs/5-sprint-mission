@@ -1,9 +1,5 @@
 import { ArticleComment } from "@prisma/client";
-import {
-  NewArticleCommentEntity,
-  PersitstArticleCommentEntity,
-  ArticleCommentEntity,
-} from "../../../domain/entity/comment/article-comment.entity";
+import { ArticleCommentEntity, NewArticleCommentEntity, PersitstArticleCommentEntity } from "../../../application/command/entity/comment/article-comment.entity";
 
 export type CreateCommentData = {
   articleId: string;

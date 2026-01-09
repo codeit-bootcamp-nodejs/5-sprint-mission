@@ -1,9 +1,9 @@
 import { BaseController, ControllerHandler } from "./base.controller";
 import { productLikeReqSchema } from "../requests/product/product.req.schemas";
-import { ProductService } from "../../domain/service/product/product.service";
+import { ProductCommandService } from "../../application/command/service/product/product.command.service";
 
 export class ProductLikeController extends BaseController {
-  constructor(private readonly _productService: ProductService) {
+  constructor(private readonly _productService: ProductCommandService) {
     super();
   }
 
