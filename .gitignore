@@ -112,3 +112,8 @@ public/*
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Markdown files (except README.md and GitHub templates)
+*.md
+!README.md
+!.github/PULL_REQUEST_TEMPLATE.md
