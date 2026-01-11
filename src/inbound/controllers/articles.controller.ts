@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { create } from "superstruct";
 import { AuthenticatedHandler } from "../../common/types/common";
 import { prismaClient } from "../../common/lib/prisma.client";
+import { deleteImage } from "../../common/lib/image.util";
 import { CreateArticleService } from "../../domain/services/create.article.service";
 import { UpdateArticleService } from "../../domain/services/update.article.service";
 import { DeleteArticleService } from "../../domain/services/delete.article.service";
@@ -89,6 +90,17 @@ export const updateArticle: AuthenticatedHandler = async (
 
   const { id } = create(req.params, IdParamsStruct);
   const updateData = create(req.body, UpdateArticleBodyStruct);
+  const existingArticle = await prismaClient.article.findUnique({
+    where: { id },
+  });
+
+  if (
+    updateData.image !== undefined &&
+    existingArticle?.image &&
+    existingArticle.image !== updateData.image
+  ) {
+    await deleteImage(existingArticle.image);
+  }
 
   const updatedArticle = await updateArticleService.update({
     id,
@@ -111,6 +123,13 @@ export const deleteArticle: AuthenticatedHandler = async (
   }
 
   const { id } = create(req.params, IdParamsStruct);
+  const article = await prismaClient.article.findUnique({
+    where: { id },
+  });
+
+  if (article?.image) {
+    await deleteImage(article.image);
+  }
 
   await deleteArticleService.delete({ id, userId });
 

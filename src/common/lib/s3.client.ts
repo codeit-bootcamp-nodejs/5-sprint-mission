@@ -122,5 +122,3 @@ export async function getS3Url(fileName: string): Promise<string> {
     throw new Error("Failed to get signed URL from S3");
   }
 }
-
-//s3 aws 수정

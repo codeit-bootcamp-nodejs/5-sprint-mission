@@ -4,6 +4,7 @@ import path from "path";
 import http from "http";
 import { PORT, PUBLIC_PATH, STATIC_PATH } from "./common/config/constants";
 import { initializeSocket } from "./common/lib/socket.manager";
+import { initS3Client } from "./common/lib/s3.client";
 import articlesRouterCA from "./inbound/routers/articles.router";
 import userRouterCA from "./inbound/routers/user.router";
 import imagesRouter from "./inbound/routers/images.router";
@@ -13,6 +14,8 @@ import {
 } from "./inbound/controllers/error.controller";
 
 const app = express();
+
+initS3Client();
 
 app.use(cors());
 app.use(express.json());

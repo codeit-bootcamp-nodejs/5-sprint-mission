@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { create } from "superstruct";
 import { prismaClient } from "../../common/lib/prisma.client";
+import { deleteImages } from "../../common/lib/image.util";
 import { IdParamsStruct } from "../../common/validation/common.structs";
 import {
   CreateProductBodyStruct,
@@ -82,6 +83,16 @@ export const updateProduct: AuthenticatedHandler = async (
       type: BusinessExceptionType.UNAUTORIZED_REQUEST,
     });
   }
+
+  if (images && existingProduct.images) {
+    const removedImages = existingProduct.images.filter(
+      (img) => !images.includes(img),
+    );
+    if (removedImages.length > 0) {
+      await deleteImages(removedImages);
+    }
+  }
+
   const updatedProduct = await prismaClient.product.update({
     where: { id },
     data: { name, description, price, tags, images },
@@ -127,6 +138,10 @@ export async function deleteProduct(
       type: BusinessExceptionType.UNAUTORIZED_REQUEST,
     });
   }
+  if (existingProduct.images && existingProduct.images.length > 0) {
+    await deleteImages(existingProduct.images);
+  }
+
   await prismaClient.product.delete({ where: { id } });
   res.send({ id });
 }
