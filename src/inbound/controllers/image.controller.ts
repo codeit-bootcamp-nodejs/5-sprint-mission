@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { AWS_S3_ENABLED } from "../../common/config/config";
 import {
   PUBLIC_PATH,
   STATIC_PATH,
@@ -11,21 +12,24 @@ import {
   BusinessException,
   BusinessExceptionType,
 } from "../../common/errors/business.exception";
+import { uploadToS3 } from "../../common/lib/s3.client";
 
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 export const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, cb) {
-      cb(null, PUBLIC_PATH);
-    },
-    filename(req, file, cb) {
-      const ext = path.extname(file.originalname);
-      const filename = `${uuidv4()}${ext}`;
-      cb(null, filename);
-    },
-  }),
+  storage: AWS_S3_ENABLED
+    ? multer.memoryStorage()
+    : multer.diskStorage({
+        destination(req, file, cb) {
+          cb(null, PUBLIC_PATH);
+        },
+        filename(req, file, cb) {
+          const ext = path.extname(file.originalname);
+          const filename = `${uuidv4()}${ext}`;
+          cb(null, filename);
+        },
+      }),
 
   limits: {
     fileSize: FILE_SIZE_LIMIT,
@@ -57,7 +61,22 @@ export async function uploadImage(
     return;
   }
 
-  const filePath = path.join(STATIC_PATH, req.file.filename);
-  const url = `${IMAGE_BASE_URL}${filePath}`;
-  res.send({ url });
+  try {
+    let url: string;
+
+    if (AWS_S3_ENABLED) {
+      const fileName = `${uuidv4()}${path.extname(req.file.originalname)}`;
+      url = await uploadToS3(req.file.buffer, fileName, req.file.mimetype);
+    } else {
+      const filePath = path.join(STATIC_PATH, req.file.filename);
+      url = `${IMAGE_BASE_URL}${filePath}`;
+    }
+
+    res.send({ url });
+  } catch (error) {
+    throw new BusinessException({
+      type: BusinessExceptionType.PARSE_BODY_ERROR,
+      message: "Failed to upload image",
+    });
+  }
 }

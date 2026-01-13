@@ -12,7 +12,12 @@ build/
 *.tsbuildinfo
 
 # Environment variables
-.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.test
 !.env.example
 
 # Documentation files (contains sensitive info)
@@ -107,3 +112,8 @@ public/*
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Markdown files (except README.md and GitHub templates)
+*.md
+!README.md
+!.github/PULL_REQUEST_TEMPLATE.md

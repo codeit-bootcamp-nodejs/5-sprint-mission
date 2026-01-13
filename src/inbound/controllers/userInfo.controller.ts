@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../../common/lib/prisma.client";
+import { deleteImage } from "../../common/lib/image.util";
 import bcrypt from "bcrypt";
 import { AuthenticatedHandler } from "../../common/types/common";
 import {
@@ -45,6 +46,14 @@ export async function updateMyInfo(req: Request, res: Response): Promise<void> {
     return;
   }
   const { nickname, image } = req.body;
+  const existingUser = await prismaClient.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (image && existingUser?.image && existingUser.image !== image) {
+    await deleteImage(existingUser.image);
+  }
+
   const updatedUser = await prismaClient.user.update({
     where: { id: userId },
     data: {
