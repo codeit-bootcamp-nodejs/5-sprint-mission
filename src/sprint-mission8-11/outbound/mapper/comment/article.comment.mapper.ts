@@ -1,0 +1,39 @@
+import { ArticleComment } from "@prisma/client";
+import { ArticleCommentEntity, NewArticleCommentEntity, PersitstArticleCommentEntity } from "../../../application/command/entity/comment/article-comment.entity";
+
+export type CreateCommentData = {
+  articleId: string;
+  userId: string;
+  content: string;
+};
+export type UpdateCommentData = {
+  content: string;
+};
+
+export class ArticleCommentMapper {
+  static toCreateData(entity: NewArticleCommentEntity): CreateCommentData {
+    return {
+      articleId: entity.articleId,
+      userId: entity.userId,
+      content: entity.content,
+    };
+  }
+
+  static toUpdateData(entity: PersitstArticleCommentEntity): UpdateCommentData {
+    return {
+      content: entity.content,
+    };
+  }
+
+  static toPersistEntity(entity: ArticleComment, articleUserId?: string) {
+    return ArticleCommentEntity.createPersist({
+      id: entity.id,
+      articleId: entity.articleId,
+      articleUserId: articleUserId,
+      userId: entity.userId,
+      content: entity.content,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    });
+  }
+}

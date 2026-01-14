@@ -1,0 +1,46 @@
+networks:
+  panda-market-network:
+    driver: bridge
+
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
+  public:
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    restart: always
+    networks:
+      - panda-market-network
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  server:
+    depends_on:
+      - redis
+    image: ${SERVER_IMAGE_NAME}
+    restart: always
+    networks:
+      - panda-market-network
+    expose:
+      - "3000"
+    env_file: .env.prod
+    environment:
+      - VIRTUAL_HOST=54.180.92.17
+      - VIRTUAL_PORT=3000
+    volumes:
+      - public:/server/public
+
+  redis:
+    image: redis:alpine
+    restart: "always"
+    networks:
+      - panda-market-network
+    expose:
+      - "6379"
