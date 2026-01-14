@@ -1,15 +1,24 @@
-FROM node:20-alpine
 
-WORKDIR /app
-
-COPY package*.json ./
-
+FROM node:24-alpine AS builder
+WORKDIR /server
+COPY prisma ./prisma
+COPY src ./src
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
 RUN npm ci
-
-COPY . .
-
+RUN npx prisma generate
 RUN npm run build
 
-EXPOSE 3000
+FROM node:24-alpine AS runner
+WORKDIR /server
+COPY prisma ./prisma
+COPY src ./src
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
+RUN npm ci --omit=dev
+RUN npx prisma generate
+COPY --from=builder /server/dist ./dist
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "prod"]

@@ -1,320 +1,102 @@
-name: CI/CD Pipeline
+# Github Secrets
+# AWS_ACCESS_KEY_ID(duplicated in .env.prod)
+# AWS_SECRET_ACCESS_KEY(duplicated in .env.prod)
+# AWS_REGION(duplicated in .env.prod)
+# ECR_SERVER_URI
+# EC2_HOST
+# EC2_USERNAME
+# EC2_SSH_PRIVATE_KEY
+# ENV
+
+name: ci/cd
 
 on:
   pull_request:
-    branches:
-      - main
-      - develop
-      - 양다온
+    branches: ["양다온"]
   push:
-    branches:
-      - main
-      - develop
-      - 양다온
-  workflow_dispatch:
-    inputs:
-      test_type:
-        description: Test type to run
-        required: false
-        default: all
-        type: choice
-        options:
-          - all
-          - integration
-          - coverage
+    branches: ["양다온", "양다온-sprint11"]
 
 jobs:
-  format-check:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/양다온')
+  ci:
     runs-on: ubuntu-latest
-    name: Auto Format Code
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref }}
+      - name: checkout branch
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: install node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: "lts/*"
           cache: "npm"
 
-      - name: Install dependencies
+      - name: install dependencies
         run: npm ci
 
-      - name: Run format
-        run: npm run format
+      - name: check types
+        run: npm run type:check
 
-      - name: Commit and push changes
+      - name: check format
+        run: npm run format:check
+
+      - name: run unit test
+        run: npm run test:unit
+  cd:
+    needs: ci
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: login to ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: build and push docker image to ecr
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          if [ -n "$(git status -s)" ]; then
-            git add .
-            git commit -m "chore: auto format code"
-            git push
-          fi
+          docker build --target runner -t ${{secrets.ECR_SERVER_URI}}:latest -t ${{secrets.ECR_SERVER_URI}}:${{github.sha}} .
+          docker build --target migrator -t ${{secrets.ECR_SERVER_URI}}:migrator .
+          docker push ${{secrets.ECR_SERVER_URI}}:latest
+          docker push ${{secrets.ECR_SERVER_URI}}:${{github.sha}}
+          docker push ${{secrets.ECR_SERVER_URI}}:migrator
 
-  test-pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    name: Test on Pull Request
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: create .env.prod on ec2
+        uses: appleboy/ssh-action@master
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USERNAME}}
+          key: ${{secrets.EC2_SSH_PRIVATE_KEY}}
+          script: |
+            echo "${{secrets.ENV}}" > .env.prod
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup test database
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npx prisma migrate deploy
-
-      - name: Run linter
-        run: npm run format -- --check
-        continue-on-error: true
-
-      - name: Build TypeScript
-        run: npm run build
-
-      - name: Run integration tests
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npm run test:integration
-
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
+      - name: copy docker-compose.yml to ec2
+        uses: appleboy/scp-action@master
         with:
-          file: ./coverage/coverage-final.json
-          flags: unittests
-          name: codecov-umbrella
-        continue-on-error: true
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USERNAME}}
+          key: ${{secrets.EC2_SSH_PRIVATE_KEY}}
+          source: "docker-compose.yml"
+          target: "/home/${{secrets.EC2_USERNAME}}"
 
-  quality-check:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    name: Code Quality Check
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: run docker-compose.yml on ec2
+        uses: appleboy/ssh-action@master
         with:
-          node-version: 20.x
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup test database
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npx prisma migrate deploy
-
-      - name: Check code format with Prettier
-        run: npm run format -- --check
-        continue-on-error: true
-
-      - name: Run type check
-        run: npm run build
-        continue-on-error: true
-
-      - name: Run test coverage
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npm run test:coverage
-        continue-on-error: true
-
-  deploy-aws:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    name: Deploy to AWS
-    needs: []
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-
-      - name: Run tests before deployment
-        run: npm run test
-        continue-on-error: true
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-        continue-on-error: true
-
-      - name: Upload to S3
-        run: aws s3 sync ./dist s3://${{ secrets.AWS_S3_BUCKET }}/app --delete
-        continue-on-error: true
-
-      - name: Invalidate CloudFront
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
-        continue-on-error: true
-
-      - name: Notify Slack on success
-        if: success()
-        uses: slackapi/slack-github-action@v1
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          payload: |
-            {
-              "text": "Deployment to AWS successful",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Deployment Status: SUCCESS\nBranch: main\nCommit: ${{ github.sha }}"
-                  }
-                }
-              ]
-            }
-        continue-on-error: true
-
-      - name: Notify Slack on failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          payload: |
-            {
-              "text": "Deployment to AWS failed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Deployment Status: FAILED\nBranch: main\nCommit: ${{ github.sha }}"
-                  }
-                }
-              ]
-            }
-        continue-on-error: true
-
-  manual-test:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    name: Manual Test Run
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup test database
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npx prisma migrate deploy
-
-      - name: Build TypeScript
-        run: npm run build
-
-      - name: Run all tests
-        if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == ''
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npm run test
-
-      - name: Run integration tests
-        if: github.event.inputs.test_type == 'integration'
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npm run test:integration
-
-      - name: Run tests with coverage
-        if: github.event.inputs.test_type == 'coverage'
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
-        run: npm run test:coverage
-
-      - name: Upload coverage artifacts
-        if: github.event.inputs.test_type == 'coverage'
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: coverage/
-        continue-on-error: true
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USERNAME}}
+          key: ${{secrets.EC2_SSH_PRIVATE_KEY}}
+          script: |
+            export SERVER_IMAGE_NAME=${{secrets.ECR_SERVER_URI}}:latest
+            export MIGRATOR_IMAGE_NAME=${{secrets.ECR_SERVER_URI}}:migrator
+            aws ecr get-login-password --region ${{secrets.AWS_REGION}} | docker login --username AWS --password-stdin ${{secrets.ECR_SERVER_URI}}
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml run --rm migrator
+            docker-compose -f docker-compose.yml up -d
+            docker image prune -f
+            docker logout ${{secrets.ECR_SERVER_URI}}
+            rm -f .env.prod
