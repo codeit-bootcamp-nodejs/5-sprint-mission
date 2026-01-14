@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client/extension";
 
 import { Prisma } from "@prisma/client";
-import { NewProductComment, PersistedProductComment } from "../../../02-application/command/entity/product.comment.entity";
+import {
+  NewProductComment,
+  PersistedProductComment,
+} from "../../../02-application/command/entity/product.comment.entity";
 import { IProductCommentCommandRepository } from "../../../02-application/port/repositories/command/I.product.comment.repository";
 import { ProductCommentMapper } from "../../mapper/product.comment.mapper";
 

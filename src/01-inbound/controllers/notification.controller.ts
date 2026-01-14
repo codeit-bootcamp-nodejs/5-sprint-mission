@@ -4,7 +4,6 @@ import { AuthenticatorType } from "../../shared/authenticator/authenticator";
 import { NotificationCommandServiceType } from "../../02-application/command/service/notification.command.service";
 import { NotificationQueryServiceType } from "../../02-application/query/service/notification.query.service";
 
-
 export const createNotificationController = (
   _notificationCommandService: NotificationCommandServiceType,
   _notificationQueryService: NotificationQueryServiceType,
@@ -48,14 +47,18 @@ export const createNotificationController = (
 
   const getNotifications = async (req: Request, res: Response) => {
     const userId = req.user.userId;
-    const notifications = await notificationQueryService.getNotifications(userId);
+    const notifications =
+      await notificationQueryService.getNotifications(userId);
     return res.json(notifications);
   };
 
   const readNotification = async (req: Request, res: Response) => {
     const userId = req.user.userId;
     const id = req.params.id;
-    const notifications = await notificationCommandService.readNotification(userId, id);
+    const notifications = await notificationCommandService.readNotification(
+      userId,
+      id,
+    );
     return res.json(notifications);
   };
 

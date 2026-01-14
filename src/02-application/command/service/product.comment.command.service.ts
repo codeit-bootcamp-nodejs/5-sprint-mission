@@ -1,15 +1,16 @@
 import { ProductCommentDto } from "../../../01-inbound/request/product.comment.request";
 import { ProductCommentResDto } from "../../../01-inbound/response/product.comment.response";
 import { INotificationEventBus } from "../../../shared/eventbus/ports/I.notification.eventbus";
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 import { IProductCommentCommandRepository } from "../../port/repositories/command/I.product.comment.repository";
 import { ProductComment } from "../entity/product.comment.entity";
 
-
-
 export const createProductCommentCommandService = (
   productCommentCommandRepository: IProductCommentCommandRepository,
-  notificationEventBuses: INotificationEventBus
+  notificationEventBuses: INotificationEventBus,
 ) => {
   const createProductComment = async (dto: ProductCommentDto) => {
     const { content, productId, userId } = dto;
@@ -23,7 +24,6 @@ export const createProductCommentCommandService = (
     return ProductCommentResDto(productComment);
   };
 
-
   const updateProductComment = async (dto: ProductCommentDto) => {
     const { content, productId, commentId, userId } = dto;
     if (!commentId) {
@@ -33,7 +33,8 @@ export const createProductCommentCommandService = (
     }
 
     // 기존 댓글 조회
-    const foundProductComment = await productCommentCommandRepository.findById(commentId);
+    const foundProductComment =
+      await productCommentCommandRepository.findById(commentId);
     if (!foundProductComment) {
       throw BusinessException({
         type: BusinessExceptionType.DATA_NOT_FOUND,

@@ -8,7 +8,6 @@ import {
 import { ProductCommentQueryServiceType } from "../../02-application/query/service/product.comment.query.service";
 import { ProductCommentCommandServiceType } from "../../02-application/command/service/product.comment.command.service";
 
-
 export const createProductCommentController = (
   productCommentCommandService: ProductCommentCommandServiceType,
   productCommentQueryService: ProductCommentQueryServiceType,
@@ -47,18 +46,20 @@ export const createProductCommentController = (
     const body = validate(productCommentBodySchema, req.body);
     const params = validate(productCommentParamSchema, req.params);
 
-    const productCommentResDto = await productCommentCommandService.createProductComment({
-      ...body,
-      ...params,
-      userId: req.user.userId,
-    });
+    const productCommentResDto =
+      await productCommentCommandService.createProductComment({
+        ...body,
+        ...params,
+        userId: req.user.userId,
+      });
 
     return res.status(201).json(productCommentResDto);
   };
 
   const getProductComments = async (req: Request, res: Response) => {
     const productId = req.params.productId;
-    const comments = await productCommentQueryService.getProductComments(productId);
+    const comments =
+      await productCommentQueryService.getProductComments(productId);
     return res.json(comments);
   };
 
@@ -66,11 +67,12 @@ export const createProductCommentController = (
     const body = validate(productCommentBodySchema, req.body);
     const params = validate(productCommentParamSchema, req.params);
 
-    const productCommentResDto = await productCommentCommandService.updateProductComment({
-      ...body,
-      ...params,
-      userId: req.user.userId,
-    });
+    const productCommentResDto =
+      await productCommentCommandService.updateProductComment({
+        ...body,
+        ...params,
+        userId: req.user.userId,
+      });
 
     return res.json(productCommentResDto);
   };

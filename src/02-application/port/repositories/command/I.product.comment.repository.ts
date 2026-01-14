@@ -1,15 +1,12 @@
-import { NewProductComment, PersistedProductComment } from "../../../command/entity/product.comment.entity";
-
-
+import {
+  NewProductComment,
+  PersistedProductComment,
+} from "../../../command/entity/product.comment.entity";
 
 export interface IProductCommentCommandRepository {
-  save(
-    entity: NewProductComment,
-  ): Promise<PersistedProductComment>;
+  save(entity: NewProductComment): Promise<PersistedProductComment>;
 
-  findAll(
-    productId: string,
-  ): Promise<PersistedProductComment[]>;
+  findAll(productId: string): Promise<PersistedProductComment[]>;
 
   findById(commentId: string): Promise<PersistedProductComment>;
 

@@ -4,6 +4,6 @@ import { ArticleView } from "../../../query/view/article.view";
 import { ProductView } from "../../../query/view/product.view";
 
 export interface IProductQueryRepository {
-    findAll(query: QueryType): Promise<ProductView[]>;
-    findById(id: string): Promise<ProductView>;
+  findAll(query: QueryType): Promise<ProductView[]>;
+  findById(id: string): Promise<ProductView>;
 }

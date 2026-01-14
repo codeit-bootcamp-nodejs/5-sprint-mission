@@ -1,5 +1,7 @@
-
-import { PersistedProduct, Product } from "../../02-application/command/entity/product";
+import {
+  PersistedProduct,
+  Product,
+} from "../../02-application/command/entity/product";
 import { PersistProduct } from "../repository/command/product.command.repository";
 
 export const ProductMapper = {

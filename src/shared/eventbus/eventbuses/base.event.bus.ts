@@ -1,4 +1,3 @@
-
 export const BaseEventBus = <T>() => {
   let callback: (event: T) => void;
   let callbackAll: (event: T) => void;
@@ -11,7 +10,6 @@ export const BaseEventBus = <T>() => {
   const publish = (event: T) => {
     callback(event);
   };
-
 
   // 다수의 유저에게 메세지 전송
   const subscribeAll = (_callback: (event: T) => void) => {

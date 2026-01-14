@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { Prisma } from "@prisma/client";
 import { QueryType } from "../../../01-inbound/request/query.request";
-import { NewProduct, PersistedProduct } from "../../../02-application/command/entity/product";
+import {
+  NewProduct,
+  PersistedProduct,
+} from "../../../02-application/command/entity/product";
 import { IProductCommandRepository } from "../../../02-application/port/repositories/command/I.product.repository";
 import { ProductMapper } from "../../mapper/product.mapper";
-
 
 export type PersistProduct = Prisma.ProductGetPayload<{}>;
 
@@ -29,11 +31,11 @@ export const createProductCommandRepository = (
     const { offset = 0, limit = 10, search = "", sort = "desc" } = query;
     const condition = search
       ? {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-        ],
-      }
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ],
+        }
       : {};
 
     const products = await prisma.product.findMany({

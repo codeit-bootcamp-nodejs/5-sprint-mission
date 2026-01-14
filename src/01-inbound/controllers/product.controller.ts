@@ -67,7 +67,8 @@ export const createProductController = (
 
   const getProducts = async (req: Request, res: Response) => {
     const query = validate(querySchema, req.query);
-    const productsResDto = await productCommentQueryService.getAllProducts(query);
+    const productsResDto =
+      await productCommentQueryService.getAllProducts(query);
     return res.json(productsResDto);
   };
 

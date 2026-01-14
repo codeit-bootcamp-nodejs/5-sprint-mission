@@ -1,7 +1,6 @@
 import { QueryType } from "../../../../01-inbound/request/query.request";
 import { NewProduct, PersistedProduct } from "../../../command/entity/product";
 
-
 export interface IProductCommandRepository {
   save(entity: NewProduct): Promise<PersistedProduct>;
 

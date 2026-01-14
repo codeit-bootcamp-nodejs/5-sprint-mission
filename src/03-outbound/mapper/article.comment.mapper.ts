@@ -1,5 +1,8 @@
 import { ArticleComment } from "../../02-application/command/entity/article.comment";
-import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../shared/exception/exception";
 import { PersistArticleComment } from "../repository/command/article.comment.command.repository";
 
 export const ArticleCommentMapper = {

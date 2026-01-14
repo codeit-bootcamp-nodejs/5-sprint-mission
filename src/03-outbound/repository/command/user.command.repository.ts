@@ -1,13 +1,21 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { Prisma } from "@prisma/client";
-import { NewUserEntity, PersistedUserEntity } from "../../../02-application/command/entity/user.entity";
+import {
+  NewUserEntity,
+  PersistedUserEntity,
+} from "../../../02-application/command/entity/user.entity";
 import { IUserCommandRepository } from "../../../02-application/port/repositories/command/I.user.repository";
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 import { UserMapper } from "../../mapper/user.mapper";
 
 export type PersistUser = Prisma.UserGetPayload<{}>;
 
-export const createUserCommandRepository = (prisma: PrismaClient): IUserCommandRepository => {
+export const createUserCommandRepository = (
+  prisma: PrismaClient,
+): IUserCommandRepository => {
   const save = async (entity: NewUserEntity) => {
     const { email, nickname, password, refreshToken } = entity;
     const user = await prisma.user.create({
@@ -29,8 +37,8 @@ export const createUserCommandRepository = (prisma: PrismaClient): IUserCommandR
 
     if (!user) {
       throw BusinessException({
-        type: BusinessExceptionType.DATA_NOT_FOUND
-      })
+        type: BusinessExceptionType.DATA_NOT_FOUND,
+      });
     }
 
     return UserMapper.toPersist(user);
@@ -42,8 +50,8 @@ export const createUserCommandRepository = (prisma: PrismaClient): IUserCommandR
     });
     if (!user) {
       throw BusinessException({
-        type: BusinessExceptionType.DATA_NOT_FOUND
-      })
+        type: BusinessExceptionType.DATA_NOT_FOUND,
+      });
     }
 
     return UserMapper.toPersist(user);
@@ -67,22 +75,21 @@ export const createUserCommandRepository = (prisma: PrismaClient): IUserCommandR
 
   const updateRefreshToken = async (
     email: string,
-    refreshToken: string
+    refreshToken: string,
   ): Promise<void> => {
     await prisma.user.update({
       where: { email },
       data: {
-        refreshToken
-      }
-    })
+        refreshToken,
+      },
+    });
   };
-
 
   return {
     save,
     findById,
     findByEmail,
     update,
-    updateRefreshToken
+    updateRefreshToken,
   };
 };

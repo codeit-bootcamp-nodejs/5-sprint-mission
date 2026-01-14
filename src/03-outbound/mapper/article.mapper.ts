@@ -1,4 +1,3 @@
-
 import { Article } from "../../02-application/command/entity/article";
 import { PersistArticle } from "../repository/command/article.command.repository";
 

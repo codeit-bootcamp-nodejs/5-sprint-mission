@@ -9,7 +9,10 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import http, { Server as DefaultHttpServer } from "http";
 import { Prisma } from "@prisma/client";
-import { PrismaClientValidationError, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import {
+  PrismaClientValidationError,
+  PrismaClientKnownRequestError,
+} from "@prisma/client/runtime/library";
 import { isBusinessException } from "../../shared/exception/exception";
 import { HttpError } from "../../shared/authenticator/authenticator";
 
@@ -59,7 +62,8 @@ export const createHttpServer = (controllers: any) => {
   };
 
   const listen = () => {
-    const isTestEnv = process.env.NODE_ENV === "test" ||
+    const isTestEnv =
+      process.env.NODE_ENV === "test" ||
       typeof process.env.JEST_WORKER_ID !== "undefined";
 
     if (isTestEnv) {
@@ -85,7 +89,7 @@ export const createHttpServer = (controllers: any) => {
   return {
     run,
     defaultHttpServer,
-    server
+    server,
   };
 };
 

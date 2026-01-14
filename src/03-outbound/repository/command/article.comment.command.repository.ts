@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client/extension";
 import { Prisma } from "@prisma/client";
-import { NewArticleComment, PersistedArticleComment } from "../../../02-application/command/entity/article.comment";
+import {
+  NewArticleComment,
+  PersistedArticleComment,
+} from "../../../02-application/command/entity/article.comment";
 import { IArticleCommentCommandRepository } from "../../../02-application/port/repositories/command/I.article.comment.repository";
 import { ArticleCommentMapper } from "../../mapper/article.comment.mapper";
 

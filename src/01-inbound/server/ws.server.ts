@@ -4,14 +4,16 @@ import jwt from "jsonwebtoken";
 import { Request } from "express";
 import { Socket } from "net";
 import { WebSocket } from "ws";
-import { BusinessException, BusinessExceptionType } from "../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../shared/exception/exception";
 
 require("dotenv").config();
 
 export const createWsServer = (server: HttpServer, eventHandlers: any) => {
-  const clients = new Map<string, WebSocket>();         // 클라이언트 웹소켓 정보
-  const wss = new WebSocketServer({ noServer: true });  // 웹소켓 서버 
-
+  const clients = new Map<string, WebSocket>(); // 클라이언트 웹소켓 정보
+  const wss = new WebSocketServer({ noServer: true }); // 웹소켓 서버
 
   // 웹소켓 설정
   const setUp = () => {
@@ -24,9 +26,7 @@ export const createWsServer = (server: HttpServer, eventHandlers: any) => {
     for (const eventHandler of eventHandlers) {
       eventHandler.registerClients(clients);
     }
-  }
-
-
+  };
 
   const checkWsAuth = (req: Request, socket: Socket, head: Buffer) => {
     if (req.url !== "/") {
@@ -58,7 +58,6 @@ export const createWsServer = (server: HttpServer, eventHandlers: any) => {
     });
   };
 
-
   const setUpConnection = (ws: WebSocket, req: Request) => {
     const userId = req.user.userId;
 
@@ -76,7 +75,6 @@ export const createWsServer = (server: HttpServer, eventHandlers: any) => {
       console.log("ws closed ", userId);
     });
   };
-
 
   const run = () => {
     registerRoutes();

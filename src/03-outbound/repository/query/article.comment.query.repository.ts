@@ -3,35 +3,34 @@ import { IArticleCommentQueryRepository } from "../../../02-application/port/rep
 import { ArticleCommentView } from "../../../02-application/query/view/article.comment.view";
 
 export const createArticleCommentQueryRepository = (
-    prisma: PrismaClient
+  prisma: PrismaClient,
 ): IArticleCommentQueryRepository => {
-    const findAll = async (id: string): Promise<ArticleCommentView[]> => {
-        const articleComments = await prisma.articleComment.findMany({
-            where: {
-                articleId: id
-            },
-            include: {
-                article: true,
-                user: true
-            }
-        })
+  const findAll = async (id: string): Promise<ArticleCommentView[]> => {
+    const articleComments = await prisma.articleComment.findMany({
+      where: {
+        articleId: id,
+      },
+      include: {
+        article: true,
+        user: true,
+      },
+    });
 
-        return articleComments.map((articleComment) => {
-            return {
-                id: articleComment.id,
-                articleTitle: articleComment.article.title,
-                content: articleComment.content,
-                createdAt: articleComment.createdAt,
-                updatedAt: articleComment.updatedAt,
-                author: {
-                    nickname: articleComment.user.nickname
-                }
-            }
-        })
+    return articleComments.map((articleComment) => {
+      return {
+        id: articleComment.id,
+        articleTitle: articleComment.article.title,
+        content: articleComment.content,
+        createdAt: articleComment.createdAt,
+        updatedAt: articleComment.updatedAt,
+        author: {
+          nickname: articleComment.user.nickname,
+        },
+      };
+    });
+  };
 
-    }
-
-    return {
-        findAll
-    }
-}
+  return {
+    findAll,
+  };
+};

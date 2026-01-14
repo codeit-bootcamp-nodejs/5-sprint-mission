@@ -1,8 +1,14 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { QueryType } from "../../../01-inbound/request/query.request";
-import { NewArticle, PersistedArticle } from "../../../02-application/command/entity/article";
+import {
+  NewArticle,
+  PersistedArticle,
+} from "../../../02-application/command/entity/article";
 import { IArticleCommandRepository } from "../../../02-application/port/repositories/command/I.article.repository";
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 import { ArticleMapper } from "../../mapper/article.mapper";
 
 export type PersistArticle = Prisma.ArticleGetPayload<{}>;
@@ -15,11 +21,11 @@ export const createArticleCommandRepository = (
 
     const condition: Prisma.ArticleWhereInput = search
       ? {
-        OR: [
-          { title: { contains: search, mode: "insensitive" } },
-          { content: { contains: search, mode: "insensitive" } },
-        ],
-      }
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { content: { contains: search, mode: "insensitive" } },
+          ],
+        }
       : {};
 
     const articles = await prisma.article.findMany({

@@ -34,14 +34,12 @@ export const createUserController = (
       errorHandler(editUserInfo),
     );
 
-
     // 내 정보 조회
     router.get(
       "/me",
       errorHandler(auth.verifyAccessToken),
       errorHandler(userInfo),
     );
-
 
     // 내 상품 조회
     router.get(
@@ -56,7 +54,6 @@ export const createUserController = (
       errorHandler(auth.verifyAccessToken),
       errorHandler(userArticles),
     );
-
 
     // 내 댓글 조회
     router.get(
@@ -76,11 +73,12 @@ export const createUserController = (
 
   const signIn = async (req: Request, res: Response) => {
     const body = validate(signInBodySchema, req.body);
-    const { accessToken, refreshToken } = await userCommandService.getTokens(body);
+    const { accessToken, refreshToken } =
+      await userCommandService.getTokens(body);
     await userCommandService.updateRefreshToken({
       email: body.email,
-      refreshToken: refreshToken
-    })
+      refreshToken: refreshToken,
+    });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
@@ -120,12 +118,10 @@ export const createUserController = (
     return res.json(articles);
   };
 
-
   const userComments = async (req: Request, res: Response) => {
     const comments = await userQueryService.getUserComments(req.user.userId);
     return res.json(comments);
   };
-
 
   registerRoutes();
 

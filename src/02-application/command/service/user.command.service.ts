@@ -1,8 +1,15 @@
-import { UserSignUpDto, UserSignInDto, UserEditDto } from "../../../01-inbound/request/user.request";
+import {
+  UserSignUpDto,
+  UserSignInDto,
+  UserEditDto,
+} from "../../../01-inbound/request/user.request";
 import { ProductResDto } from "../../../01-inbound/response/product.response";
 import { AuthenticatorType } from "../../../shared/authenticator/authenticator";
 import { INotificationEventBus } from "../../../shared/eventbus/ports/I.notification.eventbus";
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 import { IProductCommandRepository } from "../../port/repositories/command/I.product.repository";
 import { IUserCommandRepository } from "../../port/repositories/command/I.user.repository";
 import { PersistedProduct } from "../entity/product";
@@ -12,7 +19,7 @@ export const createUserCommandService = (
   userCommandRepository: IUserCommandRepository,
   productCommandRepository: IProductCommandRepository,
   auth: AuthenticatorType,
-  notificationEventBuses: INotificationEventBus
+  notificationEventBuses: INotificationEventBus,
 ) => {
   const createUser = async (dto: UserSignUpDto) => {
     const { email, nickname, password } = dto;
@@ -47,7 +54,6 @@ export const createUserCommandService = (
     const hashPassword = await auth.createHashPassword(password);
     const refreshToken = auth.createToken({ email }, "refresh");
 
-
     const updatedUser = UserEntity.createNew({
       email,
       nickname,
@@ -55,7 +61,10 @@ export const createUserCommandService = (
       password: hashPassword,
     });
 
-    const userUpdated = await userCommandRepository.update(foundUser, updatedUser);
+    const userUpdated = await userCommandRepository.update(
+      foundUser,
+      updatedUser,
+    );
     return auth.filterSensitiveUserData(userUpdated);
   };
 
@@ -81,19 +90,24 @@ export const createUserCommandService = (
   };
 
   const updateRefreshToken = async (params: {
-    email: string,
-    refreshToken: string
+    email: string;
+    refreshToken: string;
   }) => {
     console.log(params.email, params.refreshToken);
-    await userCommandRepository.updateRefreshToken(params.email, params.refreshToken);
-  }
+    await userCommandRepository.updateRefreshToken(
+      params.email,
+      params.refreshToken,
+    );
+  };
 
   return {
     createUser,
     updateUser,
     getTokens,
-    updateRefreshToken
+    updateRefreshToken,
   };
 };
 
-export type UserCommandServiceType = ReturnType<typeof createUserCommandService>;
+export type UserCommandServiceType = ReturnType<
+  typeof createUserCommandService
+>;

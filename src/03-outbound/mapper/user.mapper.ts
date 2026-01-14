@@ -1,4 +1,3 @@
-
 import { UserEntity } from "../../02-application/command/entity/user.entity";
 import { PersistUser } from "../repository/command/user.command.repository";
 
@@ -14,5 +13,5 @@ export const UserMapper = {
       refreshToken: record.refreshToken,
       image: record.image || undefined,
     });
-  }
-}
+  },
+};

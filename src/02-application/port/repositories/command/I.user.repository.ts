@@ -1,10 +1,10 @@
-import { NewUserEntity, PersistedUserEntity } from "../../../command/entity/user.entity";
-
-
+import {
+  NewUserEntity,
+  PersistedUserEntity,
+} from "../../../command/entity/user.entity";
 
 export interface IUserCommandRepository {
   save(entity: NewUserEntity): Promise<PersistedUserEntity>;
-
 
   findById(id: string): Promise<PersistedUserEntity>;
 
@@ -15,8 +15,5 @@ export interface IUserCommandRepository {
     newEntity: NewUserEntity,
   ): Promise<PersistedUserEntity>;
 
-  updateRefreshToken(
-    email: string,
-    refreshToken: string
-  ): Promise<void>
+  updateRefreshToken(email: string, refreshToken: string): Promise<void>;
 }

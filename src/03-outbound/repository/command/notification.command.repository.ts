@@ -1,7 +1,13 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { NewNotification, PersistedNotification } from "../../../02-application/command/entity/notification";
+import {
+  NewNotification,
+  PersistedNotification,
+} from "../../../02-application/command/entity/notification";
 import { INotificationCommandRepository } from "../../../02-application/port/repositories/command/I.notification.repository";
-import { BusinessException, BusinessExceptionType } from "../../../shared/exception/exception";
+import {
+  BusinessException,
+  BusinessExceptionType,
+} from "../../../shared/exception/exception";
 import { NotificationMapper } from "../../mapper/notification.mapper";
 
 export type PersistNotification = Prisma.NotificationGetPayload<{}>;
@@ -12,8 +18,6 @@ export const createNotificationCommandRepository = (
   const create = async (
     entity: NewNotification,
   ): Promise<PersistedNotification> => {
-
-
     const notification = await prisma.notification.create({
       data: {
         type: entity.type,
@@ -30,7 +34,7 @@ export const createNotificationCommandRepository = (
   const findAll = async (userId: string): Promise<PersistedNotification[]> => {
     const records = await prisma.notification.findMany({
       where: {
-        receiverId: userId
+        receiverId: userId,
       },
     });
 

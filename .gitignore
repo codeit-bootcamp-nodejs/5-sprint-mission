@@ -9,7 +9,6 @@ et --hard
 
 # prisma 
 /prisma/migrations/*
-package-lock.json
 
 # git reset logs
 et\ --hard\ *
