@@ -1,0 +1,42 @@
+networks:
+  codeit-network:
+    driver: bridge
+
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
+  public:
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    restart: always
+    networks:
+      - codeit-network
+      ports;
+        - "80:80"
+        - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  server:
+    depends_on:
+      - redis
+    image: ${ECR_SERVER_URI}:latest
+    restart: always
+    networks:
+      - pandamarket-network
+    ports:
+      - 80:4000
+      - 443:4000
+    env_file: .env.prod
+
+  redis:
+    image: redis:alpine
+    restart: 'always'
+    networks:
+      - - pandamarket-network
+    expose:
+      - '6379'
