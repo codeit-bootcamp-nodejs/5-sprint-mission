@@ -1,0 +1,117 @@
+name: ci/cd
+
+on:
+  pull_request:
+    branches: ["오창섭-sprint11"]
+  push:
+    branches: ["오창섭-sprint11"]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PORT: 3000
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://test:test@localhost:5432/testdb"
+      ACCESS_TOKEN_SECRET_KEY: testfortest
+      REFRESH_TOKEN_SECRET_KEY: testfortest
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: prisma db push
+        run: npx prisma db push --accept-data-loss
+
+      - name: check types
+        run: npm run type:check
+
+      - name: check format
+        run: npm run format:check
+
+      - name: check test
+        run: npm run test:check
+
+  cd:
+    needs: ci
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: login to ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: build and push docker image to ecr
+        run: |
+          docker build -t ${{ secrets.AWS_ECR_URI }}:latest .
+          docker push ${{ secrets.AWS_ECR_URI }}:latest
+
+      - name: create .env.prod on ec2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            echo "${{secrets.ENV}}" > .env.prod
+
+      - name: copy files to ec2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml,nginx/default.conf"
+          target: "/home/${{ secrets.EC2_USERNAME }}"
+
+      - name: run docker-compose.yml on ec2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            export AWS_ECR_URI=${{ secrets.AWS_ECR_URI }}
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }}
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml up -d
+            docker image prune -f
+            docker logout ${{ secrets.AWS_ECR_URI }}

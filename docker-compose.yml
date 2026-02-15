@@ -1,0 +1,47 @@
+networks:
+  codeit-network:
+    driver: bridge
+
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
+  public:
+
+services:
+  # nginx.conf 설정 없이 자동으로 할 때
+  # nginx-proxy:
+  #   image: nginxproxy/nginx-proxy
+  #   restart: always
+  #   networks:
+  #     - codeit-network
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  # nginx.conf를 설정하고 수동으로 할 때
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - codeit-network
+    depends_on:
+      - server
+
+  server:
+    image: ${AWS_ECR_URI}:latest
+    restart: always
+    networks:
+      - codeit-network
+    ports:
+      - 3000:3000
+    env_file: .env.prod
+    volumes:
+      - ./src/uploads:/server/src/uploads
