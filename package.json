@@ -4,7 +4,12 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node algorithm/sorts.js"
+    "start": "node algorithm/sorts.js",
+    "test:list": "node algorithm/LinkedList.js",
+    "test:doubly": "node algorithm/DoublyLinkedList.js",
+    "test:queue": "node algorithm/Queue.js",
+    "test:stack": "node algorithm/Stack.js",
+    "test:bst": "node algorithm/BinarySearchTree.js"
   },
   "keywords": [],
   "author": "",
