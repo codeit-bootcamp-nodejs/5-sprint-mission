@@ -83,6 +83,38 @@ function quickSort(arr) {
   sort(0, arr.length - 1);
 }
 
+function heapSort(arr) {
+  const n = arr.length;
+
+  function heapify(size, i) {
+    let largest = i;
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+
+    if (left < size && arr[left] > arr[largest]) {
+      largest = left;
+    }
+
+    if (right < size && arr[right] > arr[largest]) {
+      largest = right;
+    }
+
+    if (largest !== i) {
+      [arr[i], arr[largest]] = [arr[largest], arr[i]];
+      heapify(size, largest);
+    }
+  }
+
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    heapify(n, i);
+  }
+
+  for (let i = n - 1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapify(i, 0);
+  }
+}
+
 // 테스트용 배열
 const original = [5, 3, 8, 4, 2, 7, 1, 6];
 
@@ -103,3 +135,7 @@ console.log("Merge Sort:", sorted);
 const arr4 = [...original];
 quickSort(arr4);
 console.log("Quick Sort:", arr4);
+
+const arr5 = [...original];
+heapSort(arr5);
+console.log("Heap Sort:", arr5);
