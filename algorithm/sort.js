@@ -48,6 +48,7 @@ function merge(left, right) {
   let leftIndex = 0;
   let rightIndex = 0;
 
+  
   while (leftIndex < left.length && rightIndex < right.length) {
     if (left[leftIndex] <= right[rightIndex]) {
       result.push(left[leftIndex]);
@@ -58,6 +59,7 @@ function merge(left, right) {
     }
   }
 
+  
   return result
     .concat(left.slice(leftIndex))
     .concat(right.slice(rightIndex));
@@ -115,6 +117,19 @@ function heapsort(arr) {
     [arr[0], arr[j]] = [arr[j], arr[0]]
     heapify(arr, 0, j)
   }
+  
+  let i = low - 1;
+  
+  for (let j = low; j < high; j++) {
+    if (arr[j] <= pivot) {
+      i++; 
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+  
+  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+  
+  return i + 1; 
 }
 
 //테스트
